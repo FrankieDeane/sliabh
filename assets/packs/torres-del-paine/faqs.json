@@ -1,0 +1,37 @@
+[
+  {
+    "q": "Do I need a permit for the W Circuit?",
+    "a": "Yes. CONAF permits are mandatory for all trekking in Torres del Paine. Book via the official CONAF portal (ventanilla.conaf.cl) well before arrival — quotas fill months in advance in high season (Dec–Feb). Print your permit or have it available digitally.",
+    "tags": ["permits", "planning"]
+  },
+  {
+    "q": "When is the best time to hike the W Circuit?",
+    "a": "The main season runs October to April. December–February is peak season with the best weather but most crowds and highest winds. October–November and March–April offer fewer hikers and calmer winds. Winter trekking (May–Sep) is possible for experienced mountaineers but most refugios close.",
+    "tags": ["planning", "seasons"]
+  },
+  {
+    "q": "Can I drink the water from rivers and lakes?",
+    "a": "Water sources in the park are generally clean but should always be treated before drinking. Use a filter (e.g. Sawyer Squeeze, LifeStraw) or purification tablets. Glacial silt can reduce filter effectiveness — let water settle first.",
+    "tags": ["water", "safety"]
+  },
+  {
+    "q": "What is the difficulty of the W Circuit?",
+    "a": "Moderate. The W requires solid fitness and prior hiking experience. Steep sections at Mirador Base Torres and Valle del Francés. Daily distances of 15–22km with 400–900m elevation gain. No technical climbing required. The full O Circuit is harder, with John Gardner Pass adding significant challenge.",
+    "tags": ["difficulty", "planning"]
+  },
+  {
+    "q": "Is camping allowed anywhere in the park?",
+    "a": "No. Free camping (wildcamp) is strictly prohibited. You must stay at designated CONAF campgrounds or refugios, all of which require advance booking. This is strictly enforced.",
+    "tags": ["camping", "rules"]
+  },
+  {
+    "q": "What is the emergency number in the park?",
+    "a": "CONAF Rescue: +56 61 2691931. Carabineros de Chile (police/rescue): 133. For satellite emergencies, FIDAE coordinates rescue. Always register your route with CONAF at the park entrance.",
+    "tags": ["emergency", "safety"]
+  },
+  {
+    "q": "How much does the W Circuit cost?",
+    "a": "Park entrance fee is approximately USD $35 (foreigners, high season). Campground fees range from USD $0 (Camping Italiano) to $18 (Camping Pehoe). Refugio dorm beds run USD $60–100/night including dinner and breakfast. The full W can cost USD $200–500+ depending on accommodation choice.",
+    "tags": ["cost", "planning"]
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "camping-chileno",
+    "name": "Camping Chileno",
+    "lat": -50.9414, "lon": -72.9367,
+    "elevation_m": 380,
+    "capacity": 60,
+    "services": ["toilets", "food_store"],
+    "water_available": true,
+    "fee_usd": 12
+  },
+  {
+    "id": "camping-grey",
+    "name": "Camping Grey",
+    "lat": -50.9649, "lon": -73.1731,
+    "elevation_m": 210,
+    "capacity": 80,
+    "services": ["toilets", "hot_shower", "food_store"],
+    "water_available": true,
+    "fee_usd": 15
+  },
+  {
+    "id": "camping-italiano",
+    "name": "Camping Italiano",
+    "lat": -50.9756, "lon": -73.0417,
+    "elevation_m": 135,
+    "capacity": 40,
+    "services": ["toilets"],
+    "water_available": true,
+    "fee_usd": 0
+  },
+  {
+    "id": "camping-pehoe",
+    "name": "Camping Pehoe",
+    "lat": -51.0048, "lon": -73.0614,
+    "elevation_m": 50,
+    "capacity": 100,
+    "services": ["toilets", "hot_shower", "restaurant"],
+    "water_available": true,
+    "fee_usd": 18
+  }
+]

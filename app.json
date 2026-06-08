@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Sliabh",
+    "slug": "sliabh",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "sliabh",
+    "userInterfaceStyle": "dark",
+    "platforms": ["android"],
+    "android": {
+      "minSdkVersion": 26,
+      "targetSdkVersion": 35,
+      "compileSdkVersion": 35,
+      "package": "com.sliabh.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#14532d"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "wp-rio-ascencio",
+    "name": "Río Ascencio",
+    "lat": -50.9423, "lon": -72.9289,
+    "type": "river",
+    "treatment_required": true,
+    "reliable_year_round": true
+  },
+  {
+    "id": "wp-lago-grey",
+    "name": "Lago Grey shore",
+    "lat": -50.9638, "lon": -73.1602,
+    "type": "lake",
+    "treatment_required": true,
+    "reliable_year_round": true
+  },
+  {
+    "id": "wp-refugio-chileno-tap",
+    "name": "Refugio Chileno tap water",
+    "lat": -50.9414, "lon": -72.9367,
+    "type": "tap",
+    "treatment_required": false,
+    "reliable_year_round": false
+  }
+]

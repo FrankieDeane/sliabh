@@ -1,0 +1,23 @@
+[
+  {
+    "id": "alert-wind-grey-sector",
+    "severity": "high",
+    "area": "grey-glacier",
+    "message": "Extreme wind gusts common Oct–Mar on the Grey glacier shore. Do not attempt crossing in winds exceeding 60 km/h. Check at refugio before departing.",
+    "permanent": true
+  },
+  {
+    "id": "alert-fire-ban",
+    "severity": "critical",
+    "area": "entire-park",
+    "message": "Open fires strictly prohibited throughout the park. Stoves only. Violations result in permanent ban and criminal charges.",
+    "permanent": true
+  },
+  {
+    "id": "alert-john-gardner",
+    "severity": "high",
+    "area": "john-gardner-pass",
+    "message": "John Gardner Pass (1241m) can be icy and exposed year-round. Microspikes recommended. Pass closes in extreme weather — check with CONAF ranger.",
+    "permanent": true
+  }
+]

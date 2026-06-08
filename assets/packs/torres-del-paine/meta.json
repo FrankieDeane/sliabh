@@ -1,0 +1,10 @@
+{
+  "id": "torres-del-paine",
+  "name": "Torres del Paine",
+  "country": "Chile",
+  "region": "Magallanes",
+  "version": "1.0.0",
+  "schema_version": 1,
+  "updated_at": "2025-01-01",
+  "bbox": { "sw": [-51.35, -73.65], "ne": [-50.70, -72.40] }
+}

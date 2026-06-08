@@ -1,0 +1,38 @@
+[
+  {
+    "id": "w-circuit",
+    "name": "W Circuit",
+    "type": "multi-day",
+    "difficulty": "moderate",
+    "distance_km": 80,
+    "duration_days": { "min": 4, "max": 5 },
+    "elevation_gain_m": 2800,
+    "segments": ["base-torres", "valle-frances", "grey-glacier"],
+    "warnings": ["river_crossings", "sudden_weather", "strong_winds"],
+    "permits_required": true
+  },
+  {
+    "id": "o-circuit",
+    "name": "O Circuit (Full Circuit)",
+    "type": "multi-day",
+    "difficulty": "hard",
+    "distance_km": 130,
+    "duration_days": { "min": 7, "max": 10 },
+    "elevation_gain_m": 4200,
+    "segments": ["w-circuit", "john-gardner-pass", "rio-de-los-perros"],
+    "warnings": ["river_crossings", "john_gardner_exposed", "snow_possible_year_round", "suspension_bridge_quota"],
+    "permits_required": true
+  },
+  {
+    "id": "base-torres-day",
+    "name": "Base Torres Day Hike",
+    "type": "day-hike",
+    "difficulty": "moderate",
+    "distance_km": 22,
+    "duration_days": { "min": 1, "max": 1 },
+    "elevation_gain_m": 850,
+    "segments": ["hotel-las-torres-trailhead", "chileno", "mirador-base-torres"],
+    "warnings": ["crowded_in_season", "early_start_recommended", "permit_quota_limited"],
+    "permits_required": true
+  }
+]

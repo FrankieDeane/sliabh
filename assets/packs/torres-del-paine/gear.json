@@ -1,0 +1,42 @@
+[
+  {
+    "context": "w-circuit-summer",
+    "essential": [
+      "waterproof_jacket_20000mm",
+      "waterproof_pants",
+      "trekking_poles",
+      "gaiters",
+      "sleeping_bag_0c",
+      "waterproof_pack_cover",
+      "water_filter_or_purification_tablets",
+      "sun_protection_50spf",
+      "headlamp",
+      "first_aid_kit",
+      "emergency_whistle"
+    ],
+    "recommended": [
+      "microspikes",
+      "sun_hat",
+      "warm_gloves",
+      "wool_baselayer",
+      "trekking_sandals_for_camp",
+      "dry_bags_for_electronics"
+    ],
+    "weight_target_kg": 12
+  },
+  {
+    "context": "o-circuit-full",
+    "essential": [
+      "all_w_circuit_essentials",
+      "microspikes",
+      "trekking_axe_optional",
+      "extra_fuel_canister",
+      "bear_canister_or_hang_system"
+    ],
+    "recommended": [
+      "satellite_communicator",
+      "extra_emergency_rations_2days"
+    ],
+    "weight_target_kg": 14
+  }
+]

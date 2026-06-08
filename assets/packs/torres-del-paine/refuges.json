@@ -1,0 +1,33 @@
+[
+  {
+    "id": "refugio-grey",
+    "name": "Refugio Grey",
+    "lat": -50.9723, "lon": -73.1852,
+    "elevation_m": 210,
+    "capacity": 60,
+    "services": ["dormitory", "meals", "hot_shower", "bar"],
+    "season": { "open": "Oct", "close": "Apr" },
+    "booking_required": true,
+    "emergency_contact": "+56 61 2412742"
+  },
+  {
+    "id": "refugio-chileno",
+    "name": "Refugio Chileno",
+    "lat": -50.9414, "lon": -72.9367,
+    "elevation_m": 380,
+    "capacity": 50,
+    "services": ["dormitory", "meals", "hot_shower"],
+    "season": { "open": "Oct", "close": "Apr" },
+    "booking_required": true
+  },
+  {
+    "id": "refugio-las-torres",
+    "name": "Refugio Las Torres",
+    "lat": -50.9597, "lon": -72.8619,
+    "elevation_m": 155,
+    "capacity": 80,
+    "services": ["dormitory", "meals", "hot_shower", "equipment_rental"],
+    "season": { "open": "Sep", "close": "May" },
+    "booking_required": true
+  }
+]
