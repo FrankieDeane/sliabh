@@ -3,11 +3,14 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { OllamaProvider } from '../src/ai/OllamaProvider';
+import { CloudProvider } from '../src/ai/CloudProvider';
 import { setAIProvider } from '../src/ai/AIService';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
+import { WebHeader } from '../src/components/layout/WebHeader';
+import { WebFooter } from '../src/components/layout/WebFooter';
 
 function NetworkWatcher() {
   const setOnline = useNetworkStore((s) => s.setOnline);
@@ -54,8 +57,31 @@ export default function RootLayout() {
   const isDark = theme === 'dark';
 
   useEffect(() => {
-    setAIProvider(new OllamaProvider({ baseUrl: ollamaUrl }));
+    if (Platform.OS === 'web') {
+      setAIProvider(new CloudProvider());
+    } else {
+      setAIProvider(new OllamaProvider({ baseUrl: ollamaUrl }));
+    }
   }, [ollamaUrl]);
+
+  if (Platform.OS === 'web') {
+    return (
+      <View style={{ flex: 1, flexDirection: 'column' }}>
+        <NetworkWatcher />
+        <StatusBar style={isDark ? 'light' : 'dark'} />
+        <WebHeader />
+        <View style={{ flex: 1 }}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: isDark ? '#070b14' : '#f8fafc' },
+            }}
+          />
+        </View>
+        <WebFooter />
+      </View>
+    );
+  }
 
   return (
     <>
