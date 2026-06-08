@@ -1,6 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
+// Only import on web
+let MapContainer: any, TileLayer: any, useMapEvents: any, Marker: any, Popup: any, Polyline: any;
+if (typeof window !== 'undefined') {
+  const rl = require('react-leaflet');
+  const L = require('leaflet');
+  MapContainer = rl.MapContainer;
+  TileLayer = rl.TileLayer;
+  useMapEvents = rl.useMapEvents;
+  Marker = rl.Marker;
+  Popup = rl.Popup;
+  Polyline = rl.Polyline;
+  // Fix default marker icon
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+}
+
 interface MapLeafletProps {
   onMapPress?: (lat: number, lon: number) => void;
   waypoints?: Array<{ lat: number; lon: number; name: string }>;
@@ -15,12 +35,24 @@ const TILE_URLS = {
   topo: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
 };
 
-const ATTRIBUTIONS = {
-  osm: '© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-  topo: '© <a href="https://opentopomap.org">OpenTopoMap</a>, © OpenStreetMap contributors',
+const TILE_ATTRIBUTIONS = {
+  osm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  topo: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
 };
 
-export default function MapLeaflet({
+function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) => void }) {
+  if (!useMapEvents) return null;
+  useMapEvents({
+    click(e: any) {
+      if (onMapPress) {
+        onMapPress(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
+}
+
+export function MapLeaflet({
   onMapPress,
   waypoints = [],
   center = [-51.0, -73.0],
@@ -28,101 +60,75 @@ export default function MapLeaflet({
   height = 400,
   layer = 'osm',
 }: MapLeafletProps) {
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const polylineRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const initializedRef = useRef(false);
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (initializedRef.current) return;
-
-    // Inject Leaflet CSS
-    if (!document.getElementById('leaflet-css')) {
+    const id = 'leaflet-css';
+    if (!document.getElementById(id)) {
       const link = document.createElement('link');
-      link.id = 'leaflet-css';
+      link.id = id;
       link.rel = 'stylesheet';
       link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
       document.head.appendChild(link);
     }
+  }, []);
 
-    const init = async () => {
-      const L = (await import('leaflet')).default;
+  if (typeof window === 'undefined' || !MapContainer) {
+    return (
+      <View
+        style={{
+          height: typeof height === 'number' ? height : undefined,
+          flex: height === '100%' ? 1 : undefined,
+          backgroundColor: '#1c1917',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
+    );
+  }
 
-      // Fix marker icons
-      delete (L.Icon.Default.prototype as any)._getIconUrl;
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      });
-
-      if (!containerRef.current) return;
-      const map = L.map(containerRef.current).setView(center, zoom);
-      mapRef.current = map;
-      initializedRef.current = true;
-
-      L.tileLayer(TILE_URLS[layer], { attribution: ATTRIBUTIONS[layer], maxZoom: 18 }).addTo(map);
-
-      if (onMapPress) {
-        map.on('click', (e: any) => onMapPress(e.latlng.lat, e.latlng.lng));
-      }
-
-      // Add initial waypoints
-      addWaypointMarkers(L, map);
-    };
-
-    init().catch(console.error);
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-        initializedRef.current = false;
-      }
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const addWaypointMarkers = (L: any, map: any) => {
-    // Clear existing
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-    if (polylineRef.current) { polylineRef.current.remove(); polylineRef.current = null; }
-
-    if (!waypoints.length) return;
-
-    const latlngs: [number, number][] = [];
-    waypoints.forEach((wp, i) => {
-      const icon = L.divIcon({
-        html: `<div style="background:#16a34a;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3)">${i + 1}</div>`,
-        className: '',
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-      });
-      const marker = L.marker([wp.lat, wp.lon], { icon }).addTo(map);
-      marker.bindPopup(`<b>${wp.name}</b>`);
-      markersRef.current.push(marker);
-      latlngs.push([wp.lat, wp.lon]);
-    });
-
-    if (latlngs.length > 1) {
-      polylineRef.current = L.polyline(latlngs, { color: '#16a34a', weight: 3, opacity: 0.8 }).addTo(map);
-    }
+  const containerStyle: React.CSSProperties = {
+    height: typeof height === 'number' ? `${height}px` : height,
+    width: '100%',
+    flex: height === '100%' ? 1 : undefined,
+    minHeight: typeof height === 'string' && height !== '100%' ? undefined : 300,
   };
 
-  // Sync waypoints when they change
-  useEffect(() => {
-    if (!mapRef.current || typeof window === 'undefined') return;
-    import('leaflet').then(({ default: L }) => addWaypointMarkers(L, mapRef.current));
-  }, [waypoints]); // eslint-disable-line react-hooks/exhaustive-deps
+  const polylinePositions = waypoints.map((w) => [w.lat, w.lon] as [number, number]);
 
   return (
-    <View style={{ height: typeof height === 'number' ? height : undefined, flex: typeof height === 'string' ? 1 : undefined }}>
-      <div
-        ref={containerRef}
-        style={{ width: '100%', height: typeof height === 'number' ? height : '100%', minHeight: 300 }}
-      />
-    </View>
+    <div style={containerStyle}>
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom
+      >
+        <TileLayer
+          url={TILE_URLS[layer] ?? TILE_URLS.osm}
+          attribution={TILE_ATTRIBUTIONS[layer] ?? TILE_ATTRIBUTIONS.osm}
+          maxZoom={18}
+        />
+        <ClickHandler onMapPress={onMapPress} />
+        {waypoints.map((wp, index) => (
+          <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
+            <Popup>
+              <strong>{index + 1}. {wp.name}</strong>
+              <br />
+              {wp.lat.toFixed(5)}, {wp.lon.toFixed(5)}
+            </Popup>
+          </Marker>
+        ))}
+        {polylinePositions.length >= 2 && (
+          <Polyline
+            positions={polylinePositions}
+            color="#22c55e"
+            weight={3}
+            opacity={0.8}
+          />
+        )}
+      </MapContainer>
+    </div>
   );
 }
+
+export default MapLeaflet;
