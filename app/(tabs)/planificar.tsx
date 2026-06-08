@@ -7,32 +7,25 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenHeader } from '../../src/components/layout/ScreenHeader';
 import { WaypointList } from '../../src/components/planner/WaypointList';
 import { RouteStats } from '../../src/components/planner/RouteStats';
 import { Button } from '../../src/components/ui/Button';
-import { ResponsiveLayout } from '../../src/components/layout/ResponsiveLayout';
 import { MapLeaflet } from '../../src/components/map/MapLeaflet';
-import { useTheme } from '../../src/hooks/useTheme';
 import { usePlannerStore } from '../../src/store/plannerStore';
 import { useResponsive } from '../../src/hooks/useResponsive';
 
 type MobileTab = 'mapa' | 'puntos';
 
 export default function PlanificarScreen() {
-  const { isDark } = useTheme();
+  const router = useRouter();
   const { isWide } = useResponsive();
   const { waypoints, planName, setPlanName, addWaypoint, clearPlan } = usePlannerStore();
   const [mobileTab, setMobileTab] = useState<MobileTab>('mapa');
-
-  const bg = isDark ? 'bg-stone-950' : 'bg-stone-50';
-  const textPrimary = isDark ? 'text-stone-50' : 'text-stone-900';
-  const textMuted = isDark ? 'text-stone-400' : 'text-stone-500';
-  const inputBg = isDark ? 'bg-stone-800 border-stone-700 text-stone-50' : 'bg-white border-stone-300 text-stone-900';
-  const tabActiveBg = isDark ? 'bg-stone-700' : 'bg-white';
-  const tabInactiveBg = isDark ? 'bg-stone-800' : 'bg-stone-100';
-  const tabContainerBg = isDark ? 'bg-stone-800 border-stone-700' : 'bg-stone-100 border-stone-200';
 
   function handleMapPress(lat: number, lon: number) {
     addWaypoint({
@@ -46,23 +39,19 @@ export default function PlanificarScreen() {
   function handleAnalyzeWithAI() {
     if (waypoints.length < 2) {
       Alert.alert(
-        'Pocos puntos',
+        'Puntos insuficientes',
         'Añade al menos 2 puntos de ruta para analizar con IA.',
         [{ text: 'Entendido' }],
       );
       return;
     }
-    Alert.alert(
-      '🤖 Análisis IA',
-      `Analizando "${planName}" con ${waypoints.length} puntos...\n\nEsta función usará el modelo local para evaluar dificultad, riesgos y recomendaciones de equipamiento.`,
-      [{ text: 'Cerrar' }],
-    );
+    router.push('/(tabs)/chat');
   }
 
   function handleClearRoute() {
     Alert.alert(
       'Limpiar ruta',
-      '¿Estás seguro de que quieres eliminar todos los puntos de ruta?',
+      '¿Eliminar todos los puntos de ruta?',
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Limpiar', style: 'destructive', onPress: clearPlan },
@@ -70,113 +59,265 @@ export default function PlanificarScreen() {
     );
   }
 
+  function handleExportGPX() {
+    Alert.alert('Próximamente', 'La exportación GPX estará disponible en la próxima versión.');
+  }
+
+  // Plan name input — shared between layouts
   const planNameInput = (
-    <View className="px-3 pt-3 pb-2">
+    <View style={styles.nameInputWrapper}>
       <TextInput
         value={planName}
         onChangeText={setPlanName}
-        placeholder="Nombre del plan..."
-        placeholderTextColor={isDark ? '#6b7280' : '#9ca3af'}
-        className={`rounded-xl border px-4 py-3 text-sm font-medium ${inputBg}`}
+        placeholder="Nombre de la ruta"
+        placeholderTextColor="#57534e"
+        style={styles.nameInput}
       />
     </View>
   );
 
+  // Sidebar / bottom action buttons
   const actionButtons = (
-    <View className="px-3 pb-3 gap-2">
+    <View style={styles.actionButtons}>
       <Button
         label="Analizar con IA"
         onPress={handleAnalyzeWithAI}
         variant="primary"
-        icon="🤖"
+        leftIcon="sparkles"
         fullWidth
       />
+      <View style={styles.actionButtonSpacer} />
+      <Button
+        label="Exportar GPX"
+        onPress={handleExportGPX}
+        variant="secondary"
+        leftIcon="download-outline"
+        fullWidth
+      />
+      <View style={styles.actionButtonSpacer} />
       <Button
         label="Limpiar ruta"
         onPress={handleClearRoute}
-        variant="danger"
-        icon="🗑️"
+        variant="ghost"
+        leftIcon="trash-outline"
         fullWidth
       />
     </View>
   );
 
+  // Empty state shown over map area when no waypoints
+  const emptyState = (
+    <View style={styles.emptyState} pointerEvents="none">
+      <Ionicons name="map-outline" size={48} color="#44403c" />
+      <Text style={styles.emptyText}>Toca el mapa para añadir puntos</Text>
+    </View>
+  );
+
+  // ── WIDE LAYOUT (tablet / desktop) ──────────────────────────────
   if (isWide) {
-    // Desktop / tablet: sidebar left, map right
     return (
-      <View className={`flex-1 ${bg}`}>
-        <ScreenHeader title="Planificar ruta" subtitle={`${waypoints.length} puntos de ruta`} />
-        <View className="flex-1 flex-row">
+      <View style={styles.root}>
+        <ScreenHeader
+          title="Planificar"
+          subtitle="Diseña tu caminata"
+        />
+        <View style={styles.wideContainer}>
           {/* Sidebar */}
-          <View className={`w-80 flex-col border-r ${isDark ? 'border-stone-700 bg-stone-900' : 'border-stone-200 bg-white'}`}>
+          <View style={styles.sidebar}>
             {planNameInput}
             <RouteStats />
-            <View className="flex-1">
+            <View style={styles.sidebarList}>
               <WaypointList />
             </View>
             {actionButtons}
           </View>
+
           {/* Map */}
-          <View className="flex-1">
+          <View style={styles.mapFlex}>
             <MapLeaflet
               onMapPress={handleMapPress}
               waypoints={waypoints}
               height="100%"
+              layer="topo"
             />
+            {waypoints.length === 0 && emptyState}
           </View>
         </View>
       </View>
     );
   }
 
-  // Mobile: tabs between Mapa and Puntos, RouteStats always at bottom
+  // ── MOBILE LAYOUT ────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView
-      className={`flex-1 ${bg}`}
+      style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScreenHeader title="Planificar ruta" subtitle={`${waypoints.length} puntos de ruta`} />
+      <ScreenHeader
+        title="Planificar"
+        subtitle="Diseña tu caminata"
+      />
 
       {planNameInput}
 
       {/* Tab switcher */}
-      <View className={`flex-row mx-3 mb-2 rounded-xl border p-1 ${tabContainerBg}`}>
+      <View style={styles.tabRow}>
         <TouchableOpacity
           onPress={() => setMobileTab('mapa')}
-          className={`flex-1 rounded-lg py-2 items-center ${mobileTab === 'mapa' ? tabActiveBg : tabInactiveBg}`}
+          style={[styles.tabPill, mobileTab === 'mapa' && styles.tabPillActive]}
+          activeOpacity={0.8}
         >
-          <Text className={`text-sm font-semibold ${mobileTab === 'mapa' ? textPrimary : textMuted}`}>
-            🗺️ Mapa
+          <Ionicons
+            name="map-outline"
+            size={14}
+            color={mobileTab === 'mapa' ? '#f1f5f9' : '#78716c'}
+          />
+          <Text style={[styles.tabLabel, mobileTab === 'mapa' && styles.tabLabelActive]}>
+            Mapa
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setMobileTab('puntos')}
-          className={`flex-1 rounded-lg py-2 items-center ${mobileTab === 'puntos' ? tabActiveBg : tabInactiveBg}`}
+          style={[styles.tabPill, mobileTab === 'puntos' && styles.tabPillActive]}
+          activeOpacity={0.8}
         >
-          <Text className={`text-sm font-semibold ${mobileTab === 'puntos' ? textPrimary : textMuted}`}>
-            📍 Puntos ({waypoints.length})
+          <Ionicons
+            name="location-outline"
+            size={14}
+            color={mobileTab === 'puntos' ? '#f1f5f9' : '#78716c'}
+          />
+          <Text style={[styles.tabLabel, mobileTab === 'puntos' && styles.tabLabelActive]}>
+            Puntos ({waypoints.length})
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Content */}
-      <View className="flex-1">
+      <View style={styles.mapFlex}>
         {mobileTab === 'mapa' ? (
-          <MapLeaflet
-            onMapPress={handleMapPress}
-            waypoints={waypoints}
-            height="100%"
-          />
+          <>
+            <MapLeaflet
+              onMapPress={handleMapPress}
+              waypoints={waypoints}
+              height="100%"
+              layer="topo"
+            />
+            {waypoints.length === 0 && emptyState}
+          </>
         ) : (
-          <View className="flex-1">
+          <View style={styles.mapFlex}>
             <WaypointList />
             {actionButtons}
           </View>
         )}
       </View>
 
-      {/* RouteStats always visible at bottom */}
+      {/* Stats always visible */}
       <RouteStats />
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#070b14',
+  },
+
+  // Name input
+  nameInputWrapper: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  nameInput: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#f1f5f9',
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e2d42',
+    paddingVertical: 8,
+    letterSpacing: -0.3,
+  },
+
+  // Tab switcher
+  tabRow: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginBottom: 10,
+    backgroundColor: '#0f1724',
+    borderWidth: 1,
+    borderColor: '#1e2d42',
+    borderRadius: 14,
+    padding: 4,
+    gap: 4,
+  },
+  tabPill: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
+  tabPillActive: {
+    backgroundColor: '#162035',
+  },
+  tabLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#78716c',
+  },
+  tabLabelActive: {
+    color: '#f1f5f9',
+  },
+
+  // Map
+  mapFlex: {
+    flex: 1,
+    position: 'relative',
+  },
+
+  // Empty state
+  emptyState: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#57534e',
+    fontWeight: '500',
+  },
+
+  // Action buttons
+  actionButtons: {
+    padding: 16,
+  },
+  actionButtonSpacer: {
+    height: 8,
+  },
+
+  // Wide layout
+  wideContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  sidebar: {
+    width: 320,
+    backgroundColor: '#0f1724',
+    borderRightWidth: 1,
+    borderRightColor: '#1e2d42',
+    flexDirection: 'column',
+  },
+  sidebarList: {
+    flex: 1,
+  },
+});

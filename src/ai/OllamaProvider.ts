@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AIMessage, AIProvider, AIResponse } from './AIService';
 
 const DEFAULT_BASE_URL = 'http://10.0.2.2:11434'; // Android emulator → host machine
-const DEFAULT_MODEL = 'gemma2:2b';
+const DEFAULT_MODEL = 'gemma3:4b';
 
 interface OllamaConfig {
   baseUrl?: string;

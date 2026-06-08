@@ -1,19 +1,47 @@
 import React from 'react';
-import { View, ViewProps } from 'react-native';
+import { View, ViewProps, StyleSheet } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
   padding?: 'sm' | 'md' | 'lg';
+  elevated?: boolean;
+  className?: string;
 }
 
-export function Card({ children, padding = 'md', className = '', ...props }: CardProps) {
+const PADDING_MAP = { sm: 12, md: 16, lg: 24 } as const;
+
+export function Card({ children, padding = 'md', elevated = false, style, ...props }: CardProps) {
   const { isDark } = useTheme();
-  const padClass = padding === 'sm' ? 'p-3' : padding === 'lg' ? 'p-6' : 'p-4';
-  const bgClass = isDark ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-200';
+
+  const bgColor = isDark
+    ? elevated ? '#162035' : '#0f1724'
+    : elevated ? '#f1f5f9' : '#ffffff';
+
+  const borderColor = isDark ? '#1e2d42' : '#e2e8f0';
+
   return (
-    <View className={`rounded-2xl border ${bgClass} ${padClass} ${className}`} {...props}>
+    <View
+      style={[
+        styles.base,
+        {
+          backgroundColor: bgColor,
+          borderColor,
+          padding: PADDING_MAP[padding],
+        },
+        style,
+      ]}
+      {...props}
+    >
       {children}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  base: {
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+});

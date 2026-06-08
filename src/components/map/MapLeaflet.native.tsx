@@ -8,12 +8,13 @@ interface Props {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  layer?: 'osm' | 'topo';
+  layer?: 'osm' | 'topo' | 'dark';
 }
 
 const TILE_URLS = {
   osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   topo: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
 };
 
 function buildHTML(

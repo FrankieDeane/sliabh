@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -12,24 +12,66 @@ interface Props {
 export function ResponsiveLayout({ sidebar, children, scrollable = true }: Props) {
   const { isWide } = useResponsive();
   const { isDark } = useTheme();
-  const bgClass = isDark ? 'bg-stone-900' : 'bg-stone-50';
+
+  const bgColor = isDark ? '#070b14' : '#f8fafc';
+  const sidebarBgColor = isDark ? '#0f1724' : '#ffffff';
+  const borderColor = isDark ? '#1e2d42' : '#e2e8f0';
 
   if (isWide && sidebar) {
     return (
-      <View className={`flex-1 flex-row ${bgClass}`}>
-        <View className={`w-80 border-r ${isDark ? 'border-stone-700 bg-stone-900' : 'border-stone-200 bg-white'}`}>
+      <View style={[styles.row, { backgroundColor: bgColor }]}>
+        <View
+          style={[
+            styles.sidebar,
+            {
+              backgroundColor: sidebarBgColor,
+              borderRightColor: borderColor,
+            },
+          ]}
+        >
           {sidebar}
         </View>
-        <View className="flex-1">
-          {scrollable ? <ScrollView className="flex-1">{children}</ScrollView> : children}
+        <View style={styles.content}>
+          {scrollable ? (
+            <ScrollView style={styles.fill} contentContainerStyle={styles.scrollContent}>
+              {children}
+            </ScrollView>
+          ) : (
+            children
+          )}
         </View>
       </View>
     );
   }
 
   return scrollable ? (
-    <ScrollView className={`flex-1 ${bgClass}`}>{children}</ScrollView>
+    <ScrollView
+      style={[styles.fill, { backgroundColor: bgColor }]}
+      contentContainerStyle={styles.scrollContent}
+    >
+      {children}
+    </ScrollView>
   ) : (
-    <View className={`flex-1 ${bgClass}`}>{children}</View>
+    <View style={[styles.fill, { backgroundColor: bgColor }]}>{children}</View>
   );
 }
+
+const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+  },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  sidebar: {
+    width: 320,
+    borderRightWidth: 1,
+  },
+  content: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+});
