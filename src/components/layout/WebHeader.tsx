@@ -6,11 +6,6 @@ import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
 import { LOGO_URI } from '../../constants/logo';
 
-if (Platform.OS !== 'web') {
-  // This component must never render on native — bail early.
-  module.exports = { WebHeader: () => null };
-}
-
 const NAV = [
   { label: 'Inicio', href: '/(tabs)/inicio' as const },
   { label: 'Rutas', href: '/(tabs)/rutas' as const },
@@ -22,6 +17,7 @@ const NAV = [
 const MAX_CONTENT = 1200;
 
 export function WebHeader() {
+  if (Platform.OS !== 'web') return null;
   const router = useRouter();
   const pathname = usePathname();
   const { user, signOut } = useAuthStore();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, StyleSheet, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, StyleSheet, ImageBackground, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { ContributeForm } from '../../src/components/contribute/ContributeForm';
@@ -8,7 +8,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useContribStore } from '../../src/store/contributionStore';
 
-const { width: SW } = Dimensions.get('window');
+const MAX_CONTENT = 900;
 
 const HERO_URI =
   'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&q=85&fit=crop&auto=format';
@@ -31,6 +31,9 @@ export default function ContribuirScreen() {
   const { pending } = useContribStore();
   const [modalOpen, setModalOpen] = useState(false);
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const contentW = Math.min(width, MAX_CONTENT);
+  const sidePad = Math.max(16, (width - contentW) / 2);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -44,11 +47,11 @@ export default function ContribuirScreen() {
         {/* Hero with photo */}
         <ImageBackground
           source={{ uri: HERO_URI }}
-          style={[styles.hero, { minHeight: SW * 0.72 }]}
+          style={[styles.hero, { minHeight: Math.min(width * 0.55, 420) }]}
           resizeMode="cover"
         >
           <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
-          <View style={[styles.heroInner, { paddingTop: insets.top + 20 }]}>
+          <View style={[styles.heroInner, { paddingTop: insets.top + 20, paddingHorizontal: sidePad }]}>
             <View style={styles.heroBrand}>
               <Ionicons name="earth" size={13} color="#22c55e" />
               <Text style={styles.heroBrandText}>CONTRIBUIR</Text>
@@ -64,7 +67,7 @@ export default function ContribuirScreen() {
         </ImageBackground>
 
         {/* Stats */}
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, { marginHorizontal: sidePad }]}>
           {STATS.map((s) => (
             <View key={s.label} style={[styles.statCard, { backgroundColor: c.surface, borderColor: c.border }]}>
               <Text style={styles.statValue}>{s.value}</Text>
@@ -75,7 +78,7 @@ export default function ContribuirScreen() {
 
         {/* Pending */}
         {pending.length > 0 && (
-          <View style={styles.section}>
+          <View style={[styles.section, { paddingHorizontal: sidePad }]}>
             <Text style={[styles.sectionTitle, { color: c.muted }]}>MIS CONTRIBUCIONES</Text>
             {pending.slice(0, 5).map((p) => (
               <View key={p.id} style={[styles.pendingRow, { backgroundColor: c.surface, borderColor: c.border }]}>
@@ -94,7 +97,7 @@ export default function ContribuirScreen() {
         )}
 
         {/* How it works */}
-        <View style={styles.section}>
+        <View style={[styles.section, { paddingHorizontal: sidePad }]}>
           <Text style={[styles.sectionTitle, { color: c.muted }]}>¿CÓMO FUNCIONA?</Text>
           <View style={[styles.stepsCard, { backgroundColor: c.surface, borderColor: c.border }]}>
             {STEPS.map((s, i) => (
@@ -112,7 +115,7 @@ export default function ContribuirScreen() {
         </View>
 
         {/* Offline note */}
-        <View style={[styles.offlineNote, { marginHorizontal: 16 }]}>
+        <View style={[styles.offlineNote, { marginHorizontal: sidePad }]}>
           <Ionicons name="flash-outline" size={16} color="#fbbf24" />
           <Text style={styles.offlineNoteText}>
             {isOffline && unsynced.length > 0
@@ -141,16 +144,16 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   hero: { width: '100%' },
   heroOverlay: { backgroundColor: 'rgba(7,11,20,0.58)' },
-  heroInner: { paddingHorizontal: 24, paddingBottom: 36 },
+  heroInner: { paddingBottom: 36, minHeight: 200, justifyContent: 'flex-end' },
   heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 },
   heroBrandText: { fontSize: 10, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
   heroTitle: { fontSize: 34, fontWeight: '900', color: '#fff', letterSpacing: -1, lineHeight: 40, marginBottom: 10 },
   heroSub: { fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 21, marginBottom: 24 },
-  statsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 20 },
+  statsRow: { flexDirection: 'row', gap: 10, marginTop: 20 },
   statCard: { flex: 1, alignItems: 'center', paddingVertical: 16, borderRadius: 18, borderWidth: 1 },
   statValue: { fontSize: 22, fontWeight: '800', color: '#22c55e' },
   statLabel: { fontSize: 11, fontWeight: '500', marginTop: 2 },
-  section: { paddingHorizontal: 16, marginTop: 24 },
+  section: { marginTop: 24 },
   sectionTitle: { fontSize: 11, fontWeight: '800', letterSpacing: 1.5, marginBottom: 12 },
   pendingRow: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 16, borderWidth: 1, marginBottom: 8 },
   pendingTitle: { fontSize: 14, fontWeight: '600' },

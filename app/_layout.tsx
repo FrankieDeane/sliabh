@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { OllamaProvider } from '../src/ai/OllamaProvider';
+import { CloudProvider } from '../src/ai/CloudProvider';
 import { setAIProvider } from '../src/ai/AIService';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { useThemeStore } from '../src/store/themeStore';
@@ -56,7 +57,11 @@ export default function RootLayout() {
   const isDark = theme === 'dark';
 
   useEffect(() => {
-    setAIProvider(new OllamaProvider({ baseUrl: ollamaUrl }));
+    if (Platform.OS === 'web') {
+      setAIProvider(new CloudProvider());
+    } else {
+      setAIProvider(new OllamaProvider({ baseUrl: ollamaUrl }));
+    }
   }, [ollamaUrl]);
 
   if (Platform.OS === 'web') {
