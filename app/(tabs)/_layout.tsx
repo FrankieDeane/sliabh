@@ -1,44 +1,68 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
+import { useThemeStore } from '../../src/store/themeStore';
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
+function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
   return (
-    <Text className={`text-xs mt-1 ${focused ? 'text-brand-500' : 'text-stone-500'}`}>
-      {label}
-    </Text>
+    <View className="items-center pt-1">
+      <Text className="text-xl">{emoji}</Text>
+      <Text className={`text-xs mt-0.5 ${focused ? 'text-brand-500' : 'text-stone-500'}`}>
+        {label}
+      </Text>
+    </View>
   );
 }
 
 export default function TabLayout() {
+  const { theme } = useThemeStore();
+  const isDark = theme === 'dark';
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#1c1917', borderTopColor: '#292524' },
+        tabBarStyle: {
+          backgroundColor: isDark ? '#111827' : '#ffffff',
+          borderTopColor: isDark ? '#1f2937' : '#e5e7eb',
+          paddingBottom: 6,
+          height: 64,
+        },
         tabBarActiveTintColor: '#22c55e',
         tabBarInactiveTintColor: '#6b7280',
+        tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
-        name="chat"
+        name="inicio"
         options={{
-          title: 'Ask',
-          tabBarIcon: ({ focused }) => <TabIcon label="💬" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🏔️" label="Inicio" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="planificar"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ focused }) => <TabIcon label="🗺" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🗺️" label="Planificar" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="mapas"
         options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => <TabIcon label="⚙️" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="📍" label="Mapas" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="contribuir"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="✏️" label="Contribuir" focused={focused} />
+          ),
         }}
       />
     </Tabs>

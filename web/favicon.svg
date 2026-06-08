@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#111827"/>
+  <!-- Mountain silhouette -->
+  <polygon points="32,8 56,52 8,52" fill="#16a34a"/>
+  <!-- Snow cap -->
+  <polygon points="32,8 42,28 22,28" fill="#f0fdf4"/>
+  <!-- Peak accent -->
+  <polygon points="32,8 37,20 27,20" fill="#ffffff" opacity="0.9"/>
+</svg>
