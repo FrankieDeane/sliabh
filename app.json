@@ -9,7 +9,13 @@
     "platforms": ["android", "web"],
     "web": {
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "name": "Sliabh",
+      "shortName": "Sliabh",
+      "description": "Explora la montaña con IA offline. Rutas, mapas y planificación para Patagonia y más.",
+      "lang": "es",
+      "themeColor": "#16a34a",
+      "backgroundColor": "#111827"
     },
     "android": {
       "minSdkVersion": 26,
