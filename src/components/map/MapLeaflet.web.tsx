@@ -27,17 +27,19 @@ interface MapLeafletProps {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  layer?: 'osm' | 'topo';
+  layer?: 'osm' | 'topo' | 'dark';
 }
 
 const TILE_URLS = {
   osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   topo: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
+  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
 };
 
 const TILE_ATTRIBUTIONS = {
   osm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   topo: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+  dark: '&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; OpenStreetMap contributors',
 };
 
 function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) => void }) {

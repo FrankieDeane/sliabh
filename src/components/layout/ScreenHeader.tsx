@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { OfflineBadge } from '../ui/OfflineBadge';
 import { useTheme } from '../../hooks/useTheme';
@@ -12,23 +12,67 @@ interface Props {
 
 export function ScreenHeader({ title, subtitle, right }: Props) {
   const { isDark } = useTheme();
-  const bgClass = isDark ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-200';
-  const titleClass = isDark ? 'text-stone-50' : 'text-stone-900';
-  const subtitleClass = isDark ? 'text-stone-400' : 'text-stone-500';
+
+  const bgColor = isDark ? '#070b14' : '#ffffff';
+  const borderColor = isDark ? '#1e2d42' : '#e2e8f0';
+  const titleColor = isDark ? '#f0f9ff' : '#0f172a';
+  const subtitleColor = '#64748b';
 
   return (
-    <SafeAreaView className={`border-b ${bgClass}`}>
-      <View className="flex-row items-center justify-between px-4 py-3">
-        <View className="flex-1">
-          <Text className={`text-xl font-bold ${titleClass}`}>{title}</Text>
-          {subtitle && <Text className={`text-xs ${subtitleClass}`}>{subtitle}</Text>}
-        </View>
-        <View className="flex-row items-center gap-2">
-          <OfflineBadge />
-          <ThemeToggle />
-          {right}
-        </View>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: bgColor,
+          borderBottomColor: borderColor,
+        },
+      ]}
+    >
+      <View style={styles.left}>
+        <Text style={[styles.title, { color: titleColor }]} numberOfLines={1}>
+          {title}
+        </Text>
+        {subtitle ? (
+          <Text style={[styles.subtitle, { color: subtitleColor }]} numberOfLines={1}>
+            {subtitle}
+          </Text>
+        ) : null}
       </View>
-    </SafeAreaView>
+
+      <View style={styles.right}>
+        <OfflineBadge />
+        <ThemeToggle />
+        {right ?? null}
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  left: {
+    flex: 1,
+    marginRight: 12,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  subtitle: {
+    fontSize: 12,
+    marginTop: 1,
+  },
+  right: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+});

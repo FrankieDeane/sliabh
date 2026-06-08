@@ -1,16 +1,41 @@
 import React from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
-import { useTheme } from '../../hooks/useTheme';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '../../store/themeStore';
 
 export function ThemeToggle() {
-  const { isDark, toggle } = useTheme();
+  const { theme, toggle: toggleTheme } = useThemeStore();
+  const isDark = theme === 'dark';
+
   return (
     <TouchableOpacity
-      onPress={toggle}
-      className="flex-row items-center gap-1 px-2 py-1 rounded-full border border-stone-600"
+      onPress={toggleTheme}
+      style={[
+        styles.button,
+        {
+          borderColor: isDark ? '#334155' : '#cbd5e1',
+          backgroundColor: isDark ? '#0f1724' : '#f8fafc',
+        },
+      ]}
       accessibilityLabel={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+      accessibilityRole="button"
     >
-      <Text className="text-base">{isDark ? '☀️' : '🌙'}</Text>
+      <Ionicons
+        name={isDark ? 'sunny-outline' : 'moon-outline'}
+        size={18}
+        color={isDark ? '#f0f9ff' : '#0f172a'}
+      />
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

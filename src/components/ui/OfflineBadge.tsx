@@ -1,13 +1,38 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNetwork } from '../../hooks/useNetwork';
 
 export function OfflineBadge() {
   const { isOffline } = useNetwork();
   if (!isOffline) return null;
+
   return (
-    <View className="flex-row items-center gap-1 bg-amber-500/20 border border-amber-500/40 px-3 py-1 rounded-full">
-      <Text className="text-amber-400 text-xs font-semibold">⚡ Sin conexión — IA disponible</Text>
+    <View style={styles.pill}>
+      <Ionicons name="cloud-offline-outline" size={12} color="#fcd34d" style={styles.icon} />
+      <Text style={styles.text}>Sin señal · IA activa</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(245,158,11,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.4)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  text: {
+    color: '#fcd34d',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+  },
+});
