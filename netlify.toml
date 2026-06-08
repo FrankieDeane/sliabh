@@ -1,0 +1,15 @@
+# Netlify configuration for the Sliabh Expo web build.
+# `expo export -p web` produces a static SPA in the `dist` directory.
+[build]
+  command = "npx expo export -p web"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# expo-router with output:"single" emits a single-page app, so every route
+# must fall back to index.html for client-side routing to work.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
