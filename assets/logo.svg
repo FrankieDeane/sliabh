@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="98" fill="#060d1b"/>
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#16a34a" stroke-width="3"/>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(34,197,94,0.2)" stroke-width="1"/>
+
+  <!-- Mountain range -->
+  <path d="M10 148 L38 90 L58 112 L100 54 L142 112 L162 90 L190 148 Z"
+        fill="#0a2218"/>
+  <path d="M10 148 L38 90 L58 112 L100 54 L142 112 L162 90 L190 148"
+        fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- Snow cap centre peak -->
+  <path d="M100 54 L116 85 L84 85 Z" fill="rgba(255,255,255,0.45)"/>
+  <!-- Snow cap left peak -->
+  <path d="M38 90 L45 104 L31 104 Z" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Eagle in flight -->
+  <!-- Body -->
+  <ellipse cx="100" cy="36" rx="7" ry="5" fill="#f0fdf4"/>
+  <!-- Head -->
+  <circle cx="100" cy="27" r="6" fill="#f0fdf4"/>
+  <!-- Beak -->
+  <path d="M105 27 L112 29 L105 31 Z" fill="#f59e0b"/>
+  <!-- Eye -->
+  <circle cx="102" cy="26" r="1.4" fill="#060d1b"/>
+  <!-- Left wing (spread, banked) -->
+  <path d="M 93 34 C 78 28 60 33 46 42 C 58 36 76 35 90 38 Z" fill="#f0fdf4"/>
+  <path d="M 93 34 C 78 28 60 33 46 42" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <!-- Right wing -->
+  <path d="M 107 34 C 122 28 140 33 154 42 C 142 36 124 35 110 38 Z" fill="#f0fdf4"/>
+  <path d="M 107 34 C 122 28 140 33 154 42" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <!-- Tail -->
+  <path d="M100 41 L94 52 L100 49 L106 52 Z" fill="#f0fdf4"/>
+
+  <!-- Three mullet stars — Douglas heraldry -->
+  <g fill="#22c55e" opacity="0.75">
+    <polygon points="44,70 46,76 52,76 47.5,80 49,86 44,82.5 39,86 40.5,80 36,76 42,76" transform="scale(0.55) translate(36,-20)"/>
+    <polygon points="100,68 102,74 108,74 103.5,78 105,84 100,80.5 95,84 96.5,78 92,74 98,74" transform="scale(0.55) translate(-10,-18)"/>
+    <polygon points="156,70 158,76 164,76 159.5,80 161,86 156,82.5 151,86 152.5,80 148,76 154,76" transform="scale(0.55) translate(-58,-20)"/>
+  </g>
+
+  <!-- Decorative bottom arc line -->
+  <path d="M 24 158 A 80 80 0 0 0 176 158" fill="none" stroke="rgba(34,197,94,0.25)" stroke-width="1.2"/>
+
+  <!-- SLIABH wordmark -->
+  <text x="100" y="174"
+        text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="19"
+        font-weight="bold"
+        fill="#22c55e"
+        letter-spacing="7">SLIABH</text>
+
+  <!-- Subtitle -->
+  <text x="100" y="188"
+        text-anchor="middle"
+        font-family="Georgia, serif"
+        font-size="7.5"
+        fill="rgba(34,197,94,0.5)"
+        letter-spacing="3.5">ARGAELIC</text>
+</svg>

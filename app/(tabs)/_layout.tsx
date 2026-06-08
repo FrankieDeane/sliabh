@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../src/store/themeStore';
 
@@ -31,14 +31,16 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: isDark ? '#070b14' : '#ffffff',
-          borderTopColor: isDark ? '#1e2d42' : '#e2e8f0',
-          borderTopWidth: 1,
-          height: 64,
-          paddingBottom: 0,
-          paddingTop: 0,
-        },
+        tabBarStyle: Platform.OS === 'web'
+          ? { display: 'none' as const }
+          : {
+              backgroundColor: isDark ? '#070b14' : '#ffffff',
+              borderTopColor: isDark ? '#1e2d42' : '#e2e8f0',
+              borderTopWidth: 1,
+              height: 64,
+              paddingBottom: 0,
+              paddingTop: 0,
+            },
         tabBarActiveTintColor: '#22c55e',
         tabBarInactiveTintColor: '#475569',
         tabBarShowLabel: false,

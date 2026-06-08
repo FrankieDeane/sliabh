@@ -15,7 +15,7 @@
       "description": "Explora la montaña con IA offline. Rutas, mapas y planificación para Patagonia y más.",
       "lang": "es",
       "themeColor": "#16a34a",
-      "backgroundColor": "#111827"
+      "backgroundColor": "#060d1b"
     },
     "android": {
       "minSdkVersion": 26,
