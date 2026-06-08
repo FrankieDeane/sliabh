@@ -5,19 +5,70 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
-import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 
+const { width: SW } = Dimensions.get('window');
+
+const HERO_URI =
+  'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1400&q=85&fit=crop&auto=format';
+
+const FEATURED = [
+  {
+    title: 'Circuito W',
+    subtitle: 'Torres del Paine',
+    distance: '80 km',
+    days: '4–5 días',
+    uri: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80&fit=crop&auto=format',
+  },
+  {
+    title: 'Laguna de los Tres',
+    subtitle: 'Los Glaciares',
+    distance: '24 km',
+    days: '1 día',
+    uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80&fit=crop&auto=format',
+  },
+  {
+    title: 'Dientes de Navarino',
+    subtitle: 'Isla Navarino',
+    distance: '53 km',
+    days: '4–5 días',
+    uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=700&q=80&fit=crop&auto=format',
+  },
+  {
+    title: 'Escalar Torres',
+    subtitle: 'Torres del Paine',
+    distance: '18 km',
+    days: '1–2 días',
+    uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
+  },
+];
+
+const GALLERY = [
+  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=500&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=500&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=500&q=80&fit=crop&auto=format',
+];
+
+const PACK_URI =
+  'https://images.unsplash.com/photo-1548248823-ce16a73b6d49?w=900&q=80&fit=crop&auto=format';
+
+const CARD_W = SW * 0.68;
+const CARD_H = CARD_W * 1.3;
+
 export default function InicioScreen() {
-  const { isDark } = useTheme();
+  useTheme();
   const { user } = useAuthStore();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.root}>
@@ -26,124 +77,171 @@ export default function InicioScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* ── 1. HERO SECTION ── */}
-        <View style={styles.hero}>
-          <View style={styles.heroIconCircle}>
-            <Ionicons name="triangle" size={36} color="#16a34a" />
-          </View>
-
-          <Text style={styles.heroTitle}>Explora sin límites</Text>
-
-          <Text style={styles.heroSub}>
-            PATAGONIA · TORRES DEL PAINE · IA OFFLINE
-          </Text>
-
-          <View style={styles.heroCtas}>
-            <View style={styles.heroCtaPrimary}>
-              <Button
-                label="Planificar ruta"
+        {/* ── HERO ── */}
+        <ImageBackground source={{ uri: HERO_URI }} style={styles.hero} resizeMode="cover">
+          <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
+          <View style={[styles.heroInner, { paddingTop: insets.top + 24 }]}>
+            <View style={styles.heroBrand}>
+              <Ionicons name="triangle" size={13} color="#22c55e" />
+              <Text style={styles.heroBrandText}>SLIABH</Text>
+            </View>
+            <Text style={styles.heroTitle}>{'Explora\nsin límites'}</Text>
+            <Text style={styles.heroSub}>PATAGONIA · TORRES DEL PAINE · IA OFFLINE</Text>
+            <View style={styles.heroCtas}>
+              <TouchableOpacity
+                style={styles.heroBtnPrimary}
                 onPress={() => router.push('/(tabs)/planificar')}
-                variant="primary"
-                leftIcon="map-outline"
-                size="md"
-              />
-            </View>
-            <View style={styles.heroCtaSecondary}>
-              <Button
-                label="Ver mapas"
+                activeOpacity={0.85}
+              >
+                <Ionicons name="map-outline" size={15} color="#fff" />
+                <Text style={styles.heroBtnPrimaryTxt}>Planificar ruta</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.heroBtnSecondary}
                 onPress={() => router.push('/(tabs)/mapas')}
-                variant="secondary"
-                leftIcon="layers-outline"
-                size="md"
-              />
+                activeOpacity={0.75}
+              >
+                <Text style={styles.heroBtnSecondaryTxt}>Ver mapas</Text>
+              </TouchableOpacity>
             </View>
           </View>
+        </ImageBackground>
+
+        {/* ── STATS ── */}
+        <View style={styles.statsRow}>
+          {[['23', 'Rutas'], ['12', 'Campamentos'], ['8', 'Refugios']].map(([n, l]) => (
+            <View key={l} style={styles.statCard}>
+              <Text style={styles.statNum}>{n}</Text>
+              <Text style={styles.statLbl}>{l}</Text>
+            </View>
+          ))}
         </View>
 
-        {/* ── 2. OFFLINE AI BANNER ── */}
-        <View style={styles.sectionMx}>
+        {/* ── FEATURED ROUTES ── */}
+        <View style={styles.mt8}>
+          <Text style={styles.sectionLabel}>RUTAS DESTACADAS</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.featuredScroll}
+          >
+            {FEATURED.map((r) => (
+              <TouchableOpacity
+                key={r.title}
+                style={styles.featuredCard}
+                onPress={() => router.push('/(tabs)/planificar')}
+                activeOpacity={0.88}
+              >
+                <ImageBackground
+                  source={{ uri: r.uri }}
+                  style={StyleSheet.absoluteFillObject}
+                  resizeMode="cover"
+                >
+                  <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
+                  <View style={styles.featuredContent}>
+                    <View style={styles.featuredBadge}>
+                      <Text style={styles.featuredBadgeTxt}>{r.distance}</Text>
+                    </View>
+                    <View style={{ flex: 1 }} />
+                    <Text style={styles.featuredTitle}>{r.title}</Text>
+                    <Text style={styles.featuredSub}>{r.subtitle}</Text>
+                    <View style={styles.featuredMeta}>
+                      <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.65)" />
+                      <Text style={styles.featuredMetaTxt}>{r.days}</Text>
+                    </View>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* ── OFFLINE AI ── */}
+        <View style={[styles.sectionMx, styles.mt8]}>
           <OfflineAICard />
         </View>
 
-        {/* ── 3. QUICK STATS ROW ── */}
-        <View style={[styles.sectionMx, styles.mt6]}>
-          <View style={styles.statsRow}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>23</Text>
-              <Text style={styles.statLabel}>Rutas</Text>
-            </View>
-            <View style={[styles.statCard, styles.statCardMx]}>
-              <Text style={styles.statNumber}>12</Text>
-              <Text style={styles.statLabel}>Campamentos</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>8</Text>
-              <Text style={styles.statLabel}>Refugios</Text>
-            </View>
+        {/* ── GALLERY ── */}
+        <View style={styles.mt8}>
+          <Text style={[styles.sectionLabel, styles.sectionMx]}>GALERÍA</Text>
+          <View style={[styles.sectionMx, styles.galleryGrid]}>
+            {GALLERY.map((uri, i) => (
+              <View
+                key={i}
+                style={[styles.galleryCell, i === 0 && styles.galleryCellFull]}
+              >
+                <ImageBackground
+                  source={{ uri }}
+                  style={StyleSheet.absoluteFillObject}
+                  resizeMode="cover"
+                >
+                  <View style={[StyleSheet.absoluteFillObject, styles.galleryOverlay]} />
+                </ImageBackground>
+              </View>
+            ))}
           </View>
         </View>
 
-        {/* ── 4. QUICK ACTIONS ── */}
-        <View style={[styles.sectionMx, styles.mt6]}>
+        {/* ── QUICK ACTIONS ── */}
+        <View style={[styles.sectionMx, styles.mt8]}>
           <Text style={styles.sectionLabel}>EXPLORAR</Text>
-
           <TouchableOpacity
             style={styles.actionCard}
-            activeOpacity={0.75}
+            activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/planificar')}
           >
-            <View style={styles.actionIconCircle}>
-              <Ionicons name="map-outline" size={22} color="#ffffff" />
+            <View style={styles.actionIcon}>
+              <Ionicons name="map-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
               <Text style={styles.actionTitle}>Planificar caminata</Text>
-              <Text style={styles.actionDesc}>
-                Traza tu próxima ruta y analízala con IA
-              </Text>
+              <Text style={styles.actionDesc}>Traza tu próxima ruta y analízala con IA</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#4a5568" />
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.actionCard, styles.mt3]}
-            activeOpacity={0.75}
+            activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/contribuir')}
           >
-            <View style={styles.actionIconCircle}>
-              <Ionicons name="pencil-outline" size={22} color="#ffffff" />
+            <View style={styles.actionIcon}>
+              <Ionicons name="pencil-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
               <Text style={styles.actionTitle}>Contribuir al mapa</Text>
-              <Text style={styles.actionDesc}>
-                Ayuda a la comunidad con datos de senderos
-              </Text>
+              <Text style={styles.actionDesc}>Ayuda a la comunidad con datos de senderos</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#4a5568" />
           </TouchableOpacity>
         </View>
 
-        {/* ── 5. PACK ACTIVO ── */}
-        <View style={[styles.sectionMx, styles.mt6]}>
+        {/* ── PACK ACTIVO ── */}
+        <View style={[styles.sectionMx, styles.mt8]}>
           <Text style={styles.sectionLabel}>PACK ACTIVO</Text>
-
           <View style={styles.packCard}>
+            <ImageBackground
+              source={{ uri: PACK_URI }}
+              style={StyleSheet.absoluteFillObject}
+              resizeMode="cover"
+            >
+              <View style={[StyleSheet.absoluteFillObject, styles.packOverlay]} />
+            </ImageBackground>
             <View style={styles.packRow}>
-              <View style={styles.packInfo}>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.packName}>Torres del Paine</Text>
                 <Text style={styles.packRegion}>Patagonia, Chile</Text>
               </View>
-              <View style={styles.packOfflineBadge}>
-                <Ionicons name="cloud-done-outline" size={14} color="#34d399" />
-                <Text style={styles.packOfflineText}>Disponible offline</Text>
+              <View style={styles.packBadge}>
+                <Ionicons name="cloud-done-outline" size={13} color="#34d399" />
+                <Text style={styles.packBadgeTxt}>Offline</Text>
               </View>
             </View>
-            <View style={styles.packMeta}>
-              <Text style={styles.packMetaText}>v2.4.1 · Región sur · 1.2 GB</Text>
-            </View>
+            <View style={styles.packDivider} />
+            <Text style={styles.packMeta}>v2.4.1 · Región sur · 1.2 GB</Text>
           </View>
         </View>
 
-        {/* ── 6. AUTH BANNER ── */}
+        {/* ── AUTH BANNER ── */}
         {!user && (
           <TouchableOpacity
             style={styles.authBanner}
@@ -151,9 +249,7 @@ export default function InicioScreen() {
             onPress={() => router.push('/(auth)/login')}
           >
             <Ionicons name="person-circle-outline" size={28} color="#16a34a" />
-            <Text style={styles.authText}>
-              Inicia sesión para guardar tus rutas
-            </Text>
+            <Text style={styles.authText}>Inicia sesión para guardar tus rutas</Text>
             <Ionicons name="chevron-forward" size={18} color="#4a5568" />
           </TouchableOpacity>
         )}
@@ -163,87 +259,59 @@ export default function InicioScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#070b14',
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
+  root: { flex: 1, backgroundColor: '#070b14' },
+  scroll: { flex: 1 },
+  scrollContent: { paddingBottom: 48 },
 
   // Hero
-  hero: {
-    backgroundColor: '#070b14',
+  hero: { width: '100%', minHeight: 520 },
+  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.52)' },
+  heroInner: {
     paddingHorizontal: 24,
-    paddingTop: 56,
-    paddingBottom: 32,
-    alignItems: 'flex-start',
+    paddingBottom: 40,
+    justifyContent: 'flex-end',
+    minHeight: 520,
   },
-  heroIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: 'rgba(22,163,74,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(22,163,74,0.25)',
-  },
+  heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 22 },
+  heroBrandText: { fontSize: 11, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
   heroTitle: {
-    fontSize: 46,
+    fontSize: 54,
     fontWeight: '900',
-    color: '#ffffff',
-    letterSpacing: -1.5,
-    lineHeight: 50,
-    marginBottom: 8,
+    color: '#fff',
+    letterSpacing: -2,
+    lineHeight: 58,
+    marginBottom: 10,
   },
   heroSub: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
-    color: '#78716c',
+    color: 'rgba(255,255,255,0.45)',
     letterSpacing: 2.5,
     textTransform: 'uppercase',
-    marginTop: 4,
     marginBottom: 28,
   },
-  heroCtas: {
+  heroCtas: { flexDirection: 'row', gap: 10 },
+  heroBtnPrimary: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+    gap: 7,
+    backgroundColor: '#16a34a',
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 999,
   },
-  heroCtaPrimary: {
-    flex: 1,
+  heroBtnPrimaryTxt: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  heroBtnSecondary: {
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.28)',
   },
-  heroCtaSecondary: {
-    flex: 1,
-  },
-
-  // Shared section
-  sectionMx: {
-    marginHorizontal: 16,
-  },
-  mt3: {
-    marginTop: 12,
-  },
-  mt6: {
-    marginTop: 24,
-  },
-  sectionLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#78716c',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: 12,
-  },
+  heroBtnSecondaryTxt: { color: '#fff', fontSize: 14, fontWeight: '600' },
 
   // Stats
-  statsRow: {
-    flexDirection: 'row',
-  },
+  statsRow: { flexDirection: 'row', marginHorizontal: 16, marginTop: 20, gap: 10 },
   statCard: {
     flex: 1,
     backgroundColor: '#0f1724',
@@ -252,23 +320,60 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  statCardMx: {
-    marginHorizontal: 8,
-  },
-  statNumber: {
-    fontSize: 24,
+  statNum: { fontSize: 24, fontWeight: '700', color: '#4ade80', letterSpacing: -0.5 },
+  statLbl: { fontSize: 11, color: '#78716c', marginTop: 3, fontWeight: '500' },
+
+  // Section
+  mt8: { marginTop: 32 },
+  mt3: { marginTop: 12 },
+  sectionMx: { marginHorizontal: 16 },
+  sectionLabel: {
+    fontSize: 10,
     fontWeight: '700',
-    color: '#4ade80',
-    letterSpacing: -0.5,
-  },
-  statLabel: {
-    fontSize: 11,
     color: '#78716c',
-    marginTop: 3,
-    fontWeight: '500',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginBottom: 14,
   },
+
+  // Featured cards
+  featuredScroll: { paddingHorizontal: 16, gap: 12 },
+  featuredCard: {
+    width: CARD_W,
+    height: CARD_H,
+    borderRadius: 22,
+    overflow: 'hidden',
+  },
+  featuredOverlay: { backgroundColor: 'rgba(0,0,0,0.38)' },
+  featuredContent: { flex: 1, padding: 16 },
+  featuredBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(22,163,74,0.9)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  featuredBadgeTxt: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  featuredTitle: { fontSize: 19, fontWeight: '800', color: '#fff', marginBottom: 3 },
+  featuredSub: { fontSize: 12, color: 'rgba(255,255,255,0.68)', marginBottom: 8 },
+  featuredMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
+
+  // Gallery
+  galleryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  galleryCell: {
+    width: (SW - 48) / 2,
+    height: (SW - 48) / 2,
+    borderRadius: 18,
+    overflow: 'hidden',
+    backgroundColor: '#0f1724',
+  },
+  galleryCellFull: {
+    width: SW - 32,
+    height: (SW - 32) * 0.52,
+  },
+  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.12)' },
 
   // Action cards
   actionCard: {
@@ -280,7 +385,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  actionIconCircle: {
+  actionIcon: {
     width: 44,
     height: 44,
     borderRadius: 22,
@@ -290,73 +395,40 @@ const styles = StyleSheet.create({
     marginRight: 14,
     flexShrink: 0,
   },
-  actionText: {
-    flex: 1,
-  },
-  actionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#f1f5f9',
-    marginBottom: 3,
-  },
-  actionDesc: {
-    fontSize: 12,
-    color: '#78716c',
-    lineHeight: 17,
-  },
+  actionText: { flex: 1 },
+  actionTitle: { fontSize: 15, fontWeight: '700', color: '#f1f5f9', marginBottom: 3 },
+  actionDesc: { fontSize: 12, color: '#78716c', lineHeight: 17 },
 
   // Pack activo
   packCard: {
-    backgroundColor: '#0f1724',
-    borderWidth: 1,
-    borderColor: '#1e2d42',
     borderRadius: 24,
+    overflow: 'hidden',
     padding: 20,
+    backgroundColor: '#0f1724',
   },
-  packRow: {
+  packOverlay: { backgroundColor: 'rgba(7,11,20,0.68)' },
+  packRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  packName: { fontSize: 17, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
+  packRegion: { fontSize: 12, color: 'rgba(255,255,255,0.55)' },
+  packBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  packInfo: {
-    flex: 1,
-  },
-  packName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#f1f5f9',
-    marginBottom: 2,
-  },
-  packRegion: {
-    fontSize: 12,
-    color: '#78716c',
-  },
-  packOfflineBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(52,211,153,0.1)',
+    backgroundColor: 'rgba(52,211,153,0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(52,211,153,0.25)',
+    borderColor: 'rgba(52,211,153,0.28)',
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 5,
     gap: 5,
   },
-  packOfflineText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#34d399',
+  packBadgeTxt: { fontSize: 11, fontWeight: '600', color: '#34d399' },
+  packDivider: {
+    marginTop: 14,
+    marginBottom: 10,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
-  packMeta: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#1e2d42',
-  },
-  packMetaText: {
-    fontSize: 11,
-    color: '#78716c',
-  },
+  packMeta: { fontSize: 11, color: 'rgba(255,255,255,0.35)' },
 
   // Auth banner
   authBanner: {
@@ -366,17 +438,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(22,163,74,0.2)',
-    backgroundColor: 'rgba(22,163,74,0.05)',
+    borderColor: 'rgba(22,163,74,0.22)',
+    backgroundColor: 'rgba(22,163,74,0.06)',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
   },
-  authText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#d1d5db',
-  },
+  authText: { flex: 1, fontSize: 14, fontWeight: '600', color: '#d1d5db' },
 });
