@@ -10,7 +10,6 @@ import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
 import { Platform, View } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
-import { WebFooter } from '../src/components/layout/WebFooter';
 
 function NetworkWatcher() {
   const setOnline = useNetworkStore((s) => s.setOnline);
@@ -78,7 +77,6 @@ export default function RootLayout() {
             }}
           />
         </View>
-        <WebFooter />
       </View>
     );
   }

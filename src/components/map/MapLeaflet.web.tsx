@@ -89,10 +89,11 @@ export function MapLeaflet({
   }
 
   const containerStyle: React.CSSProperties = {
-    height: typeof height === 'number' ? `${height}px` : height,
+    height: typeof height === 'number'
+      ? `${height}px`
+      : 'calc(100vh - 58px)', // 58px = WebHeader height
     width: '100%',
-    flex: height === '100%' ? 1 : undefined,
-    minHeight: typeof height === 'string' && height !== '100%' ? undefined : 300,
+    minHeight: 300,
   };
 
   const polylinePositions = waypoints.map((w) => [w.lat, w.lon] as [number, number]);
