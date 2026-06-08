@@ -13,7 +13,7 @@ const TIPOS: Array<{ id: ContribType; icon: string; label: string }> = [
   { id: 'nota', icon: '📝', label: 'Nota' },
 ];
 
-export function ContributeForm({ onClose }: { onClose?: () => void }) {
+export function ContributeForm({ onClose, onSubmit }: { onClose?: () => void; onSubmit?: () => void }) {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
   const { add } = useContribStore();
@@ -45,7 +45,7 @@ export function ContributeForm({ onClose }: { onClose?: () => void }) {
             ? 'Sin conexión. Tu contribución se enviará automáticamente cuando vuelvas a tener señal.'
             : 'Tu contribución ha sido enviada para revisión. ¡Gracias por mejorar Sliabh!'}
         </Text>
-        <Button label="Cerrar" onPress={onClose ?? (() => setStep(1))} />
+        <Button label="Cerrar" onPress={onSubmit ?? onClose ?? (() => setStep(1))} />
       </View>
     );
   }
