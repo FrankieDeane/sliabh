@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Metro
+.metro-health-check*
+
+# native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# macOS
+.DS_Store
+
+# local env files
+.env*.local
+
+# logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# typescript
+*.tsbuildinfo
+
+# nativewind / css-interop generated types
+nativewind-env.d.ts

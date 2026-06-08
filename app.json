@@ -6,7 +6,11 @@
     "orientation": "portrait",
     "scheme": "sliabh",
     "userInterfaceStyle": "dark",
-    "platforms": ["android"],
+    "platforms": ["android", "web"],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
     "android": {
       "minSdkVersion": 26,
       "targetSdkVersion": 35,
