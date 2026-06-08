@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, TouchableOpacity, Modal, StyleSheet, ImageBackground, Dimensions } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenHeader } from '../../src/components/layout/ScreenHeader';
 import { ContributeForm } from '../../src/components/contribute/ContributeForm';
 import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useContribStore } from '../../src/store/contributionStore';
+
+const { width: SW } = Dimensions.get('window');
+
+const HERO_URI =
+  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&q=85&fit=crop&auto=format';
 
 const STATS = [
   { value: '247', label: 'Rutas' },
@@ -26,6 +30,7 @@ export default function ContribuirScreen() {
   const { isOffline } = useNetwork();
   const { pending } = useContribStore();
   const [modalOpen, setModalOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -34,23 +39,29 @@ export default function ContribuirScreen() {
   const unsynced = pending.filter((p) => !p.synced);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: c.bg }]} edges={['top']}>
-      <ScreenHeader title="Contribuir" subtitle="Mejora los senderos" />
-
+    <View style={[styles.container, { backgroundColor: c.bg }]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
-        {/* Hero */}
-        <View style={[styles.hero, { backgroundColor: c.surface, borderBottomColor: c.border }]}>
-          <View style={[styles.heroIcon, { backgroundColor: '#16a34a' }]}>
-            <Ionicons name="earth" size={28} color="#fff" />
+        {/* Hero with photo */}
+        <ImageBackground
+          source={{ uri: HERO_URI }}
+          style={[styles.hero, { minHeight: SW * 0.72 }]}
+          resizeMode="cover"
+        >
+          <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
+          <View style={[styles.heroInner, { paddingTop: insets.top + 20 }]}>
+            <View style={styles.heroBrand}>
+              <Ionicons name="earth" size={13} color="#22c55e" />
+              <Text style={styles.heroBrandText}>CONTRIBUIR</Text>
+            </View>
+            <Text style={styles.heroTitle}>Construye el mapa de la montaña</Text>
+            <Text style={styles.heroSub}>
+              Tu conocimiento ayuda a otros excursionistas a explorar con seguridad.
+            </Text>
+            <View style={{ alignSelf: 'flex-start' }}>
+              <Button label="Nueva contribución" leftIcon="add" onPress={() => setModalOpen(true)} />
+            </View>
           </View>
-          <Text style={[styles.heroTitle, { color: c.text }]}>Construye el mapa de la montaña</Text>
-          <Text style={[styles.heroSub, { color: c.muted }]}>
-            Tu conocimiento ayuda a otros excursionistas a explorar con seguridad.
-          </Text>
-          <View style={styles.heroBtn}>
-            <Button label="Nueva contribución" leftIcon="add" onPress={() => setModalOpen(true)} fullWidth />
-          </View>
-        </View>
+        </ImageBackground>
 
         {/* Stats */}
         <View style={styles.statsRow}>
@@ -122,17 +133,19 @@ export default function ContribuirScreen() {
           <ContributeForm onClose={() => setModalOpen(false)} onSubmit={() => setModalOpen(false)} />
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  hero: { alignItems: 'center', paddingHorizontal: 24, paddingTop: 24, paddingBottom: 28, borderBottomWidth: 1 },
-  heroIcon: { width: 60, height: 60, borderRadius: 18, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
-  heroTitle: { fontSize: 22, fontWeight: '800', textAlign: 'center', letterSpacing: -0.4, marginBottom: 6 },
-  heroSub: { fontSize: 14, textAlign: 'center', lineHeight: 21, maxWidth: 300 },
-  heroBtn: { width: '100%', marginTop: 20 },
+  hero: { width: '100%' },
+  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.58)' },
+  heroInner: { paddingHorizontal: 24, paddingBottom: 36 },
+  heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 },
+  heroBrandText: { fontSize: 10, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
+  heroTitle: { fontSize: 34, fontWeight: '900', color: '#fff', letterSpacing: -1, lineHeight: 40, marginBottom: 10 },
+  heroSub: { fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 21, marginBottom: 24 },
   statsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 16, marginTop: 20 },
   statCard: { flex: 1, alignItems: 'center', paddingVertical: 16, borderRadius: 18, borderWidth: 1 },
   statValue: { fontSize: 22, fontWeight: '800', color: '#22c55e' },
