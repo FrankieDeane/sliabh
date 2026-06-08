@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   useWindowDimensions,
-  Alert,
-  Linking,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -55,12 +53,6 @@ export default function RutasScreen() {
 
   const isWide = width >= 768;
 
-  const openTrail = (url: string) => {
-    Linking.openURL(url).catch(() =>
-      Alert.alert('Error', 'No se pudo abrir el enlace.')
-    );
-  };
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: c.bg }]} edges={['top']}>
       {/* Header */}
@@ -73,12 +65,12 @@ export default function RutasScreen() {
         <View>
           <Text style={[styles.headerTitle, { color: c.text }]}>Rutas Argentina</Text>
           <Text style={[styles.headerSub, { color: c.muted }]}>
-            {ARGENTINA_TRAILS.length} senderos · thecrag.com
+            {ARGENTINA_TRAILS.length} senderos · Patagonia y toda Argentina
           </Text>
         </View>
         <View style={[styles.sourceBadge, { backgroundColor: c.elevated, borderColor: c.border }]}>
-          <Ionicons name="earth-outline" size={13} color="#22c55e" />
-          <Text style={[styles.sourceText, { color: c.muted }]}>thecrag.com</Text>
+          <Ionicons name="leaf-outline" size={13} color="#22c55e" />
+          <Text style={[styles.sourceText, { color: c.muted }]}>Sliabh</Text>
         </View>
       </View>
 
@@ -132,10 +124,7 @@ export default function RutasScreen() {
             {featured && (
               <View style={styles.section}>
                 <Text style={[styles.sectionLabel, { color: c.muted }]}>DESTACADA</Text>
-                <FeaturedTrailCard
-                  trail={featured}
-                  onPress={() => openTrail(featured.thecrag_url)}
-                />
+                <FeaturedTrailCard trail={featured} onPress={() => {}} />
 
                 {/* Trail description */}
                 <View
@@ -153,13 +142,12 @@ export default function RutasScreen() {
                       {featured.trailhead}
                     </Text>
                   </View>
-                  <TouchableOpacity
-                    style={styles.cragLink}
-                    onPress={() => openTrail(featured.thecrag_url)}
-                  >
-                    <Ionicons name="open-outline" size={13} color="#22c55e" />
-                    <Text style={styles.cragLinkText}>Ver en thecrag.com</Text>
-                  </TouchableOpacity>
+                  <View style={styles.descMeta}>
+                    <Ionicons name="calendar-outline" size={13} color={c.muted} />
+                    <Text style={[styles.descMetaText, { color: c.muted }]}>
+                      Mejor época: {featured.best_season}
+                    </Text>
+                  </View>
                 </View>
               </View>
             )}
@@ -176,22 +164,13 @@ export default function RutasScreen() {
                   <View style={styles.grid}>
                     {rest.map((t) => (
                       <View key={t.id} style={styles.gridCell}>
-                        <TrailListCard
-                          trail={t}
-                          onPress={() => openTrail(t.thecrag_url)}
-                          colors={c}
-                        />
+                        <TrailListCard trail={t} onPress={() => {}} colors={c} />
                       </View>
                     ))}
                   </View>
                 ) : (
                   rest.map((t) => (
-                    <TrailListCard
-                      key={t.id}
-                      trail={t}
-                      onPress={() => openTrail(t.thecrag_url)}
-                      colors={c}
-                    />
+                    <TrailListCard key={t.id} trail={t} onPress={() => {}} colors={c} />
                   ))
                 )}
               </View>
@@ -203,16 +182,8 @@ export default function RutasScreen() {
         <View style={[styles.footer, { borderTopColor: c.border }]}>
           <Ionicons name="information-circle-outline" size={14} color={c.muted} />
           <Text style={[styles.footerText, { color: c.muted }]}>
-            Datos curados de{' '}
-            <Text
-              style={{ color: '#22c55e' }}
-              onPress={() =>
-                Linking.openURL('https://www.thecrag.com/en/climbing/argentina')
-              }
-            >
-              thecrag.com/argentina
-            </Text>
-            . Solo Argentina.
+            Senderos de Argentina curados por el equipo de Sliabh. Verifica siempre
+            las condiciones locales antes de salir a la montaña.
           </Text>
         </View>
 
@@ -270,8 +241,6 @@ const styles = StyleSheet.create({
   descText: { fontSize: 13, lineHeight: 20 },
   descMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   descMetaText: { fontSize: 12 },
-  cragLink: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
-  cragLinkText: { fontSize: 12, color: '#22c55e', fontWeight: '600' },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   gridCell: { width: '48.5%' },
