@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ImageBackground,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -14,11 +15,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
+import { WebFooter } from '../../src/components/layout/WebFooter';
 
 const MAX_CONTENT = 900;
 
 const HERO_URI =
-  'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1400&q=85&fit=crop&auto=format';
+  'https://images.unsplash.com/photo-xfngap_DToE?w=1400&q=85&fit=crop&auto=format';
 
 const FEATURED = [
   {
@@ -275,6 +277,8 @@ export default function InicioScreen() {
             <Ionicons name="chevron-forward" size={18} color="#4a5568" />
           </TouchableOpacity>
         )}
+
+        {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
     </View>
   );

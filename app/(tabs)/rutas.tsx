@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   Alert,
   Linking,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +20,7 @@ import {
   type TrailRegion,
 } from '../../src/data/argentinaTrails';
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
+import { WebFooter } from '../../src/components/layout/WebFooter';
 
 const MAX_CONTENT = 900;
 
@@ -213,6 +215,8 @@ export default function RutasScreen() {
             . Solo Argentina.
           </Text>
         </View>
+
+        {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
     </SafeAreaView>
   );
