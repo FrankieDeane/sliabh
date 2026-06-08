@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
@@ -51,17 +51,8 @@ export function WebFooter() {
               </View>
             </TouchableOpacity>
             <Text style={[styles.tagline, { color: c.muted }]}>
-              Explora la montaña con IA offline.{'\n'}Rutas, mapas y planificación para{'\n'}Patagonia y toda Argentina.
+              Explora la montaña con IA.{'\n'}Rutas, mapas y planificación para{'\n'}Patagonia y toda Argentina.
             </Text>
-            <View style={styles.socialRow}>
-              <TouchableOpacity
-                style={[styles.socialBtn, { borderColor: c.border }]}
-                onPress={() => Linking.openURL('https://www.thecrag.com/en/climbing/argentina')}
-              >
-                <Ionicons name="earth-outline" size={15} color={c.muted} />
-                <Text style={[styles.socialTxt, { color: c.muted }]}>thecrag.com</Text>
-              </TouchableOpacity>
-            </View>
           </View>
 
           {/* Nav links */}
@@ -142,12 +133,6 @@ const styles = StyleSheet.create({
   brandName: { fontSize: 18, fontWeight: '800', letterSpacing: -0.4 },
   brandSub: { fontSize: 9, fontWeight: '600', letterSpacing: 2.5, textTransform: 'uppercase' },
   tagline: { fontSize: 13, lineHeight: 20 },
-  socialRow: { flexDirection: 'row', gap: 8, marginTop: 4 },
-  socialBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5,
-  },
-  socialTxt: { fontSize: 11, fontWeight: '500' },
 
   // Nav columns
   navCol: { flex: 1, gap: 10 },

@@ -56,11 +56,6 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
               }
             />
           </View>
-
-          <View style={styles.cragBadge}>
-            <Ionicons name="link-outline" size={10} color="rgba(255,255,255,0.5)" />
-            <Text style={styles.cragText}>thecrag.com</Text>
-          </View>
         </View>
       </ImageBackground>
     </TouchableOpacity>
@@ -193,8 +188,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   statBadgeText: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '600' },
-  cragBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  cragText: { fontSize: 10, color: 'rgba(255,255,255,0.4)', fontWeight: '500' },
 
   // List card
   listCard: {

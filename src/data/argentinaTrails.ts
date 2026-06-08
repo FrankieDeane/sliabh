@@ -1,6 +1,6 @@
 /**
- * Argentina hiking & climbing trail data curated from thecrag.com/en/climbing/argentina
- * Organised by thecrag area hierarchy: country → province → area → route
+ * Argentina hiking & climbing trail data — curated by the Sliabh Argaelic Team.
+ * Organised by region: country → province → area → route
  */
 
 export type TrailDifficulty = 'facil' | 'moderado' | 'dificil' | 'extremo';
@@ -23,7 +23,6 @@ export interface ArgentinaTrail {
   tags: string[];
   permits_required: boolean;
   best_season: string;
-  thecrag_url: string;
   description: string;
   trailhead: string;
 }
@@ -46,7 +45,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['cima', 'nieve', 'alta montaña', 'aclimatación'],
     permits_required: true,
     best_season: 'Dic – Feb',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/mendoza/aconcagua',
     description:
       'La cima más alta del hemisferio occidental (6961 m). La Ruta Normal sube por el noroeste desde Plaza de Mulas. Requiere aclimatación progresiva y permiso del parque.',
     trailhead: 'Horcones (Uspallata, Mendoza)',
@@ -69,7 +67,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['laguna', 'vistas', 'glaciar', 'icónico'],
     permits_required: false,
     best_season: 'Nov – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/santa-cruz/chalten',
     description:
       'El sendero más famoso de la Patagonia argentina. Ofrece vistas directas al imponente cerro Fitz Roy (3405 m) desde la laguna glaciar al pie de las torres.',
     trailhead: 'El Chaltén (Santa Cruz)',
@@ -92,7 +89,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['laguna', 'glaciar', 'vistas', 'patagonia'],
     permits_required: false,
     best_season: 'Nov – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/santa-cruz/chalten',
     description:
       'Trekking clásico hasta la Laguna Torre con vista al Cerro Torre (3128 m) y al Glaciar Grande. Terreno parejo con final técnico hasta el mirador.',
     trailhead: 'El Chaltén (Santa Cruz)',
@@ -115,7 +111,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['refugio', 'lago', 'escalada', 'bosque'],
     permits_required: false,
     best_season: 'Nov – Abr',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/rio-negro/bariloche',
     description:
       'Trekking desde la base de Cerro Catedral hasta el Refugio Frey a orillas de la Laguna Schmoll. Uno de los puntos de escalada en roca más concurridos de la Patagonia.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
@@ -138,7 +133,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['vistas', 'lago Nahuel Huapi', 'refugio', 'panorama'],
     permits_required: false,
     best_season: 'Dic – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/rio-negro/bariloche',
     description:
       'Ascenso al Refugio López (1626 m) y opcionalmente la cima del Cerro López (2076 m). Vistas panorámicas del lago Nahuel Huapi y la cordillera patagónica.',
     trailhead: 'Ruta 79 km 20 (Bariloche)',
@@ -161,7 +155,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['glaciar', 'volcán', 'cascada', 'bosque nativo'],
     permits_required: false,
     best_season: 'Dic – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/rio-negro/bariloche/tronador',
     description:
       'Sendero hasta los aluviones del Glaciar Negro del Cerro Tronador (3491 m). Se pasa por el imponente salto de agua de la garganta del Diablo.',
     trailhead: 'Pampa Linda (90 km de Bariloche)',
@@ -183,7 +176,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['volcán', 'cima', 'nieve', 'crampones'],
     permits_required: true,
     best_season: 'Dic – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/neuquen/lanin',
     description:
       'Volcán inactivo y una de las cumbres más bellas de la Patagonia. La vía normal asciende por el flanco norte usando piolet y crampones en los tramos de hielo.',
     trailhead: 'Tromen (Neuquén) o Pucón (Chile)',
@@ -206,7 +198,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['cumbre', 'serranías', 'pastizales', 'sierras grandes'],
     permits_required: false,
     best_season: 'Mar – Nov',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/cordoba',
     description:
       'El punto más alto de la provincia de Córdoba (2790 m). Trekking de 2 días por pastizales de altura con vistas a las Sierras Grandes. Clásico para quienes empiezan en alta montaña.',
     trailhead: 'Villa Alpina o Luyaba (Córdoba)',
@@ -228,7 +219,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['granito', 'escalada deportiva', 'vias clásicas', 'sierras'],
     permits_required: false,
     best_season: 'Abr – Oct',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/cordoba/los-gigantes',
     description:
       'El área de escalada más importante de Córdoba. Paredes de granito de hasta 300 m con vías de todos los grados. El acceso al camping base toma ~2 h de caminata.',
     trailhead: 'La Cumbre / Estancia Los Gigantes (Córdoba)',
@@ -250,7 +240,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['ventana natural', 'sierra de la ventana', 'vistas pampa', 'sudoeste bonaerense'],
     permits_required: true,
     best_season: 'Todo el año',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/buenos-aires/sierra-de-la-ventana',
     description:
       'Ascenso a la famosa "ventana" natural en la cumbre del cerro. El permiso diario se gestiona en el centro de visitantes. El tramo final requiere manos para trepar la roca.',
     trailhead: 'Centro de Visitantes Tornquist (Buenos Aires)',
@@ -272,7 +261,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['patrimonio UNESCO', 'cerro de los 7 colores', 'puna', 'pueblos originarios'],
     permits_required: false,
     best_season: 'Abr – Oct',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/jujuy',
     description:
       'Recorrido a pie por la quebrada Patrimonio de la Humanidad. Conecta Tilcara, Purmamarca (Cerro de los 7 Colores) y Humahuaca. Ideal para aclimatación a la Puna.',
     trailhead: 'Purmamarca / Tilcara (Jujuy)',
@@ -295,7 +283,6 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     tags: ['lago glaciar', 'bosque nativo', 'fauna', 'fácil'],
     permits_required: false,
     best_season: 'Nov – Mar',
-    thecrag_url: 'https://www.thecrag.com/en/climbing/argentina/santa-cruz/chalten',
     description:
       'Sendero tranquilo hasta el Lago del Desierto, al norte de El Chaltén. Bosque de lenga y ñire, posibles avistamientos de huemules y vistas al Volcán Rees. Ideal para familias.',
     trailhead: 'El Chaltén (37 km al norte)',
