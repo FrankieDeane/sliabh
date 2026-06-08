@@ -14,14 +14,23 @@ import type { KnowledgePack } from '../../src/knowledge/types';
 import type { ChatMessage } from '../../src/store/chatStore';
 
 export default function ChatScreen() {
-  const { messages, isLoading, error, addMessage, setLoading, setError } = useChatStore();
-  const { activePack } = useSettingsStore();
+  const { messages, isLoading, error, addMessage, updateMessage, setLoading, setError } =
+    useChatStore();
+  const { activePack, packVersion, setPackVersion } = useSettingsStore();
   const [pack, setPack] = useState<KnowledgePack | null>(null);
+  const [packBanner, setPackBanner] = useState<string | null>(null);
   const listRef = useRef<FlatList>(null);
 
   useEffect(() => {
     loadPack(activePack)
-      .then(setPack)
+      .then((loaded) => {
+        setPack(loaded);
+        const stored = packVersion[activePack];
+        if (stored && stored !== loaded.meta.version) {
+          setPackBanner(`Pack updated: ${loaded.meta.name} v${loaded.meta.version}`);
+        }
+        setPackVersion(activePack, loaded.meta.version);
+      })
       .catch((e) => setError(`Failed to load pack: ${String(e)}`));
   }, [activePack]);
 
@@ -33,7 +42,6 @@ export default function ChatScreen() {
 
   const handleSend = async (text: string) => {
     const safety = checkInput(text);
-
     addMessage({ role: 'user', content: text });
 
     if (safety.verdict === 'block') {
@@ -48,22 +56,27 @@ export default function ChatScreen() {
     setLoading(true);
     setError(null);
 
+    // Add placeholder for streaming
+    const assistantId = addMessage({
+      role: 'assistant',
+      content: '',
+      warning,
+      streaming: true,
+    });
+
     try {
       const history = messages
-        .filter((m) => m.role !== 'system')
+        .filter((m) => m.role !== 'system' && !m.streaming)
         .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 
       const aiMessages = buildMessages(text, history, pack);
-      const response = await generate(aiMessages);
-      const safeText = checkOutput(response.text);
 
-      addMessage({ role: 'assistant', content: safeText, warning });
-    } catch (e) {
-      setError('Failed to get response. Make sure Ollama is running on your machine.');
-      addMessage({
-        role: 'assistant',
-        content: 'Connection error. If running locally, ensure Ollama is running: `ollama serve`',
+      await generate(aiMessages, (chunk, done) => {
+        updateMessage(assistantId, checkOutput(chunk), done);
       });
+    } catch {
+      updateMessage(assistantId, 'Connection error. Ensure Ollama is running: `ollama serve`', true);
+      setError('Failed to reach Ollama. Check your connection and Ollama URL in Settings.');
     } finally {
       setLoading(false);
     }
@@ -78,6 +91,18 @@ export default function ChatScreen() {
         </Text>
       </View>
 
+      {packBanner && (
+        <View className="bg-brand-900 px-4 py-2 flex-row items-center justify-between">
+          <Text className="text-brand-500 text-xs">{packBanner}</Text>
+          <Text
+            className="text-stone-400 text-xs"
+            onPress={() => setPackBanner(null)}
+          >
+            ✕
+          </Text>
+        </View>
+      )}
+
       <FlatList
         ref={listRef}
         data={messages}
@@ -90,13 +115,17 @@ export default function ChatScreen() {
             <Text className="text-stone-500 text-sm text-center leading-6">
               Ask about routes, refuges, gear, permits, or trail conditions in Patagonia.
             </Text>
+            <Text className="text-stone-600 text-xs text-center mt-3 leading-5">
+              Try: "What gear do I need for the W Circuit?" or "Are permits required?"
+            </Text>
           </View>
         }
         renderItem={({ item }: { item: ChatMessage }) => <ChatBubble message={item} />}
         ItemSeparatorComponent={() => <View className="h-1" />}
+        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
       />
 
-      {isLoading && (
+      {isLoading && !messages.some((m) => m.streaming) && (
         <View className="items-start px-4 pb-2">
           <View className="bg-stone-800 rounded-2xl rounded-tl-sm px-4 py-3 flex-row items-center gap-2">
             <ActivityIndicator size="small" color="#22c55e" />

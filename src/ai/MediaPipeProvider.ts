@@ -8,7 +8,10 @@
 import type { AIMessage, AIProvider, AIResponse } from './AIService';
 
 export class MediaPipeProvider implements AIProvider {
-  async generate(_messages: AIMessage[]): Promise<AIResponse> {
+  async generate(
+    _messages: AIMessage[],
+    _onToken?: (chunk: string, done: boolean) => void,
+  ): Promise<AIResponse> {
     throw new Error('MediaPipeProvider not yet implemented. Use OllamaProvider in dev.');
   }
 
