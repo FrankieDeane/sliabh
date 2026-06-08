@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -15,7 +15,7 @@ import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 
-const { width: SW } = Dimensions.get('window');
+const MAX_CONTENT = 900;
 
 const HERO_URI =
   'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1400&q=85&fit=crop&auto=format';
@@ -52,23 +52,35 @@ const FEATURED = [
 ];
 
 const GALLERY = [
-  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=500&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=500&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=500&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=600&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=600&q=80&fit=crop&auto=format',
 ];
 
 const PACK_URI =
   'https://images.unsplash.com/photo-1548248823-ce16a73b6d49?w=900&q=80&fit=crop&auto=format';
-
-const CARD_W = SW * 0.68;
-const CARD_H = CARD_W * 1.3;
 
 export default function InicioScreen() {
   useTheme();
   const { user } = useAuthStore();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+
+  const contentW = Math.min(width, MAX_CONTENT);
+  const sidePad = Math.max(16, (width - contentW) / 2);
+
+  // Card size: capped so they don't get massive on desktop
+  const CARD_W = Math.min(contentW * 0.62, 240);
+  const CARD_H = Math.round(CARD_W * 1.35);
+
+  // Gallery cell sizes
+  const galleryGap = 8;
+  const cellW = (contentW - galleryGap) / 2;
+  const cellH = Math.round(cellW * 0.72);
+  const fullW = contentW;
+  const fullH = Math.round(fullW * 0.45);
 
   return (
     <View style={styles.root}>
@@ -80,7 +92,12 @@ export default function InicioScreen() {
         {/* ── HERO ── */}
         <ImageBackground source={{ uri: HERO_URI }} style={styles.hero} resizeMode="cover">
           <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
-          <View style={[styles.heroInner, { paddingTop: insets.top + 24 }]}>
+          <View
+            style={[
+              styles.heroInner,
+              { paddingTop: insets.top + 28, paddingHorizontal: sidePad },
+            ]}
+          >
             <View style={styles.heroBrand}>
               <Ionicons name="triangle" size={13} color="#22c55e" />
               <Text style={styles.heroBrandText}>SLIABH</Text>
@@ -108,7 +125,7 @@ export default function InicioScreen() {
         </ImageBackground>
 
         {/* ── STATS ── */}
-        <View style={styles.statsRow}>
+        <View style={[styles.statsRow, { marginHorizontal: sidePad }]}>
           {[['23', 'Rutas'], ['12', 'Campamentos'], ['8', 'Refugios']].map(([n, l]) => (
             <View key={l} style={styles.statCard}>
               <Text style={styles.statNum}>{n}</Text>
@@ -119,16 +136,16 @@ export default function InicioScreen() {
 
         {/* ── FEATURED ROUTES ── */}
         <View style={styles.mt8}>
-          <Text style={styles.sectionLabel}>RUTAS DESTACADAS</Text>
+          <Text style={[styles.sectionLabel, { marginHorizontal: sidePad }]}>RUTAS DESTACADAS</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.featuredScroll}
+            contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12 }}
           >
             {FEATURED.map((r) => (
               <TouchableOpacity
                 key={r.title}
-                style={styles.featuredCard}
+                style={[styles.featuredCard, { width: CARD_W, height: CARD_H }]}
                 onPress={() => router.push('/(tabs)/planificar')}
                 activeOpacity={0.88}
               >
@@ -157,18 +174,23 @@ export default function InicioScreen() {
         </View>
 
         {/* ── OFFLINE AI ── */}
-        <View style={[styles.sectionMx, styles.mt8]}>
+        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
           <OfflineAICard />
         </View>
 
         {/* ── GALLERY ── */}
         <View style={styles.mt8}>
-          <Text style={[styles.sectionLabel, styles.sectionMx]}>GALERÍA</Text>
-          <View style={[styles.sectionMx, styles.galleryGrid]}>
+          <Text style={[styles.sectionLabel, { marginHorizontal: sidePad }]}>GALERÍA</Text>
+          <View style={[styles.galleryGrid, { marginHorizontal: sidePad, gap: galleryGap }]}>
             {GALLERY.map((uri, i) => (
               <View
                 key={i}
-                style={[styles.galleryCell, i === 0 && styles.galleryCellFull]}
+                style={[
+                  styles.galleryCell,
+                  i === 0
+                    ? { width: fullW, height: fullH }
+                    : { width: cellW, height: cellH },
+                ]}
               >
                 <ImageBackground
                   source={{ uri }}
@@ -183,7 +205,7 @@ export default function InicioScreen() {
         </View>
 
         {/* ── QUICK ACTIONS ── */}
-        <View style={[styles.sectionMx, styles.mt8]}>
+        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
           <Text style={styles.sectionLabel}>EXPLORAR</Text>
           <TouchableOpacity
             style={styles.actionCard}
@@ -216,7 +238,7 @@ export default function InicioScreen() {
         </View>
 
         {/* ── PACK ACTIVO ── */}
-        <View style={[styles.sectionMx, styles.mt8]}>
+        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
           <Text style={styles.sectionLabel}>PACK ACTIVO</Text>
           <View style={styles.packCard}>
             <ImageBackground
@@ -244,7 +266,7 @@ export default function InicioScreen() {
         {/* ── AUTH BANNER ── */}
         {!user && (
           <TouchableOpacity
-            style={styles.authBanner}
+            style={[styles.authBanner, { marginHorizontal: sidePad }]}
             activeOpacity={0.8}
             onPress={() => router.push('/(auth)/login')}
           >
@@ -263,23 +285,23 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
-  // Hero
-  hero: { width: '100%', minHeight: 520 },
+  // Hero — capped height so it doesn't fill a 27" monitor
+  hero: { width: '100%', minHeight: 460, maxHeight: 640 },
   heroOverlay: { backgroundColor: 'rgba(7,11,20,0.52)' },
   heroInner: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+    minHeight: 460,
+    maxHeight: 640,
     justifyContent: 'flex-end',
-    minHeight: 520,
+    paddingBottom: 40,
   },
-  heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 22 },
+  heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 20 },
   heroBrandText: { fontSize: 11, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
   heroTitle: {
-    fontSize: 54,
+    fontSize: 48,
     fontWeight: '900',
     color: '#fff',
     letterSpacing: -2,
-    lineHeight: 58,
+    lineHeight: 52,
     marginBottom: 10,
   },
   heroSub: {
@@ -296,14 +318,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 7,
     backgroundColor: '#16a34a',
-    paddingHorizontal: 22,
-    paddingVertical: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 13,
     borderRadius: 999,
   },
   heroBtnPrimaryTxt: { color: '#fff', fontSize: 14, fontWeight: '700' },
   heroBtnSecondary: {
-    paddingHorizontal: 22,
-    paddingVertical: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 13,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.28)',
@@ -311,7 +333,7 @@ const styles = StyleSheet.create({
   heroBtnSecondaryTxt: { color: '#fff', fontSize: 14, fontWeight: '600' },
 
   // Stats
-  statsRow: { flexDirection: 'row', marginHorizontal: 16, marginTop: 20, gap: 10 },
+  statsRow: { flexDirection: 'row', marginTop: 20, gap: 10 },
   statCard: {
     flex: 1,
     backgroundColor: '#0f1724',
@@ -321,13 +343,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
   },
-  statNum: { fontSize: 24, fontWeight: '700', color: '#4ade80', letterSpacing: -0.5 },
+  statNum: { fontSize: 22, fontWeight: '700', color: '#4ade80', letterSpacing: -0.5 },
   statLbl: { fontSize: 11, color: '#78716c', marginTop: 3, fontWeight: '500' },
 
-  // Section
+  // Shared
   mt8: { marginTop: 32 },
   mt3: { marginTop: 12 },
-  sectionMx: { marginHorizontal: 16 },
   sectionLabel: {
     fontSize: 10,
     fontWeight: '700',
@@ -337,16 +358,10 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
 
-  // Featured cards
-  featuredScroll: { paddingHorizontal: 16, gap: 12 },
-  featuredCard: {
-    width: CARD_W,
-    height: CARD_H,
-    borderRadius: 22,
-    overflow: 'hidden',
-  },
+  // Featured cards (width/height set inline)
+  featuredCard: { borderRadius: 20, overflow: 'hidden' },
   featuredOverlay: { backgroundColor: 'rgba(0,0,0,0.38)' },
-  featuredContent: { flex: 1, padding: 16 },
+  featuredContent: { flex: 1, padding: 14 },
   featuredBadge: {
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(22,163,74,0.9)',
@@ -355,24 +370,14 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   featuredBadgeTxt: { color: '#fff', fontSize: 11, fontWeight: '700' },
-  featuredTitle: { fontSize: 19, fontWeight: '800', color: '#fff', marginBottom: 3 },
+  featuredTitle: { fontSize: 17, fontWeight: '800', color: '#fff', marginBottom: 3 },
   featuredSub: { fontSize: 12, color: 'rgba(255,255,255,0.68)', marginBottom: 8 },
   featuredMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
 
-  // Gallery
-  galleryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  galleryCell: {
-    width: (SW - 48) / 2,
-    height: (SW - 48) / 2,
-    borderRadius: 18,
-    overflow: 'hidden',
-    backgroundColor: '#0f1724',
-  },
-  galleryCellFull: {
-    width: SW - 32,
-    height: (SW - 32) * 0.52,
-  },
+  // Gallery (width/height set inline)
+  galleryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
   galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.12)' },
 
   // Action cards
@@ -380,15 +385,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f1724',
     borderWidth: 1,
     borderColor: '#1e2d42',
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 20,
+    padding: 18,
     flexDirection: 'row',
     alignItems: 'center',
   },
   actionIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#16a34a',
     alignItems: 'center',
     justifyContent: 'center',
@@ -396,19 +401,19 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   actionText: { flex: 1 },
-  actionTitle: { fontSize: 15, fontWeight: '700', color: '#f1f5f9', marginBottom: 3 },
+  actionTitle: { fontSize: 15, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
   actionDesc: { fontSize: 12, color: '#78716c', lineHeight: 17 },
 
   // Pack activo
   packCard: {
-    borderRadius: 24,
+    borderRadius: 22,
     overflow: 'hidden',
     padding: 20,
     backgroundColor: '#0f1724',
   },
   packOverlay: { backgroundColor: 'rgba(7,11,20,0.68)' },
   packRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  packName: { fontSize: 17, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
+  packName: { fontSize: 16, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
   packRegion: { fontSize: 12, color: 'rgba(255,255,255,0.55)' },
   packBadge: {
     flexDirection: 'row',
@@ -432,7 +437,6 @@ const styles = StyleSheet.create({
 
   // Auth banner
   authBanner: {
-    marginHorizontal: 16,
     marginTop: 16,
     marginBottom: 8,
     flexDirection: 'row',
@@ -440,7 +444,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(22,163,74,0.22)',
     backgroundColor: 'rgba(22,163,74,0.06)',
-    borderRadius: 20,
+    borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,

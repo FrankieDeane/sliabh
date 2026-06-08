@@ -58,6 +58,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="rutas"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              icon="trail-sign"
+              iconOutline="trail-sign-outline"
+              label="Rutas"
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="planificar"
         options={{
           tabBarIcon: ({ focused }) => (
