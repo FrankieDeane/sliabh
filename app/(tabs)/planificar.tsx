@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +21,114 @@ import { usePlannerStore } from '../../src/store/plannerStore';
 import { useResponsive } from '../../src/hooks/useResponsive';
 
 type MobileTab = 'mapa' | 'puntos';
+
+// ─── National parks data ───────────────────────────────────────────────────────
+const NATIONAL_PARKS = [
+  { name: 'Los Glaciares', location: 'Santa Cruz', fact: 'Fitz Roy, Cerro Torre, glaciares' },
+  { name: 'Nahuel Huapi', location: 'Río Negro', fact: 'Bariloche, lago, cerro Tronador' },
+  { name: 'Lanín', location: 'Neuquén', fact: 'Volcán Lanín, bosque araucaria' },
+  { name: 'Aconcagua', location: 'Mendoza', fact: 'Cerro más alto del hemisferio, 6961m' },
+  { name: 'Quebrada de Humahuaca', location: 'Jujuy', fact: 'UNESCO, 7 colores, puna' },
+  { name: 'Sierras de Córdoba', location: 'Córdoba', fact: 'Los Gigantes, La Ventana' },
+  { name: 'Torres del Paine', location: 'Chile', fact: 'Circuito W, refugios' },
+  { name: 'Tierra del Fuego', location: 'Ushuaia', fact: 'Fin del mundo, Ushuaia' },
+];
+
+function ParquesNacionalesSection() {
+  return (
+    <View style={parkStyles.container}>
+      <Text style={parkStyles.title}>Parques Nacionales Argentina</Text>
+      <Text style={parkStyles.subtitle}>Información para planificar tu visita</Text>
+
+      <View style={parkStyles.cards}>
+        {NATIONAL_PARKS.map((park) => (
+          <View key={park.name} style={parkStyles.card}>
+            <View style={parkStyles.dot} />
+            <View style={parkStyles.cardText}>
+              <Text style={parkStyles.parkName}>{park.name}</Text>
+              <Text style={parkStyles.parkFact}>{park.location} · {park.fact}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      <View style={parkStyles.note}>
+        <Ionicons name="map-outline" size={14} color="#64748b" />
+        <Text style={parkStyles.noteText}>
+          Descarga mapas en Mapas → capas del mapa
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const parkStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 16,
+    backgroundColor: '#0f1724',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#1e2d42',
+    padding: 16,
+  },
+  title: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#f0f9ff',
+    letterSpacing: 0.2,
+    marginBottom: 2,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: '#64748b',
+    marginBottom: 14,
+  },
+  cards: {
+    gap: 10,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#22c55e',
+    marginTop: 5,
+    flexShrink: 0,
+  },
+  cardText: {
+    flex: 1,
+  },
+  parkName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#f0f9ff',
+    lineHeight: 18,
+  },
+  parkFact: {
+    fontSize: 12,
+    color: '#64748b',
+    lineHeight: 17,
+  },
+  note: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#1e2d42',
+  },
+  noteText: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+});
 
 export default function PlanificarScreen() {
   const router = useRouter();
@@ -129,7 +238,13 @@ export default function PlanificarScreen() {
             <View style={styles.sidebarList}>
               <WaypointList />
             </View>
-            {actionButtons}
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1 }}
+            >
+              {actionButtons}
+              <ParquesNacionalesSection />
+            </ScrollView>
           </View>
 
           {/* Map */}
@@ -205,10 +320,15 @@ export default function PlanificarScreen() {
             {waypoints.length === 0 && emptyState}
           </>
         ) : (
-          <View style={styles.mapFlex}>
+          <ScrollView
+            style={styles.mapFlex}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
             <WaypointList />
             {actionButtons}
-          </View>
+            <ParquesNacionalesSection />
+          </ScrollView>
         )}
       </View>
 

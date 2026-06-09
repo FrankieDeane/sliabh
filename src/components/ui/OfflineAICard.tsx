@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
 
@@ -7,6 +7,7 @@ const PILLS = ['Consultas', 'Rutas', 'Seguridad'] as const;
 
 export function OfflineAICard() {
   const { isDark } = useTheme();
+  const isWeb = Platform.OS === 'web';
 
   const titleColor = isDark ? '#f0f9ff' : '#0f172a';
 
@@ -18,10 +19,12 @@ export function OfflineAICard() {
         </View>
         <View style={styles.textBlock}>
           <Text style={[styles.title, { color: titleColor }]}>
-            IA disponible sin internet
+            {isWeb ? 'Asistente IA con Claude' : 'IA disponible sin internet'}
           </Text>
           <Text style={styles.subtitle}>
-            Gemma 3 · Modelo local · Sin límites en la montaña
+            {isWeb
+              ? 'Claude · Nube · Requiere conexión a internet'
+              : 'Gemma 3 · Modelo local · Sin límites en la montaña'}
           </Text>
         </View>
       </View>

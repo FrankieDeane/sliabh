@@ -81,10 +81,6 @@ export function WebFooter() {
             <Text style={[styles.infoText, { color: c.muted, marginTop: 8 }]}>
               IA local con Ollama + Gemma.{'\n'}Funciona sin señal de red.
             </Text>
-            <View style={[styles.clanCard, { backgroundColor: c.surface, borderColor: c.border }]}>
-              <Ionicons name="shield-outline" size={13} color="#22c55e" />
-              <Text style={[styles.clanText, { color: c.muted }]}>Douglas clan · Drysdale branch</Text>
-            </View>
           </View>
         </View>
 
@@ -95,8 +91,6 @@ export function WebFooter() {
         <View style={[styles.bottom, isWide ? styles.bottomWide : null]}>
           <Text style={[styles.copy, { color: c.muted }]}>
             © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic Team</Text>
-            {'  ·  '}
-            A Douglas clan idea, Drysdale branch
           </Text>
           <View style={styles.copyRight}>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />

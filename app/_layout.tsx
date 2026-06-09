@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { OllamaProvider } from '../src/ai/OllamaProvider';
 import { CloudProvider } from '../src/ai/CloudProvider';
+import { FallbackProvider } from '../src/ai/FallbackProvider';
 import { setAIProvider } from '../src/ai/AIService';
 import { useSettingsStore } from '../src/store/settingsStore';
 import { useThemeStore } from '../src/store/themeStore';
@@ -57,9 +58,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === 'web') {
-      setAIProvider(new CloudProvider());
+      // Web: Claude via Netlify function, with KnowledgeProvider fallback when offline
+      setAIProvider(new FallbackProvider(new CloudProvider()));
     } else {
-      setAIProvider(new OllamaProvider({ baseUrl: ollamaUrl }));
+      // Native: Ollama (emulator or real device with Ollama running),
+      // falls back to built-in KnowledgeProvider so hikers always get answers
+      setAIProvider(new FallbackProvider(new OllamaProvider({ baseUrl: ollamaUrl })));
     }
   }, [ollamaUrl]);
 

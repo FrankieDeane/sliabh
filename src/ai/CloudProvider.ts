@@ -36,7 +36,16 @@ export class CloudProvider implements AIProvider {
   }
 
   async isAvailable(): Promise<boolean> {
-    // Assume available on web — errors surface via generate()
-    return true;
+    try {
+      const res = await fetch(this.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }] }),
+        signal: AbortSignal.timeout(5000),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
   }
 }

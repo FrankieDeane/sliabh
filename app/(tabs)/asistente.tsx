@@ -85,8 +85,8 @@ export default function AsistenteScreen() {
     } catch (e: any) {
       const isWeb = Platform.OS === 'web';
       const errMsg = isWeb
-        ? 'No pude conectar con el asistente IA.\n\nAsegúrate de que la variable **ANTHROPIC_API_KEY** esté configurada en las variables de entorno de Netlify (Site settings → Environment variables).'
-        : 'No pude conectar con el modelo local. Verifica que Ollama esté ejecutándose.\n\n`ollama run gemma3:4b`';
+        ? 'No pude conectar con el asistente IA en la nube. Revisando base de conocimiento local…'
+        : 'Ollama no disponible. Usando base de conocimiento integrada — prueba preguntar sobre rutas, equipo o seguridad.';
       updateMessage(assistantId, errMsg, true);
       setAiReachable(false);
     } finally {
@@ -101,7 +101,7 @@ export default function AsistenteScreen() {
       {Platform.OS !== 'web' && (
         <ScreenHeader
           title="Asistente IA"
-          subtitle={Platform.OS === 'web' ? 'Claude · Nube' : 'Gemma · Modelo local'}
+          subtitle={Platform.OS === 'web' ? 'Claude · Nube' : 'Ollama / Offline · Siempre disponible'}
           right={
             hasMessages ? (
               <TouchableOpacity onPress={clearMessages} style={styles.headerBtn}>
