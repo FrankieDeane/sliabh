@@ -500,93 +500,94 @@ export default function TrailDetailScreen() {
 
   return (
     <View style={styles.root}>
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <View style={styles.heroContainer}>
-        <ImageBackground
-          source={{ uri: trail.photo_uri }}
-          style={styles.hero}
-          resizeMode="cover"
-        >
-          {/* Dark gradient overlay */}
-          <View style={styles.heroOverlay} />
+      {/* Floating back button — always visible above scroll */}
+      <TouchableOpacity
+        style={[styles.backBtn, { top: insets.top + 10 }]}
+        onPress={() => router.back()}
+        activeOpacity={0.75}
+      >
+        <Ionicons name="chevron-back" size={22} color={C.text} />
+      </TouchableOpacity>
 
-          {/* Back button */}
-          <TouchableOpacity
-            style={[styles.backBtn, { top: insets.top + 10 }]}
-            onPress={() => router.back()}
-            activeOpacity={0.75}
-          >
-            <Ionicons name="chevron-back" size={22} color={C.text} />
-          </TouchableOpacity>
-
-          {/* Hero text */}
-          <View style={[styles.heroText, { paddingHorizontal: sidePad, paddingBottom: insets.bottom > 0 ? 20 : 24 }]}>
-            <View style={styles.activityRow}>
-              <View style={[styles.activityBadge, { borderColor: C.border }]}>
-                <Text style={styles.activityBadgeText}>{activityLabel}</Text>
-              </View>
-            </View>
-            <Text style={styles.heroTitle}>{trail.name}</Text>
-            <Text style={styles.heroSub}>
-              {trail.province}
-              {trail.subarea ? ` · ${trail.subarea}` : ''} · {trail.area}
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-
-      {/* ── Stat pills ───────────────────────────────────────────────────────── */}
-      <View style={[styles.statsBar, { paddingHorizontal: sidePad }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsScroll}>
-          <StatPill icon="map-outline" value={`${trail.distance_km} km`} />
-          <StatPill icon="trending-up-outline" value={`${trail.elevation_gain_m} m`} />
-          <StatPill icon="triangle-outline" value={`${trail.max_altitude_m} m`} />
-          <StatPill icon="time-outline" value={durationLabel} />
-          <View style={[styles.diffPill, { backgroundColor: diffColor.bg }]}>
-            <Text style={[styles.diffPillText, { color: diffColor.text }]}>{diffLabel}</Text>
-          </View>
-        </ScrollView>
-      </View>
-
-      {/* ── Tab bar ──────────────────────────────────────────────────────────── */}
-      <View style={[styles.tabBar, { paddingHorizontal: sidePad }]}>
-        {TABS.map((tab) => {
-          const active = activeTab === tab.key;
-          return (
-            <TouchableOpacity
-              key={tab.key}
-              style={[styles.tabItem, active && styles.tabItemActive]}
-              onPress={() => setActiveTab(tab.key)}
-              activeOpacity={0.75}
-            >
-              <Text style={[styles.tabLabel, active ? styles.tabLabelActive : { color: C.muted }]}>
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* ── Tab content ──────────────────────────────────────────────────────── */}
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: sidePad }]}
         showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[1]}
       >
-        {activeTab === 'overview' && (
-          <OverviewTab trail={trail} lang={lang} t={t} />
-        )}
-        {activeTab === 'logistics' && (
-          <LogisticsTab lines={logisticsLines} t={t} />
-        )}
-        {activeTab === 'safety' && (
-          <SafetyTab bullets={safetyBullets} difficulty={trail.difficulty} t={t} />
-        )}
-        {activeTab === 'gear' && (
-          <GearTab categories={gearCategories} />
-        )}
+        {/* ── Hero — index 0, scrolls away ───────────────────────────────────── */}
+        <View style={styles.heroContainer}>
+          <ImageBackground
+            source={{ uri: trail.photo_uri }}
+            style={styles.hero}
+            resizeMode="cover"
+          >
+            <View style={styles.heroOverlay} />
+            <View style={[styles.heroText, { paddingHorizontal: sidePad, paddingBottom: 28 }]}>
+              <View style={styles.activityRow}>
+                <View style={[styles.activityBadge, { borderColor: C.border }]}>
+                  <Text style={styles.activityBadgeText}>{activityLabel}</Text>
+                </View>
+              </View>
+              <Text style={styles.heroTitle}>{trail.name}</Text>
+              <Text style={styles.heroSub}>
+                {trail.province}
+                {trail.subarea ? ` · ${trail.subarea}` : ''} · {trail.area}
+              </Text>
+            </View>
+          </ImageBackground>
+        </View>
 
-        <View style={{ height: 40 }} />
+        {/* ── Sticky header: stats + tabs — index 1 ──────────────────────────── */}
+        <View style={{ backgroundColor: C.surface }}>
+          {/* Stat pills */}
+          <View style={[styles.statsBar, { paddingHorizontal: sidePad }]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsScroll}>
+              <StatPill icon="map-outline" value={`${trail.distance_km} km`} />
+              <StatPill icon="trending-up-outline" value={`${trail.elevation_gain_m} m`} />
+              <StatPill icon="triangle-outline" value={`${trail.max_altitude_m} m`} />
+              <StatPill icon="time-outline" value={durationLabel} />
+              <View style={[styles.diffPill, { backgroundColor: diffColor.bg }]}>
+                <Text style={[styles.diffPillText, { color: diffColor.text }]}>{diffLabel}</Text>
+              </View>
+            </ScrollView>
+          </View>
+
+          {/* Tab bar */}
+          <View style={[styles.tabBar, { paddingHorizontal: sidePad }]}>
+            {TABS.map((tab) => {
+              const active = activeTab === tab.key;
+              return (
+                <TouchableOpacity
+                  key={tab.key}
+                  style={[styles.tabItem, active && styles.tabItemActive]}
+                  onPress={() => setActiveTab(tab.key)}
+                  activeOpacity={0.75}
+                >
+                  <Text style={[styles.tabLabel, active ? styles.tabLabelActive : { color: C.muted }]}>
+                    {tab.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
+        <View style={[styles.scrollContent, { paddingHorizontal: sidePad }]}>
+          {activeTab === 'overview' && (
+            <OverviewTab trail={trail} lang={lang} t={t} />
+          )}
+          {activeTab === 'logistics' && (
+            <LogisticsTab lines={logisticsLines} t={t} />
+          )}
+          {activeTab === 'safety' && (
+            <SafetyTab bullets={safetyBullets} difficulty={trail.difficulty} t={t} />
+          )}
+          {activeTab === 'gear' && (
+            <GearTab categories={gearCategories} />
+          )}
+          <View style={{ height: 60 }} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -824,14 +825,15 @@ const styles = StyleSheet.create({
   },
 
   // Hero
-  heroContainer: { height: 280 },
+  heroContainer: { height: 340 },
   hero: { flex: 1, justifyContent: 'flex-end' },
   heroOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(7,11,20,0.55)',
+    backgroundColor: 'rgba(7,11,20,0.45)',
   },
   backBtn: {
     position: 'absolute',
+    zIndex: 10,
     left: 16,
     width: 38,
     height: 38,
@@ -914,7 +916,7 @@ const styles = StyleSheet.create({
 
   // Scroll / content
   scroll: { flex: 1 },
-  scrollContent: { paddingTop: 20, paddingBottom: 24 },
+  scrollContent: { paddingTop: 20, paddingBottom: 24, gap: 14 },
   tabContent: { gap: 14 },
 
   // Section card
