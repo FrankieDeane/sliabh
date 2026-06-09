@@ -31,6 +31,7 @@ export default function MapasScreen() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [contributeOpen, setContributeOpen] = useState(false);
   const [coord, setCoord] = useState<{ lat: number; lon: number } | null>(null);
+  const [downloadOpen, setDownloadOpen] = useState(false);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -77,6 +78,9 @@ export default function MapasScreen() {
           style={[styles.fab, { backgroundColor: c.surface, borderColor: c.border, borderWidth: 1 }]}
         >
           <Ionicons name="add" size={26} color={c.text} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setDownloadOpen(true)} style={[styles.fab, { backgroundColor: '#0f172a', borderColor: '#22c55e', borderWidth: 1 }]}>
+          <Ionicons name="download-outline" size={20} color="#22c55e" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setSheetOpen(true)} style={[styles.fab, { backgroundColor: '#16a34a' }]}>
           <Ionicons name="layers" size={22} color="#fff" />
@@ -150,6 +154,57 @@ export default function MapasScreen() {
                 <Text style={styles.offlineNoteText}>Sin conexión · Los tiles del mapa requieren internet</Text>
               </View>
             )}
+            </ScrollView>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* ── Download Maps Modal ── */}
+      <Modal visible={downloadOpen} transparent animationType="slide" onRequestClose={() => setDownloadOpen(false)}>
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={() => setDownloadOpen(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.sheet, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <View style={[styles.handle, { backgroundColor: c.border }]} />
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(34,197,94,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(34,197,94,0.3)' }}>
+                  <Ionicons name="download-outline" size={18} color="#22c55e" />
+                </View>
+                <View>
+                  <Text style={[{ fontSize: 15, fontWeight: '800', color: c.text }]}>Mapas para descarga</Text>
+                  <Text style={[{ fontSize: 11, color: c.muted, marginTop: 1 }]}>PDFs oficiales · Parques Nacionales</Text>
+                </View>
+              </View>
+
+              {[
+                { name: 'Los Glaciares — Fitz Roy & Cerro Torre', region: 'Santa Cruz', url: 'https://www.argentina.gob.ar/parquesnacionales/losglaciares' },
+                { name: 'Nahuel Huapi — Bariloche & Tronador', region: 'Río Negro', url: 'https://www.argentina.gob.ar/parquesnacionales/nahuelhuapi' },
+                { name: 'Lanín — Volcán Lanín & Araucarias', region: 'Neuquén', url: 'https://www.argentina.gob.ar/parquesnacionales/lanin' },
+                { name: 'Aconcagua — Ruta Normal', region: 'Mendoza', url: 'https://www.mendoza.gov.ar/aconcagua/' },
+                { name: 'Quebrada de Humahuaca', region: 'Jujuy', url: 'https://www.argentina.gob.ar/parquesnacionales/talampaya' },
+                { name: 'Champaquí & Sierras de Córdoba', region: 'Córdoba', url: 'https://www.cordoba.gob.ar' },
+                { name: 'Tierra del Fuego', region: 'Ushuaia', url: 'https://www.argentina.gob.ar/parquesnacionales/tierradelfuego' },
+              ].map((m) => (
+                <TouchableOpacity
+                  key={m.name}
+                  style={[styles.mapLink, { backgroundColor: c.elevated, borderColor: c.border }]}
+                  onPress={() => Linking.openURL(m.url)}
+                  activeOpacity={0.75}
+                >
+                  <Ionicons name="map-outline" size={18} color="#22c55e" />
+                  <View style={{ flex: 1 }}>
+                    <Text style={[{ fontSize: 13, fontWeight: '600', color: c.text }]} numberOfLines={1}>{m.name}</Text>
+                    <Text style={[{ fontSize: 11, color: c.muted }]}>{m.region}</Text>
+                  </View>
+                  <Ionicons name="open-outline" size={14} color={c.muted} />
+                </TouchableOpacity>
+              ))}
+
+              <View style={[styles.offlineNote, { marginTop: 8 }]}>
+                <Ionicons name="information-circle-outline" size={15} color="#38bdf8" />
+                <Text style={[styles.offlineNoteText, { color: '#38bdf8' }]}>
+                  Los PDF incluyen mapas topográficos descargables para uso sin conexión
+                </Text>
+              </View>
             </ScrollView>
           </TouchableOpacity>
         </TouchableOpacity>

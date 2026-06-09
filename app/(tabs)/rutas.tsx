@@ -73,24 +73,13 @@ export default function RutasScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingHorizontal: sidePad }]}
       >
         {/* Header — scrolls with content */}
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: c.border, marginHorizontal: -sidePad, paddingHorizontal: sidePad },
-          ]}
-        >
-          <View>
-            <Text style={[styles.headerTitle, { color: c.text }]}>
-              {t('Rutas Argentina', 'Argentine Trails')}
-            </Text>
-            <Text style={[styles.headerSub, { color: c.muted }]}>
-              {ARGENTINA_TRAILS.length} {t('senderos · Patagonia y toda Argentina', 'trails · Patagonia and all of Argentina')}
-            </Text>
-          </View>
-          <View style={[styles.sourceBadge, { backgroundColor: c.elevated, borderColor: c.border }]}>
-            <Ionicons name="leaf-outline" size={13} color="#22c55e" />
-            <Text style={[styles.sourceText, { color: c.muted }]}>Sliabh</Text>
-          </View>
+        <View style={{ paddingTop: 24, paddingBottom: 8 }}>
+          <Text style={[styles.headerTitle, { color: c.text }]}>
+            {t('Rutas', 'Trails')}
+          </Text>
+          <Text style={[styles.headerSub, { color: c.muted }]}>
+            {ARGENTINA_TRAILS.length} {t('senderos en Argentina', 'trails across Argentina')}
+          </Text>
         </View>
 
         {/* Region filter chips */}
@@ -138,32 +127,7 @@ export default function RutasScreen() {
             {/* Featured trail */}
             {featured && (
               <View style={styles.section}>
-                <Text style={[styles.sectionLabel, { color: c.muted }]}>DESTACADA</Text>
                 <FeaturedTrailCard trail={featured} onPress={() => goToTrail(featured.id)} />
-
-                {/* Trail description */}
-                <View
-                  style={[
-                    styles.descCard,
-                    { backgroundColor: c.surface, borderColor: c.border },
-                  ]}
-                >
-                  <Text style={[styles.descText, { color: c.muted }]}>
-                    {featured.description}
-                  </Text>
-                  <View style={styles.descMeta}>
-                    <Ionicons name="location-outline" size={13} color={c.muted} />
-                    <Text style={[styles.descMetaText, { color: c.muted }]}>
-                      {featured.trailhead}
-                    </Text>
-                  </View>
-                  <View style={styles.descMeta}>
-                    <Ionicons name="calendar-outline" size={13} color={c.muted} />
-                    <Text style={[styles.descMetaText, { color: c.muted }]}>
-                      Mejor época: {featured.best_season}
-                    </Text>
-                  </View>
-                </View>
               </View>
             )}
 
@@ -171,7 +135,7 @@ export default function RutasScreen() {
             {rest.length > 0 && (
               <View style={styles.section}>
                 <Text style={[styles.sectionLabel, { color: c.muted }]}>
-                  TODAS LAS RUTAS ({filtered.length})
+                  {filtered.length} {t('RUTAS', 'TRAILS')}
                 </Text>
 
                 {isWide ? (
@@ -212,24 +176,10 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: 14,
-    borderBottomWidth: 1,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', letterSpacing: -0.4 },
-  headerSub: { fontSize: 12, marginTop: 2 },
-  sourceBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  sourceText: { fontSize: 11, fontWeight: '600' },
+  headerTitle: { fontSize: 32, fontWeight: '900', letterSpacing: -1 },
+  headerSub: { fontSize: 13, marginTop: 4 },
 
   scrollContent: { paddingBottom: 48 },
 
@@ -245,17 +195,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 12,
   },
-
-  descCard: {
-    borderRadius: 18,
-    borderWidth: 1,
-    padding: 16,
-    marginTop: 10,
-    gap: 8,
-  },
-  descText: { fontSize: 13, lineHeight: 20 },
-  descMeta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  descMetaText: { fontSize: 12 },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   gridCell: { width: '48.5%' },

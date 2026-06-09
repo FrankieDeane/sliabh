@@ -1,6 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
+// Inject Leaflet CSS synchronously at module load — before any MapContainer renders
+if (typeof document !== 'undefined') {
+  const cssId = 'leaflet-css-sync';
+  if (!document.getElementById(cssId)) {
+    const link = document.createElement('link');
+    link.id = cssId;
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.prepend(link);
+  }
+}
+
 let MapContainer: any, TileLayer: any, useMapEvents: any, Marker: any, Popup: any, Polyline: any;
 if (typeof window !== 'undefined') {
   const rl = require('react-leaflet');
