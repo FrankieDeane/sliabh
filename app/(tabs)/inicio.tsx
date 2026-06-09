@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,50 +15,61 @@ import { Ionicons } from '@expo/vector-icons';
 import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
+import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { injectWebStyles } from '../../src/utils/webStyles';
+import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
 
 const MAX_CONTENT = 900;
 
 const HERO_URI =
-  'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1400&q=85&fit=crop&auto=format';
+  'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
 const FEATURED = [
   {
-    title: 'Circuito W',
+    titleEs: 'Circuito W',
+    titleEn: 'W Circuit',
     subtitle: 'Torres del Paine',
     distance: '80 km',
-    days: '4–5 días',
+    daysEs: '4–5 días',
+    daysEn: '4–5 days',
     uri: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80&fit=crop&auto=format',
     routeId: 'cerro-torre-base',
   },
   {
-    title: 'Laguna de los Tres',
+    titleEs: 'Laguna de los Tres',
+    titleEn: 'Laguna de los Tres',
     subtitle: 'Los Glaciares',
     distance: '24 km',
-    days: '1 día',
+    daysEs: '1 día',
+    daysEn: '1 day',
     uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80&fit=crop&auto=format',
     routeId: 'fitz-roy-laguna-tres',
   },
   {
-    title: 'Dientes de Navarino',
+    titleEs: 'Dientes de Navarino',
+    titleEn: 'Dientes de Navarino',
     subtitle: 'Isla Navarino',
     distance: '53 km',
-    days: '4–5 días',
+    daysEs: '4–5 días',
+    daysEn: '4–5 days',
     uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=700&q=80&fit=crop&auto=format',
     routeId: 'lago-desierto-patagonia',
   },
   {
-    title: 'Aconcagua',
+    titleEs: 'Aconcagua',
+    titleEn: 'Aconcagua',
     subtitle: 'Ruta Normal',
     distance: '110 km',
-    days: '18–22 días',
+    daysEs: '18–22 días',
+    daysEn: '18–22 days',
     uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
     routeId: 'aconcagua-ruta-normal',
   },
 ];
 
 const GALLERY = [
-  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&q=85&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=600&q=80&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&q=80&fit=crop&auto=format',
   'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=600&q=80&fit=crop&auto=format',
@@ -70,6 +81,7 @@ const PACK_URI =
 export default function InicioScreen() {
   useTheme();
   const { user } = useAuthStore();
+  const { t } = useLangStore();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -77,17 +89,23 @@ export default function InicioScreen() {
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
 
-  // Card size: capped so they don't get massive on desktop
   const CARD_W = Math.min(contentW * 0.62, 240);
   const CARD_H = Math.round(CARD_W * 0.65);
 
-  // Gallery cell sizes — use actual container inner width (contentW minus horizontal padding)
   const galleryGap = 8;
   const galleryInnerW = width - 2 * sidePad;
   const cellW = (galleryInnerW - galleryGap) / 2;
   const cellH = Math.round(cellW * 0.56);
   const fullW = galleryInnerW;
   const fullH = Math.round(fullW * 0.42);
+
+  useEffect(() => {
+    injectWebStyles();
+    animateHeroEntrance('[data-hero]');
+    animateParallaxHero('[data-hero]');
+    const timer = setTimeout(() => animateScrollReveal(), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -97,44 +115,101 @@ export default function InicioScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* ── HERO ── */}
-        <ImageBackground source={{ uri: HERO_URI }} style={styles.hero} resizeMode="cover">
-          <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
-          <View
-            style={[
-              styles.heroInner,
-              { paddingTop: insets.top + 28, paddingHorizontal: sidePad },
-            ]}
+        <View
+          style={styles.heroWrapper}
+          {...(Platform.OS === 'web' ? ({ 'data-hero': true } as any) : {})}
+        >
+          <ImageBackground
+            source={{ uri: HERO_URI }}
+            style={styles.hero}
+            resizeMode="cover"
+            imageStyle={styles.heroImage}
+            {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
-            <View style={styles.heroBrand}>
-              <Text style={{ fontSize: 13 }}>🏔️</Text>
-              <Text style={styles.heroBrandText}>SLIABH</Text>
-            </View>
-            <Text style={styles.heroTitle}>{'Explora\nsin límites'}</Text>
-            <Text style={styles.heroSub}>PATAGONIA · TORRES DEL PAINE · IA OFFLINE</Text>
-            <View style={styles.heroCtas}>
-              <TouchableOpacity
-                style={styles.heroBtnPrimary}
-                onPress={() => router.push('/(tabs)/planificar')}
-                activeOpacity={0.85}
+            <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
+            {/* Cinematic gradient at bottom */}
+            <View style={[StyleSheet.absoluteFillObject, styles.heroGradient]} />
+            <View
+              style={[
+                styles.heroInner,
+                { paddingTop: insets.top + 28, paddingHorizontal: sidePad },
+              ]}
+              {...(Platform.OS === 'web' ? ({ 'data-hero-content': true } as any) : {})}
+            >
+              <View
+                style={styles.heroBrand}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-brand': true } as any) : {})}
               >
-                <Ionicons name="map-outline" size={15} color="#fff" />
-                <Text style={styles.heroBtnPrimaryTxt}>Planificar ruta</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.heroBtnSecondary}
-                onPress={() => router.push('/(tabs)/mapas')}
-                activeOpacity={0.75}
+                <Text style={{ fontSize: 13 }}>🏔️</Text>
+                <Text style={styles.heroBrandText}>SLIABH</Text>
+                <View style={styles.heroBrandDivider} />
+                <Text style={styles.heroBrandTagline}>
+                  {t('PATAGONIA', 'PATAGONIA')}
+                </Text>
+              </View>
+              <Text
+                style={styles.heroTitle}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-title': true } as any) : {})}
               >
-                <Text style={styles.heroBtnSecondaryTxt}>Ver mapas</Text>
-              </TouchableOpacity>
+                {t('Explora\nsin límites', 'Explore\nwithout limits')}
+              </Text>
+              <Text
+                style={styles.heroSub}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true } as any) : {})}
+              >
+                {t(
+                  'TORRES DEL PAINE · FITZ ROY · ACONCAGUA · IA OFFLINE',
+                  'TORRES DEL PAINE · FITZ ROY · ACONCAGUA · OFFLINE AI',
+                )}
+              </Text>
+              <View style={styles.heroCtas}>
+                <TouchableOpacity
+                  style={styles.heroBtnPrimary}
+                  onPress={() => router.push('/(tabs)/planificar')}
+                  activeOpacity={0.85}
+                  accessibilityLabel={t('Planificar ruta', 'Plan route')}
+                  {...(Platform.OS === 'web' ? ({ 'data-hero-cta': true, 'data-btn-primary': true } as any) : {})}
+                >
+                  <Ionicons name="map-outline" size={15} color="#fff" />
+                  <Text style={styles.heroBtnPrimaryTxt}>
+                    {t('Planificar ruta', 'Plan a route')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.heroBtnSecondary}
+                  onPress={() => router.push('/(tabs)/mapas')}
+                  activeOpacity={0.75}
+                  accessibilityLabel={t('Ver mapas', 'View maps')}
+                  {...(Platform.OS === 'web' ? ({ 'data-hero-cta': true } as any) : {})}
+                >
+                  <Text style={styles.heroBtnSecondaryTxt}>
+                    {t('Ver mapas', 'View maps')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Scroll indicator */}
+              {Platform.OS === 'web' && (
+                <View style={styles.scrollIndicator}>
+                  <Ionicons name="chevron-down" size={18} color="rgba(255,255,255,0.4)" />
+                </View>
+              )}
             </View>
-          </View>
-        </ImageBackground>
+          </ImageBackground>
+        </View>
 
         {/* ── STATS ── */}
         <View style={[styles.statsRow, { marginHorizontal: sidePad }]}>
-          {[['23', 'Rutas'], ['12', 'Campamentos'], ['8', 'Refugios']].map(([n, l]) => (
-            <View key={l} style={styles.statCard}>
+          {[
+            ['100+', t('Rutas', 'Trails')],
+            ['12', t('Campamentos', 'Camps')],
+            ['8', t('Refugios', 'Huts')],
+          ].map(([n, l]) => (
+            <View
+              key={l}
+              style={styles.statCard}
+              {...(Platform.OS === 'web' ? ({ 'data-stat-card': true } as any) : {})}
+            >
               <Text style={styles.statNum}>{n}</Text>
               <Text style={styles.statLbl}>{l}</Text>
             </View>
@@ -143,7 +218,12 @@ export default function InicioScreen() {
 
         {/* ── FEATURED ROUTES ── */}
         <View style={styles.mt8}>
-          <Text style={[styles.sectionLabel, { marginHorizontal: sidePad }]}>RUTAS DESTACADAS</Text>
+          <Text
+            style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+          >
+            {t('RUTAS DESTACADAS', 'FEATURED TRAILS')}
+          </Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -151,10 +231,13 @@ export default function InicioScreen() {
           >
             {FEATURED.map((r) => (
               <TouchableOpacity
-                key={r.title}
+                key={r.titleEs}
                 style={[styles.featuredCard, { width: CARD_W, height: CARD_H }]}
-                onPress={() => router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)}
+                onPress={() =>
+                  router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)
+                }
                 activeOpacity={0.88}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
               >
                 <ImageBackground
                   source={{ uri: r.uri }}
@@ -167,11 +250,15 @@ export default function InicioScreen() {
                       <Text style={styles.featuredBadgeTxt}>{r.distance}</Text>
                     </View>
                     <View style={{ flex: 1 }} />
-                    <Text style={styles.featuredTitle}>{r.title}</Text>
+                    <Text style={styles.featuredTitle}>
+                      {t(r.titleEs, r.titleEn)}
+                    </Text>
                     <Text style={styles.featuredSub}>{r.subtitle}</Text>
                     <View style={styles.featuredMeta}>
                       <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.65)" />
-                      <Text style={styles.featuredMetaTxt}>{r.days}</Text>
+                      <Text style={styles.featuredMetaTxt}>
+                        {t(r.daysEs, r.daysEn)}
+                      </Text>
                     </View>
                   </View>
                 </ImageBackground>
@@ -181,13 +268,21 @@ export default function InicioScreen() {
         </View>
 
         {/* ── OFFLINE AI ── */}
-        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
+        <View
+          style={[styles.mt8, { marginHorizontal: sidePad }]}
+          {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
+        >
           <OfflineAICard />
         </View>
 
         {/* ── GALLERY ── */}
         <View style={styles.mt8}>
-          <Text style={[styles.sectionLabel, { marginHorizontal: sidePad }]}>GALERÍA</Text>
+          <Text
+            style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+          >
+            {t('GALERÍA', 'GALLERY')}
+          </Text>
           <View style={[styles.galleryGrid, { marginHorizontal: sidePad, gap: galleryGap }]}>
             {GALLERY.map((uri, i) => (
               <View
@@ -198,6 +293,7 @@ export default function InicioScreen() {
                     ? { width: fullW, height: fullH }
                     : { width: cellW, height: cellH },
                 ]}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
               >
                 <ImageBackground
                   source={{ uri }}
@@ -213,18 +309,31 @@ export default function InicioScreen() {
 
         {/* ── QUICK ACTIONS ── */}
         <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
-          <Text style={styles.sectionLabel}>EXPLORAR</Text>
+          <Text
+            style={styles.sectionLabel}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+          >
+            {t('EXPLORAR', 'EXPLORE')}
+          </Text>
           <TouchableOpacity
             style={styles.actionCard}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/planificar')}
+            {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true, 'data-interactive-card': true } as any) : {})}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="map-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>Planificar caminata</Text>
-              <Text style={styles.actionDesc}>Traza tu próxima ruta y analízala con IA</Text>
+              <Text style={styles.actionTitle}>
+                {t('Planificar caminata', 'Plan a hike')}
+              </Text>
+              <Text style={styles.actionDesc}>
+                {t(
+                  'Traza tu próxima ruta y analízala con IA',
+                  'Map your next route and analyse it with AI',
+                )}
+              </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#4a5568" />
           </TouchableOpacity>
@@ -232,21 +341,37 @@ export default function InicioScreen() {
             style={[styles.actionCard, styles.mt3]}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/contribuir')}
+            {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true, 'data-interactive-card': true } as any) : {})}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="pencil-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>Contribuir al mapa</Text>
-              <Text style={styles.actionDesc}>Ayuda a la comunidad con datos de senderos</Text>
+              <Text style={styles.actionTitle}>
+                {t('Contribuir al mapa', 'Contribute to the map')}
+              </Text>
+              <Text style={styles.actionDesc}>
+                {t(
+                  'Ayuda a la comunidad con datos de senderos',
+                  'Help the community with trail data',
+                )}
+              </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#4a5568" />
           </TouchableOpacity>
         </View>
 
         {/* ── PACK ACTIVO ── */}
-        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
-          <Text style={styles.sectionLabel}>PACK ACTIVO</Text>
+        <View
+          style={[styles.mt8, { marginHorizontal: sidePad }]}
+          {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
+        >
+          <Text
+            style={styles.sectionLabel}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+          >
+            {t('PACK ACTIVO', 'ACTIVE PACK')}
+          </Text>
           <View style={styles.packCard}>
             <ImageBackground
               source={{ uri: PACK_URI }}
@@ -258,7 +383,9 @@ export default function InicioScreen() {
             <View style={styles.packRow}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.packName}>Torres del Paine</Text>
-                <Text style={styles.packRegion}>Patagonia, Chile</Text>
+                <Text style={styles.packRegion}>
+                  {t('Patagonia, Chile', 'Patagonia, Chile')}
+                </Text>
               </View>
               <View style={styles.packBadge}>
                 <Ionicons name="cloud-done-outline" size={13} color="#34d399" />
@@ -266,7 +393,7 @@ export default function InicioScreen() {
               </View>
             </View>
             <View style={styles.packDivider} />
-            <Text style={styles.packMeta}>v2.4.1 · Región sur · 1.2 GB</Text>
+            <Text style={styles.packMeta}>v2.4.1 · {t('Región sur', 'Southern Region')} · 1.2 GB</Text>
           </View>
         </View>
 
@@ -278,7 +405,9 @@ export default function InicioScreen() {
             onPress={() => router.push('/(auth)/login')}
           >
             <Ionicons name="person-circle-outline" size={28} color="#16a34a" />
-            <Text style={styles.authText}>Inicia sesión para guardar tus rutas</Text>
+            <Text style={styles.authText}>
+              {t('Inicia sesión para guardar tus rutas', 'Sign in to save your routes')}
+            </Text>
             <Ionicons name="chevron-forward" size={18} color="#4a5568" />
           </TouchableOpacity>
         )}
@@ -294,55 +423,94 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
-  // Hero — capped height so it doesn't fill a 27" monitor
-  hero: { width: '100%', minHeight: 460, maxHeight: 640 },
-  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.52)' },
-  heroInner: {
-    minHeight: 460,
-    maxHeight: 640,
-    justifyContent: 'flex-end',
-    paddingBottom: 40,
+  // Hero
+  heroWrapper: { width: '100%', overflow: 'hidden' },
+  hero: { width: '100%', minHeight: 520, maxHeight: 700 },
+  heroImage: { transform: [{ scale: 1.05 }] },
+  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.48)' },
+  heroGradient: {
+    backgroundColor: 'transparent',
   },
-  heroBrand: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 20 },
-  heroBrandText: { fontSize: 11, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
+  heroInner: {
+    minHeight: 520,
+    maxHeight: 700,
+    justifyContent: 'flex-end',
+    paddingBottom: 48,
+  },
+  heroBrand: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 22,
+  },
+  heroBrandText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#22c55e',
+    letterSpacing: 3.5,
+  },
+  heroBrandDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
+  heroBrandTagline: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.45)',
+    letterSpacing: 2,
+  },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 52,
     fontWeight: '900',
     color: '#fff',
-    letterSpacing: -2,
-    lineHeight: 52,
-    marginBottom: 10,
+    letterSpacing: -2.5,
+    lineHeight: 56,
+    marginBottom: 12,
   },
   heroSub: {
     fontSize: 10,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.45)',
-    letterSpacing: 2.5,
+    color: 'rgba(255,255,255,0.42)',
+    letterSpacing: 2,
     textTransform: 'uppercase',
-    marginBottom: 28,
+    marginBottom: 30,
   },
-  heroCtas: { flexDirection: 'row', gap: 10 },
+  heroCtas: { flexDirection: 'row', gap: 12 },
   heroBtnPrimary: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 7,
+    gap: 8,
     backgroundColor: '#16a34a',
-    paddingHorizontal: 20,
-    paddingVertical: 13,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
     borderRadius: 999,
+    shadowColor: '#22c55e',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 6,
   },
   heroBtnPrimaryTxt: { color: '#fff', fontSize: 14, fontWeight: '700' },
   heroBtnSecondary: {
-    paddingHorizontal: 20,
-    paddingVertical: 13,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.28)',
+    borderColor: 'rgba(255,255,255,0.25)',
+    backgroundColor: 'rgba(255,255,255,0.06)',
   },
   heroBtnSecondaryTxt: { color: '#fff', fontSize: 14, fontWeight: '600' },
 
+  // Scroll indicator
+  scrollIndicator: {
+    marginTop: 20,
+    alignItems: 'center',
+    opacity: 0.6,
+  },
+
   // Stats
-  statsRow: { flexDirection: 'row', marginTop: 20, gap: 10 },
+  statsRow: { flexDirection: 'row', marginTop: 24, gap: 10 },
   statCard: {
     flex: 1,
     backgroundColor: '#0f1724',
@@ -352,11 +520,11 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
   },
-  statNum: { fontSize: 22, fontWeight: '700', color: '#4ade80', letterSpacing: -0.5 },
+  statNum: { fontSize: 24, fontWeight: '800', color: '#4ade80', letterSpacing: -0.5 },
   statLbl: { fontSize: 11, color: '#78716c', marginTop: 3, fontWeight: '500' },
 
   // Shared
-  mt8: { marginTop: 32 },
+  mt8: { marginTop: 36 },
   mt3: { marginTop: 12 },
   sectionLabel: {
     fontSize: 10,
@@ -367,13 +535,15 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
 
-  // Featured cards (width/height set inline)
+  // Featured cards
   featuredCard: { borderRadius: 20, overflow: 'hidden' },
-  featuredOverlay: { backgroundColor: 'rgba(0,0,0,0.38)' },
+  featuredOverlay: {
+    backgroundColor: 'rgba(0,0,0,0.32)',
+  },
   featuredContent: { flex: 1, padding: 14 },
   featuredBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(22,163,74,0.9)',
+    backgroundColor: 'rgba(22,163,74,0.88)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
@@ -384,10 +554,10 @@ const styles = StyleSheet.create({
   featuredMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
 
-  // Gallery (width/height set inline)
+  // Gallery
   galleryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
-  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.12)' },
+  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.1)' },
 
   // Action cards
   actionCard: {
@@ -400,9 +570,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#16a34a',
     alignItems: 'center',
     justifyContent: 'center',

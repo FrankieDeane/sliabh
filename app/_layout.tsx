@@ -11,6 +11,7 @@ import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
 import { Platform, View } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
+import { injectWebStyles } from '../src/utils/webStyles';
 
 function NetworkWatcher() {
   const setOnline = useNetworkStore((s) => s.setOnline);
@@ -55,6 +56,10 @@ export default function RootLayout() {
   const { ollamaUrl } = useSettingsStore();
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
+
+  useEffect(() => {
+    injectWebStyles();
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === 'web') {

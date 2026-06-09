@@ -154,7 +154,7 @@ export default function PlanificarScreen() {
       );
       return;
     }
-    router.push('/(tabs)/chat');
+    router.push('/(tabs)/asistente');
   }
 
   function handleClearRoute() {

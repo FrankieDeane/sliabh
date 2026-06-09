@@ -1,5 +1,13 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
@@ -7,36 +15,70 @@ import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 
-const NAV = [
-  { label: 'Inicio', href: '/(tabs)/inicio' as const },
-  { label: 'Rutas', href: '/(tabs)/rutas' as const },
-  { label: 'Mapas', href: '/(tabs)/mapas' as const },
-  { label: 'Planificar', href: '/(tabs)/planificar' as const },
-  { label: 'IA', href: '/(tabs)/asistente' as const },
-];
-
 const MAX_CONTENT = 1200;
+
+function useScrolled() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+    const handler = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+  return scrolled;
+}
 
 export function WebHeader() {
   if (Platform.OS !== 'web') return null;
+
   const router = useRouter();
   const pathname = usePathname();
   const { user, signOut } = useAuthStore();
   const { theme, toggle: toggleTheme } = useThemeStore();
-  const { lang, setLang } = useLangStore();
+  const { lang, setLang, t } = useLangStore();
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
+  const scrolled = useScrolled();
+
+  const NAV = [
+    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const },
+    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const },
+    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const },
+    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const },
+    { labelEs: 'IA', labelEn: 'AI', href: '/(tabs)/asistente' as const },
+  ];
 
   const c = isDark
-    ? { bg: '#070b14', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b', surface: '#0f1724' }
-    : { bg: '#ffffff', border: '#e2e8f0', text: '#0f172a', muted: '#64748b', surface: '#f8fafc' };
+    ? {
+        bg: scrolled ? 'rgba(7,11,20,0.88)' : '#070b14',
+        border: scrolled ? 'rgba(30,45,66,0.6)' : '#1e2d42',
+        text: '#f0f9ff',
+        muted: '#64748b',
+        surface: '#0f1724',
+      }
+    : {
+        bg: scrolled ? 'rgba(255,255,255,0.88)' : '#ffffff',
+        border: scrolled ? 'rgba(226,232,240,0.6)' : '#e2e8f0',
+        text: '#0f172a',
+        muted: '#64748b',
+        surface: '#f8fafc',
+      };
 
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
   const isCompact = width < 720;
 
   return (
-    <View style={[styles.bar, { backgroundColor: c.bg, borderBottomColor: c.border }]}>
+    <View
+      style={[
+        styles.bar,
+        {
+          backgroundColor: c.bg,
+          borderBottomColor: c.border,
+        },
+      ]}
+      {...(scrolled ? ({ 'data-header-glass': true } as any) : {})}
+    >
       <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
         {/* Logo + wordmark */}
         <TouchableOpacity
@@ -53,7 +95,7 @@ export function WebHeader() {
           )}
         </TouchableOpacity>
 
-        {/* Nav links (hidden on very small screens) */}
+        {/* Nav links */}
         {!isCompact && (
           <View style={styles.nav}>
             {NAV.map((n) => {
@@ -64,14 +106,16 @@ export function WebHeader() {
                   onPress={() => router.push(n.href)}
                   style={styles.navItem}
                   activeOpacity={0.7}
+                  {...({ 'data-nav-link': true } as any)}
                 >
                   <Text
                     style={[
                       styles.navLabel,
                       { color: active ? '#22c55e' : c.muted },
+                      active && styles.navLabelActive,
                     ]}
                   >
-                    {n.label}
+                    {t(n.labelEs, n.labelEn)}
                   </Text>
                   {active && <View style={styles.navDot} />}
                 </TouchableOpacity>
@@ -88,15 +132,21 @@ export function WebHeader() {
               onPress={() => setLang('es')}
               style={[styles.langBtn, lang === 'es' && styles.langBtnActive]}
               activeOpacity={0.8}
+              accessibilityLabel="Switch to Spanish"
             >
-              <Text style={[styles.langBtnTxt, { color: lang === 'es' ? '#fff' : c.muted }]}>ES</Text>
+              <Text style={[styles.langBtnTxt, { color: lang === 'es' ? '#fff' : c.muted }]}>
+                ES
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setLang('en')}
               style={[styles.langBtn, lang === 'en' && styles.langBtnActive]}
               activeOpacity={0.8}
+              accessibilityLabel="Switch to English"
             >
-              <Text style={[styles.langBtnTxt, { color: lang === 'en' ? '#fff' : c.muted }]}>EN</Text>
+              <Text style={[styles.langBtnTxt, { color: lang === 'en' ? '#fff' : c.muted }]}>
+                EN
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -105,9 +155,13 @@ export function WebHeader() {
             onPress={toggleTheme}
             style={[styles.iconBtn, { borderColor: c.border }]}
             activeOpacity={0.8}
-            accessibilityLabel={isDark ? 'Switch to Sun mode' : 'Switch to Moon mode'}
+            accessibilityLabel={isDark ? t('Cambiar a modo claro', 'Switch to light mode') : t('Cambiar a modo oscuro', 'Switch to dark mode')}
           >
-            <Ionicons name={isDark ? 'sunny-outline' : 'moon-outline'} size={16} color={c.muted} />
+            <Ionicons
+              name={isDark ? 'sunny-outline' : 'moon-outline'}
+              size={16}
+              color={c.muted}
+            />
           </TouchableOpacity>
 
           {user ? (
@@ -123,7 +177,11 @@ export function WebHeader() {
                 activeOpacity={0.8}
               >
                 <Ionicons name="log-out-outline" size={15} color={c.muted} />
-                {!isCompact && <Text style={[styles.loginBtnTxt, { color: c.muted }]}>Salir</Text>}
+                {!isCompact && (
+                  <Text style={[styles.loginBtnTxt, { color: c.muted }]}>
+                    {t('Salir', 'Sign out')}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           ) : (
@@ -133,7 +191,9 @@ export function WebHeader() {
               activeOpacity={0.85}
             >
               <Ionicons name="person-outline" size={15} color="#22c55e" />
-              <Text style={styles.loginBtnTxt}>Iniciar sesión</Text>
+              <Text style={styles.loginBtnTxt}>
+                {t('Iniciar sesión', 'Sign in')}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -147,6 +207,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderBottomWidth: 1,
     zIndex: 100,
+    transition: 'background-color 0.3s ease, border-color 0.3s ease' as any,
   },
   inner: {
     flexDirection: 'row',
@@ -192,6 +253,10 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 13,
     fontWeight: '600',
+    transition: 'color 0.18s ease' as any,
+  },
+  navLabelActive: {
+    color: '#22c55e',
   },
   navDot: {
     width: 4,
@@ -215,6 +280,7 @@ const styles = StyleSheet.create({
   langBtn: {
     paddingHorizontal: 10,
     paddingVertical: 5,
+    transition: 'background-color 0.18s ease' as any,
   },
   langBtnActive: {
     backgroundColor: '#16a34a',
@@ -230,6 +296,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    transition: 'border-color 0.18s ease' as any,
   },
   userRow: {
     flexDirection: 'row',
@@ -250,6 +317,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 7,
+    transition: 'background-color 0.18s ease' as any,
   },
   loginBtnTxt: {
     fontSize: 13,

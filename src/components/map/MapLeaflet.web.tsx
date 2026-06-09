@@ -91,7 +91,7 @@ export function MapLeaflet({
   const containerStyle: React.CSSProperties = {
     height: typeof height === 'number'
       ? `${height}px`
-      : 'calc(100vh - 58px)', // 58px = WebHeader height
+      : 'calc(100vh - 58px)',
     width: '100%',
     minHeight: 300,
   };

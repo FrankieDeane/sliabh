@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { animateScrollReveal } from '../../src/utils/gsapAnimations';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useLangStore } from '../../src/store/langStore';
 import {
   ARGENTINA_TRAILS,
   TRAIL_REGIONS,
@@ -28,6 +30,12 @@ export default function RutasScreen() {
   const { width } = useWindowDimensions();
   const router = useRouter();
   const [region, setRegion] = useState<TrailRegion>('Todas');
+  const { t } = useLangStore();
+
+  useEffect(() => {
+    const timer = setTimeout(() => animateScrollReveal(), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   function goToTrail(id: string) {
     router.push({ pathname: '/(tabs)/ruta/[id]', params: { id } } as any);
@@ -69,9 +77,11 @@ export default function RutasScreen() {
         ]}
       >
         <View>
-          <Text style={[styles.headerTitle, { color: c.text }]}>Rutas Argentina</Text>
+          <Text style={[styles.headerTitle, { color: c.text }]}>
+            {t('Rutas Argentina', 'Argentine Trails')}
+          </Text>
           <Text style={[styles.headerSub, { color: c.muted }]}>
-            {ARGENTINA_TRAILS.length} senderos · Patagonia y toda Argentina
+            {ARGENTINA_TRAILS.length} {t('senderos · Patagonia y toda Argentina', 'trails · Patagonia and all of Argentina')}
           </Text>
         </View>
         <View style={[styles.sourceBadge, { backgroundColor: c.elevated, borderColor: c.border }]}>
