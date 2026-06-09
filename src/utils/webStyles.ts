@@ -180,6 +180,49 @@ export function injectWebStyles() {
       gap: 12px;
     }
 
+    /* ── Home hero: full viewport height ── */
+    [data-hero-section] {
+      height: 100vh !important;
+      min-height: 620px;
+    }
+    [data-hero-title-display] {
+      font-size: clamp(42px, 6vw, 72px) !important;
+      line-height: 1.0 !important;
+      letter-spacing: -2.5px !important;
+    }
+
+    /* ── Feature blocks: 3-column on desktop ── */
+    [data-feature-blocks] {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      [data-feature-blocks] {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Rutas split layout ── */
+    [data-rutas-split] {
+      display: flex;
+      flex-direction: row;
+      height: calc(100vh - 58px);
+      overflow: hidden;
+    }
+    [data-rutas-list-panel] {
+      width: 400px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    [data-rutas-map-panel] {
+      flex: 1;
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 58px);
+    }
+
     /* ── Trail detail: full-viewport hero ── */
     [data-trail-hero] {
       height: 100vh !important;
