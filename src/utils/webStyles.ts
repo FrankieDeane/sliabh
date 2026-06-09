@@ -2,6 +2,17 @@ import { Platform } from 'react-native';
 
 export function injectWebStyles() {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+
+  // Leaflet CSS must be synchronously available before MapContainer mounts
+  const leafletId = 'leaflet-css-eager';
+  if (!document.getElementById(leafletId)) {
+    const link = document.createElement('link');
+    link.id = leafletId;
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+  }
+
   const id = 'sliabh-global-styles';
   if (document.getElementById(id)) return;
 
@@ -167,6 +178,36 @@ export function injectWebStyles() {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
+    }
+
+    /* ── Premium button states ── */
+    [data-btn] {
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.15s ease,
+                  filter 0.15s ease;
+      will-change: transform;
+    }
+    [data-btn]:hover  { transform: translateY(-2px) scale(1.02); filter: brightness(1.08); }
+    [data-btn]:active { transform: translateY(1px)  scale(0.98); filter: brightness(0.95); }
+    [data-btn]:focus-visible {
+      outline: 2px solid #22c55e;
+      outline-offset: 3px;
+    }
+    [data-btn="primary"] {
+      box-shadow: 0 4px 16px rgba(22,163,74,0.35), 0 1px 3px rgba(0,0,0,0.25);
+    }
+    [data-btn="primary"]:hover {
+      box-shadow: 0 8px 24px rgba(22,163,74,0.45), 0 2px 6px rgba(0,0,0,0.3);
+    }
+    [data-btn="secondary"]:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    [data-btn="ghost"]:hover {
+      background-color: rgba(22,163,74,0.08) !important;
+    }
+    [data-btn="danger"] {
+      box-shadow: 0 4px 14px rgba(220,38,38,0.3);
     }
   `;
   document.head.appendChild(style);

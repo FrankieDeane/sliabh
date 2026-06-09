@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
-// Only import on web
 let MapContainer: any, TileLayer: any, useMapEvents: any, Marker: any, Popup: any, Polyline: any;
 if (typeof window !== 'undefined') {
   const rl = require('react-leaflet');
@@ -12,7 +11,6 @@ if (typeof window !== 'undefined') {
   Marker = rl.Marker;
   Popup = rl.Popup;
   Polyline = rl.Polyline;
-  // Fix default marker icon
   delete (L.Icon.Default.prototype as any)._getIconUrl;
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -37,18 +35,16 @@ const TILE_URLS = {
 };
 
 const TILE_ATTRIBUTIONS = {
-  osm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  osm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   topo: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
-  dark: '&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; OpenStreetMap contributors',
+  dark: '&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; OpenStreetMap',
 };
 
 function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) => void }) {
   if (!useMapEvents) return null;
   useMapEvents({
     click(e: any) {
-      if (onMapPress) {
-        onMapPress(e.latlng.lat, e.latlng.lng);
-      }
+      onMapPress?.(e.latlng.lat, e.latlng.lng);
     },
   });
   return null;
@@ -62,6 +58,9 @@ export function MapLeaflet({
   height = 400,
   layer = 'osm',
 }: MapLeafletProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Ensure Leaflet CSS is present (injectWebStyles pre-injects it, this is a safety net)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const id = 'leaflet-css';
@@ -70,7 +69,7 @@ export function MapLeaflet({
       link.id = id;
       link.rel = 'stylesheet';
       link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
+      document.head.prepend(link); // prepend so it loads before any render
     }
   }, []);
 
@@ -80,26 +79,26 @@ export function MapLeaflet({
         style={{
           height: typeof height === 'number' ? height : undefined,
           flex: height === '100%' ? 1 : undefined,
-          backgroundColor: '#1c1917',
-          alignItems: 'center',
-          justifyContent: 'center',
+          backgroundColor: '#0f1724',
         }}
       />
     );
   }
 
+  const isFullHeight = height === '100%';
   const containerStyle: React.CSSProperties = {
-    height: typeof height === 'number'
-      ? `${height}px`
-      : 'calc(100vh - 58px)',
     width: '100%',
+    height: isFullHeight ? 'calc(100vh - 58px)' : `${height}px`,
     minHeight: 300,
+    // Ensure the container is a positioned block so Leaflet can measure it
+    position: 'relative',
+    display: 'block',
   };
 
   const polylinePositions = waypoints.map((w) => [w.lat, w.lon] as [number, number]);
 
   return (
-    <div style={containerStyle}>
+    <div ref={wrapperRef} style={containerStyle}>
       <MapContainer
         center={center}
         zoom={zoom}
@@ -115,19 +114,13 @@ export function MapLeaflet({
         {waypoints.map((wp, index) => (
           <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
             <Popup>
-              <strong>{index + 1}. {wp.name}</strong>
-              <br />
+              <strong>{index + 1}. {wp.name}</strong><br />
               {wp.lat.toFixed(5)}, {wp.lon.toFixed(5)}
             </Popup>
           </Marker>
         ))}
         {polylinePositions.length >= 2 && (
-          <Polyline
-            positions={polylinePositions}
-            color="#22c55e"
-            weight={3}
-            opacity={0.8}
-          />
+          <Polyline positions={polylinePositions} color="#22c55e" weight={3} opacity={0.85} />
         )}
       </MapContainer>
     </div>

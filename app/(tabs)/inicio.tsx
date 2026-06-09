@@ -97,6 +97,48 @@ const PACK_URI =
 const AUTH_BG_URI =
   'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&fit=crop&auto=format';
 
+function GalleryCell({
+  item,
+  index,
+  width,
+  height,
+  onPress,
+  t,
+}: {
+  item: { uri: string; labelEs: string; labelEn: string };
+  index: number;
+  width: number;
+  height: number;
+  onPress: (i: number) => void;
+  t: (es: string, en: string) => string;
+}) {
+  return (
+    <TouchableOpacity
+      style={[styles.galleryCell, { width, height }]}
+      activeOpacity={0.9}
+      onPress={() => onPress(index)}
+      {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
+    >
+      <ImageBackground
+        source={{ uri: item.uri }}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        <View style={[StyleSheet.absoluteFillObject, styles.galleryOverlay]} />
+        <View
+          style={styles.galleryLabel}
+          {...(Platform.OS === 'web' ? ({ 'data-gallery-label': true } as any) : {})}
+        >
+          <Text style={styles.galleryLabelTxt}>{t(item.labelEs, item.labelEn)}</Text>
+        </View>
+        <View style={styles.galleryExpandIcon}>
+          <Ionicons name="expand-outline" size={16} color="rgba(255,255,255,0.6)" />
+        </View>
+      </ImageBackground>
+    </TouchableOpacity>
+  );
+}
+
 function SectionDivider({ sidePad }: { sidePad: number }) {
   if (Platform.OS !== 'web') {
     return <View style={[styles.divider, { marginHorizontal: sidePad }]} />;
@@ -127,7 +169,8 @@ export default function InicioScreen() {
 
   const galleryGap = 10;
   const galleryInnerW = width - 2 * sidePad;
-  const cellW = (galleryInnerW - galleryGap) / 2;
+  // Use Math.floor to prevent sub-pixel overflow that causes item 2 to wrap to a new row
+  const cellW = Math.floor((galleryInnerW - galleryGap) / 2);
   const cellH = Math.round(cellW * 0.68);
   const fullW = galleryInnerW;
   const fullH = Math.round(fullW * 0.44);
@@ -385,41 +428,15 @@ export default function InicioScreen() {
           >
             {t('GALERÍA', 'GALLERY')}
           </Text>
-          <View style={[styles.galleryGrid, { marginHorizontal: sidePad, gap: galleryGap }]}>
-            {GALLERY.map((item, i) => (
-              <TouchableOpacity
-                key={i}
-                style={[
-                  styles.galleryCell,
-                  i === 0
-                    ? { width: fullW, height: fullH }
-                    : { width: cellW, height: cellH },
-                ]}
-                activeOpacity={0.9}
-                onPress={() => setLightboxIndex(i)}
-                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
-              >
-                <ImageBackground
-                  source={{ uri: item.uri }}
-                  style={StyleSheet.absoluteFillObject}
-                  resizeMode="cover"
-                >
-                  <View style={[StyleSheet.absoluteFillObject, styles.galleryOverlay]} />
-                  <View
-                    style={styles.galleryLabel}
-                    {...(Platform.OS === 'web' ? ({ 'data-gallery-label': true } as any) : {})}
-                  >
-                    <Text style={styles.galleryLabelTxt}>
-                      {t(item.labelEs, item.labelEn)}
-                    </Text>
-                  </View>
-                  {/* Expand icon */}
-                  <View style={styles.galleryExpandIcon}>
-                    <Ionicons name="expand-outline" size={16} color="rgba(255,255,255,0.6)" />
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
-            ))}
+          {/* Explicit 2-row structure — avoids sub-pixel flexWrap bugs */}
+          <View style={{ marginHorizontal: sidePad }}>
+            {/* Row 1: full-width image */}
+            <GalleryCell item={GALLERY[0]} index={0} width={fullW} height={fullH} onPress={setLightboxIndex} t={t} />
+            {/* Row 2: two half-width images side by side */}
+            <View style={{ flexDirection: 'row', gap: galleryGap, marginTop: galleryGap }}>
+              <GalleryCell item={GALLERY[1]} index={1} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} />
+              <GalleryCell item={GALLERY[2]} index={2} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} />
+            </View>
           </View>
         </View>
 
@@ -722,7 +739,6 @@ const styles = StyleSheet.create({
   featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
 
   // Gallery
-  galleryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
   galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.15)' },
   galleryLabel: {
