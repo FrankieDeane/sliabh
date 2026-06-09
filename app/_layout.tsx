@@ -13,6 +13,15 @@ import { Platform, View } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
 import { injectWebStyles } from '../src/utils/webStyles';
 
+// Initialize AI provider at module load so asistente.tsx's useEffect sees a provider
+// (child effects fire before parent effects, so useEffect in _layout is too late)
+if (Platform.OS === 'web') {
+  setAIProvider(new FallbackProvider(new CloudProvider()));
+} else {
+  const defaultUrl = useSettingsStore.getState?.()?.ollamaUrl ?? 'http://localhost:11434';
+  setAIProvider(new FallbackProvider(new OllamaProvider({ baseUrl: defaultUrl })));
+}
+
 function NetworkWatcher() {
   const setOnline = useNetworkStore((s) => s.setOnline);
 

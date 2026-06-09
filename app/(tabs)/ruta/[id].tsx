@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -412,7 +412,7 @@ export default function TrailDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const { lang, t } = useLangStore();
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
@@ -421,6 +421,7 @@ export default function TrailDetailScreen() {
 
   const MAX_CONTENT = 800;
   const sidePad = Math.max(16, (width - Math.min(width, MAX_CONTENT)) / 2);
+  const heroHeight = Platform.OS === 'web' ? height : Math.round(height * 0.62);
 
   // ── Not found ───────────────────────────────────────────────────────────────
   if (!trail) {
@@ -500,93 +501,109 @@ export default function TrailDetailScreen() {
 
   return (
     <View style={styles.root}>
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <View style={styles.heroContainer}>
-        <ImageBackground
-          source={{ uri: trail.photo_uri }}
-          style={styles.hero}
-          resizeMode="cover"
-        >
-          {/* Dark gradient overlay */}
-          <View style={styles.heroOverlay} />
+      {/* Floating back button — always visible above scroll */}
+      <TouchableOpacity
+        style={[styles.backBtn, { top: insets.top + 10 }]}
+        onPress={() => router.back()}
+        activeOpacity={0.75}
+      >
+        <Ionicons name="chevron-back" size={22} color={C.text} />
+      </TouchableOpacity>
 
-          {/* Back button */}
-          <TouchableOpacity
-            style={[styles.backBtn, { top: insets.top + 10 }]}
-            onPress={() => router.back()}
-            activeOpacity={0.75}
-          >
-            <Ionicons name="chevron-back" size={22} color={C.text} />
-          </TouchableOpacity>
-
-          {/* Hero text */}
-          <View style={[styles.heroText, { paddingHorizontal: sidePad, paddingBottom: insets.bottom > 0 ? 20 : 24 }]}>
-            <View style={styles.activityRow}>
-              <View style={[styles.activityBadge, { borderColor: C.border }]}>
-                <Text style={styles.activityBadgeText}>{activityLabel}</Text>
-              </View>
-            </View>
-            <Text style={styles.heroTitle}>{trail.name}</Text>
-            <Text style={styles.heroSub}>
-              {trail.province}
-              {trail.subarea ? ` · ${trail.subarea}` : ''} · {trail.area}
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-
-      {/* ── Stat pills ───────────────────────────────────────────────────────── */}
-      <View style={[styles.statsBar, { paddingHorizontal: sidePad }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsScroll}>
-          <StatPill icon="map-outline" value={`${trail.distance_km} km`} />
-          <StatPill icon="trending-up-outline" value={`${trail.elevation_gain_m} m`} />
-          <StatPill icon="triangle-outline" value={`${trail.max_altitude_m} m`} />
-          <StatPill icon="time-outline" value={durationLabel} />
-          <View style={[styles.diffPill, { backgroundColor: diffColor.bg }]}>
-            <Text style={[styles.diffPillText, { color: diffColor.text }]}>{diffLabel}</Text>
-          </View>
-        </ScrollView>
-      </View>
-
-      {/* ── Tab bar ──────────────────────────────────────────────────────────── */}
-      <View style={[styles.tabBar, { paddingHorizontal: sidePad }]}>
-        {TABS.map((tab) => {
-          const active = activeTab === tab.key;
-          return (
-            <TouchableOpacity
-              key={tab.key}
-              style={[styles.tabItem, active && styles.tabItemActive]}
-              onPress={() => setActiveTab(tab.key)}
-              activeOpacity={0.75}
-            >
-              <Text style={[styles.tabLabel, active ? styles.tabLabelActive : { color: C.muted }]}>
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* ── Tab content ──────────────────────────────────────────────────────── */}
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: sidePad }]}
         showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[1]}
       >
-        {activeTab === 'overview' && (
-          <OverviewTab trail={trail} lang={lang} t={t} />
-        )}
-        {activeTab === 'logistics' && (
-          <LogisticsTab lines={logisticsLines} t={t} />
-        )}
-        {activeTab === 'safety' && (
-          <SafetyTab bullets={safetyBullets} difficulty={trail.difficulty} t={t} />
-        )}
-        {activeTab === 'gear' && (
-          <GearTab categories={gearCategories} />
-        )}
+        {/* ── Hero — index 0, scrolls away ───────────────────────────────────── */}
+        <View
+          style={{ height: heroHeight }}
+          {...(Platform.OS === 'web' ? ({ 'data-trail-hero': true } as any) : {})}
+        >
+          <ImageBackground
+            source={{ uri: trail.photo_uri }}
+            style={{ flex: 1, justifyContent: 'flex-end' }}
+            resizeMode="cover"
+          >
+            {/* Cinematic gradient: dark top for back-btn, strong bottom for text */}
+            <View
+              style={styles.heroGradientTop}
+              {...(Platform.OS === 'web' ? ({ 'data-trail-hero-gradient-top': true } as any) : {})}
+            />
+            <View
+              style={styles.heroGradientBottom}
+              {...(Platform.OS === 'web' ? ({ 'data-trail-hero-gradient-bottom': true } as any) : {})}
+            />
 
-        <View style={{ height: 40 }} />
+            <View style={[styles.heroText, { paddingHorizontal: sidePad, paddingBottom: 40 }]}>
+              {/* Activity + region line */}
+              <View style={styles.activityRow}>
+                <View style={[styles.activityBadge, { borderColor: 'rgba(34,197,94,0.5)' }]}>
+                  <Text style={styles.activityBadgeText}>{activityLabel.toUpperCase()}</Text>
+                </View>
+                <View style={[styles.activityBadge, { borderColor: 'rgba(255,255,255,0.2)', marginLeft: 6 }]}>
+                  <Text style={[styles.activityBadgeText, { color: 'rgba(240,249,255,0.7)' }]}>
+                    {trail.province.toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Large display title */}
+              <Text style={styles.heroTitle}>{trail.name}</Text>
+              <Text style={styles.heroSub}>{trail.area}{trail.subarea ? ` · ${trail.subarea}` : ''}</Text>
+
+              {/* Inline key stats in hero */}
+              <View style={styles.heroStats}>
+                <HeroStat label={t('Distancia', 'Distance')} value={`${trail.distance_km} km`} />
+                <View style={styles.heroStatDivider} />
+                <HeroStat label={t('Desnivel', 'Gain')} value={`+${trail.elevation_gain_m} m`} />
+                <View style={styles.heroStatDivider} />
+                <HeroStat label={t('Altitud', 'Altitude')} value={`${trail.max_altitude_m} m`} />
+                <View style={styles.heroStatDivider} />
+                <HeroStat label={t('Tiempo', 'Time')} value={durationLabel} />
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
+
+        {/* ── Sticky tab bar — index 1 ────────────────────────────────────────── */}
+        <View
+          style={[styles.tabBar, { paddingHorizontal: sidePad }]}
+          {...(Platform.OS === 'web' ? ({ 'data-trail-tab-bar': true } as any) : {})}
+        >
+          {TABS.map((tab) => {
+            const active = activeTab === tab.key;
+            return (
+              <TouchableOpacity
+                key={tab.key}
+                style={[styles.tabItem, active && styles.tabItemActive]}
+                onPress={() => setActiveTab(tab.key)}
+                activeOpacity={0.75}
+              >
+                <Text style={[styles.tabLabel, active ? styles.tabLabelActive : { color: C.muted }]}>
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
+        <View style={[styles.scrollContent, { paddingHorizontal: sidePad }]}>
+          {activeTab === 'overview' && (
+            <OverviewTab trail={trail} lang={lang} t={t} />
+          )}
+          {activeTab === 'logistics' && (
+            <LogisticsTab lines={logisticsLines} t={t} />
+          )}
+          {activeTab === 'safety' && (
+            <SafetyTab bullets={safetyBullets} difficulty={trail.difficulty} t={t} />
+          )}
+          {activeTab === 'gear' && (
+            <GearTab categories={gearCategories} />
+          )}
+          <View style={{ height: 60 }} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -599,6 +616,100 @@ function StatPill({ icon, value }: { icon: React.ComponentProps<typeof Ionicons>
     <View style={styles.statPill}>
       <Ionicons name={icon} size={13} color={C.accent} />
       <Text style={styles.statPillText}>{value}</Text>
+    </View>
+  );
+}
+
+function HeroStat({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.heroStatItem}>
+      <Text style={styles.heroStatValue}>{value}</Text>
+      <Text style={styles.heroStatLabel}>{label}</Text>
+    </View>
+  );
+}
+
+function ElevationProfile({
+  distanceKm,
+  gainM,
+  maxAltM,
+}: {
+  distanceKm: number;
+  gainM: number;
+  maxAltM: number;
+}) {
+  if (Platform.OS !== 'web') return null;
+
+  const baseAlt = maxAltM - gainM;
+  const W = 400;
+  const H = 90;
+  const pad = 2;
+
+  // Plausible ascent profile: steepens in the middle, slight descent at end
+  const rawPts = [
+    { x: 0, y: baseAlt },
+    { x: distanceKm * 0.1, y: baseAlt + gainM * 0.05 },
+    { x: distanceKm * 0.28, y: baseAlt + gainM * 0.3 },
+    { x: distanceKm * 0.48, y: baseAlt + gainM * 0.62 },
+    { x: distanceKm * 0.65, y: maxAltM },
+    { x: distanceKm * 0.78, y: maxAltM - gainM * 0.08 },
+    { x: distanceKm * 0.9, y: maxAltM - gainM * 0.18 },
+    { x: distanceKm, y: maxAltM - gainM * 0.28 },
+  ];
+
+  const minY = Math.min(...rawPts.map((p) => p.y));
+  const maxY = Math.max(...rawPts.map((p) => p.y));
+  const rangeY = maxY - minY || 1;
+
+  const toSvg = (x: number, y: number) => [
+    pad + (x / distanceKm) * (W - 2 * pad),
+    pad + (1 - (y - minY) / rangeY) * (H - 2 * pad - 10),
+  ] as [number, number];
+
+  const pts = rawPts.map((p) => toSvg(p.x, p.y));
+
+  // Smooth bezier path
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [px, py] = pts[i - 1];
+    const [cx, cy] = pts[i];
+    const cpx = (px + cx) / 2;
+    d += ` C ${cpx} ${py} ${cpx} ${cy} ${cx} ${cy}`;
+  }
+  const fillD = `${d} L ${pts[pts.length - 1][0]} ${H} L ${pts[0][0]} ${H} Z`;
+
+  const peakPt = pts[4];
+
+  return (
+    <View style={{ marginTop: 8 }}>
+      {/* @ts-ignore — SVG on web */}
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', overflow: 'visible' }}>
+        <defs>
+          {/* @ts-ignore */}
+          <linearGradient id="elevFill" x1="0" y1="0" x2="0" y2="1">
+            {/* @ts-ignore */}
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.35" />
+            {/* @ts-ignore */}
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        {/* @ts-ignore */}
+        <path d={fillD} fill="url(#elevFill)" />
+        {/* @ts-ignore */}
+        <path d={d} fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Peak dot */}
+        {/* @ts-ignore */}
+        <circle cx={peakPt[0]} cy={peakPt[1]} r="4" fill="#22c55e" />
+        {/* @ts-ignore */}
+        <circle cx={peakPt[0]} cy={peakPt[1]} r="8" fill="#22c55e" fillOpacity="0.2" />
+      </svg>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+        <Text style={{ color: C.muted, fontSize: 10 }}>0 km</Text>
+        <Text style={{ color: C.accent, fontSize: 11, fontWeight: '700' }}>
+          ↑ {gainM.toLocaleString()} m · {maxAltM.toLocaleString()} m máx
+        </Text>
+        <Text style={{ color: C.muted, fontSize: 10 }}>{distanceKm} km</Text>
+      </View>
     </View>
   );
 }
@@ -670,6 +781,16 @@ function OverviewTab({
 }) {
   return (
     <View style={styles.tabContent}>
+      {/* Elevation profile */}
+      <SectionCard>
+        <CardLabel text={t('Perfil de elevación', 'Elevation Profile')} />
+        <ElevationProfile
+          distanceKm={trail.distance_km}
+          gainM={trail.elevation_gain_m}
+          maxAltM={trail.max_altitude_m}
+        />
+      </SectionCard>
+
       {/* Description */}
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
@@ -824,45 +945,69 @@ const styles = StyleSheet.create({
   },
 
   // Hero
-  heroContainer: { height: 280 },
-  hero: { flex: 1, justifyContent: 'flex-end' },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(7,11,20,0.55)',
+  heroGradientTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    backgroundColor: 'rgba(7,11,20,0.4)',
+  },
+  heroGradientBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '65%' as any,
+    backgroundColor: 'rgba(7,11,20,0.75)',
   },
   backBtn: {
     position: 'absolute',
+    zIndex: 10,
     left: 16,
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(7,11,20,0.65)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(7,11,20,0.7)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: 'rgba(255,255,255,0.15)',
   },
-  heroText: { gap: 4 },
-  activityRow: { flexDirection: 'row' },
+  heroText: { gap: 8 },
+  activityRow: { flexDirection: 'row', marginBottom: 4 },
   activityBadge: {
     borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 10,
+    borderRadius: 4,
+    paddingHorizontal: 9,
     paddingVertical: 4,
-    backgroundColor: 'rgba(7,11,20,0.6)',
-    marginBottom: 6,
+    backgroundColor: 'rgba(7,11,20,0.5)',
   },
-  activityBadgeText: { fontSize: 11, fontWeight: '600', color: C.accent, letterSpacing: 0.5 },
+  activityBadgeText: { fontSize: 10, fontWeight: '700', color: C.accent, letterSpacing: 1.2 },
   heroTitle: {
-    fontSize: 26,
-    fontWeight: '800',
+    fontSize: 42,
+    fontWeight: '900',
     color: C.text,
-    letterSpacing: -0.5,
-    lineHeight: 32,
+    letterSpacing: -1.5,
+    lineHeight: 46,
   },
-  heroSub: { fontSize: 13, color: 'rgba(240,249,255,0.7)', marginTop: 2 },
+  heroSub: { fontSize: 13, color: 'rgba(240,249,255,0.6)', letterSpacing: 0.3, marginTop: 2 },
 
-  // Stats
+  // Hero inline stats
+  heroStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingTop: 18,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.12)',
+  },
+  heroStatItem: { flex: 1, alignItems: 'center' },
+  heroStatValue: { fontSize: 18, fontWeight: '800', color: C.text, letterSpacing: -0.5 },
+  heroStatLabel: { fontSize: 10, color: 'rgba(240,249,255,0.5)', marginTop: 2, letterSpacing: 0.5 },
+  heroStatDivider: { width: 1, height: 32, backgroundColor: 'rgba(255,255,255,0.12)' },
+
+  // Stats (legacy — kept for pill usage if needed)
   statsBar: {
     backgroundColor: C.surface,
     borderBottomWidth: 1,
@@ -896,41 +1041,41 @@ const styles = StyleSheet.create({
   // Tab bar
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: C.surface,
+    backgroundColor: C.bg,
     borderBottomWidth: 1,
     borderBottomColor: C.border,
     gap: 0,
   },
   tabItem: {
     flex: 1,
-    paddingVertical: 13,
+    paddingVertical: 15,
     alignItems: 'center',
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
   },
   tabItemActive: { borderBottomColor: C.accent },
-  tabLabel: { fontSize: 12, fontWeight: '600' },
+  tabLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase' as const },
   tabLabelActive: { color: C.accent },
 
   // Scroll / content
   scroll: { flex: 1 },
-  scrollContent: { paddingTop: 20, paddingBottom: 24 },
+  scrollContent: { paddingTop: 20, paddingBottom: 24, gap: 14 },
   tabContent: { gap: 14 },
 
   // Section card
   sectionCard: {
     backgroundColor: C.surface,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: C.border,
-    padding: 16,
-    gap: 10,
+    padding: 20,
+    gap: 12,
   },
   cardLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 2,
+    textTransform: 'uppercase' as const,
     color: C.muted,
     marginBottom: 2,
   },

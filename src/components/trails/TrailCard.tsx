@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
 import { DIFFICULTY_LABEL, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
 
+// ── Featured card — full-bleed hero, AllTrails-style ────────────────────────
+
 interface FeaturedProps {
   trail: ArgentinaTrail;
   onPress: () => void;
@@ -13,54 +15,50 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
 
   return (
-    <TouchableOpacity style={styles.featured} onPress={onPress} activeOpacity={0.88}>
+    <TouchableOpacity style={styles.featured} onPress={onPress} activeOpacity={0.9}>
       <ImageBackground
         source={{ uri: trail.photo_uri }}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
-      >
-        <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
-        <View style={styles.featuredContent}>
-          <View style={styles.featuredTop}>
-            <View style={[styles.activityPill, { backgroundColor: 'rgba(0,0,0,0.45)' }]}>
-              <Ionicons
-                name={ACTIVITY_ICON[trail.activity] as any}
-                size={12}
-                color="rgba(255,255,255,0.9)"
-              />
-              <Text style={styles.activityText}>{trail.activity.replace('_', ' ')}</Text>
-            </View>
-            <View style={[styles.diffPill, { backgroundColor: diff.bg }]}>
-              <Text style={[styles.diffText, { color: diff.text }]}>
-                {DIFFICULTY_LABEL[trail.difficulty]}
-              </Text>
-            </View>
-          </View>
+      />
+      {/* Bottom gradient overlay */}
+      <View style={styles.featuredGradient} />
 
-          <View style={{ flex: 1 }} />
-
-          <Text style={styles.featuredTitle}>{trail.name}</Text>
-          <Text style={styles.featuredSub}>
-            {trail.province} · {trail.area}
+      {/* Top badges */}
+      <View style={styles.featuredTop}>
+        <View style={[styles.diffBadge, { backgroundColor: diff.bg }]}>
+          <Text style={[styles.diffBadgeText, { color: diff.text }]}>
+            {DIFFICULTY_LABEL[trail.difficulty]}
           </Text>
-
-          <View style={styles.statsRow}>
-            <StatBadge icon="footsteps-outline" value={`${trail.distance_km} km`} />
-            <StatBadge icon="arrow-up-outline" value={`${trail.elevation_gain_m} m`} />
-            <StatBadge
-              icon="time-outline"
-              value={
-                trail.duration.min === trail.duration.max
-                  ? `${trail.duration.min} ${trail.duration.unit}`
-                  : `${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`
-              }
-            />
-          </View>
         </View>
-      </ImageBackground>
+        {trail.permits_required && (
+          <View style={styles.permitBadge}>
+            <Ionicons name="document-text-outline" size={10} color="#fbbf24" />
+            <Text style={styles.permitBadgeText}>Permiso</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Bottom content */}
+      <View style={styles.featuredBottom}>
+        <Text style={styles.featuredTitle} numberOfLines={2}>{trail.name}</Text>
+        <Text style={styles.featuredRegion}>
+          {trail.province} · {trail.area}
+        </Text>
+        <View style={styles.statsRow}>
+          <StatChip icon="footsteps-outline" value={`${trail.distance_km} km`} />
+          <StatChip icon="trending-up-outline" value={`+${trail.elevation_gain_m} m`} />
+          <StatChip
+            icon="time-outline"
+            value={`${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`}
+          />
+        </View>
+      </View>
     </TouchableOpacity>
   );
 }
+
+// ── List card — AllTrails horizontal layout ──────────────────────────────────
 
 interface ListProps {
   trail: ArgentinaTrail;
@@ -73,72 +71,69 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.listCard, { backgroundColor: c.surface, borderColor: c.border }]}
+      style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }]}
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
     >
-      <View style={styles.listThumb}>
+      {/* Photo */}
+      <View style={styles.photoWrap}>
         <ImageBackground
           source={{ uri: trail.photo_uri }}
           style={StyleSheet.absoluteFillObject}
           resizeMode="cover"
         />
+        <View style={[styles.diffCorner, { backgroundColor: diff.bg }]}>
+          <Text style={[styles.diffCornerText, { color: diff.text }]}>
+            {DIFFICULTY_LABEL[trail.difficulty]}
+          </Text>
+        </View>
       </View>
 
-      <View style={styles.listBody}>
-        <View style={styles.listTop}>
-          <Text style={[styles.listTitle, { color: c.text }]} numberOfLines={1}>
-            {trail.name}
+      {/* Info */}
+      <View style={styles.cardBody}>
+        <Text style={[styles.cardTitle, { color: c.text }]} numberOfLines={2}>
+          {trail.name}
+        </Text>
+        <View style={styles.cardRegionRow}>
+          <Ionicons name="location-outline" size={11} color={c.muted} />
+          <Text style={[styles.cardRegion, { color: c.muted }]} numberOfLines={1}>
+            {trail.province} · {trail.area}
           </Text>
-          <View style={[styles.diffPillSm, { backgroundColor: diff.bg }]}>
-            <Text style={[styles.diffTextSm, { color: diff.text }]}>
-              {DIFFICULTY_LABEL[trail.difficulty]}
-            </Text>
-          </View>
         </View>
 
-        <Text style={[styles.listSub, { color: c.muted }]} numberOfLines={1}>
-          {trail.province} · {trail.area}
-        </Text>
-
-        <View style={styles.listStats}>
+        <View style={styles.cardStats}>
           <MiniStat icon="footsteps-outline" value={`${trail.distance_km} km`} color={c.muted} />
-          <MiniStat
-            icon="arrow-up-outline"
-            value={`+${trail.elevation_gain_m} m`}
-            color={c.muted}
-          />
+          <MiniStat icon="trending-up-outline" value={`+${trail.elevation_gain_m} m`} color={c.muted} />
           <MiniStat
             icon="time-outline"
-            value={
-              trail.duration.min === trail.duration.max
-                ? `${trail.duration.min} ${trail.duration.unit}`
-                : `${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`
-            }
+            value={`${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`}
             color={c.muted}
           />
         </View>
 
-        {trail.permits_required && (
-          <View style={styles.permitRow}>
-            <Ionicons name="document-text-outline" size={11} color="#fbbf24" />
-            <Text style={styles.permitText}>Permiso requerido</Text>
+        <View style={styles.cardFooter}>
+          <View style={[styles.activityTag, { backgroundColor: c.elevated, borderColor: c.border }]}>
+            <Ionicons name={ACTIVITY_ICON[trail.activity] as any} size={10} color={c.muted} />
+            <Text style={[styles.activityTagText, { color: c.muted }]}>
+              {trail.activity.replace('_', ' ')}
+            </Text>
           </View>
-        )}
-      </View>
-
-      <View style={[styles.seasonBadge, { backgroundColor: c.elevated }]}>
-        <Text style={[styles.seasonText, { color: c.muted }]}>{trail.best_season}</Text>
+          {trail.best_season && (
+            <Text style={[styles.seasonText, { color: c.muted }]}>{trail.best_season}</Text>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
 }
 
-function StatBadge({ icon, value }: { icon: any; value: string }) {
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function StatChip({ icon, value }: { icon: any; value: string }) {
   return (
-    <View style={styles.statBadge}>
-      <Ionicons name={icon} size={12} color="rgba(255,255,255,0.7)" />
-      <Text style={styles.statBadgeText}>{value}</Text>
+    <View style={styles.statChip}>
+      <Ionicons name={icon} size={11} color="rgba(255,255,255,0.75)" />
+      <Text style={styles.statChipText}>{value}</Text>
     </View>
   );
 }
@@ -152,68 +147,166 @@ function MiniStat({ icon, value, color }: { icon: any; value: string; color: str
   );
 }
 
+// ── Styles ────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
-  // Featured
-  featured: { borderRadius: 24, overflow: 'hidden', height: 340 },
-  featuredOverlay: { backgroundColor: 'rgba(0,0,0,0.42)' },
-  featuredContent: { flex: 1, padding: 18 },
-  featuredTop: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  activityPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
+  // Featured card
+  featured: {
+    height: 380,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
-  activityText: { fontSize: 11, color: 'rgba(255,255,255,0.9)', fontWeight: '600', textTransform: 'capitalize' },
-  diffPill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  diffText: { fontSize: 11, fontWeight: '700' },
+  featuredGradient: {
+    ...StyleSheet.absoluteFillObject,
+    // Simulated gradient via overlapping views
+    backgroundColor: 'rgba(7,11,20,0)',
+    top: '40%',
+  },
+  featuredTop: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  featuredBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: 'rgba(7,11,20,0.82)',
+  },
   featuredTitle: {
     fontSize: 22,
     fontWeight: '900',
     color: '#fff',
     letterSpacing: -0.5,
+    lineHeight: 28,
     marginBottom: 4,
   },
-  featuredSub: { fontSize: 13, color: 'rgba(255,255,255,0.65)', marginBottom: 14 },
-  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
-  statBadge: {
+  featuredRegion: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.6)',
+    marginBottom: 14,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  statChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(0,0,0,0.38)',
+    gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+  },
+  statChipText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.9)',
+    fontWeight: '600',
+  },
+  diffBadge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 999,
   },
-  statBadgeText: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '600' },
-
-  // List card
-  listCard: {
+  diffBadgeText: { fontSize: 11, fontWeight: '800', letterSpacing: 0.3 },
+  permitBadge: {
     flexDirection: 'row',
-    borderRadius: 20,
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(251,191,36,0.18)',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(251,191,36,0.3)',
+  },
+  permitBadgeText: { fontSize: 10, color: '#fbbf24', fontWeight: '700' },
+
+  // List card — AllTrails style
+  card: {
+    flexDirection: 'row',
+    borderRadius: 18,
     borderWidth: 1,
     overflow: 'hidden',
     marginBottom: 12,
+    minHeight: 112,
   },
-  listThumb: { width: 100, height: 100 },
-  listBody: { flex: 1, padding: 12, justifyContent: 'center' },
-  listTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
-  listTitle: { fontSize: 14, fontWeight: '700', flex: 1 },
-  diffPillSm: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, flexShrink: 0 },
-  diffTextSm: { fontSize: 10, fontWeight: '700' },
-  listSub: { fontSize: 11, marginTop: 2, marginBottom: 6 },
-  listStats: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
-  miniStat: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  miniStatText: { fontSize: 11, fontWeight: '500' },
-  permitRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 5 },
-  permitText: { fontSize: 10, color: '#fbbf24', fontWeight: '600' },
-  seasonBadge: {
-    paddingHorizontal: 10,
-    justifyContent: 'center',
+  photoWrap: {
+    width: 112,
+    alignSelf: 'stretch',
+    position: 'relative',
+  },
+  diffCorner: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  diffCornerText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.3 },
+  cardBody: {
+    flex: 1,
+    padding: 14,
+    gap: 4,
+    justifyContent: 'space-between',
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 19,
+    letterSpacing: -0.1,
+  },
+  cardRegionRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    minWidth: 56,
+    gap: 3,
   },
-  seasonText: { fontSize: 9, fontWeight: '600', textAlign: 'center', lineHeight: 13 },
+  cardRegion: {
+    fontSize: 11,
+    flex: 1,
+  },
+  cardStats: {
+    flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+    marginTop: 2,
+  },
+  miniStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  miniStatText: { fontSize: 11, fontWeight: '500' },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  activityTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  activityTagText: {
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'capitalize' as const,
+  },
+  seasonText: { fontSize: 10 },
 });
