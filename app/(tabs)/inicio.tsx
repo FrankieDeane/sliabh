@@ -20,6 +20,7 @@ import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { injectWebStyles } from '../../src/utils/webStyles';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
+import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
 
 const MAX_CONTENT = 900;
 
@@ -96,6 +97,36 @@ const PACK_URI =
 
 const AUTH_BG_URI =
   'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&fit=crop&auto=format';
+
+const FEATURE_CARDS = [
+  {
+    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80',
+    icon: 'compass-outline' as const,
+    titleEs: 'Explora',
+    titleEn: 'Explore',
+    descEs: 'Filtra por dificultad, distancia y actividad',
+    descEn: 'Filter by difficulty, distance and activity',
+    route: '/(tabs)/rutas' as const,
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80',
+    icon: 'map-outline' as const,
+    titleEs: 'Planifica',
+    titleEn: 'Plan',
+    descEs: 'Construye rutas con waypoints y analiza con IA',
+    descEn: 'Build routes with waypoints and analyse with AI',
+    route: '/(tabs)/planificar' as const,
+  },
+  {
+    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80',
+    icon: 'cloud-offline-outline' as const,
+    titleEs: 'Sin señal',
+    titleEn: 'Offline',
+    descEs: 'Navega y accede a mapas sin conexión',
+    descEn: 'Navigate and access maps without signal',
+    route: '/(tabs)/mapas' as const,
+  },
+];
 
 function GalleryCell({
   item,
@@ -175,6 +206,9 @@ export default function InicioScreen() {
   const fullW = galleryInnerW;
   const fullH = Math.round(fullW * 0.44);
 
+  // Hero height: 580 mobile, full viewport on web
+  const heroHeight = Platform.OS === 'web' ? undefined : 580;
+
   useEffect(() => {
     injectWebStyles();
     animateHeroEntrance('[data-hero]');
@@ -182,6 +216,13 @@ export default function InicioScreen() {
     const timer = setTimeout(() => animateScrollReveal(), 300);
     return () => clearTimeout(timer);
   }, []);
+
+  const HERO_STATS = [
+    `${ARGENTINA_TRAILS.length} ${t('senderos', 'trails')}`,
+    'Patagonia',
+    t('IA integrada', 'AI built-in'),
+    t('Sin señal', 'Offline'),
+  ];
 
   return (
     <View style={styles.root}>
@@ -193,13 +234,12 @@ export default function InicioScreen() {
       >
         {/* ── HERO ── */}
         <View
-          style={styles.heroWrapper}
+          style={[styles.heroWrapper, Platform.OS === 'web' ? ({ minHeight: '100vh' } as any) : { height: heroHeight }]}
           {...(Platform.OS === 'web' ? ({ 'data-hero': true } as any) : {})}
         >
-          {/* Native: ImageBackground | Web: video with image fallback */}
           <ImageBackground
             source={{ uri: HERO_URI }}
-            style={styles.hero}
+            style={[StyleSheet.absoluteFillObject]}
             resizeMode="cover"
             imageStyle={Platform.OS !== 'web' ? undefined : { opacity: 0 }}
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
@@ -227,96 +267,123 @@ export default function InicioScreen() {
             )}
 
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
-            <View style={[StyleSheet.absoluteFillObject, styles.heroGradientBottom]} />
+            {/* Bottom gradient fade */}
+            <View style={styles.heroGradientBottom} />
+          </ImageBackground>
 
-            <View
-              style={[
-                styles.heroInner,
-                { paddingTop: insets.top + 28, paddingHorizontal: sidePad },
-              ]}
-              {...(Platform.OS === 'web' ? ({ 'data-hero-content': true } as any) : {})}
-            >
-              <View
-                style={styles.heroBrand}
-                {...(Platform.OS === 'web' ? ({ 'data-hero-brand': true } as any) : {})}
-              >
-                <Text style={{ fontSize: 13 }}>🏔️</Text>
-                <Text style={styles.heroBrandText}>SLIABH</Text>
-                <View style={styles.heroBrandDivider} />
-                <Text style={styles.heroBrandTagline}>PATAGONIA</Text>
-              </View>
+          {/* Hero content — centered */}
+          <View
+            style={[
+              styles.heroInner,
+              { paddingTop: insets.top + 80, paddingHorizontal: sidePad },
+              Platform.OS === 'web' ? ({ minHeight: '100vh' } as any) : { height: heroHeight },
+            ]}
+            {...(Platform.OS === 'web' ? ({ 'data-hero-content': true } as any) : {})}
+          >
+            {/* Centered text block */}
+            <View style={styles.heroCenterBlock}>
+              {/* Eyebrow */}
+              <Text style={styles.heroEyebrow}>ARGENTINA · PATAGONIA · ANDES</Text>
 
+              {/* Giant display title */}
               <Text
-                style={styles.heroTitle}
+                style={[
+                  styles.heroTitle,
+                  Platform.OS === 'web'
+                    ? ({ fontSize: 'clamp(38px, 5.5vw, 64px)' } as any)
+                    : { fontSize: 38 },
+                ]}
                 {...(Platform.OS === 'web' ? ({ 'data-hero-title': true } as any) : {})}
               >
-                {t('Explora\nsin límites', 'Explore\nwithout limits')}
+                {t('Tu próxima\naventura.', 'Your next\nadventure.')}
               </Text>
 
-              <Text
-                style={styles.heroSub}
-                {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true } as any) : {})}
-              >
+              {/* Subtitle */}
+              <Text style={styles.heroSub}>
                 {t(
-                  'TORRES DEL PAINE · FITZ ROY · ACONCAGUA · IA OFFLINE',
-                  'TORRES DEL PAINE · FITZ ROY · ACONCAGUA · OFFLINE AI',
+                  'Descubre senderos. Construye tu ruta.\nExplora sin señal.',
+                  'Discover trails. Build your route.\nExplore without signal.',
                 )}
               </Text>
 
+              {/* CTAs */}
               <View style={styles.heroCtas}>
                 <TouchableOpacity
                   style={styles.heroBtnPrimary}
-                  onPress={() => router.push('/(tabs)/planificar')}
+                  onPress={() => router.push('/(tabs)/rutas')}
                   activeOpacity={0.85}
-                  accessibilityLabel={t('Planificar ruta', 'Plan route')}
+                  accessibilityLabel={t('Explorar rutas', 'Explore trails')}
                   {...(Platform.OS === 'web' ? ({
                     'data-hero-cta': true,
                     'data-btn-primary': true,
                   } as any) : {})}
                 >
-                  <Ionicons name="map-outline" size={15} color="#fff" />
+                  <Ionicons name="compass-outline" size={15} color="#fff" />
                   <Text style={styles.heroBtnPrimaryTxt}>
-                    {t('Planificar ruta', 'Plan a route')}
+                    {t('Explorar rutas', 'Explore trails')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.heroBtnSecondary}
-                  onPress={() => router.push('/(tabs)/mapas')}
+                  onPress={() => router.push('/(tabs)/planificar')}
                   activeOpacity={0.75}
-                  accessibilityLabel={t('Ver mapas', 'View maps')}
+                  accessibilityLabel={t('Construir ruta', 'Build a route')}
                   {...(Platform.OS === 'web' ? ({ 'data-hero-cta': true } as any) : {})}
                 >
                   <Text style={styles.heroBtnSecondaryTxt}>
-                    {t('Ver mapas', 'View maps')}
+                    {t('Construir ruta', 'Build a route')}
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              {Platform.OS === 'web' && (
-                <View style={styles.scrollIndicator}>
-                  <Ionicons name="chevron-down" size={18} color="rgba(255,255,255,0.35)" />
-                </View>
-              )}
             </View>
-          </ImageBackground>
+
+            {/* Bottom stats strip — inside hero */}
+            <View style={styles.heroStatsStrip}>
+              {HERO_STATS.map((label, i) => (
+                <React.Fragment key={label}>
+                  {i > 0 && <View style={styles.heroStatDivider} />}
+                  <Text style={styles.heroStatText}>{label}</Text>
+                </React.Fragment>
+              ))}
+            </View>
+          </View>
         </View>
 
-        {/* ── STATS ── */}
-        <View style={[styles.statsRow, { marginHorizontal: sidePad }]}>
-          {[
-            ['100+', t('Rutas', 'Trails')],
-            ['12', t('Campamentos', 'Camps')],
-            ['8', t('Refugios', 'Huts')],
-          ].map(([n, l]) => (
-            <View
-              key={l}
-              style={styles.statCard}
-              {...(Platform.OS === 'web' ? ({ 'data-stat-card': true } as any) : {})}
-            >
-              <Text style={styles.statNum}>{n}</Text>
-              <Text style={styles.statLbl}>{l}</Text>
-            </View>
-          ))}
+        {/* ── FEATURE BLOCKS ── */}
+        <View style={[styles.featureSection, { paddingHorizontal: sidePad }]}>
+          <Text
+            style={styles.sectionLabel}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+          >
+            {t('TODO LO QUE NECESITAS', 'EVERYTHING YOU NEED')}
+          </Text>
+          <View style={[styles.featureRow, isWide ? styles.featureRowWide : null]}>
+            {FEATURE_CARDS.map((card) => (
+              <TouchableOpacity
+                key={card.titleEn}
+                style={[styles.featureCard, isWide ? styles.featureCardWide : null]}
+                activeOpacity={0.88}
+                onPress={() => router.push(card.route as any)}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
+              >
+                <ImageBackground
+                  source={{ uri: card.photo }}
+                  style={styles.featureCardPhoto}
+                  resizeMode="cover"
+                >
+                  <View style={styles.featureCardOverlay} />
+                  <View style={styles.featureCardContent}>
+                    <View style={styles.featureCardIconWrap}>
+                      <Ionicons name={card.icon} size={20} color="#fff" />
+                    </View>
+                    <View style={{ flex: 1 }} />
+                    <Text style={styles.featureCardTitle}>{t(card.titleEs, card.titleEn)}</Text>
+                    <Text style={styles.featureCardDesc}>{t(card.descEs, card.descEn)}</Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         <SectionDivider sidePad={sidePad} />
@@ -410,16 +477,6 @@ export default function InicioScreen() {
 
         <SectionDivider sidePad={sidePad} />
 
-        {/* ── OFFLINE AI ── */}
-        <View
-          style={[styles.mt4, { marginHorizontal: sidePad }]}
-          {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
-        >
-          <OfflineAICard />
-        </View>
-
-        <SectionDivider sidePad={sidePad} />
-
         {/* ── GALLERY ── */}
         <View style={styles.mt4}>
           <Text
@@ -438,6 +495,16 @@ export default function InicioScreen() {
               <GalleryCell item={GALLERY[2]} index={2} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} />
             </View>
           </View>
+        </View>
+
+        <SectionDivider sidePad={sidePad} />
+
+        {/* ── OFFLINE AI ── */}
+        <View
+          style={[styles.mt4, { marginHorizontal: sidePad }]}
+          {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
+        >
+          <OfflineAICard />
         </View>
 
         <SectionDivider sidePad={sidePad} />
@@ -598,63 +665,63 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 48 },
 
   // Hero
-  heroWrapper: { width: '100%', overflow: 'hidden' },
-  hero: { width: '100%', minHeight: 520, maxHeight: 700 },
-  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.42)' },
+  heroWrapper: {
+    width: '100%',
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.5)' },
   heroGradientBottom: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 220,
-    backgroundColor: 'transparent',
-    // On web webStyles injects a proper CSS gradient; on native this is a soft fade
-    opacity: 0.85,
+    height: 260,
+    backgroundColor: 'rgba(7,11,20,0.65)',
   },
   heroInner: {
-    minHeight: 520,
-    maxHeight: 700,
-    justifyContent: 'flex-end',
-    paddingBottom: 52,
+    justifyContent: 'space-between',
+    paddingBottom: 0,
   },
-  heroBrand: {
-    flexDirection: 'row',
+  heroCenterBlock: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 22,
+    paddingHorizontal: 24,
+    paddingBottom: 80,
   },
-  heroBrandText: { fontSize: 11, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
-  heroBrandDivider: { width: 1, height: 12, backgroundColor: 'rgba(255,255,255,0.2)' },
-  heroBrandTagline: {
-    fontSize: 10,
+  heroEyebrow: {
+    fontSize: 11,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.45)',
-    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.55)',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    marginBottom: 18,
+    textAlign: 'center',
   },
   heroTitle: {
-    fontSize: 52,
     fontWeight: '900',
     color: '#fff',
-    letterSpacing: -2.5,
-    lineHeight: 56,
-    marginBottom: 12,
+    letterSpacing: -2,
+    lineHeight: undefined,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   heroSub: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.42)',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: 30,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.65)',
+    lineHeight: 22,
+    marginBottom: 36,
+    textAlign: 'center',
   },
-  heroCtas: { flexDirection: 'row', gap: 12 },
+  heroCtas: { flexDirection: 'row', gap: 12, flexWrap: 'wrap', justifyContent: 'center' },
   heroBtnPrimary: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#16a34a',
-    paddingHorizontal: 22,
-    paddingVertical: 14,
+    paddingHorizontal: 26,
+    paddingVertical: 15,
     borderRadius: 999,
     shadowColor: '#22c55e',
     shadowOffset: { width: 0, height: 4 },
@@ -662,31 +729,84 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
-  heroBtnPrimaryTxt: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  heroBtnPrimaryTxt: { color: '#fff', fontSize: 15, fontWeight: '700' },
   heroBtnSecondary: {
-    paddingHorizontal: 22,
-    paddingVertical: 14,
+    paddingHorizontal: 26,
+    paddingVertical: 15,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.25)',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
-  heroBtnSecondaryTxt: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  scrollIndicator: { marginTop: 20, alignItems: 'center', opacity: 0.6 },
+  heroBtnSecondaryTxt: { color: '#fff', fontSize: 15, fontWeight: '600' },
 
-  // Stats
-  statsRow: { flexDirection: 'row', marginTop: 28, gap: 10 },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#0f1724',
-    borderWidth: 1,
-    borderColor: '#1e2d42',
-    borderRadius: 16,
-    paddingVertical: 18,
+  // Hero stats strip
+  heroStatsStrip: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(7,11,20,0.55)',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    flexWrap: 'wrap',
+    gap: 4,
   },
-  statNum: { fontSize: 24, fontWeight: '800', color: '#4ade80', letterSpacing: -0.5 },
-  statLbl: { fontSize: 11, color: '#78716c', marginTop: 3, fontWeight: '500' },
+  heroStatText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.72)',
+    letterSpacing: 0.5,
+    paddingHorizontal: 8,
+  },
+  heroStatDivider: {
+    width: 1,
+    height: 14,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
+
+  // Feature cards section
+  featureSection: { paddingTop: 48, paddingBottom: 4 },
+  featureRow: { flexDirection: 'column', gap: 14, marginTop: 14 },
+  featureRowWide: { flexDirection: 'row' },
+  featureCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    height: 220,
+    flex: 1,
+  },
+  featureCardWide: { flex: 1 },
+  featureCardPhoto: { flex: 1 },
+  featureCardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(7,11,20,0.48)',
+  },
+  featureCardContent: {
+    flex: 1,
+    padding: 18,
+    justifyContent: 'flex-end',
+  },
+  featureCardIconWrap: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(22,163,74,0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featureCardTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#fff',
+    marginBottom: 6,
+  },
+  featureCardDesc: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.68)',
+    lineHeight: 18,
+  },
 
   // Divider
   divider: {
@@ -701,9 +821,9 @@ const styles = StyleSheet.create({
   mt3: { marginTop: 12 },
   sectionLabel: {
     fontSize: 10,
-    fontWeight: '700',
-    color: '#78716c',
-    letterSpacing: 2,
+    fontWeight: '800',
+    color: '#64748b',
+    letterSpacing: 2.5,
     textTransform: 'uppercase',
     marginBottom: 14,
   },
@@ -733,7 +853,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   featuredBadgeTxt: { color: '#fff', fontSize: 11, fontWeight: '700' },
-  featuredTitle: { fontSize: 17, fontWeight: '800', color: '#fff', marginBottom: 3 },
+  featuredTitle: { fontSize: 18, fontWeight: '800', color: '#fff', marginBottom: 3 },
   featuredSub: { fontSize: 12, color: 'rgba(255,255,255,0.68)', marginBottom: 8 },
   featuredMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
@@ -790,14 +910,14 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   actionText: { flex: 1 },
-  actionTitle: { fontSize: 15, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
-  actionDesc: { fontSize: 12, color: '#78716c', lineHeight: 17 },
+  actionTitle: { fontSize: 15, fontWeight: '700', color: '#f0f9ff', marginBottom: 2 },
+  actionDesc: { fontSize: 12, color: '#64748b', lineHeight: 17 },
 
   // Pack activo
   packCard: { borderRadius: 22, overflow: 'hidden', padding: 20, backgroundColor: '#0f1724' },
   packOverlay: { backgroundColor: 'rgba(7,11,20,0.68)' },
   packRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  packName: { fontSize: 16, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
+  packName: { fontSize: 16, fontWeight: '700', color: '#f0f9ff', marginBottom: 2 },
   packRegion: { fontSize: 12, color: 'rgba(255,255,255,0.55)' },
   packBadge: {
     flexDirection: 'row',
@@ -850,7 +970,7 @@ const styles = StyleSheet.create({
   authBannerTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#f1f5f9',
+    color: '#f0f9ff',
     marginBottom: 2,
   },
   authBannerSub: {
