@@ -8,6 +8,7 @@ import {
   ImageBackground,
   useWindowDimensions,
   Platform,
+  Linking,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +20,22 @@ import {
 } from '../../../src/data/argentinaTrails';
 import { useLangStore } from '../../../src/store/langStore';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
+
+// ─── Trail videos ─────────────────────────────────────────────────────────────
+const TRAIL_VIDEOS: Record<string, string> = {
+  'aconcagua-ruta-normal':      'smv2WXDzG5I',
+  'fitz-roy-laguna-tres':       'ZFtM28xYy14',
+  'cerro-torre-base':           'uoMaOmEvbmc',
+  'refugio-frey-bariloche':     'xK1eo4hKJVM',
+  'cerro-lopez-bariloche':      'h52dog4oaoA',
+  'cerro-tronador-bariloche':   'O8ynDxVg9lU',
+  'volcan-lanin':               '3VfsFSm3AbA',
+  'cerro-champaqui':            'uVeO6fr81kk',
+  'los-gigantes-cordoba':       'mGsNkTL6vEQ',
+  'cerro-la-ventana':           '3807z2eqStg',
+  'quebrada-humahuaca-trek':    '_0k0NG0R6jc',
+  'lago-desierto-patagonia':    'Wr0Go7gmQQE',
+};
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 const C = {
@@ -594,6 +611,54 @@ function CardLabel({ text }: { text: string }) {
   return <Text style={styles.cardLabel}>{text}</Text>;
 }
 
+function VideoSection({
+  trailId,
+  t,
+}: {
+  trailId: string;
+  t: (es: string, en: string) => string;
+}) {
+  const videoId = TRAIL_VIDEOS[trailId];
+  if (!videoId) return null;
+
+  return (
+    <SectionCard>
+      <CardLabel text="VIDEO" />
+      {Platform.OS === 'web' ? (
+        <View
+          style={{
+            width: '100%',
+            height: 200,
+            borderRadius: 12,
+            overflow: 'hidden',
+            marginTop: 4,
+          }}
+        >
+          {/* @ts-ignore — iframe is web-only */}
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={styles.videoButton}
+          onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${videoId}`)}
+          activeOpacity={0.75}
+        >
+          <Ionicons name="play-circle-outline" size={22} color={C.accent} />
+          <Text style={styles.videoButtonText}>
+            {t('Ver video en YouTube', 'Watch on YouTube')}
+          </Text>
+          <Ionicons name="open-outline" size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
+        </TouchableOpacity>
+      )}
+    </SectionCard>
+  );
+}
+
 function OverviewTab({
   trail,
   lang,
@@ -662,6 +727,9 @@ function OverviewTab({
           ))}
         </View>
       )}
+
+      {/* Video */}
+      <VideoSection trailId={trail.id} t={t} />
     </View>
   );
 }
@@ -898,6 +966,24 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   tagText: { fontSize: 12, color: C.muted },
+
+  // Video button (native)
+  videoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: C.accent,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginTop: 4,
+  },
+  videoButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: C.accent,
+  },
 
   // Alert banner
   alertBanner: {
