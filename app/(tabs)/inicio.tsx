@@ -68,11 +68,22 @@ const FEATURED = [
   },
 ];
 
-const GALLERY = [
-  'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&q=85&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=600&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=600&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=600&q=80&fit=crop&auto=format',
+const GALLERY: { uri: string; labelEs: string; labelEn: string }[] = [
+  {
+    uri: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1920&q=90&fit=crop&auto=format',
+    labelEs: 'Escalada en roca',
+    labelEn: 'Rock climbing',
+  },
+  {
+    uri: 'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=900&q=85&fit=crop&auto=format',
+    labelEs: 'Paisajes de invierno',
+    labelEn: 'Winter landscapes',
+  },
+  {
+    uri: 'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=900&q=85&fit=crop&auto=format',
+    labelEs: 'Senderos remotos',
+    labelEn: 'Remote trails',
+  },
 ];
 
 const PACK_URI =
@@ -92,12 +103,12 @@ export default function InicioScreen() {
   const CARD_W = Math.min(contentW * 0.62, 240);
   const CARD_H = Math.round(CARD_W * 0.65);
 
-  const galleryGap = 8;
+  const galleryGap = 10;
   const galleryInnerW = width - 2 * sidePad;
   const cellW = (galleryInnerW - galleryGap) / 2;
-  const cellH = Math.round(cellW * 0.56);
+  const cellH = Math.round(cellW * 0.68); // taller cells for better proportion
   const fullW = galleryInnerW;
-  const fullH = Math.round(fullW * 0.42);
+  const fullH = Math.round(fullW * 0.44);
 
   useEffect(() => {
     injectWebStyles();
@@ -284,7 +295,7 @@ export default function InicioScreen() {
             {t('GALERÍA', 'GALLERY')}
           </Text>
           <View style={[styles.galleryGrid, { marginHorizontal: sidePad, gap: galleryGap }]}>
-            {GALLERY.map((uri, i) => (
+            {GALLERY.map((item, i) => (
               <View
                 key={i}
                 style={[
@@ -296,11 +307,20 @@ export default function InicioScreen() {
                 {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
               >
                 <ImageBackground
-                  source={{ uri }}
+                  source={{ uri: item.uri }}
                   style={StyleSheet.absoluteFillObject}
                   resizeMode="cover"
                 >
                   <View style={[StyleSheet.absoluteFillObject, styles.galleryOverlay]} />
+                  {/* Label bottom-left */}
+                  <View
+                    style={styles.galleryLabel}
+                    {...(Platform.OS === 'web' ? ({ 'data-gallery-label': true } as any) : {})}
+                  >
+                    <Text style={styles.galleryLabelTxt}>
+                      {t(item.labelEs, item.labelEn)}
+                    </Text>
+                  </View>
                 </ImageBackground>
               </View>
             ))}
@@ -557,7 +577,23 @@ const styles = StyleSheet.create({
   // Gallery
   galleryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
-  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.1)' },
+  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.18)' },
+  galleryLabel: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    justifyContent: 'flex-end',
+  },
+  galleryLabelTxt: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.75)',
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
+  },
 
   // Action cards
   actionCard: {

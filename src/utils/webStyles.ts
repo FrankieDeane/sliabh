@@ -105,6 +105,11 @@ export function injectWebStyles() {
       transform: scale(1.04);
     }
 
+    /* Gallery label gradient */
+    [data-gallery-label] {
+      background: linear-gradient(to top, rgba(7,11,20,0.72) 0%, transparent 100%) !important;
+    }
+
     /* Section reveal base (GSAP animates these) */
     [data-stat-card],
     [data-section-label],
