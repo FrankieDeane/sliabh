@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { OfflineBadge } from '../ui/OfflineBadge';
 import { useTheme } from '../../hooks/useTheme';
@@ -11,6 +11,9 @@ interface Props {
 }
 
 export function ScreenHeader({ title, subtitle, right }: Props) {
+  // WebHeader already provides the navigation chrome on web
+  if (Platform.OS === 'web') return null;
+
   const { isDark } = useTheme();
 
   const bgColor = isDark ? '#070b14' : '#ffffff';

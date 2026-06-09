@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { animateScrollReveal } from '../../src/utils/gsapAnimations';
@@ -68,32 +67,32 @@ export default function RutasScreen() {
   const isWide = width >= 768;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: c.bg }]} edges={['top']}>
-      {/* Header */}
-      <View
-        style={[
-          styles.header,
-          { borderBottomColor: c.border, paddingHorizontal: sidePad },
-        ]}
-      >
-        <View>
-          <Text style={[styles.headerTitle, { color: c.text }]}>
-            {t('Rutas Argentina', 'Argentine Trails')}
-          </Text>
-          <Text style={[styles.headerSub, { color: c.muted }]}>
-            {ARGENTINA_TRAILS.length} {t('senderos · Patagonia y toda Argentina', 'trails · Patagonia and all of Argentina')}
-          </Text>
-        </View>
-        <View style={[styles.sourceBadge, { backgroundColor: c.elevated, borderColor: c.border }]}>
-          <Ionicons name="leaf-outline" size={13} color="#22c55e" />
-          <Text style={[styles.sourceText, { color: c.muted }]}>Sliabh</Text>
-        </View>
-      </View>
-
+    <View style={[styles.container, { backgroundColor: c.bg }]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scrollContent, { paddingHorizontal: sidePad }]}
       >
+        {/* Header — scrolls with content */}
+        <View
+          style={[
+            styles.header,
+            { borderBottomColor: c.border, marginHorizontal: -sidePad, paddingHorizontal: sidePad },
+          ]}
+        >
+          <View>
+            <Text style={[styles.headerTitle, { color: c.text }]}>
+              {t('Rutas Argentina', 'Argentine Trails')}
+            </Text>
+            <Text style={[styles.headerSub, { color: c.muted }]}>
+              {ARGENTINA_TRAILS.length} {t('senderos · Patagonia y toda Argentina', 'trails · Patagonia and all of Argentina')}
+            </Text>
+          </View>
+          <View style={[styles.sourceBadge, { backgroundColor: c.elevated, borderColor: c.border }]}>
+            <Ionicons name="leaf-outline" size={13} color="#22c55e" />
+            <Text style={[styles.sourceText, { color: c.muted }]}>Sliabh</Text>
+          </View>
+        </View>
+
         {/* Region filter chips */}
         <ScrollView
           horizontal
@@ -186,7 +185,7 @@ export default function RutasScreen() {
                   </View>
                 ) : (
                   rest.map((t) => (
-                    <TrailListCard key={t.id} trail={t} onPress={() => {}} colors={c} />
+                    <TrailListCard key={t.id} trail={t} onPress={() => goToTrail(t.id)} colors={c} />
                   ))
                 )}
               </View>
@@ -205,7 +204,7 @@ export default function RutasScreen() {
 
         {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
