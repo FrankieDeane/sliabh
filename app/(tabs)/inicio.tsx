@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
+import { GalleryLightbox } from '../../src/components/ui/GalleryLightbox';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
@@ -24,6 +25,10 @@ const MAX_CONTENT = 900;
 
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
+
+// Silent looping drone footage for web hero
+const HERO_VIDEO_URL =
+  'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
 
 const FEATURED = [
   {
@@ -89,16 +94,33 @@ const GALLERY: { uri: string; labelEs: string; labelEn: string }[] = [
 const PACK_URI =
   'https://images.unsplash.com/photo-1548248823-ce16a73b6d49?w=900&q=80&fit=crop&auto=format';
 
+const AUTH_BG_URI =
+  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&fit=crop&auto=format';
+
+function SectionDivider({ sidePad }: { sidePad: number }) {
+  if (Platform.OS !== 'web') {
+    return <View style={[styles.divider, { marginHorizontal: sidePad }]} />;
+  }
+  return (
+    <View
+      style={[styles.divider, { marginHorizontal: sidePad }]}
+      {...({ 'data-section-divider': true } as any)}
+    />
+  );
+}
+
 export default function InicioScreen() {
   useTheme();
   const { user } = useAuthStore();
-  const { t } = useLangStore();
+  const { lang, t } = useLangStore();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
+  const isWide = width >= 720;
 
   const CARD_W = Math.min(contentW * 0.62, 240);
   const CARD_H = Math.round(CARD_W * 0.65);
@@ -106,7 +128,7 @@ export default function InicioScreen() {
   const galleryGap = 10;
   const galleryInnerW = width - 2 * sidePad;
   const cellW = (galleryInnerW - galleryGap) / 2;
-  const cellH = Math.round(cellW * 0.68); // taller cells for better proportion
+  const cellH = Math.round(cellW * 0.68);
   const fullW = galleryInnerW;
   const fullH = Math.round(fullW * 0.44);
 
@@ -124,22 +146,46 @@ export default function InicioScreen() {
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        {...(Platform.OS === 'web' ? ({ 'data-page-content': true } as any) : {})}
       >
         {/* ── HERO ── */}
         <View
           style={styles.heroWrapper}
           {...(Platform.OS === 'web' ? ({ 'data-hero': true } as any) : {})}
         >
+          {/* Native: ImageBackground | Web: video with image fallback */}
           <ImageBackground
             source={{ uri: HERO_URI }}
             style={styles.hero}
             resizeMode="cover"
-            imageStyle={styles.heroImage}
+            imageStyle={Platform.OS !== 'web' ? undefined : { opacity: 0 }}
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
+            {/* Web: silent looping drone video */}
+            {Platform.OS === 'web' && (
+              // @ts-ignore — video is web-only
+              <video
+                src={HERO_VIDEO_URL}
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster={HERO_URI}
+                data-hero-video
+                data-hero-bg
+                style={{
+                  position: 'absolute',
+                  top: 0, left: 0,
+                  width: '100%', height: '100%',
+                  objectFit: 'cover',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
-            {/* Cinematic gradient at bottom */}
-            <View style={[StyleSheet.absoluteFillObject, styles.heroGradient]} />
+            <View style={[StyleSheet.absoluteFillObject, styles.heroGradientBottom]} />
+
             <View
               style={[
                 styles.heroInner,
@@ -154,16 +200,16 @@ export default function InicioScreen() {
                 <Text style={{ fontSize: 13 }}>🏔️</Text>
                 <Text style={styles.heroBrandText}>SLIABH</Text>
                 <View style={styles.heroBrandDivider} />
-                <Text style={styles.heroBrandTagline}>
-                  {t('PATAGONIA', 'PATAGONIA')}
-                </Text>
+                <Text style={styles.heroBrandTagline}>PATAGONIA</Text>
               </View>
+
               <Text
                 style={styles.heroTitle}
                 {...(Platform.OS === 'web' ? ({ 'data-hero-title': true } as any) : {})}
               >
                 {t('Explora\nsin límites', 'Explore\nwithout limits')}
               </Text>
+
               <Text
                 style={styles.heroSub}
                 {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true } as any) : {})}
@@ -173,13 +219,17 @@ export default function InicioScreen() {
                   'TORRES DEL PAINE · FITZ ROY · ACONCAGUA · OFFLINE AI',
                 )}
               </Text>
+
               <View style={styles.heroCtas}>
                 <TouchableOpacity
                   style={styles.heroBtnPrimary}
                   onPress={() => router.push('/(tabs)/planificar')}
                   activeOpacity={0.85}
                   accessibilityLabel={t('Planificar ruta', 'Plan route')}
-                  {...(Platform.OS === 'web' ? ({ 'data-hero-cta': true, 'data-btn-primary': true } as any) : {})}
+                  {...(Platform.OS === 'web' ? ({
+                    'data-hero-cta': true,
+                    'data-btn-primary': true,
+                  } as any) : {})}
                 >
                   <Ionicons name="map-outline" size={15} color="#fff" />
                   <Text style={styles.heroBtnPrimaryTxt}>
@@ -199,10 +249,9 @@ export default function InicioScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Scroll indicator */}
               {Platform.OS === 'web' && (
                 <View style={styles.scrollIndicator}>
-                  <Ionicons name="chevron-down" size={18} color="rgba(255,255,255,0.4)" />
+                  <Ionicons name="chevron-down" size={18} color="rgba(255,255,255,0.35)" />
                 </View>
               )}
             </View>
@@ -227,67 +276,109 @@ export default function InicioScreen() {
           ))}
         </View>
 
+        <SectionDivider sidePad={sidePad} />
+
         {/* ── FEATURED ROUTES ── */}
-        <View style={styles.mt8}>
+        <View style={styles.mt4}>
           <Text
             style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('RUTAS DESTACADAS', 'FEATURED TRAILS')}
           </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12 }}
-          >
-            {FEATURED.map((r) => (
-              <TouchableOpacity
-                key={r.titleEs}
-                style={[styles.featuredCard, { width: CARD_W, height: CARD_H }]}
-                onPress={() =>
-                  router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)
-                }
-                activeOpacity={0.88}
-                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
-              >
-                <ImageBackground
-                  source={{ uri: r.uri }}
-                  style={StyleSheet.absoluteFillObject}
-                  resizeMode="cover"
+
+          {/* Desktop: 2×2 grid | Mobile: horizontal scroll */}
+          {isWide ? (
+            <View
+              style={[styles.featuredGrid, { marginHorizontal: sidePad }]}
+              {...(Platform.OS === 'web' ? ({ 'data-featured-grid': true } as any) : {})}
+            >
+              {FEATURED.map((r) => (
+                <TouchableOpacity
+                  key={r.titleEs}
+                  style={[styles.featuredGridCard]}
+                  onPress={() =>
+                    router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)
+                  }
+                  activeOpacity={0.88}
+                  {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
                 >
-                  <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
-                  <View style={styles.featuredContent}>
-                    <View style={styles.featuredBadge}>
-                      <Text style={styles.featuredBadgeTxt}>{r.distance}</Text>
+                  <ImageBackground
+                    source={{ uri: r.uri }}
+                    style={StyleSheet.absoluteFillObject}
+                    resizeMode="cover"
+                  >
+                    <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
+                    <View style={styles.featuredContent}>
+                      <View style={styles.featuredBadge}>
+                        <Text style={styles.featuredBadgeTxt}>{r.distance}</Text>
+                      </View>
+                      <View style={{ flex: 1 }} />
+                      <Text style={styles.featuredTitle}>{t(r.titleEs, r.titleEn)}</Text>
+                      <Text style={styles.featuredSub}>{r.subtitle}</Text>
+                      <View style={styles.featuredMeta}>
+                        <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.65)" />
+                        <Text style={styles.featuredMetaTxt}>{t(r.daysEs, r.daysEn)}</Text>
+                      </View>
                     </View>
-                    <View style={{ flex: 1 }} />
-                    <Text style={styles.featuredTitle}>
-                      {t(r.titleEs, r.titleEn)}
-                    </Text>
-                    <Text style={styles.featuredSub}>{r.subtitle}</Text>
-                    <View style={styles.featuredMeta}>
-                      <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.65)" />
-                      <Text style={styles.featuredMetaTxt}>
-                        {t(r.daysEs, r.daysEn)}
-                      </Text>
+                  </ImageBackground>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12 }}
+            >
+              {FEATURED.map((r) => (
+                <TouchableOpacity
+                  key={r.titleEs}
+                  style={[styles.featuredCard, { width: CARD_W, height: CARD_H }]}
+                  onPress={() =>
+                    router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)
+                  }
+                  activeOpacity={0.88}
+                >
+                  <ImageBackground
+                    source={{ uri: r.uri }}
+                    style={StyleSheet.absoluteFillObject}
+                    resizeMode="cover"
+                  >
+                    <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
+                    <View style={styles.featuredContent}>
+                      <View style={styles.featuredBadge}>
+                        <Text style={styles.featuredBadgeTxt}>{r.distance}</Text>
+                      </View>
+                      <View style={{ flex: 1 }} />
+                      <Text style={styles.featuredTitle}>{t(r.titleEs, r.titleEn)}</Text>
+                      <Text style={styles.featuredSub}>{r.subtitle}</Text>
+                      <View style={styles.featuredMeta}>
+                        <Ionicons name="time-outline" size={12} color="rgba(255,255,255,0.65)" />
+                        <Text style={styles.featuredMetaTxt}>{t(r.daysEs, r.daysEn)}</Text>
+                      </View>
                     </View>
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+                  </ImageBackground>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
+
+        <SectionDivider sidePad={sidePad} />
 
         {/* ── OFFLINE AI ── */}
         <View
-          style={[styles.mt8, { marginHorizontal: sidePad }]}
+          style={[styles.mt4, { marginHorizontal: sidePad }]}
           {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
         >
           <OfflineAICard />
         </View>
 
+        <SectionDivider sidePad={sidePad} />
+
         {/* ── GALLERY ── */}
-        <View style={styles.mt8}>
+        <View style={styles.mt4}>
           <Text
             style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
@@ -296,7 +387,7 @@ export default function InicioScreen() {
           </Text>
           <View style={[styles.galleryGrid, { marginHorizontal: sidePad, gap: galleryGap }]}>
             {GALLERY.map((item, i) => (
-              <View
+              <TouchableOpacity
                 key={i}
                 style={[
                   styles.galleryCell,
@@ -304,6 +395,8 @@ export default function InicioScreen() {
                     ? { width: fullW, height: fullH }
                     : { width: cellW, height: cellH },
                 ]}
+                activeOpacity={0.9}
+                onPress={() => setLightboxIndex(i)}
                 {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
               >
                 <ImageBackground
@@ -312,7 +405,6 @@ export default function InicioScreen() {
                   resizeMode="cover"
                 >
                   <View style={[StyleSheet.absoluteFillObject, styles.galleryOverlay]} />
-                  {/* Label bottom-left */}
                   <View
                     style={styles.galleryLabel}
                     {...(Platform.OS === 'web' ? ({ 'data-gallery-label': true } as any) : {})}
@@ -321,14 +413,20 @@ export default function InicioScreen() {
                       {t(item.labelEs, item.labelEn)}
                     </Text>
                   </View>
+                  {/* Expand icon */}
+                  <View style={styles.galleryExpandIcon}>
+                    <Ionicons name="expand-outline" size={16} color="rgba(255,255,255,0.6)" />
+                  </View>
                 </ImageBackground>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
 
+        <SectionDivider sidePad={sidePad} />
+
         {/* ── QUICK ACTIONS ── */}
-        <View style={[styles.mt8, { marginHorizontal: sidePad }]}>
+        <View style={[styles.mt4, { marginHorizontal: sidePad }]}>
           <Text
             style={styles.sectionLabel}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
@@ -339,15 +437,16 @@ export default function InicioScreen() {
             style={styles.actionCard}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/planificar')}
-            {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true, 'data-interactive-card': true } as any) : {})}
+            {...(Platform.OS === 'web' ? ({
+              'data-reveal-card': true,
+              'data-interactive-card': true,
+            } as any) : {})}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="map-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>
-                {t('Planificar caminata', 'Plan a hike')}
-              </Text>
+              <Text style={styles.actionTitle}>{t('Planificar caminata', 'Plan a hike')}</Text>
               <Text style={styles.actionDesc}>
                 {t(
                   'Traza tu próxima ruta y analízala con IA',
@@ -361,7 +460,10 @@ export default function InicioScreen() {
             style={[styles.actionCard, styles.mt3]}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/contribuir')}
-            {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true, 'data-interactive-card': true } as any) : {})}
+            {...(Platform.OS === 'web' ? ({
+              'data-reveal-card': true,
+              'data-interactive-card': true,
+            } as any) : {})}
           >
             <View style={styles.actionIcon}>
               <Ionicons name="pencil-outline" size={22} color="#fff" />
@@ -381,9 +483,11 @@ export default function InicioScreen() {
           </TouchableOpacity>
         </View>
 
+        <SectionDivider sidePad={sidePad} />
+
         {/* ── PACK ACTIVO ── */}
         <View
-          style={[styles.mt8, { marginHorizontal: sidePad }]}
+          style={[styles.mt4, { marginHorizontal: sidePad }]}
           {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
         >
           <Text
@@ -403,9 +507,7 @@ export default function InicioScreen() {
             <View style={styles.packRow}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.packName}>Torres del Paine</Text>
-                <Text style={styles.packRegion}>
-                  {t('Patagonia, Chile', 'Patagonia, Chile')}
-                </Text>
+                <Text style={styles.packRegion}>{t('Patagonia, Chile', 'Patagonia, Chile')}</Text>
               </View>
               <View style={styles.packBadge}>
                 <Ionicons name="cloud-done-outline" size={13} color="#34d399" />
@@ -413,7 +515,9 @@ export default function InicioScreen() {
               </View>
             </View>
             <View style={styles.packDivider} />
-            <Text style={styles.packMeta}>v2.4.1 · {t('Región sur', 'Southern Region')} · 1.2 GB</Text>
+            <Text style={styles.packMeta}>
+              v2.4.1 · {t('Región sur', 'Southern Region')} · 1.2 GB
+            </Text>
           </View>
         </View>
 
@@ -421,19 +525,52 @@ export default function InicioScreen() {
         {!user && (
           <TouchableOpacity
             style={[styles.authBanner, { marginHorizontal: sidePad }]}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             onPress={() => router.push('/(auth)/login')}
+            {...(Platform.OS === 'web' ? ({ 'data-auth-banner': true } as any) : {})}
           >
-            <Ionicons name="person-circle-outline" size={28} color="#16a34a" />
-            <Text style={styles.authText}>
-              {t('Inicia sesión para guardar tus rutas', 'Sign in to save your routes')}
-            </Text>
-            <Ionicons name="chevron-forward" size={18} color="#4a5568" />
+            <ImageBackground
+              source={{ uri: AUTH_BG_URI }}
+              style={StyleSheet.absoluteFillObject}
+              resizeMode="cover"
+            >
+              <View style={[StyleSheet.absoluteFillObject, styles.authBannerOverlay]} />
+            </ImageBackground>
+            <View style={styles.authBannerInner}>
+              <View style={styles.authBannerIcon}>
+                <Ionicons name="person-outline" size={20} color="#22c55e" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.authBannerTitle}>
+                  {t('Únete a la comunidad', 'Join the community')}
+                </Text>
+                <Text style={styles.authBannerSub}>
+                  {t(
+                    'Guarda rutas, contribuye y accede sin límites',
+                    'Save routes, contribute and access without limits',
+                  )}
+                </Text>
+              </View>
+              <View style={styles.authBannerCta}>
+                <Text style={styles.authBannerCtaTxt}>
+                  {t('Entrar', 'Sign in')}
+                </Text>
+                <Ionicons name="arrow-forward" size={14} color="#fff" />
+              </View>
+            </View>
           </TouchableOpacity>
         )}
 
         {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
+
+      {/* ── GALLERY LIGHTBOX ── */}
+      <GalleryLightbox
+        items={GALLERY}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        lang={lang}
+      />
     </View>
   );
 }
@@ -446,16 +583,22 @@ const styles = StyleSheet.create({
   // Hero
   heroWrapper: { width: '100%', overflow: 'hidden' },
   hero: { width: '100%', minHeight: 520, maxHeight: 700 },
-  heroImage: { transform: [{ scale: 1.05 }] },
-  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.48)' },
-  heroGradient: {
+  heroOverlay: { backgroundColor: 'rgba(7,11,20,0.42)' },
+  heroGradientBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 220,
     backgroundColor: 'transparent',
+    // On web webStyles injects a proper CSS gradient; on native this is a soft fade
+    opacity: 0.85,
   },
   heroInner: {
     minHeight: 520,
     maxHeight: 700,
     justifyContent: 'flex-end',
-    paddingBottom: 48,
+    paddingBottom: 52,
   },
   heroBrand: {
     flexDirection: 'row',
@@ -463,17 +606,8 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 22,
   },
-  heroBrandText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#22c55e',
-    letterSpacing: 3.5,
-  },
-  heroBrandDivider: {
-    width: 1,
-    height: 12,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-  },
+  heroBrandText: { fontSize: 11, fontWeight: '800', color: '#22c55e', letterSpacing: 3.5 },
+  heroBrandDivider: { width: 1, height: 12, backgroundColor: 'rgba(255,255,255,0.2)' },
   heroBrandTagline: {
     fontSize: 10,
     fontWeight: '600',
@@ -521,30 +655,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.06)',
   },
   heroBtnSecondaryTxt: { color: '#fff', fontSize: 14, fontWeight: '600' },
-
-  // Scroll indicator
-  scrollIndicator: {
-    marginTop: 20,
-    alignItems: 'center',
-    opacity: 0.6,
-  },
+  scrollIndicator: { marginTop: 20, alignItems: 'center', opacity: 0.6 },
 
   // Stats
-  statsRow: { flexDirection: 'row', marginTop: 24, gap: 10 },
+  statsRow: { flexDirection: 'row', marginTop: 28, gap: 10 },
   statCard: {
     flex: 1,
     backgroundColor: '#0f1724',
     borderWidth: 1,
     borderColor: '#1e2d42',
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
   },
   statNum: { fontSize: 24, fontWeight: '800', color: '#4ade80', letterSpacing: -0.5 },
   statLbl: { fontSize: 11, color: '#78716c', marginTop: 3, fontWeight: '500' },
 
+  // Divider
+  divider: {
+    height: 1,
+    backgroundColor: '#1e2d42',
+    marginVertical: 32,
+    opacity: 0.5,
+  },
+
   // Shared
-  mt8: { marginTop: 36 },
+  mt4: { marginTop: 0 },
   mt3: { marginTop: 12 },
   sectionLabel: {
     fontSize: 10,
@@ -555,11 +691,22 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
 
-  // Featured cards
-  featuredCard: { borderRadius: 20, overflow: 'hidden' },
-  featuredOverlay: {
-    backgroundColor: 'rgba(0,0,0,0.32)',
+  // Featured — desktop 2×2 grid
+  featuredGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
   },
+  featuredGridCard: {
+    width: '48.5%',
+    aspectRatio: 1.55,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+
+  // Featured — mobile horizontal card
+  featuredCard: { borderRadius: 20, overflow: 'hidden' },
+  featuredOverlay: { backgroundColor: 'rgba(0,0,0,0.32)' },
   featuredContent: { flex: 1, padding: 14 },
   featuredBadge: {
     alignSelf: 'flex-start',
@@ -577,7 +724,7 @@ const styles = StyleSheet.create({
   // Gallery
   galleryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
-  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.18)' },
+  galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.15)' },
   galleryLabel: {
     position: 'absolute',
     bottom: 0,
@@ -588,11 +735,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   galleryLabelTxt: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.75)',
-    letterSpacing: 0.4,
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.7)',
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
+  },
+  galleryExpandIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Action cards
@@ -620,12 +778,7 @@ const styles = StyleSheet.create({
   actionDesc: { fontSize: 12, color: '#78716c', lineHeight: 17 },
 
   // Pack activo
-  packCard: {
-    borderRadius: 22,
-    overflow: 'hidden',
-    padding: 20,
-    backgroundColor: '#0f1724',
-  },
+  packCard: { borderRadius: 22, overflow: 'hidden', padding: 20, backgroundColor: '#0f1724' },
   packOverlay: { backgroundColor: 'rgba(7,11,20,0.68)' },
   packRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   packName: { fontSize: 16, fontWeight: '700', color: '#f1f5f9', marginBottom: 2 },
@@ -650,19 +803,54 @@ const styles = StyleSheet.create({
   },
   packMeta: { fontSize: 11, color: 'rgba(255,255,255,0.35)' },
 
-  // Auth banner
+  // Auth banner — premium card with bg image
   authBanner: {
     marginTop: 16,
     marginBottom: 8,
+    borderRadius: 22,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(22,163,74,0.28)',
+    minHeight: 90,
+  },
+  authBannerOverlay: { backgroundColor: 'rgba(7,11,20,0.72)' },
+  authBannerInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(22,163,74,0.22)',
-    backgroundColor: 'rgba(22,163,74,0.06)',
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    padding: 18,
+    gap: 14,
   },
-  authText: { flex: 1, fontSize: 14, fontWeight: '600', color: '#d1d5db' },
+  authBannerIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(22,163,74,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(22,163,74,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  authBannerTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#f1f5f9',
+    marginBottom: 2,
+  },
+  authBannerSub: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+    lineHeight: 17,
+  },
+  authBannerCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#16a34a',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    flexShrink: 0,
+  },
+  authBannerCtaTxt: { fontSize: 13, fontWeight: '700', color: '#fff' },
 });

@@ -116,6 +116,58 @@ export function injectWebStyles() {
     [data-reveal-card] {
       will-change: transform, opacity;
     }
+
+    /* Smooth page entrance */
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    [data-page-content] {
+      animation: pageIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Section divider gradient */
+    [data-section-divider] {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(30,45,66,0.7) 20%, rgba(30,45,66,0.7) 80%, transparent);
+      margin: 32px 0;
+    }
+
+    /* Hero video — always covers its container */
+    [data-hero-video] {
+      position: absolute !important;
+      top: 0 !important; left: 0 !important;
+      width: 100% !important; height: 100% !important;
+      object-fit: cover !important;
+      pointer-events: none !important;
+      z-index: 0 !important;
+    }
+
+    /* Auth banner hover lift */
+    [data-auth-banner] {
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    [data-auth-banner]:hover {
+      transform: translateY(-2px);
+      border-color: rgba(22,163,74,0.45) !important;
+      background-color: rgba(22,163,74,0.1) !important;
+    }
+
+    /* Gallery lightbox animation */
+    [data-lightbox-backdrop] {
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Featured grid on desktop */
+    [data-featured-grid] {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
   `;
   document.head.appendChild(style);
 }
