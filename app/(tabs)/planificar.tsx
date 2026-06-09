@@ -172,20 +172,21 @@ export default function PlanificarScreen() {
     Alert.alert('Próximamente', 'La exportación GPX estará disponible en la próxima versión.');
   }
 
-  // Plan name input — shared between layouts
+  // Plan name input
   const planNameInput = (
     <View style={styles.nameInputWrapper}>
+      <Ionicons name="pencil-outline" size={16} color="#64748b" style={{ marginRight: 8 }} />
       <TextInput
         value={planName}
         onChangeText={setPlanName}
         placeholder="Nombre de la ruta"
-        placeholderTextColor="#57534e"
+        placeholderTextColor="#475569"
         style={styles.nameInput}
       />
     </View>
   );
 
-  // Sidebar / bottom action buttons
+  // Sidebar action buttons
   const actionButtons = (
     <View style={styles.actionButtons}>
       <Button
@@ -217,8 +218,11 @@ export default function PlanificarScreen() {
   // Empty state shown over map area when no waypoints
   const emptyState = (
     <View style={styles.emptyState} pointerEvents="none">
-      <Ionicons name="map-outline" size={48} color="#44403c" />
-      <Text style={styles.emptyText}>Toca el mapa para añadir puntos</Text>
+      <View style={styles.emptyIconWrap}>
+        <Ionicons name="location-outline" size={32} color="#22c55e" />
+      </View>
+      <Text style={styles.emptyTitle}>Construye tu ruta</Text>
+      <Text style={styles.emptyText}>Toca cualquier punto del mapa{'\n'}para añadir un waypoint</Text>
     </View>
   );
 
@@ -233,14 +237,31 @@ export default function PlanificarScreen() {
         <View style={styles.wideContainer}>
           {/* Sidebar */}
           <View style={styles.sidebar}>
-            {planNameInput}
+            {/* Premium sidebar header */}
+            <View style={styles.sidebarHeader}>
+              <View style={styles.sidebarHeaderTop}>
+                <View style={styles.sidebarIconWrap}>
+                  <Ionicons name="map-outline" size={18} color="#22c55e" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.sidebarTitle}>Constructor de ruta</Text>
+                  <Text style={styles.sidebarSubtitle}>
+                    {waypoints.length === 0
+                      ? 'Toca el mapa para añadir puntos'
+                      : `${waypoints.length} punto${waypoints.length !== 1 ? 's' : ''} añadido${waypoints.length !== 1 ? 's' : ''}`}
+                  </Text>
+                </View>
+              </View>
+              {planNameInput}
+            </View>
+
             <RouteStats />
             <View style={styles.sidebarList}>
               <WaypointList />
             </View>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
             >
               {actionButtons}
               <ParquesNacionalesSection />
@@ -411,10 +432,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
   },
+  emptyIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(34,197,94,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(34,197,94,0.2)',
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#f0f9ff',
+    letterSpacing: -0.3,
+  },
   emptyText: {
     fontSize: 14,
     color: '#57534e',
     fontWeight: '500',
+    textAlign: 'center',
   },
 
   // Action buttons
@@ -423,6 +461,40 @@ const styles = StyleSheet.create({
   },
   actionButtonSpacer: {
     height: 8,
+  },
+
+  // Sidebar header
+  sidebarHeader: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e2d42',
+  },
+  sidebarHeaderTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  sidebarIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: 'rgba(34,197,94,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(34,197,94,0.2)',
+  },
+  sidebarTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#f0f9ff',
+    letterSpacing: -0.2,
+  },
+  sidebarSubtitle: {
+    fontSize: 12,
+    color: '#64748b',
+    marginTop: 1,
   },
 
   // Wide layout

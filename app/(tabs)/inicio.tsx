@@ -92,6 +92,44 @@ const GALLERY: { uri: string; labelEs: string; labelEn: string }[] = [
   },
 ];
 
+const DESTINATIONS = [
+  {
+    id: 'patagonia',
+    name: 'Patagonia',
+    region: 'Santa Cruz · Tierra del Fuego',
+    trailCount: 6,
+    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=500&q=80&fit=crop&auto=format',
+  },
+  {
+    id: 'bariloche',
+    name: 'Bariloche',
+    region: 'Río Negro · Neuquén',
+    trailCount: 4,
+    photo: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&q=80&fit=crop&auto=format',
+  },
+  {
+    id: 'aconcagua',
+    name: 'Aconcagua',
+    region: 'Mendoza',
+    trailCount: 1,
+    photo: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=500&q=80&fit=crop&auto=format',
+  },
+  {
+    id: 'noroeste',
+    name: 'Noroeste',
+    region: 'Jujuy · Salta',
+    trailCount: 2,
+    photo: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=500&q=80&fit=crop&auto=format',
+  },
+  {
+    id: 'cordoba',
+    name: 'Córdoba',
+    region: 'Sierras',
+    trailCount: 2,
+    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=500&q=80&fit=crop&auto=format',
+  },
+];
+
 const PACK_URI =
   'https://images.unsplash.com/photo-1548248823-ce16a73b6d49?w=900&q=80&fit=crop&auto=format';
 
@@ -473,6 +511,64 @@ export default function InicioScreen() {
               ))}
             </ScrollView>
           )}
+        </View>
+
+        <SectionDivider sidePad={sidePad} />
+
+        {/* ── ARGENTINA DESTINATION HUB ── */}
+        <View style={styles.mt4}>
+          <View style={[styles.hubHeader, { paddingHorizontal: sidePad }]}>
+            <View>
+              <Text
+                style={styles.sectionLabel}
+                {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+              >
+                {t('DESTINOS EN ARGENTINA', 'DESTINATIONS IN ARGENTINA')}
+              </Text>
+              <Text style={[styles.hubSubtitle, { color: '#64748b' }]}>
+                {t('Explora por provincia y parque nacional', 'Explore by province and national park')}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/rutas')}
+              style={styles.hubSeeAll}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.hubSeeAllTxt}>{t('Ver todas', 'See all')}</Text>
+              <Ionicons name="arrow-forward" size={13} color="#22c55e" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12, paddingBottom: 4 }}
+          >
+            {DESTINATIONS.map((dest) => (
+              <TouchableOpacity
+                key={dest.id}
+                style={styles.destCard}
+                activeOpacity={0.88}
+                onPress={() => router.push('/(tabs)/rutas')}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
+              >
+                <ImageBackground
+                  source={{ uri: dest.photo }}
+                  style={StyleSheet.absoluteFillObject}
+                  resizeMode="cover"
+                />
+                <View style={styles.destGradient} />
+                <View style={styles.destContent}>
+                  <View style={styles.destBadge}>
+                    <Text style={styles.destBadgeTxt}>{dest.trailCount} {t('rutas', 'trails')}</Text>
+                  </View>
+                  <View style={{ flex: 1 }} />
+                  <Text style={styles.destName}>{dest.name}</Text>
+                  <Text style={styles.destRegion}>{dest.region}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         <SectionDivider sidePad={sidePad} />
@@ -989,4 +1085,40 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   authBannerCtaTxt: { fontSize: 13, fontWeight: '700', color: '#fff' },
+
+  // Argentina hub
+  hubHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  hubSubtitle: { fontSize: 12, marginTop: 3 },
+  hubSeeAll: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingBottom: 2 },
+  hubSeeAllTxt: { fontSize: 12, fontWeight: '700', color: '#22c55e' },
+  destCard: {
+    width: 160,
+    height: 220,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  destGradient: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(7,11,20,0.52)',
+    top: '35%',
+  },
+  destContent: {
+    flex: 1,
+    padding: 14,
+  },
+  destBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(22,163,74,0.85)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  destBadgeTxt: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  destName: { fontSize: 16, fontWeight: '800', color: '#fff', letterSpacing: -0.3 },
+  destRegion: { fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
 });
