@@ -180,6 +180,27 @@ export function injectWebStyles() {
       gap: 12px;
     }
 
+    /* ── Trail detail: full-viewport hero ── */
+    [data-trail-hero] {
+      height: 100vh !important;
+      min-height: 560px;
+    }
+    [data-trail-hero-gradient-top] {
+      background: linear-gradient(to bottom, rgba(7,11,20,0.55) 0%, transparent 40%) !important;
+    }
+    [data-trail-hero-gradient-bottom] {
+      background: linear-gradient(to top, rgba(7,11,20,0.95) 0%, rgba(7,11,20,0.6) 50%, transparent 100%) !important;
+      height: 70% !important;
+    }
+    [data-trail-tab-bar] {
+      position: sticky;
+      top: 58px; /* below WebHeader */
+      z-index: 20;
+      backdrop-filter: blur(12px) saturate(1.3);
+      -webkit-backdrop-filter: blur(12px) saturate(1.3);
+      background-color: rgba(7,11,20,0.85) !important;
+    }
+
     /* ── Premium button states ── */
     [data-btn] {
       cursor: pointer;
