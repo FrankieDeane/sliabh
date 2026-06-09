@@ -77,11 +77,12 @@ export default function InicioScreen() {
   const CARD_W = Math.min(contentW * 0.62, 240);
   const CARD_H = Math.round(CARD_W * 1.35);
 
-  // Gallery cell sizes
+  // Gallery cell sizes — use actual container inner width (contentW minus horizontal padding)
   const galleryGap = 8;
-  const cellW = (contentW - galleryGap) / 2;
+  const galleryInnerW = width - 2 * sidePad;
+  const cellW = (galleryInnerW - galleryGap) / 2;
   const cellH = Math.round(cellW * 0.72);
-  const fullW = contentW;
+  const fullW = galleryInnerW;
   const fullH = Math.round(fullW * 0.45);
 
   return (

@@ -120,10 +120,17 @@ export default function MapasScreen() {
               ))}
             </View>
 
+            <View style={styles.downloadNote}>
+              <Ionicons name="download-outline" size={15} color="#64748b" />
+              <Text style={styles.downloadNoteText}>
+                Descarga de mapas offline — próximamente
+              </Text>
+            </View>
+
             {isOffline && (
               <View style={styles.offlineNote}>
                 <Ionicons name="cloud-offline-outline" size={15} color="#fbbf24" />
-                <Text style={styles.offlineNoteText}>Mapa en caché · Disponible sin conexión</Text>
+                <Text style={styles.offlineNoteText}>Sin conexión · Los tiles del mapa requieren internet</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -177,8 +184,13 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 8, width: '45%' },
   legendIcon: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   legendLabel: { fontSize: 13, fontWeight: '500' },
-  offlineNote: {
+  downloadNote: {
     flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20,
+    backgroundColor: 'rgba(100,116,139,0.12)', borderRadius: 12, padding: 12,
+  },
+  downloadNoteText: { color: '#64748b', fontSize: 12, fontWeight: '500', flex: 1 },
+  offlineNote: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8,
     backgroundColor: 'rgba(245,158,11,0.12)', borderRadius: 12, padding: 12,
   },
   offlineNoteText: { color: '#fbbf24', fontSize: 12, fontWeight: '500', flex: 1 },
