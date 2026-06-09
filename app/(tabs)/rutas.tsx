@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/hooks/useTheme';
 import {
   ARGENTINA_TRAILS,
@@ -25,7 +26,12 @@ const MAX_CONTENT = 900;
 export default function RutasScreen() {
   const { isDark } = useTheme();
   const { width } = useWindowDimensions();
+  const router = useRouter();
   const [region, setRegion] = useState<TrailRegion>('Todas');
+
+  function goToTrail(id: string) {
+    router.push({ pathname: '/(tabs)/ruta/[id]', params: { id } } as any);
+  }
 
   const c = isDark
     ? {
@@ -124,7 +130,7 @@ export default function RutasScreen() {
             {featured && (
               <View style={styles.section}>
                 <Text style={[styles.sectionLabel, { color: c.muted }]}>DESTACADA</Text>
-                <FeaturedTrailCard trail={featured} onPress={() => {}} />
+                <FeaturedTrailCard trail={featured} onPress={() => goToTrail(featured.id)} />
 
                 {/* Trail description */}
                 <View
@@ -164,7 +170,7 @@ export default function RutasScreen() {
                   <View style={styles.grid}>
                     {rest.map((t) => (
                       <View key={t.id} style={styles.gridCell}>
-                        <TrailListCard trail={t} onPress={() => {}} colors={c} />
+                        <TrailListCard trail={t} onPress={() => goToTrail(t.id)} colors={c} />
                       </View>
                     ))}
                   </View>

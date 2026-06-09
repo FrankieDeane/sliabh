@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, ScrollView, Linking, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { MapLeaflet } from '../../src/components/map/MapLeaflet';
@@ -87,6 +87,7 @@ export default function MapasScreen() {
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={() => setSheetOpen(false)}>
           <TouchableOpacity activeOpacity={1} style={[styles.sheet, { backgroundColor: c.surface, borderColor: c.border }]}>
             <View style={[styles.handle, { backgroundColor: c.border }]} />
+            <ScrollView showsVerticalScrollIndicator={false}>
 
             <Text style={[styles.sheetTitle, { color: c.muted }]}>CAPA DEL MAPA</Text>
             <View style={styles.layerRow}>
@@ -120,12 +121,28 @@ export default function MapasScreen() {
               ))}
             </View>
 
-            <View style={styles.downloadNote}>
-              <Ionicons name="download-outline" size={15} color="#64748b" />
-              <Text style={styles.downloadNoteText}>
-                Descarga de mapas offline — próximamente
-              </Text>
-            </View>
+            <Text style={[styles.sheetTitle, { color: c.muted, marginTop: 20 }]}>MAPAS DESCARGABLES</Text>
+            <Text style={[styles.downloadHint, { color: c.muted }]}>
+              Mapas oficiales de parques nacionales de Argentina (PDF gratuito):
+            </Text>
+            {[
+              { name: 'Los Glaciares (Fitz Roy / Cerro Torre)', url: 'https://www.argentina.gob.ar/parquesnacionales/losglaciares' },
+              { name: 'Nahuel Huapi (Bariloche)', url: 'https://www.argentina.gob.ar/parquesnacionales/nahuelhuapi' },
+              { name: 'Lanín (Volcán Lanín)', url: 'https://www.argentina.gob.ar/parquesnacionales/lanin' },
+              { name: 'Aconcagua (Mendoza)', url: 'https://www.mendoza.gov.ar/aconcagua/' },
+              { name: 'Talampaya & Quebrada Humahuaca', url: 'https://www.argentina.gob.ar/parquesnacionales/talampaya' },
+            ].map((m) => (
+              <TouchableOpacity
+                key={m.name}
+                style={[styles.mapLink, { backgroundColor: c.elevated, borderColor: c.border }]}
+                onPress={() => Linking.openURL(m.url)}
+                activeOpacity={0.75}
+              >
+                <Ionicons name="map-outline" size={16} color="#22c55e" />
+                <Text style={[styles.mapLinkText, { color: c.text }]} numberOfLines={1}>{m.name}</Text>
+                <Ionicons name="open-outline" size={13} color={c.muted} />
+              </TouchableOpacity>
+            ))}
 
             {isOffline && (
               <View style={styles.offlineNote}>
@@ -133,6 +150,7 @@ export default function MapasScreen() {
                 <Text style={styles.offlineNoteText}>Sin conexión · Los tiles del mapa requieren internet</Text>
               </View>
             )}
+            </ScrollView>
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
@@ -184,11 +202,12 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 8, width: '45%' },
   legendIcon: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   legendLabel: { fontSize: 13, fontWeight: '500' },
-  downloadNote: {
-    flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20,
-    backgroundColor: 'rgba(100,116,139,0.12)', borderRadius: 12, padding: 12,
+  downloadHint: { fontSize: 12, lineHeight: 17, marginBottom: 10 },
+  mapLink: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    borderWidth: 1, borderRadius: 12, padding: 12, marginBottom: 8,
   },
-  downloadNoteText: { color: '#64748b', fontSize: 12, fontWeight: '500', flex: 1 },
+  mapLinkText: { flex: 1, fontSize: 13, fontWeight: '500' },
   offlineNote: {
     flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8,
     backgroundColor: 'rgba(245,158,11,0.12)', borderRadius: 12, padding: 12,

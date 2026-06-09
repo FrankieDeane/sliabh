@@ -20,7 +20,7 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 const MAX_CONTENT = 900;
 
 const HERO_URI =
-  'https://images.unsplash.com/photo-xfngap_DToE?w=1400&q=85&fit=crop&auto=format';
+  'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1400&q=85&fit=crop&auto=format';
 
 const FEATURED = [
   {
@@ -29,6 +29,7 @@ const FEATURED = [
     distance: '80 km',
     days: '4–5 días',
     uri: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80&fit=crop&auto=format',
+    routeId: 'cerro-torre-base',
   },
   {
     title: 'Laguna de los Tres',
@@ -36,6 +37,7 @@ const FEATURED = [
     distance: '24 km',
     days: '1 día',
     uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80&fit=crop&auto=format',
+    routeId: 'fitz-roy-laguna-tres',
   },
   {
     title: 'Dientes de Navarino',
@@ -43,13 +45,15 @@ const FEATURED = [
     distance: '53 km',
     days: '4–5 días',
     uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=700&q=80&fit=crop&auto=format',
+    routeId: 'lago-desierto-patagonia',
   },
   {
-    title: 'Escalar Torres',
-    subtitle: 'Torres del Paine',
-    distance: '18 km',
-    days: '1–2 días',
+    title: 'Aconcagua',
+    subtitle: 'Ruta Normal',
+    distance: '110 km',
+    days: '18–22 días',
     uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
+    routeId: 'aconcagua-ruta-normal',
   },
 ];
 
@@ -75,15 +79,15 @@ export default function InicioScreen() {
 
   // Card size: capped so they don't get massive on desktop
   const CARD_W = Math.min(contentW * 0.62, 240);
-  const CARD_H = Math.round(CARD_W * 1.35);
+  const CARD_H = Math.round(CARD_W * 0.65);
 
   // Gallery cell sizes — use actual container inner width (contentW minus horizontal padding)
   const galleryGap = 8;
   const galleryInnerW = width - 2 * sidePad;
   const cellW = (galleryInnerW - galleryGap) / 2;
-  const cellH = Math.round(cellW * 0.72);
+  const cellH = Math.round(cellW * 0.56);
   const fullW = galleryInnerW;
-  const fullH = Math.round(fullW * 0.45);
+  const fullH = Math.round(fullW * 0.42);
 
   return (
     <View style={styles.root}>
@@ -102,7 +106,7 @@ export default function InicioScreen() {
             ]}
           >
             <View style={styles.heroBrand}>
-              <Ionicons name="triangle" size={13} color="#22c55e" />
+              <Text style={{ fontSize: 13 }}>🏔️</Text>
               <Text style={styles.heroBrandText}>SLIABH</Text>
             </View>
             <Text style={styles.heroTitle}>{'Explora\nsin límites'}</Text>
@@ -149,7 +153,7 @@ export default function InicioScreen() {
               <TouchableOpacity
                 key={r.title}
                 style={[styles.featuredCard, { width: CARD_W, height: CARD_H }]}
-                onPress={() => router.push('/(tabs)/planificar')}
+                onPress={() => router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: r.routeId } } as any)}
                 activeOpacity={0.88}
               >
                 <ImageBackground

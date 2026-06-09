@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
+import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 
 const NAV = [
@@ -21,7 +22,8 @@ export function WebHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, signOut } = useAuthStore();
-  const { theme } = useThemeStore();
+  const { theme, toggle: toggleTheme } = useThemeStore();
+  const { lang, setLang } = useLangStore();
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
 
@@ -78,8 +80,36 @@ export function WebHeader() {
           </View>
         )}
 
-        {/* Right: login / user */}
+        {/* Right: lang + theme + login / user */}
         <View style={styles.right}>
+          {/* Language selector */}
+          <View style={[styles.langRow, { borderColor: c.border }]}>
+            <TouchableOpacity
+              onPress={() => setLang('es')}
+              style={[styles.langBtn, lang === 'es' && styles.langBtnActive]}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.langBtnTxt, { color: lang === 'es' ? '#fff' : c.muted }]}>ES</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setLang('en')}
+              style={[styles.langBtn, lang === 'en' && styles.langBtnActive]}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.langBtnTxt, { color: lang === 'en' ? '#fff' : c.muted }]}>EN</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Theme toggle */}
+          <TouchableOpacity
+            onPress={toggleTheme}
+            style={[styles.iconBtn, { borderColor: c.border }]}
+            activeOpacity={0.8}
+            accessibilityLabel={isDark ? 'Switch to Sun mode' : 'Switch to Moon mode'}
+          >
+            <Ionicons name={isDark ? 'sunny-outline' : 'moon-outline'} size={16} color={c.muted} />
+          </TouchableOpacity>
+
           {user ? (
             <View style={styles.userRow}>
               {!isCompact && (
@@ -172,6 +202,34 @@ const styles = StyleSheet.create({
   right: {
     flexShrink: 0,
     marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  langRow: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  langBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  langBtnActive: {
+    backgroundColor: '#16a34a',
+  },
+  langBtnTxt: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  iconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   userRow: {
     flexDirection: 'row',
