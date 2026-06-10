@@ -124,6 +124,19 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="supervivencia"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              icon="shield-checkmark"
+              iconOutline="shield-checkmark-outline"
+              label="Seguridad"
+              focused={focused}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

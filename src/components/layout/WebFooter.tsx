@@ -7,13 +7,27 @@ import { LOGO_URI } from '../../constants/logo';
 
 const MAX_CONTENT = 1200;
 
-const MAIN_NAV = [
-  { label: 'Inicio', href: '/(tabs)/inicio' as const },
-  { label: 'Rutas Argentina', href: '/(tabs)/rutas' as const },
-  { label: 'Mapas', href: '/(tabs)/mapas' as const },
-  { label: 'Planificar', href: '/(tabs)/planificar' as const },
+const REGION_LINKS = [
+  { label: 'Patagonia Sur', region: 'Patagonia Sur' },
+  { label: 'Patagonia Norte', region: 'Patagonia Norte' },
+  { label: 'Cuyo & Aconcagua', region: 'Cuyo' },
+  { label: 'Norte (NOA)', region: 'Norte' },
+  { label: 'Sierras Centrales', region: 'Sierras Centrales' },
+  { label: 'Litoral', region: 'Litoral' },
+];
+
+const PREPARAR_LINKS = [
+  { label: 'Mapas offline', href: '/(tabs)/mapas' as const },
+  { label: 'Planificar ruta', href: '/(tabs)/planificar' as const },
   { label: 'Asistente IA', href: '/(tabs)/asistente' as const },
   { label: 'Contribuir', href: '/(tabs)/contribuir' as const },
+];
+
+const SEGURIDAD_LINKS = [
+  { label: 'Supervivencia', href: '/(tabs)/supervivencia' as const },
+  { label: 'Si te perdés', href: '/(tabs)/supervivencia' as const },
+  { label: 'Qué llevar', href: '/(tabs)/supervivencia' as const },
+  { label: 'Sin señal', href: '/(tabs)/supervivencia' as const },
 ];
 
 export function WebFooter() {
@@ -33,17 +47,11 @@ export function WebFooter() {
   return (
     <View style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.border }]}>
       <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
-
-        {/* Top section */}
         <View style={[styles.top, isWide ? styles.topWide : styles.topNarrow]}>
 
           {/* Brand column */}
           <View style={styles.brandCol}>
-            <TouchableOpacity
-              style={styles.brand}
-              onPress={() => router.push('/(tabs)/inicio')}
-              activeOpacity={0.8}
-            >
+            <TouchableOpacity style={styles.brand} onPress={() => router.push('/(tabs)/inicio')} activeOpacity={0.8}>
               <Image source={{ uri: LOGO_URI }} style={styles.logo} />
               <View>
                 <Text style={[styles.brandName, { color: c.text }]}>Sliabh</Text>
@@ -51,98 +59,102 @@ export function WebFooter() {
               </View>
             </TouchableOpacity>
             <Text style={[styles.tagline, { color: c.muted }]}>
-              Explora la montaña con IA.{'\n'}Rutas, mapas y planificación para{'\n'}Patagonia y toda Argentina.
+              La plataforma de senderismo{'\n'}para explorar Argentina.{'\n'}Funciona con y sin señal.
             </Text>
+            <View style={[styles.emergencyBadge, { borderColor: c.border }]}>
+              <Ionicons name="call-outline" size={12} color="#ef4444" />
+              <Text style={[styles.emergencyTxt, { color: c.muted }]}>Emergencias APN: 105</Text>
+            </View>
           </View>
 
-          {/* Nav links */}
+          {/* Explorar column */}
           <View style={styles.navCol}>
-            <Text style={[styles.navTitle, { color: c.muted }]}>MENÚ PRINCIPAL</Text>
-            {MAIN_NAV.map((n) => (
-              <TouchableOpacity
-                key={n.href}
-                onPress={() => router.push(n.href)}
-                style={styles.navItem}
-                activeOpacity={0.7}
-              >
+            <Text style={[styles.navTitle, { color: c.muted }]}>EXPLORAR</Text>
+            <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/rutas')} activeOpacity={0.7}>
+              <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+              <Text style={[styles.navLabel, { color: c.muted }]}>Todas las rutas</Text>
+            </TouchableOpacity>
+            {REGION_LINKS.map((r) => (
+              <TouchableOpacity key={r.region} style={styles.navItem} onPress={() => router.push('/(tabs)/rutas')} activeOpacity={0.7}>
+                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+                <Text style={[styles.navLabel, { color: c.muted }]}>{r.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Preparar column */}
+          <View style={styles.navCol}>
+            <Text style={[styles.navTitle, { color: c.muted }]}>PREPARAR</Text>
+            {PREPARAR_LINKS.map((n) => (
+              <TouchableOpacity key={n.href} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
                 <Ionicons name="chevron-forward" size={11} color="#22c55e" />
                 <Text style={[styles.navLabel, { color: c.muted }]}>{n.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Info column */}
+          {/* Seguridad column */}
           <View style={styles.navCol}>
-            <Text style={[styles.navTitle, { color: c.muted }]}>SOBRE EL PROYECTO</Text>
-            <Text style={[styles.infoText, { color: c.muted }]}>
-              Sliabh es gaélico para{' '}
-              <Text style={{ color: '#22c55e', fontStyle: 'italic' }}>"montaña"</Text>.
-            </Text>
-            <Text style={[styles.infoText, { color: c.muted, marginTop: 8 }]}>
-              IA local con Ollama + Gemma.{'\n'}Funciona sin señal de red.
-            </Text>
+            <Text style={[styles.navTitle, { color: c.muted }]}>SEGURIDAD</Text>
+            {SEGURIDAD_LINKS.map((n) => (
+              <TouchableOpacity key={n.label} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
+                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+                <Text style={[styles.navLabel, { color: c.muted }]}>{n.label}</Text>
+              </TouchableOpacity>
+            ))}
+            <View style={[styles.infoCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+              <Text style={[styles.infoCardTxt, { color: c.muted }]}>
+                <Text style={{ color: '#22c55e', fontStyle: 'italic' }}>Sliabh</Text> es gaélico para{' '}
+                <Text style={{ color: '#22c55e' }}>"montaña"</Text>.
+              </Text>
+            </View>
           </View>
+
         </View>
 
-        {/* Divider */}
         <View style={[styles.divider, { backgroundColor: c.border }]} />
 
-        {/* Bottom copyright */}
         <View style={[styles.bottom, isWide ? styles.bottomWide : null]}>
           <Text style={[styles.copy, { color: c.muted }]}>
-            © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic Team</Text>
+            © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic</Text> — Argentina
           </Text>
           <View style={styles.copyRight}>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />
-            <Text style={[styles.copySmall, { color: c.muted }]}>
-              Hecho con ❤ para exploradores de montaña
-            </Text>
+            <Text style={[styles.copySmall, { color: c.muted }]}>Hecho para exploradores de montaña</Text>
           </View>
         </View>
-
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  footer: {
-    width: '100%',
-    borderTopWidth: 1,
-  },
-  inner: {
-    paddingTop: 40,
-    paddingBottom: 24,
-  },
-
-  // Top section
+  footer: { width: '100%', borderTopWidth: 1 },
+  inner: { paddingTop: 48, paddingBottom: 28 },
   top: { gap: 32, marginBottom: 32 },
   topWide: { flexDirection: 'row', alignItems: 'flex-start' },
   topNarrow: { flexDirection: 'column' },
-
-  // Brand
-  brandCol: { flex: 1.4, gap: 14 },
+  brandCol: { flex: 1.6, gap: 14 },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   logo: { width: 44, height: 44, borderRadius: 22 },
   brandName: { fontSize: 18, fontWeight: '800', letterSpacing: -0.4 },
   brandSub: { fontSize: 9, fontWeight: '600', letterSpacing: 2.5, textTransform: 'uppercase' },
   tagline: { fontSize: 13, lineHeight: 20 },
-
-  // Nav columns
+  emergencyBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6,
+    alignSelf: 'flex-start',
+  },
+  emergencyTxt: { fontSize: 11, fontWeight: '600' },
   navCol: { flex: 1, gap: 10 },
   navTitle: { fontSize: 9, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 },
   navItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   navLabel: { fontSize: 13, fontWeight: '500' },
-
-  // Info column
-  infoText: { fontSize: 12, lineHeight: 19 },
-  clanCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 7,
-    borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 7, marginTop: 12,
+  infoCard: {
+    marginTop: 8, borderRadius: 10, borderWidth: 1,
+    paddingHorizontal: 10, paddingVertical: 8,
   },
-  clanText: { fontSize: 11, fontWeight: '500' },
-
-  // Bottom
+  infoCardTxt: { fontSize: 11, lineHeight: 17 },
   divider: { height: 1, marginBottom: 20 },
   bottom: { gap: 8 },
   bottomWide: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
