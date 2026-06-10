@@ -45,7 +45,7 @@ export function WebHeader() {
     { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const },
     { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const },
     { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const },
-    { labelEs: 'IA', labelEn: 'AI', href: '/(tabs)/asistente' as const },
+    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const },
   ];
 
   const c = isDark

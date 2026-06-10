@@ -31,8 +31,10 @@ const NATIONAL_PARKS = [
   { name: 'Aconcagua', location: 'Mendoza', fact: 'Cerro más alto del hemisferio, 6961m' },
   { name: 'Quebrada de Humahuaca', location: 'Jujuy', fact: 'UNESCO, 7 colores, puna' },
   { name: 'Sierras de Córdoba', location: 'Córdoba', fact: 'Los Gigantes, La Ventana' },
-  { name: 'Torres del Paine', location: 'Chile', fact: 'Circuito W, refugios' },
-  { name: 'Tierra del Fuego', location: 'Ushuaia', fact: 'Fin del mundo, Ushuaia' },
+  { name: 'Los Alerces', location: 'Chubut', fact: 'UNESCO, alerces milenarios, lago Futalaufquen' },
+  { name: 'Lago Puelo', location: 'Chubut', fact: 'Microclima único, bosque valdiviano' },
+  { name: 'PN Patagonia', location: 'Santa Cruz', fact: 'Estepa, guanacos, lago Cochrane' },
+  { name: 'Tierra del Fuego', location: 'Ushuaia', fact: 'Fin del mundo, Canal Beagle' },
 ];
 
 type ThemeColors = { bg: string; surface: string; elevated: string; border: string; text: string; muted: string };
