@@ -122,13 +122,13 @@ const REGIONS = [
     photo: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&fit=crop&auto=format',
   },
   {
-    id: 'buenos-aires',
-    nameEs: 'Buenos Aires',
-    nameEn: 'Buenos Aires',
-    regionEs: 'Sierras · Ventana',
-    regionEn: 'Hills · Ventana',
-    trailCount: 1,
-    photo: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500&q=80&fit=crop&auto=format',
+    id: 'litoral',
+    nameEs: 'Litoral',
+    nameEn: 'Litoral',
+    regionEs: 'Misiones · Corrientes · Entre Ríos',
+    regionEn: 'Misiones · Corrientes · Entre Ríos',
+    trailCount: 2,
+    photo: 'https://images.unsplash.com/photo-1546200547-f4c8c66de5d8?w=500&q=80&fit=crop&auto=format',
   },
 ];
 
