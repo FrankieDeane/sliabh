@@ -328,27 +328,42 @@ export default function SupervivenciaScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Hero band */}
-        <View style={[styles.hero, { backgroundColor: isDark ? '#0a0f1a' : '#111827' }]}>
-          <View style={{ paddingHorizontal: sidePad, paddingVertical: 52 }}>
-            <View style={styles.heroPill}>
-              <Ionicons name="shield-checkmark-outline" size={13} color="#ef4444" />
-              <Text style={styles.heroPillTxt}>
-                {t('SEGURIDAD EN MONTAÑA', 'MOUNTAIN SAFETY')}
-              </Text>
-            </View>
+        {/* Hero band — editorial full-bleed */}
+        <View style={[styles.hero, { backgroundColor: '#0a0f1a' }]}>
+          {Platform.OS === 'web' && (
+            // @ts-ignore
+            <img
+              src="https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1920&q=85&fit=crop&auto=format"
+              alt=""
+              style={{
+                position: 'absolute', inset: 0, width: '100%', height: '100%',
+                objectFit: 'cover', opacity: 0.45,
+              }}
+            />
+          )}
+          <View style={{ paddingHorizontal: sidePad, paddingVertical: 110 }}>
+            <Text
+              style={styles.heroPillTxt}
+              {...(Platform.OS === 'web' ? ({ 'data-eyebrow': true } as any) : {})}
+            >
+              {t('SEGURIDAD EN MONTAÑA — GUÍAS OFFLINE', 'MOUNTAIN SAFETY — OFFLINE GUIDES')}
+            </Text>
             <Text
               style={[
                 styles.heroTitle,
-                Platform.OS === 'web' ? ({ fontSize: 'clamp(28px, 4vw, 52px)' } as any) : { fontSize: 28 },
+                Platform.OS === 'web' ? ({ fontSize: 'clamp(38px, 6vw, 84px)' } as any) : { fontSize: 34 },
               ]}
+              {...(Platform.OS === 'web' ? ({ 'data-display-xl': true } as any) : {})}
             >
               {t('Cuando no hay señal,\nhay preparación.', 'When there is no signal,\nthere is preparation.')}
             </Text>
-            <Text style={styles.heroSub}>
+            <Text
+              style={styles.heroSub}
+              {...(Platform.OS === 'web' ? ({ 'data-serif': true } as any) : {})}
+            >
               {t(
-                '8 guías de emergencia para montaña. Descargadas y accesibles sin conexión.',
-                '8 mountain emergency guides. Downloaded and accessible without connection.',
+                'Ocho guías de emergencia, escritas para la montaña argentina.\nUna vez visitadas, funcionan sin conexión.',
+                'Eight emergency guides, written for the Argentine mountains.\nOnce visited, they work without connection.',
               )}
             </Text>
             <View style={styles.heroStats}>
@@ -425,7 +440,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 48 },
 
   // Hero
-  hero: {},
+  hero: { position: 'relative', overflow: 'hidden' },
   heroPill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -440,23 +455,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   heroPillTxt: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#ef4444',
-    letterSpacing: 1.5,
+    fontSize: 11,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.65)',
+    letterSpacing: 4,
+    marginBottom: 24,
   },
   heroTitle: {
-    fontWeight: '900',
-    color: '#f0f9ff',
-    letterSpacing: -1.5,
+    fontWeight: '400',
+    color: '#fff',
+    letterSpacing: -1,
     lineHeight: undefined,
-    marginBottom: 14,
+    marginBottom: 22,
   },
   heroSub: {
-    fontSize: 14,
-    color: 'rgba(240,249,255,0.6)',
-    lineHeight: 21,
-    marginBottom: 32,
+    fontSize: 17,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 27,
+    marginBottom: 40,
+    fontStyle: 'italic',
   },
   heroStats: {
     flexDirection: 'row',

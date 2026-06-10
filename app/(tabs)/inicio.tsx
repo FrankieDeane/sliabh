@@ -313,30 +313,30 @@ export default function InicioScreen() {
             <View style={styles.heroCenterBlock}>
               <Text
                 style={styles.heroEyebrow}
-                {...(Platform.OS === 'web' ? ({ 'data-hero-eyebrow': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-eyebrow': true, 'data-eyebrow': true } as any) : {})}
               >
-                ARGENTINA · 39 PARQUES NACIONALES · PATAGONIA
+                ARGENTINA — 22°S · 55°S
               </Text>
 
               <Text
                 style={[
                   styles.heroTitle,
                   Platform.OS === 'web'
-                    ? ({ fontSize: 'clamp(38px, 5.5vw, 68px)' } as any)
-                    : { fontSize: 38 },
+                    ? ({ fontSize: 'clamp(48px, 8vw, 110px)' } as any)
+                    : { fontSize: 44 },
                 ]}
-                {...(Platform.OS === 'web' ? ({ 'data-hero-title': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-title': true, 'data-display-xl': true } as any) : {})}
               >
-                {t('Argentina,\na pie.', 'Argentina,\non foot.')}
+                {t('La montaña\nte espera.', 'The mountain\nawaits.')}
               </Text>
 
               <Text
                 style={styles.heroSub}
-                {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true, 'data-serif': true } as any) : {})}
               >
                 {t(
-                  'Descubrí rutas. Descargá mapas.\nFunciona sin señal.',
-                  'Discover trails. Download maps.\nWorks without signal.',
+                  'Rutas, mapas offline y conocimiento de montaña\npara explorar la Argentina salvaje.',
+                  'Trails, offline maps and mountain knowledge\nto explore wild Argentina.',
                 )}
               </Text>
 
@@ -351,7 +351,7 @@ export default function InicioScreen() {
                     'data-magnetic': true,
                   } as any) : {})}
                 >
-                  <Ionicons name="compass-outline" size={15} color="#fff" />
+                  <Ionicons name="compass-outline" size={15} color="#0a0f1a" />
                   <Text style={styles.heroBtnPrimaryTxt}>
                     {t('Explorar rutas', 'Explore trails')}
                   </Text>
@@ -377,7 +377,12 @@ export default function InicioScreen() {
               {HERO_STATS.map((label, i) => (
                 <React.Fragment key={label}>
                   {i > 0 && <View style={styles.heroStatDivider} />}
-                  <Text style={styles.heroStatText}>{label}</Text>
+                  <Text
+                    style={styles.heroStatText}
+                    {...(Platform.OS === 'web' ? ({ 'data-coord': true } as any) : {})}
+                  >
+                    {label.toUpperCase()}
+                  </Text>
                 </React.Fragment>
               ))}
             </View>
@@ -388,7 +393,7 @@ export default function InicioScreen() {
         <View style={[styles.featureSection, { paddingHorizontal: sidePad }]}>
           <Text
             style={[styles.sectionLabel, { color: c.muted }]}
-            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true, 'data-eyebrow': true } as any) : {})}
           >
             {t('TODO LO QUE NECESITÁS', 'EVERYTHING YOU NEED')}
           </Text>
@@ -421,6 +426,29 @@ export default function InicioScreen() {
           </View>
         </View>
 
+        {/* ── EXPEDITION NUMBERS ── */}
+        <View style={[styles.numbersBand, { paddingHorizontal: sidePad }]}>
+          <View style={styles.numbersRow}>
+            {[
+              { value: '6.961', unit: 'm', labelEs: 'Cumbre más alta de América', labelEn: 'Highest peak in the Americas' },
+              { value: '39', unit: '', labelEs: 'Parques Nacionales', labelEn: 'National Parks' },
+              { value: '3.694', unit: 'km', labelEs: 'De norte a sur', labelEn: 'North to south' },
+              { value: '6', unit: '', labelEs: 'Regiones de montaña', labelEn: 'Mountain regions' },
+            ].map((n) => (
+              <View key={n.labelEn} style={styles.numberItem}>
+                <Text
+                  style={[styles.numberValue, { color: c.text }]}
+                  {...(Platform.OS === 'web' ? ({ 'data-bignum': true } as any) : {})}
+                >
+                  {n.value}
+                  {n.unit ? <Text style={{ fontSize: 28, color: c.muted }}> {n.unit}</Text> : null}
+                </Text>
+                <Text style={[styles.numberLabel, { color: c.muted }]}>{t(n.labelEs, n.labelEn)}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── RUTAS DESTACADAS ── */}
@@ -429,11 +457,11 @@ export default function InicioScreen() {
             <View>
               <Text
                 style={[styles.sectionLabel, { color: c.muted }]}
-                {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-section-label': true, 'data-eyebrow': true } as any) : {})}
               >
                 {t('RUTAS DESTACADAS', 'FEATURED TRAILS')}
               </Text>
-              <Text style={[styles.sectionSubtitle, { color: c.text }]}>
+              <Text style={[styles.sectionSubtitle, { color: c.text }]} {...(Platform.OS === 'web' ? ({ 'data-serif': true } as any) : {})}>
                 {t('Los circuitos más icónicos de Argentina', "Argentina's most iconic circuits")}
               </Text>
             </View>
@@ -524,11 +552,11 @@ export default function InicioScreen() {
             <View>
               <Text
                 style={[styles.sectionLabel, { color: c.muted }]}
-                {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-section-label': true, 'data-eyebrow': true } as any) : {})}
               >
                 {t('IDEAS PARA TU PRÓXIMA AVENTURA', 'IDEAS FOR YOUR NEXT ADVENTURE')}
               </Text>
-              <Text style={[styles.sectionSubtitle, { color: c.text }]}>
+              <Text style={[styles.sectionSubtitle, { color: c.text }]} {...(Platform.OS === 'web' ? ({ 'data-serif': true } as any) : {})}>
                 {t('Explorá Argentina por región', 'Explore Argentina by region')}
               </Text>
             </View>
@@ -580,7 +608,7 @@ export default function InicioScreen() {
         <View style={styles.section}>
           <Text
             style={[styles.sectionLabel, { marginHorizontal: sidePad, color: c.muted }]}
-            {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true, 'data-eyebrow': true } as any) : {})}
           >
             {t('PARQUES PARA DESCUBRIR', 'PARKS TO DISCOVER')}
           </Text>
@@ -751,33 +779,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24, paddingBottom: 80,
   },
   heroEyebrow: {
-    fontSize: 10, fontWeight: '600', color: 'rgba(255,255,255,0.5)',
-    letterSpacing: 3, textTransform: 'uppercase', marginBottom: 18, textAlign: 'center',
+    fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.65)',
+    letterSpacing: 5, textTransform: 'uppercase', marginBottom: 26, textAlign: 'center',
   },
   heroTitle: {
-    fontWeight: '900', color: '#fff', letterSpacing: -2,
-    marginBottom: 16, textAlign: 'center',
+    fontWeight: '400', color: '#fff', letterSpacing: -1,
+    marginBottom: 22, textAlign: 'center',
   },
   heroSub: {
-    fontSize: 15, color: 'rgba(255,255,255,0.65)', lineHeight: 22,
-    marginBottom: 36, textAlign: 'center',
+    fontSize: 18, color: 'rgba(255,255,255,0.78)', lineHeight: 28,
+    marginBottom: 44, textAlign: 'center', fontStyle: 'italic',
   },
-  heroCtas: { flexDirection: 'row', gap: 12, flexWrap: 'wrap', justifyContent: 'center' },
+  heroCtas: { flexDirection: 'row', gap: 14, flexWrap: 'wrap', justifyContent: 'center' },
   heroBtnPrimary: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: '#16a34a', paddingHorizontal: 26, paddingVertical: 15,
-    borderRadius: 999,
-    shadowColor: '#22c55e', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35, shadowRadius: 12, elevation: 6,
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: '#ffffff', paddingHorizontal: 34, paddingVertical: 17,
+    borderRadius: 2,
   },
-  heroBtnPrimaryTxt: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  heroBtnPrimaryTxt: {
+    color: '#0a0f1a', fontSize: 12, fontWeight: '700',
+    letterSpacing: 2.5, textTransform: 'uppercase',
+  },
   heroBtnSecondary: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    paddingHorizontal: 26, paddingVertical: 15, borderRadius: 999,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    paddingHorizontal: 34, paddingVertical: 17, borderRadius: 2,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
+    backgroundColor: 'transparent',
   },
-  heroBtnSecondaryTxt: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  heroBtnSecondaryTxt: {
+    color: '#fff', fontSize: 12, fontWeight: '600',
+    letterSpacing: 2.5, textTransform: 'uppercase',
+  },
   heroStatsStrip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(7,11,20,0.55)', paddingVertical: 14, paddingHorizontal: 20,
@@ -813,10 +845,23 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   sectionLabel: {
-    fontSize: 10, fontWeight: '800', letterSpacing: 2.5,
-    textTransform: 'uppercase', marginBottom: 6,
+    fontSize: 10, fontWeight: '600', letterSpacing: 4,
+    textTransform: 'uppercase', marginBottom: 10,
   },
-  sectionSubtitle: { fontSize: 20, fontWeight: '800', letterSpacing: -0.5 },
+  sectionSubtitle: { fontSize: 30, fontWeight: '400', letterSpacing: -0.5 },
+
+  // Big numbers band (expedition log)
+  numbersBand: { paddingVertical: 72, alignItems: 'center' },
+  numbersRow: {
+    flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
+    gap: 56, rowGap: 40, maxWidth: 1000,
+  },
+  numberItem: { alignItems: 'center', minWidth: 150 },
+  numberValue: { fontSize: 64, fontWeight: '300', letterSpacing: -2 },
+  numberLabel: {
+    fontSize: 10, fontWeight: '600', letterSpacing: 3,
+    textTransform: 'uppercase', marginTop: 10, textAlign: 'center',
+  },
   seeAll: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingBottom: 2 },
   seeAllTxt: { fontSize: 13, fontWeight: '600', color: '#22c55e' },
   divider: { height: 1, marginVertical: 32, opacity: 0.5 },

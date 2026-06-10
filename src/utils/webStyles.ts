@@ -13,6 +13,24 @@ export function injectWebStyles() {
     document.head.appendChild(link);
   }
 
+  // Editorial typefaces: Fraunces (expedition serif display) + Inter (UI)
+  const fontsId = 'sliabh-fonts';
+  if (!document.getElementById(fontsId)) {
+    const pre1 = document.createElement('link');
+    pre1.rel = 'preconnect';
+    pre1.href = 'https://fonts.googleapis.com';
+    const pre2 = document.createElement('link');
+    pre2.rel = 'preconnect';
+    pre2.href = 'https://fonts.gstatic.com';
+    pre2.crossOrigin = 'anonymous';
+    const fonts = document.createElement('link');
+    fonts.id = fontsId;
+    fonts.rel = 'stylesheet';
+    fonts.href =
+      'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600;700;800&display=swap';
+    document.head.append(pre1, pre2, fonts);
+  }
+
   const id = 'sliabh-global-styles';
   if (document.getElementById(id)) return;
 
@@ -22,6 +40,64 @@ export function injectWebStyles() {
     /* ─────────────────────────────────────────────
        KEYFRAMES
     ───────────────────────────────────────────── */
+    /* ─────────────────────────────────────────────
+       EDITORIAL TYPE SYSTEM — expedition luxury
+    ───────────────────────────────────────────── */
+    body, #root { font-family: 'Inter', -apple-system, sans-serif; }
+
+    [data-serif], [data-serif] * {
+      font-family: 'Fraunces', Georgia, serif !important;
+      font-optical-sizing: auto;
+    }
+    [data-display-xl], [data-display-xl] * {
+      font-family: 'Fraunces', Georgia, serif !important;
+      font-weight: 380 !important;
+      letter-spacing: -0.02em !important;
+      line-height: 1.02 !important;
+    }
+    [data-eyebrow], [data-eyebrow] * {
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.35em !important;
+      text-transform: uppercase !important;
+      font-size: 11px !important;
+    }
+    [data-coord], [data-coord] * {
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.2em !important;
+      font-variant-numeric: tabular-nums;
+    }
+    [data-bignum], [data-bignum] * {
+      font-family: 'Fraunces', Georgia, serif !important;
+      font-weight: 300 !important;
+      letter-spacing: -0.03em !important;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Editorial full-bleed band: image carries the section */
+    [data-band] {
+      position: relative;
+      overflow: hidden;
+    }
+    [data-band] img {
+      transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    [data-band]:hover img { transform: scale(1.04); }
+
+    /* Hairline rules, expedition-log style */
+    [data-rule] {
+      height: 1px !important;
+      background: linear-gradient(90deg, transparent, rgba(148,163,184,0.35), transparent) !important;
+    }
+
+    /* Slow editorial reveal */
+    @keyframes editorialUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    [data-ed-reveal] { animation: editorialUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
     @keyframes kenBurns {
       0%   { transform: scale(1.0) translate(0, 0); }
       50%  { transform: scale(1.08) translate(-1%, -0.5%); }
