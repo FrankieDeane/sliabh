@@ -1,0 +1,16 @@
+{
+  "name": "Sliabh Argaelic",
+  "short_name": "Sliabh",
+  "description": "La plataforma de senderismo para explorar Argentina. Rutas, mapas y planificación.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#060d1b",
+  "theme_color": "#16a34a",
+  "lang": "es",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable" }
+  ],
+  "categories": ["travel", "navigation", "sports"],
+  "screenshots": []
+}
