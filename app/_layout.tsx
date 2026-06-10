@@ -14,6 +14,30 @@ import { WebHeader } from '../src/components/layout/WebHeader';
 import { CookieBanner } from '../src/components/ui/CookieBanner';
 import { injectWebStyles } from '../src/utils/webStyles';
 
+// Web bootstrap: PWA head tags + service worker. web.output "single" ignores
+// app/+html.tsx, so these must be injected at runtime.
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const manifest = document.createElement('link');
+    manifest.rel = 'manifest';
+    manifest.href = '/manifest.json';
+    document.head.appendChild(manifest);
+  }
+  if (!document.querySelector('link[rel="icon"]')) {
+    const icon = document.createElement('link');
+    icon.rel = 'icon';
+    icon.type = 'image/svg+xml';
+    icon.href = '/favicon.svg';
+    document.head.appendChild(icon);
+  }
+  document.title = 'Sliabh — Explora la montaña';
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+}
+
 // Initialize AI provider at module load so asistente.tsx's useEffect sees a provider
 // (child effects fire before parent effects, so useEffect in _layout is too late)
 if (Platform.OS === 'web') {
