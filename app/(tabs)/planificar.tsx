@@ -19,6 +19,7 @@ import { Button } from '../../src/components/ui/Button';
 import { MapLeaflet } from '../../src/components/map/MapLeaflet';
 import { usePlannerStore } from '../../src/store/plannerStore';
 import { useResponsive } from '../../src/hooks/useResponsive';
+import { useTheme } from '../../src/hooks/useTheme';
 
 type MobileTab = 'mapa' | 'puntos';
 
@@ -34,27 +35,29 @@ const NATIONAL_PARKS = [
   { name: 'Tierra del Fuego', location: 'Ushuaia', fact: 'Fin del mundo, Ushuaia' },
 ];
 
-function ParquesNacionalesSection() {
+type ThemeColors = { bg: string; surface: string; elevated: string; border: string; text: string; muted: string };
+
+function ParquesNacionalesSection({ c }: { c: ThemeColors }) {
   return (
-    <View style={parkStyles.container}>
-      <Text style={parkStyles.title}>Parques Nacionales Argentina</Text>
-      <Text style={parkStyles.subtitle}>Información para planificar tu visita</Text>
+    <View style={[parkStyles.container, { backgroundColor: c.surface, borderColor: c.border }]}>
+      <Text style={[parkStyles.title, { color: c.text }]}>Parques Nacionales Argentina</Text>
+      <Text style={[parkStyles.subtitle, { color: c.muted }]}>Información para planificar tu visita</Text>
 
       <View style={parkStyles.cards}>
         {NATIONAL_PARKS.map((park) => (
           <View key={park.name} style={parkStyles.card}>
             <View style={parkStyles.dot} />
             <View style={parkStyles.cardText}>
-              <Text style={parkStyles.parkName}>{park.name}</Text>
-              <Text style={parkStyles.parkFact}>{park.location} · {park.fact}</Text>
+              <Text style={[parkStyles.parkName, { color: c.text }]}>{park.name}</Text>
+              <Text style={[parkStyles.parkFact, { color: c.muted }]}>{park.location} · {park.fact}</Text>
             </View>
           </View>
         ))}
       </View>
 
-      <View style={parkStyles.note}>
-        <Ionicons name="map-outline" size={14} color="#64748b" />
-        <Text style={parkStyles.noteText}>
+      <View style={[parkStyles.note, { borderTopColor: c.border }]}>
+        <Ionicons name="map-outline" size={14} color={c.muted} />
+        <Text style={[parkStyles.noteText, { color: c.muted }]}>
           Descarga mapas en Mapas → capas del mapa
         </Text>
       </View>
@@ -67,22 +70,18 @@ const parkStyles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 20,
     marginBottom: 16,
-    backgroundColor: '#0f1724',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#1e2d42',
     padding: 16,
   },
   title: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#f0f9ff',
     letterSpacing: 0.2,
     marginBottom: 2,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748b',
     marginBottom: 14,
   },
   cards: {
@@ -107,12 +106,10 @@ const parkStyles = StyleSheet.create({
   parkName: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#f0f9ff',
     lineHeight: 18,
   },
   parkFact: {
     fontSize: 12,
-    color: '#64748b',
     lineHeight: 17,
   },
   note: {
@@ -122,19 +119,22 @@ const parkStyles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#1e2d42',
   },
   noteText: {
     fontSize: 12,
-    color: '#64748b',
   },
 });
 
 export default function PlanificarScreen() {
   const router = useRouter();
   const { isWide } = useResponsive();
+  const { isDark } = useTheme();
   const { waypoints, planName, setPlanName, addWaypoint, clearPlan } = usePlannerStore();
   const [mobileTab, setMobileTab] = useState<MobileTab>('mapa');
+
+  const c: ThemeColors = isDark
+    ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
+    : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
 
   function handleMapPress(lat: number, lon: number) {
     addWaypoint({
@@ -175,13 +175,13 @@ export default function PlanificarScreen() {
   // Plan name input
   const planNameInput = (
     <View style={styles.nameInputWrapper}>
-      <Ionicons name="pencil-outline" size={16} color="#64748b" style={{ marginRight: 8 }} />
+      <Ionicons name="pencil-outline" size={16} color={c.muted} style={{ marginRight: 8 }} />
       <TextInput
         value={planName}
         onChangeText={setPlanName}
         placeholder="Nombre de la ruta"
-        placeholderTextColor="#475569"
-        style={styles.nameInput}
+        placeholderTextColor={isDark ? '#475569' : '#94a3b8'}
+        style={[styles.nameInput, { color: c.text, borderBottomColor: c.border }]}
       />
     </View>
   );
@@ -229,23 +229,23 @@ export default function PlanificarScreen() {
   // ── WIDE LAYOUT (tablet / desktop) ──────────────────────────────
   if (isWide) {
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: c.bg }]}>
         <ScreenHeader
           title="Planificar"
           subtitle="Diseña tu caminata"
         />
         <View style={styles.wideContainer}>
           {/* Sidebar */}
-          <View style={styles.sidebar}>
+          <View style={[styles.sidebar, { backgroundColor: c.surface, borderRightColor: c.border }]}>
             {/* Premium sidebar header */}
-            <View style={styles.sidebarHeader}>
+            <View style={[styles.sidebarHeader, { borderBottomColor: c.border }]}>
               <View style={styles.sidebarHeaderTop}>
                 <View style={styles.sidebarIconWrap}>
                   <Ionicons name="map-outline" size={18} color="#22c55e" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.sidebarTitle}>Constructor de ruta</Text>
-                  <Text style={styles.sidebarSubtitle}>
+                  <Text style={[styles.sidebarTitle, { color: c.text }]}>Constructor de ruta</Text>
+                  <Text style={[styles.sidebarSubtitle, { color: c.muted }]}>
                     {waypoints.length === 0
                       ? 'Toca el mapa para añadir puntos'
                       : `${waypoints.length} punto${waypoints.length !== 1 ? 's' : ''} añadido${waypoints.length !== 1 ? 's' : ''}`}
@@ -264,7 +264,7 @@ export default function PlanificarScreen() {
               contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}
             >
               {actionButtons}
-              <ParquesNacionalesSection />
+              <ParquesNacionalesSection c={c} />
             </ScrollView>
           </View>
 
@@ -286,7 +286,7 @@ export default function PlanificarScreen() {
   // ── MOBILE LAYOUT ────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView
-      style={styles.root}
+      style={[styles.root, { backgroundColor: c.bg }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScreenHeader
@@ -297,32 +297,32 @@ export default function PlanificarScreen() {
       {planNameInput}
 
       {/* Tab switcher */}
-      <View style={styles.tabRow}>
+      <View style={[styles.tabRow, { backgroundColor: c.surface, borderColor: c.border }]}>
         <TouchableOpacity
           onPress={() => setMobileTab('mapa')}
-          style={[styles.tabPill, mobileTab === 'mapa' && styles.tabPillActive]}
+          style={[styles.tabPill, mobileTab === 'mapa' && [styles.tabPillActive, { backgroundColor: c.elevated }]]}
           activeOpacity={0.8}
         >
           <Ionicons
             name="map-outline"
             size={14}
-            color={mobileTab === 'mapa' ? '#f1f5f9' : '#78716c'}
+            color={mobileTab === 'mapa' ? c.text : c.muted}
           />
-          <Text style={[styles.tabLabel, mobileTab === 'mapa' && styles.tabLabelActive]}>
+          <Text style={[styles.tabLabel, { color: mobileTab === 'mapa' ? c.text : c.muted }]}>
             Mapa
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setMobileTab('puntos')}
-          style={[styles.tabPill, mobileTab === 'puntos' && styles.tabPillActive]}
+          style={[styles.tabPill, mobileTab === 'puntos' && [styles.tabPillActive, { backgroundColor: c.elevated }]]}
           activeOpacity={0.8}
         >
           <Ionicons
             name="location-outline"
             size={14}
-            color={mobileTab === 'puntos' ? '#f1f5f9' : '#78716c'}
+            color={mobileTab === 'puntos' ? c.text : c.muted}
           />
-          <Text style={[styles.tabLabel, mobileTab === 'puntos' && styles.tabLabelActive]}>
+          <Text style={[styles.tabLabel, { color: mobileTab === 'puntos' ? c.text : c.muted }]}>
             Puntos ({waypoints.length})
           </Text>
         </TouchableOpacity>
@@ -348,7 +348,7 @@ export default function PlanificarScreen() {
           >
             <WaypointList />
             {actionButtons}
-            <ParquesNacionalesSection />
+            <ParquesNacionalesSection c={c} />
           </ScrollView>
         )}
       </View>
@@ -362,7 +362,6 @@ export default function PlanificarScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#070b14',
   },
 
   // Name input
@@ -374,10 +373,8 @@ const styles = StyleSheet.create({
   nameInput: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#f1f5f9',
     backgroundColor: 'transparent',
     borderBottomWidth: 1,
-    borderBottomColor: '#1e2d42',
     paddingVertical: 8,
     letterSpacing: -0.3,
   },
@@ -387,9 +384,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 16,
     marginBottom: 10,
-    backgroundColor: '#0f1724',
     borderWidth: 1,
-    borderColor: '#1e2d42',
     borderRadius: 14,
     padding: 4,
     gap: 4,
@@ -403,17 +398,12 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     borderRadius: 10,
   },
-  tabPillActive: {
-    backgroundColor: '#162035',
-  },
+  tabPillActive: {},
   tabLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#78716c',
   },
-  tabLabelActive: {
-    color: '#f1f5f9',
-  },
+  tabLabelActive: {},
 
   // Map
   mapFlex: {
@@ -467,7 +457,6 @@ const styles = StyleSheet.create({
   sidebarHeader: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e2d42',
   },
   sidebarHeaderTop: {
     flexDirection: 'row',
@@ -504,9 +493,7 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     width: 320,
-    backgroundColor: '#0f1724',
     borderRightWidth: 1,
-    borderRightColor: '#1e2d42',
     flexDirection: 'column',
   },
   sidebarList: {
