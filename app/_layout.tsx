@@ -11,6 +11,7 @@ import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
 import { Platform, View } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
+import { CookieBanner } from '../src/components/ui/CookieBanner';
 import { injectWebStyles } from '../src/utils/webStyles';
 
 // Initialize AI provider at module load so asistente.tsx's useEffect sees a provider
@@ -95,6 +96,7 @@ export default function RootLayout() {
             }}
           />
         </View>
+        <CookieBanner />
       </View>
     );
   }

@@ -27,9 +27,9 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-// Silent looping drone footage for web hero
-const HERO_VIDEO_URL =
-  'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
+// Silent looping mountain video for web hero
+const HERO_VIDEO_URL = 'https://pixabay.com/videos/download/x-210926_medium.mp4';
+const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
 
 const FEATURED = [
   {
@@ -293,7 +293,6 @@ export default function InicioScreen() {
             {Platform.OS === 'web' && (
               // @ts-ignore — video is web-only
               <video
-                src={HERO_VIDEO_URL}
                 autoPlay
                 muted
                 loop
@@ -308,7 +307,11 @@ export default function InicioScreen() {
                   objectFit: 'cover',
                   pointerEvents: 'none',
                 }}
-              />
+                onError={(e: any) => { e.target.src = HERO_VIDEO_FALLBACK; }}
+              >
+                <source src={HERO_VIDEO_URL} type="video/mp4" />
+                <source src={HERO_VIDEO_FALLBACK} type="video/mp4" />
+              </video>
             )}
 
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
