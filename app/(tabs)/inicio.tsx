@@ -331,7 +331,10 @@ export default function InicioScreen() {
             {/* Centered text block */}
             <View style={styles.heroCenterBlock}>
               {/* Eyebrow */}
-              <Text style={styles.heroEyebrow}>ARGENTINA · PATAGONIA · ANDES</Text>
+              <Text
+                style={styles.heroEyebrow}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-eyebrow': true } as any) : {})}
+              >ARGENTINA · PATAGONIA · ANDES</Text>
 
               {/* Giant display title */}
               <Text
@@ -347,7 +350,10 @@ export default function InicioScreen() {
               </Text>
 
               {/* Subtitle */}
-              <Text style={styles.heroSub}>
+              <Text
+                style={styles.heroSub}
+                {...(Platform.OS === 'web' ? ({ 'data-hero-sub': true } as any) : {})}
+              >
                 {t(
                   'Descubre senderos. Construye tu ruta.\nExplora sin señal.',
                   'Discover trails. Build your route.\nExplore without signal.',
@@ -386,7 +392,10 @@ export default function InicioScreen() {
             </View>
 
             {/* Bottom stats strip — inside hero */}
-            <View style={styles.heroStatsStrip}>
+            <View
+              style={styles.heroStatsStrip}
+              {...(Platform.OS === 'web' ? ({ 'data-hero-stats': true } as any) : {})}
+            >
               {HERO_STATS.map((label, i) => (
                 <React.Fragment key={label}>
                   {i > 0 && <View style={styles.heroStatDivider} />}
@@ -560,7 +569,7 @@ export default function InicioScreen() {
                 style={styles.destCard}
                 activeOpacity={0.88}
                 onPress={() => router.push('/(tabs)/rutas')}
-                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-dest-card': true } as any) : {})}
               >
                 <ImageBackground
                   source={{ uri: dest.photo }}
