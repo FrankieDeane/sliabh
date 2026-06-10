@@ -26,7 +26,8 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-const HERO_VIDEO_URL = 'https://pixabay.com/videos/download/x-210926_medium.mp4';
+// Pixabay video ID x-210926 — mountains/clouds
+const HERO_VIDEO_URL = 'https://cdn.pixabay.com/video/2021/09/27/90127-619900002_large.mp4';
 const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
 
 // Featured routes — all Argentine
