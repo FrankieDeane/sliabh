@@ -299,6 +299,62 @@ const dlS = StyleSheet.create({
   linkBtn: { width: 28, height: 28, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 });
 
+// ─── Compact offline-download button (download center) ───────────────────────
+
+function OfflineDlButton({ park, c }: { park: typeof NATIONAL_PARKS[0]; c: any }) {
+  const [state, setState] = useState<DlState>('idle');
+  const [pct, setPct] = useState(0);
+
+  React.useEffect(() => {
+    isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
+      if (cached) setState('done');
+    });
+  }, [park.id]);
+
+  function start() {
+    if (state !== 'idle') return;
+    setState('downloading');
+    if (isTileCachingSupported()) {
+      downloadAreaTiles(park.coords.lat, park.coords.lon, (done, total) => {
+        setPct(Math.round((done / total) * 100));
+      }).then(() => setState('done'));
+    } else {
+      setState('done');
+    }
+  }
+
+  return (
+    <TouchableOpacity
+      style={[
+        odbS.btn,
+        state === 'done'
+          ? { backgroundColor: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.3)' }
+          : { backgroundColor: '#16a34a', borderColor: '#16a34a' },
+      ]}
+      onPress={start}
+      disabled={state !== 'idle'}
+      activeOpacity={0.8}
+    >
+      <Ionicons
+        name={state === 'done' ? 'checkmark-circle' : state === 'downloading' ? 'hourglass-outline' : 'cloud-download-outline'}
+        size={14}
+        color={state === 'done' ? '#22c55e' : '#fff'}
+      />
+      <Text style={[odbS.txt, { color: state === 'done' ? '#22c55e' : '#fff' }]}>
+        {state === 'done' ? 'Guardado offline' : state === 'downloading' ? `Descargando ${pct}%` : `Mapa offline · ${park.size}`}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+const odbS = StyleSheet.create({
+  btn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7,
+    borderRadius: 2, borderWidth: 1, paddingVertical: 10, paddingHorizontal: 12,
+  },
+  txt: { fontSize: 11, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' },
+});
+
 // ─── Park detail panel ────────────────────────────────────────────────────────
 
 function ParkPanel({ park, onClose, c }: { park: typeof NATIONAL_PARKS[0]; onClose: () => void; c: any }) {
@@ -469,7 +525,7 @@ export default function MapasScreen() {
   // Wide layout: map + sidebar
   if (isWide && isWeb) {
     return (
-      <View style={[s.root, { backgroundColor: c.bg }]}>
+      <ScrollView style={[s.root, { backgroundColor: c.bg }]} showsVerticalScrollIndicator={false}>
         <WebHeader />
         <View style={s.wideRow}>
           {mapSection}
@@ -514,11 +570,54 @@ export default function MapasScreen() {
             </View>
           )}
         </View>
+
+        {/* ── CENTRO DE DESCARGAS — always visible ── */}
+        <View style={[s.dlCenter, { backgroundColor: c.bg }]}>
+          <Text style={[s.dlCenterEyebrow, { color: c.muted }]} {...({ 'data-eyebrow': true } as any)}>
+            CENTRO DE DESCARGAS
+          </Text>
+          <Text style={[s.dlCenterTitle, { color: c.text }]} {...({ 'data-serif': true } as any)}>
+            Mapas para llevar sin señal
+          </Text>
+          <Text style={[s.dlCenterSub, { color: c.muted }]}>
+            Mapas topográficos offline para el navegador y cartografía oficial en PDF de Parques Nacionales Argentina.
+          </Text>
+          <View style={s.dlCenterGrid}>
+            {NATIONAL_PARKS.map((park) => (
+              <View key={park.id} style={[s.dlCenterCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+                <View style={s.dlCenterPhoto}>
+                  {/* @ts-ignore */}
+                  <img src={park.photo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={park.name} loading="lazy" />
+                  {park.unesco && (
+                    <View style={s.dlCenterUnesco}>
+                      <Text style={s.dlCenterUnescoTxt}>UNESCO</Text>
+                    </View>
+                  )}
+                </View>
+                <View style={s.dlCenterBody}>
+                  <Text style={[s.dlCenterName, { color: c.text }]} {...({ 'data-serif': true } as any)}>{park.name}</Text>
+                  <Text style={[s.dlCenterProv, { color: c.muted }]}>{park.province} · {park.region}</Text>
+                  <OfflineDlButton park={park} c={c} />
+                  <TouchableOpacity
+                    style={[s.dlCenterPdfBtn, { borderColor: c.border }]}
+                    onPress={() => Linking.openURL(park.url)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons name="document-text-outline" size={14} color="#22c55e" />
+                    <Text style={[s.dlCenterPdfTxt, { color: c.text }]}>Mapa oficial PDF — APN</Text>
+                    <Ionicons name="open-outline" size={12} color={c.muted} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <WebFooter />
 
         {/* Modals */}
         {renderModals()}
-      </View>
+      </ScrollView>
     );
   }
 
@@ -713,4 +812,31 @@ const s = StyleSheet.create({
 
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1 },
   modalTitle: { fontSize: 17, fontWeight: '700' },
+
+  // Download center (always-visible section, wide web)
+  dlCenter: { paddingVertical: 72, paddingHorizontal: 40, alignItems: 'center' },
+  dlCenterEyebrow: { fontSize: 11, fontWeight: '600', letterSpacing: 4, marginBottom: 12 },
+  dlCenterTitle: { fontSize: 34, fontWeight: '400', letterSpacing: -0.5, marginBottom: 12, textAlign: 'center' },
+  dlCenterSub: { fontSize: 14, lineHeight: 22, textAlign: 'center', maxWidth: 560, marginBottom: 40 },
+  dlCenterGrid: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 20, justifyContent: 'center',
+    maxWidth: 1200, width: '100%',
+  },
+  dlCenterCard: {
+    width: 270, borderWidth: 1, borderRadius: 4, overflow: 'hidden',
+  },
+  dlCenterPhoto: { height: 150, position: 'relative', backgroundColor: '#162035' },
+  dlCenterUnesco: {
+    position: 'absolute', top: 10, left: 10,
+    backgroundColor: 'rgba(7,11,20,0.75)', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 2,
+  },
+  dlCenterUnescoTxt: { fontSize: 8, fontWeight: '800', color: '#fff', letterSpacing: 1.5 },
+  dlCenterBody: { padding: 16, gap: 8 },
+  dlCenterName: { fontSize: 19, fontWeight: '400', letterSpacing: -0.3 },
+  dlCenterProv: { fontSize: 11, letterSpacing: 0.5, marginBottom: 6 },
+  dlCenterPdfBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7,
+    borderWidth: 1, borderRadius: 2, paddingVertical: 10, paddingHorizontal: 12,
+  },
+  dlCenterPdfTxt: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5, flex: 1, textAlign: 'center' },
 });
