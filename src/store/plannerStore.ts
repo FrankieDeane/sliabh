@@ -14,11 +14,17 @@ export interface Waypoint {
 interface PlannerState {
   waypoints: Waypoint[];
   planName: string;
+  /** Selected catalog trail for the planning experience */
+  selectedTrailId: string | null;
+  /** Checked-off checklist item ids, keyed by trail id */
+  checkedItems: Record<string, string[]>;
   addWaypoint: (wp: Waypoint) => void;
   removeWaypoint: (id: string) => void;
   reorderWaypoints: (from: number, to: number) => void;
   clearPlan: () => void;
   setPlanName: (name: string) => void;
+  setSelectedTrail: (id: string | null) => void;
+  toggleCheckedItem: (trailId: string, itemId: string) => void;
 }
 
 export const usePlannerStore = create<PlannerState>()(
@@ -26,6 +32,17 @@ export const usePlannerStore = create<PlannerState>()(
     (set) => ({
       waypoints: [],
       planName: 'Mi ruta',
+      selectedTrailId: null,
+      checkedItems: {},
+      setSelectedTrail: (selectedTrailId) => set({ selectedTrailId }),
+      toggleCheckedItem: (trailId, itemId) =>
+        set((s) => {
+          const current = s.checkedItems[trailId] ?? [];
+          const next = current.includes(itemId)
+            ? current.filter((i) => i !== itemId)
+            : [...current, itemId];
+          return { checkedItems: { ...s.checkedItems, [trailId]: next } };
+        }),
       addWaypoint: (wp) => set((s) => ({ waypoints: [...s.waypoints, wp] })),
       removeWaypoint: (id) => set((s) => ({ waypoints: s.waypoints.filter((w) => w.id !== id) })),
       reorderWaypoints: (from, to) =>

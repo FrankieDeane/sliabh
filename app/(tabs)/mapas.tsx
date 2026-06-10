@@ -14,6 +14,7 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useResponsive } from '../../src/hooks/useResponsive';
+import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
 
 type MapLayer = 'dark' | 'topo' | 'osm';
 type DlState = 'idle' | 'downloading' | 'done';
@@ -191,15 +192,30 @@ function DownloadCard({ park, c }: { park: typeof NATIONAL_PARKS[0]; c: any }) {
   const [state, setState] = useState<DlState>('idle');
   const progress = useRef(new Animated.Value(0)).current;
 
+  // Reflect previously downloaded areas on mount
+  React.useEffect(() => {
+    isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
+      if (cached) setState('done');
+    });
+  }, [park.id]);
+
   function startDownload() {
     if (state !== 'idle') return;
     setState('downloading');
     progress.setValue(0);
-    Animated.timing(progress, {
-      toValue: 1,
-      duration: 2800 + Math.random() * 1200,
-      useNativeDriver: false,
-    }).start(() => setState('done'));
+
+    if (isTileCachingSupported()) {
+      // Real download: cache OpenTopoMap tiles around the park
+      downloadAreaTiles(park.coords.lat, park.coords.lon, (done, total) => {
+        progress.setValue(done / total);
+      }).then(() => setState('done'));
+    } else {
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: 2800 + Math.random() * 1200,
+        useNativeDriver: false,
+      }).start(() => setState('done'));
+    }
   }
 
   const progressWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
@@ -374,12 +390,28 @@ export default function MapasScreen() {
   const effectiveLayer: MapLayer = !isDark && layer === 'dark' ? 'osm' : layer;
   const isWeb = Platform.OS === 'web';
 
+  const parkMarkers = NATIONAL_PARKS.map((p) => ({
+    id: p.id,
+    lat: p.coords.lat,
+    lon: p.coords.lon,
+    name: p.name,
+    subtitle: `${p.province} · ${p.region}`,
+  }));
+
   const mapSection = (
     <View style={s.mapWrapper}>
       <MapLeaflet
         layer={effectiveLayer}
         height="100%"
         onMapPress={(lat: number, lon: number) => setCoord({ lat, lon })}
+        markers={parkMarkers}
+        onMarkerPress={(id: string) => {
+          const park = NATIONAL_PARKS.find((p) => p.id === id);
+          if (park) setSelectedPark(park);
+        }}
+        flyTo={selectedPark ? { lat: selectedPark.coords.lat, lon: selectedPark.coords.lon, zoom: 10 } : null}
+        center={[-40.5, -68.0]}
+        zoom={4}
       />
 
       <SafeAreaView edges={['top']} style={s.topSafe} pointerEvents="box-none">

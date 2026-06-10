@@ -10,6 +10,8 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { ARGENTINA_TRAILS, ArgentinaTrail } from '../../src/data/argentinaTrails';
+import { usePlannerStore } from '../../src/store/plannerStore';
+import { downloadGpx } from '../../src/utils/gpx';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -212,19 +214,46 @@ export default function PlanificarScreen() {
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
     : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
 
-  const [selectedTrail, setSelectedTrail] = useState<ArgentinaTrail | null>(null);
-  const [checklist, setChecklist] = useState<CheckItem[]>([]);
+  const { selectedTrailId, setSelectedTrail: persistTrail, checkedItems, toggleCheckedItem } = usePlannerStore();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'info' | 'etapas' | 'checklist'>('info');
+  const [gpxDone, setGpxDone] = useState(false);
+
+  const selectedTrail = useMemo(
+    () => ARGENTINA_TRAILS.find((t) => t.id === selectedTrailId) ?? null,
+    [selectedTrailId],
+  );
+
+  const checked = selectedTrail ? (checkedItems[selectedTrail.id] ?? []) : [];
+  const checklist: CheckItem[] = useMemo(
+    () =>
+      selectedTrail
+        ? generateChecklist(selectedTrail).map((i) => ({ ...i, checked: checked.includes(i.id) }))
+        : [],
+    [selectedTrail, checked.join(',')],
+  );
 
   function selectTrail(trail: ArgentinaTrail) {
-    setSelectedTrail(trail);
-    setChecklist(generateChecklist(trail));
+    persistTrail(trail.id);
     setActiveTab('info');
+    setGpxDone(false);
   }
 
   function toggleItem(id: string) {
-    setChecklist((prev) => prev.map((i) => i.id === id ? { ...i, checked: !i.checked } : i));
+    if (selectedTrail) toggleCheckedItem(selectedTrail.id, id);
+  }
+
+  function exportGpx() {
+    if (!selectedTrail) return;
+    const ok = downloadGpx(
+      selectedTrail.name,
+      [{ lat: selectedTrail.coordinates.lat, lon: selectedTrail.coordinates.lon, name: selectedTrail.trailhead, ele: selectedTrail.max_altitude_m }],
+      selectedTrail.description,
+    );
+    if (ok) {
+      setGpxDone(true);
+      setTimeout(() => setGpxDone(false), 2500);
+    }
   }
 
   const checkedCount = checklist.filter((i) => i.checked).length;
@@ -365,14 +394,20 @@ export default function PlanificarScreen() {
                 <Ionicons name="pricetag-outline" size={14} color="#22c55e" />
                 <Text style={[s.infoRowTxt, { color: c.muted }]}>{selectedTrail.tags.join(' · ')}</Text>
               </View>
-              <TouchableOpacity
-                style={s.aiBtn}
-                onPress={() => router.push('/(tabs)/asistente')}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="sparkles-outline" size={16} color="#22c55e" />
-                <Text style={s.aiBtnTxt}>Consultar con Asistente IA</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                <TouchableOpacity
+                  style={s.aiBtn}
+                  onPress={() => router.push('/(tabs)/asistente')}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="sparkles-outline" size={16} color="#22c55e" />
+                  <Text style={s.aiBtnTxt}>Consultar con Asistente IA</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={s.aiBtn} onPress={exportGpx} activeOpacity={0.8}>
+                  <Ionicons name={gpxDone ? 'checkmark-circle-outline' : 'download-outline'} size={16} color="#22c55e" />
+                  <Text style={s.aiBtnTxt}>{gpxDone ? 'GPX descargado' : 'Exportar GPX'}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 

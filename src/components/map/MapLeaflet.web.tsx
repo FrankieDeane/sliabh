@@ -13,13 +13,16 @@ if (typeof document !== 'undefined') {
   }
 }
 
-let MapContainer: any, TileLayer: any, useMapEvents: any, Marker: any, Popup: any, Polyline: any;
+let MapContainer: any, TileLayer: any, useMapEvents: any, useMap: any, Marker: any, Popup: any, Polyline: any;
+let Leaflet: any;
 if (typeof window !== 'undefined') {
   const rl = require('react-leaflet');
   const L = require('leaflet');
+  Leaflet = L;
   MapContainer = rl.MapContainer;
   TileLayer = rl.TileLayer;
   useMapEvents = rl.useMapEvents;
+  useMap = rl.useMap;
   Marker = rl.Marker;
   Popup = rl.Popup;
   Polyline = rl.Polyline;
@@ -31,9 +34,20 @@ if (typeof window !== 'undefined') {
   });
 }
 
+export interface MapMarker {
+  id: string;
+  lat: number;
+  lon: number;
+  name: string;
+  subtitle?: string;
+}
+
 interface MapLeafletProps {
   onMapPress?: (lat: number, lon: number) => void;
   waypoints?: Array<{ lat: number; lon: number; name: string }>;
+  markers?: MapMarker[];
+  onMarkerPress?: (id: string) => void;
+  flyTo?: { lat: number; lon: number; zoom?: number } | null;
   center?: [number, number];
   zoom?: number;
   height?: number | string;
@@ -52,6 +66,26 @@ const TILE_ATTRIBUTIONS = {
   dark: '&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; OpenStreetMap',
 };
 
+function FlyToHandler({ flyTo }: { flyTo?: { lat: number; lon: number; zoom?: number } | null }) {
+  const map = useMap ? useMap() : null;
+  useEffect(() => {
+    if (map && flyTo) {
+      map.flyTo([flyTo.lat, flyTo.lon], flyTo.zoom ?? 10, { duration: 1.2 });
+    }
+  }, [map, flyTo?.lat, flyTo?.lon]);
+  return null;
+}
+
+const parkIcon = Leaflet
+  ? Leaflet.divIcon({
+      html: '<div style="background:#16a34a;border-radius:50% 50% 50% 0;width:26px;height:26px;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;"><div style="transform:rotate(45deg);color:#fff;font-size:13px;line-height:1;">⛰</div></div>',
+      className: '',
+      iconSize: [26, 26],
+      iconAnchor: [13, 26],
+      popupAnchor: [0, -26],
+    })
+  : null;
+
 function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) => void }) {
   if (!useMapEvents) return null;
   useMapEvents({
@@ -65,6 +99,9 @@ function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) 
 export function MapLeaflet({
   onMapPress,
   waypoints = [],
+  markers = [],
+  onMarkerPress,
+  flyTo,
   center = [-51.0, -73.0],
   zoom = 10,
   height = 400,
@@ -123,6 +160,20 @@ export function MapLeaflet({
           maxZoom={18}
         />
         <ClickHandler onMapPress={onMapPress} />
+        <FlyToHandler flyTo={flyTo} />
+        {markers.map((m) => (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lon]}
+            icon={parkIcon ?? undefined}
+            eventHandlers={{ click: () => onMarkerPress?.(m.id) }}
+          >
+            <Popup>
+              <strong>{m.name}</strong>
+              {m.subtitle ? <><br />{m.subtitle}</> : null}
+            </Popup>
+          </Marker>
+        ))}
         {waypoints.map((wp, index) => (
           <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
             <Popup>

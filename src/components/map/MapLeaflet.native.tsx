@@ -2,9 +2,20 @@ import React, { useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
+export interface MapMarker {
+  id: string;
+  lat: number;
+  lon: number;
+  name: string;
+  subtitle?: string;
+}
+
 interface Props {
   onMapPress?: (lat: number, lon: number) => void;
   waypoints?: Array<{ lat: number; lon: number; name: string }>;
+  markers?: MapMarker[];
+  onMarkerPress?: (id: string) => void;
+  flyTo?: { lat: number; lon: number; zoom?: number } | null;
   center?: [number, number];
   zoom?: number;
   height?: number | string;
@@ -22,8 +33,10 @@ function buildHTML(
   zoom: number,
   tileUrl: string,
   waypoints: Array<{ lat: number; lon: number; name: string }>,
+  parkMarkers: MapMarker[] = [],
 ): string {
   const waypointsJson = JSON.stringify(waypoints);
+  const parkMarkersJson = JSON.stringify(parkMarkers);
   // Replace {s} with 'a' for native WebView since subdomains are handled in browser
   const nativeTileUrl = tileUrl.replace('{s}', 'a');
   return `<!DOCTYPE html>
@@ -81,6 +94,24 @@ function buildHTML(
 
   renderWaypoints();
 
+  var parkMarkers = ${parkMarkersJson};
+  parkMarkers.forEach(function(p) {
+    var icon = L.divIcon({
+      html: '<div style="background:#16a34a;border-radius:50% 50% 50% 0;width:26px;height:26px;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>',
+      className: '',
+      iconSize: [26, 26],
+      iconAnchor: [13, 26],
+      popupAnchor: [0, -26]
+    });
+    var marker = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
+    marker.bindPopup('<b>' + p.name + '</b>' + (p.subtitle ? '<br/>' + p.subtitle : ''));
+    marker.on('click', function() {
+      try {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'markerPress', id: p.id }));
+      } catch(err) {}
+    });
+  });
+
   map.on('click', function(e) {
     try {
       window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -99,13 +130,18 @@ function buildHTML(
 export function MapLeaflet({
   onMapPress,
   waypoints = [],
+  markers = [],
+  onMarkerPress,
+  flyTo,
   center = [-51.0, -73.0],
   zoom = 10,
   height = 400,
   layer = 'osm',
 }: Props) {
   const tileUrl = TILE_URLS[layer] ?? TILE_URLS.osm;
-  const html = buildHTML(center, zoom, tileUrl, waypoints);
+  const effectiveCenter: [number, number] = flyTo ? [flyTo.lat, flyTo.lon] : center;
+  const effectiveZoom = flyTo?.zoom ?? zoom;
+  const html = buildHTML(effectiveCenter, effectiveZoom, tileUrl, waypoints, markers);
 
   const handleMessage = useCallback(
     (event: any) => {
@@ -114,11 +150,14 @@ export function MapLeaflet({
         if (data.type === 'mapPress' && onMapPress) {
           onMapPress(data.lat, data.lon);
         }
+        if (data.type === 'markerPress' && onMarkerPress) {
+          onMarkerPress(data.id);
+        }
       } catch {
         // ignore malformed messages
       }
     },
-    [onMapPress],
+    [onMapPress, onMarkerPress],
   );
 
   return (

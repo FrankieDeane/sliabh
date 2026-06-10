@@ -17,16 +17,27 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k !== CACHE && k !== 'sliabh-tiles-v1').map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
 
+const TILE_CACHE = 'sliabh-tiles-v1';
+
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
-  // Skip non-GET, cross-origin tile requests, analytics
   if (e.request.method !== 'GET') return;
-  if (url.hostname.includes('tile') || url.hostname.includes('openstreetmap')) return;
+
+  // Map tiles: cache-first against the offline tile cache populated by
+  // the in-app "Descargar" buttons, falling back to network.
+  if (url.hostname.includes('tile') || url.hostname.includes('openstreetmap')) {
+    e.respondWith(
+      caches.open(TILE_CACHE).then((c) =>
+        c.match(e.request.url).then((cached) => cached || fetch(e.request))
+      )
+    );
+    return;
+  }
 
   e.respondWith(
     caches.match(e.request).then((cached) => {
