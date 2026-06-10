@@ -221,8 +221,8 @@ export default function PlanificarScreen() {
       <View style={styles.emptyIconWrap}>
         <Ionicons name="location-outline" size={32} color="#22c55e" />
       </View>
-      <Text style={styles.emptyTitle}>Construye tu ruta</Text>
-      <Text style={styles.emptyText}>Toca cualquier punto del mapa{'\n'}para añadir un waypoint</Text>
+      <Text style={[styles.emptyTitle, { color: c.text }]}>Construye tu ruta</Text>
+      <Text style={[styles.emptyText, { color: c.muted }]}>Toca cualquier punto del mapa{'\n'}para añadir un waypoint</Text>
     </View>
   );
 
@@ -435,12 +435,10 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#f0f9ff',
     letterSpacing: -0.3,
   },
   emptyText: {
     fontSize: 14,
-    color: '#57534e',
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -477,7 +475,6 @@ const styles = StyleSheet.create({
   sidebarTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#f0f9ff',
     letterSpacing: -0.2,
   },
   sidebarSubtitle: {

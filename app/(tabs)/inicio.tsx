@@ -695,7 +695,7 @@ export default function InicioScreen() {
           >
             {t('PACK ACTIVO', 'ACTIVE PACK')}
           </Text>
-          <View style={styles.packCard}>
+          <View style={[styles.packCard, { backgroundColor: c.surface }]}>
             <ImageBackground
               source={{ uri: PACK_URI }}
               style={StyleSheet.absoluteFillObject}
@@ -775,7 +775,7 @@ export default function InicioScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#070b14' },
+  root: { flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 48 },
 
@@ -926,7 +926,6 @@ const styles = StyleSheet.create({
   // Divider
   divider: {
     height: 1,
-    backgroundColor: '#1e2d42',
     marginVertical: 32,
     opacity: 0.5,
   },
@@ -974,7 +973,7 @@ const styles = StyleSheet.create({
   featuredMetaTxt: { fontSize: 11, color: 'rgba(255,255,255,0.58)' },
 
   // Gallery
-  galleryCell: { borderRadius: 16, overflow: 'hidden', backgroundColor: '#0f1724' },
+  galleryCell: { borderRadius: 16, overflow: 'hidden' },
   galleryOverlay: { backgroundColor: 'rgba(7,11,20,0.15)' },
   galleryLabel: {
     position: 'absolute',
@@ -1006,9 +1005,7 @@ const styles = StyleSheet.create({
 
   // Action cards
   actionCard: {
-    backgroundColor: '#0f1724',
     borderWidth: 1,
-    borderColor: '#1e2d42',
     borderRadius: 20,
     padding: 18,
     flexDirection: 'row',
@@ -1029,7 +1026,7 @@ const styles = StyleSheet.create({
   actionDesc: { fontSize: 12, color: '#64748b', lineHeight: 17 },
 
   // Pack activo
-  packCard: { borderRadius: 22, overflow: 'hidden', padding: 20, backgroundColor: '#0f1724' },
+  packCard: { borderRadius: 22, overflow: 'hidden', padding: 20 },
   packOverlay: { backgroundColor: 'rgba(7,11,20,0.68)' },
   packRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   packName: { fontSize: 16, fontWeight: '700', color: '#f0f9ff', marginBottom: 2 },

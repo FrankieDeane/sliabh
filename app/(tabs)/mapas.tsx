@@ -128,7 +128,7 @@ function DownloadCard({
   return (
     <View style={[dlStyles.card, { borderColor: c.border }]}>
       {/* Photo strip */}
-      <View style={dlStyles.photoWrap}>
+      <View style={[dlStyles.photoWrap, { backgroundColor: c.elevated }]}>
         {Platform.OS === 'web' ? (
           // @ts-ignore
           <img
@@ -207,7 +207,6 @@ const dlStyles = StyleSheet.create({
   photoWrap: {
     width: 96,
     position: 'relative',
-    backgroundColor: '#0f1724',
   },
   photoOverlay: {
     ...StyleSheet.absoluteFillObject,
