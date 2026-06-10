@@ -17,9 +17,12 @@ export function OfflineAICard() {
   const titleColor = isDark ? '#f0f9ff' : '#0f172a';
   const pills = lang === 'es' ? PILLS_ES : PILLS_EN;
 
+  const cardBg = isDark ? '#0f1f12' : '#f0fdf4';
+  const cardBorder = isDark ? 'rgba(34,197,94,0.3)' : 'rgba(34,197,94,0.4)';
+
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}
       activeOpacity={0.85}
       onPress={() => router.push('/(tabs)/asistente')}
       accessibilityRole="button"

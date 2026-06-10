@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '../../store/themeStore';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
@@ -99,8 +100,24 @@ export function Button({
   fullWidth = false,
 }: ButtonProps) {
   const [pressed, setPressed] = React.useState(false);
+  const isDark = useThemeStore((s) => s.theme === 'dark');
   const sz = SIZE_CONFIG[size];
-  const vc = VARIANT_CONFIG[variant];
+
+  // Secondary variant adapts to light/dark
+  const secondaryLight: VariantStyle = {
+    bg: 'rgba(226,232,240,0.5)',
+    pressedBg: 'rgba(226,232,240,0.85)',
+    borderColor: '#cbd5e1',
+    textColor: '#0f172a',
+    iconColor: '#64748b',
+    borderWidth: 1,
+    shadow: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 6, elevation: 1 },
+  };
+  const resolvedVariantConfig: Record<Variant, VariantStyle> = {
+    ...VARIANT_CONFIG,
+    secondary: isDark ? VARIANT_CONFIG.secondary : secondaryLight,
+  };
+  const vc = resolvedVariantConfig[variant];
 
   const bgColor = pressed && !disabled && !loading ? vc.pressedBg : vc.bg;
   const opacity = disabled ? 0.4 : 1;
