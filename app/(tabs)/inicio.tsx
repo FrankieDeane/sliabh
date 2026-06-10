@@ -27,9 +27,9 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-// Silent looping drone footage for web hero
-const HERO_VIDEO_URL =
-  'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
+// Silent looping mountain video for web hero
+const HERO_VIDEO_URL = 'https://pixabay.com/videos/download/x-210926_medium.mp4';
+const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
 
 const FEATURED = [
   {
@@ -173,6 +173,7 @@ function GalleryCell({
   height,
   onPress,
   t,
+  isDark,
 }: {
   item: { uri: string; labelEs: string; labelEn: string };
   index: number;
@@ -180,10 +181,11 @@ function GalleryCell({
   height: number;
   onPress: (i: number) => void;
   t: (es: string, en: string) => string;
+  isDark: boolean;
 }) {
   return (
     <TouchableOpacity
-      style={[styles.galleryCell, { width, height }]}
+      style={[styles.galleryCell, { width, height, backgroundColor: isDark ? '#0f1724' : '#e2e8f0' }]}
       activeOpacity={0.9}
       onPress={() => onPress(index)}
       {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
@@ -208,20 +210,21 @@ function GalleryCell({
   );
 }
 
-function SectionDivider({ sidePad }: { sidePad: number }) {
+function SectionDivider({ sidePad, isDark }: { sidePad: number; isDark: boolean }) {
+  const borderColor = isDark ? '#1e2d42' : '#e2e8f0';
   if (Platform.OS !== 'web') {
-    return <View style={[styles.divider, { marginHorizontal: sidePad }]} />;
+    return <View style={[styles.divider, { marginHorizontal: sidePad, backgroundColor: borderColor }]} />;
   }
   return (
     <View
-      style={[styles.divider, { marginHorizontal: sidePad }]}
+      style={[styles.divider, { marginHorizontal: sidePad, backgroundColor: borderColor }]}
       {...({ 'data-section-divider': true } as any)}
     />
   );
 }
 
 export default function InicioScreen() {
-  useTheme();
+  const { isDark } = useTheme();
   const { user } = useAuthStore();
   const { lang, t } = useLangStore();
   const router = useRouter();
@@ -235,6 +238,10 @@ export default function InicioScreen() {
 
   const CARD_W = Math.min(contentW * 0.62, 240);
   const CARD_H = Math.round(CARD_W * 0.65);
+
+  const c = isDark
+    ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
+    : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
 
   const galleryGap = 10;
   const galleryInnerW = width - 2 * sidePad;
@@ -263,7 +270,7 @@ export default function InicioScreen() {
   ];
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: c.bg }]}>
       <ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -286,7 +293,6 @@ export default function InicioScreen() {
             {Platform.OS === 'web' && (
               // @ts-ignore — video is web-only
               <video
-                src={HERO_VIDEO_URL}
                 autoPlay
                 muted
                 loop
@@ -301,7 +307,11 @@ export default function InicioScreen() {
                   objectFit: 'cover',
                   pointerEvents: 'none',
                 }}
-              />
+                onError={(e: any) => { e.target.src = HERO_VIDEO_FALLBACK; }}
+              >
+                <source src={HERO_VIDEO_URL} type="video/mp4" />
+                <source src={HERO_VIDEO_FALLBACK} type="video/mp4" />
+              </video>
             )}
 
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
@@ -390,7 +400,7 @@ export default function InicioScreen() {
         {/* ── FEATURE BLOCKS ── */}
         <View style={[styles.featureSection, { paddingHorizontal: sidePad }]}>
           <Text
-            style={styles.sectionLabel}
+            style={[styles.sectionLabel, { color: c.muted }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('TODO LO QUE NECESITAS', 'EVERYTHING YOU NEED')}
@@ -424,12 +434,12 @@ export default function InicioScreen() {
           </View>
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── FEATURED ROUTES ── */}
         <View style={styles.mt4}>
           <Text
-            style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
+            style={[styles.sectionLabel, { marginHorizontal: sidePad, color: c.muted }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('RUTAS DESTACADAS', 'FEATURED TRAILS')}
@@ -513,19 +523,19 @@ export default function InicioScreen() {
           )}
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── ARGENTINA DESTINATION HUB ── */}
         <View style={styles.mt4}>
           <View style={[styles.hubHeader, { paddingHorizontal: sidePad }]}>
             <View>
               <Text
-                style={styles.sectionLabel}
+                style={[styles.sectionLabel, { color: c.muted }]}
                 {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
               >
                 {t('DESTINOS EN ARGENTINA', 'DESTINATIONS IN ARGENTINA')}
               </Text>
-              <Text style={[styles.hubSubtitle, { color: '#64748b' }]}>
+              <Text style={[styles.hubSubtitle, { color: c.muted }]}>
                 {t('Explora por provincia y parque nacional', 'Explore by province and national park')}
               </Text>
             </View>
@@ -571,12 +581,12 @@ export default function InicioScreen() {
           </ScrollView>
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── GALLERY ── */}
         <View style={styles.mt4}>
           <Text
-            style={[styles.sectionLabel, { marginHorizontal: sidePad }]}
+            style={[styles.sectionLabel, { marginHorizontal: sidePad, color: c.muted }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('GALERÍA', 'GALLERY')}
@@ -584,16 +594,16 @@ export default function InicioScreen() {
           {/* Explicit 2-row structure — avoids sub-pixel flexWrap bugs */}
           <View style={{ marginHorizontal: sidePad }}>
             {/* Row 1: full-width image */}
-            <GalleryCell item={GALLERY[0]} index={0} width={fullW} height={fullH} onPress={setLightboxIndex} t={t} />
+            <GalleryCell item={GALLERY[0]} index={0} width={fullW} height={fullH} onPress={setLightboxIndex} t={t} isDark={isDark} />
             {/* Row 2: two half-width images side by side */}
             <View style={{ flexDirection: 'row', gap: galleryGap, marginTop: galleryGap }}>
-              <GalleryCell item={GALLERY[1]} index={1} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} />
-              <GalleryCell item={GALLERY[2]} index={2} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} />
+              <GalleryCell item={GALLERY[1]} index={1} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} isDark={isDark} />
+              <GalleryCell item={GALLERY[2]} index={2} width={cellW} height={cellH} onPress={setLightboxIndex} t={t} isDark={isDark} />
             </View>
           </View>
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── OFFLINE AI ── */}
         <View
@@ -603,18 +613,18 @@ export default function InicioScreen() {
           <OfflineAICard />
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── QUICK ACTIONS ── */}
         <View style={[styles.mt4, { marginHorizontal: sidePad }]}>
           <Text
-            style={styles.sectionLabel}
+            style={[styles.sectionLabel, { color: c.muted }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('EXPLORAR', 'EXPLORE')}
           </Text>
           <TouchableOpacity
-            style={styles.actionCard}
+            style={[styles.actionCard, { backgroundColor: c.surface, borderColor: c.border }]}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/planificar')}
             {...(Platform.OS === 'web' ? ({
@@ -626,18 +636,18 @@ export default function InicioScreen() {
               <Ionicons name="map-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>{t('Planificar caminata', 'Plan a hike')}</Text>
-              <Text style={styles.actionDesc}>
+              <Text style={[styles.actionTitle, { color: c.text }]}>{t('Planificar caminata', 'Plan a hike')}</Text>
+              <Text style={[styles.actionDesc, { color: c.muted }]}>
                 {t(
                   'Traza tu próxima ruta y analízala con IA',
                   'Map your next route and analyse it with AI',
                 )}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#4a5568" />
+            <Ionicons name="chevron-forward" size={20} color={c.muted} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.actionCard, styles.mt3]}
+            style={[styles.actionCard, styles.mt3, { backgroundColor: c.surface, borderColor: c.border }]}
             activeOpacity={0.78}
             onPress={() => router.push('/(tabs)/contribuir')}
             {...(Platform.OS === 'web' ? ({
@@ -649,21 +659,21 @@ export default function InicioScreen() {
               <Ionicons name="pencil-outline" size={22} color="#fff" />
             </View>
             <View style={styles.actionText}>
-              <Text style={styles.actionTitle}>
+              <Text style={[styles.actionTitle, { color: c.text }]}>
                 {t('Contribuir al mapa', 'Contribute to the map')}
               </Text>
-              <Text style={styles.actionDesc}>
+              <Text style={[styles.actionDesc, { color: c.muted }]}>
                 {t(
                   'Ayuda a la comunidad con datos de senderos',
                   'Help the community with trail data',
                 )}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#4a5568" />
+            <Ionicons name="chevron-forward" size={20} color={c.muted} />
           </TouchableOpacity>
         </View>
 
-        <SectionDivider sidePad={sidePad} />
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── PACK ACTIVO ── */}
         <View
@@ -671,7 +681,7 @@ export default function InicioScreen() {
           {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
         >
           <Text
-            style={styles.sectionLabel}
+            style={[styles.sectionLabel, { color: c.muted }]}
             {...(Platform.OS === 'web' ? ({ 'data-section-label': true } as any) : {})}
           >
             {t('PACK ACTIVO', 'ACTIVE PACK')}

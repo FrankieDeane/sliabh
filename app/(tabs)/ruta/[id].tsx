@@ -19,7 +19,16 @@ import {
   DIFFICULTY_COLOR,
 } from '../../../src/data/argentinaTrails';
 import { useLangStore } from '../../../src/store/langStore';
+import { useThemeStore } from '../../../src/store/themeStore';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
+
+// ─── Theme context (avoids prop-drilling through all sub-components) ──────────
+type ThemeColors = { bg: string; surface: string; elevated: string; border: string; text: string; muted: string; accent: string };
+const TrailThemeCtx = React.createContext<ThemeColors>({
+  bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42',
+  text: '#f0f9ff', muted: '#64748b', accent: '#22c55e',
+});
+function useC() { return React.useContext(TrailThemeCtx); }
 
 // ─── Trail videos ─────────────────────────────────────────────────────────────
 const TRAIL_VIDEOS: Record<string, string> = {
@@ -414,6 +423,11 @@ export default function TrailDetailScreen() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const { lang, t } = useLangStore();
+  const isDark = useThemeStore((s) => s.theme === 'dark');
+
+  const C: ThemeColors = isDark
+    ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b', accent: '#22c55e' }
+    : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b', accent: '#22c55e' };
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
@@ -426,24 +440,24 @@ export default function TrailDetailScreen() {
   // ── Not found ───────────────────────────────────────────────────────────────
   if (!trail) {
     return (
-      <View style={[styles.notFound, { paddingTop: insets.top + 16 }]}>
+      <View style={[styles.notFound, { paddingTop: insets.top + 16, backgroundColor: C.bg }]}>
         <Ionicons name="map-outline" size={52} color={C.muted} />
-        <Text style={styles.notFoundTitle}>
+        <Text style={[styles.notFoundTitle, { color: C.text }]}>
           {t('Ruta no encontrada', 'Trail not found')}
         </Text>
-        <Text style={styles.notFoundSub}>
+        <Text style={[styles.notFoundSub, { color: C.muted }]}>
           {t(
             'No existe una ruta con ese identificador.',
             'No trail exists with that identifier.',
           )}
         </Text>
         <TouchableOpacity
-          style={styles.notFoundBtn}
+          style={[styles.notFoundBtn, { backgroundColor: C.surface, borderColor: C.border }]}
           onPress={() => router.back()}
           activeOpacity={0.75}
         >
           <Ionicons name="chevron-back" size={18} color={C.text} />
-          <Text style={styles.notFoundBtnText}>{t('Volver', 'Go back')}</Text>
+          <Text style={[styles.notFoundBtnText, { color: C.text }]}>{t('Volver', 'Go back')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -500,7 +514,8 @@ export default function TrailDetailScreen() {
   const logisticsLines = getLogisticsContent(trail, lang);
 
   return (
-    <View style={styles.root}>
+    <TrailThemeCtx.Provider value={C}>
+    <View style={[styles.root, { backgroundColor: C.bg }]}>
       {/* Floating back button — always visible above scroll */}
       <TouchableOpacity
         style={[styles.backBtn, { top: insets.top + 10 }]}
@@ -568,7 +583,7 @@ export default function TrailDetailScreen() {
 
         {/* ── Sticky tab bar — index 1 ────────────────────────────────────────── */}
         <View
-          style={[styles.tabBar, { paddingHorizontal: sidePad }]}
+          style={[styles.tabBar, { paddingHorizontal: sidePad, backgroundColor: C.bg, borderBottomColor: C.border }]}
           {...(Platform.OS === 'web' ? ({ 'data-trail-tab-bar': true } as any) : {})}
         >
           {TABS.map((tab) => {
@@ -580,7 +595,7 @@ export default function TrailDetailScreen() {
                 onPress={() => setActiveTab(tab.key)}
                 activeOpacity={0.75}
               >
-                <Text style={[styles.tabLabel, active ? styles.tabLabelActive : { color: C.muted }]}>
+                <Text style={[styles.tabLabel, { color: active ? C.accent : C.muted }]}>
                   {tab.label}
                 </Text>
               </TouchableOpacity>
@@ -589,7 +604,7 @@ export default function TrailDetailScreen() {
         </View>
 
         {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
-        <View style={[styles.scrollContent, { paddingHorizontal: sidePad }]}>
+        <View style={[styles.scrollContent, { paddingHorizontal: sidePad, backgroundColor: C.bg }]}>
           {activeTab === 'overview' && (
             <OverviewTab trail={trail} lang={lang} t={t} />
           )}
@@ -606,16 +621,18 @@ export default function TrailDetailScreen() {
         </View>
       </ScrollView>
     </View>
+    </TrailThemeCtx.Provider>
   );
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function StatPill({ icon, value }: { icon: React.ComponentProps<typeof Ionicons>['name']; value: string }) {
+  const C = useC();
   return (
-    <View style={styles.statPill}>
+    <View style={[styles.statPill, { backgroundColor: C.elevated, borderColor: C.border }]}>
       <Ionicons name={icon} size={13} color={C.accent} />
-      <Text style={styles.statPillText}>{value}</Text>
+      <Text style={[styles.statPillText, { color: C.text }]}>{value}</Text>
     </View>
   );
 }
@@ -638,6 +655,7 @@ function ElevationProfile({
   gainM: number;
   maxAltM: number;
 }) {
+  const C = useC();
   if (Platform.OS !== 'web') return null;
 
   const baseAlt = maxAltM - gainM;
@@ -715,11 +733,13 @@ function ElevationProfile({
 }
 
 function SectionCard({ children }: { children: React.ReactNode }) {
-  return <View style={styles.sectionCard}>{children}</View>;
+  const C = useC();
+  return <View style={[styles.sectionCard, { backgroundColor: C.surface, borderColor: C.border }]}>{children}</View>;
 }
 
 function CardLabel({ text }: { text: string }) {
-  return <Text style={styles.cardLabel}>{text}</Text>;
+  const C = useC();
+  return <Text style={[styles.cardLabel, { color: C.muted }]}>{text}</Text>;
 }
 
 function VideoSection({
@@ -729,6 +749,7 @@ function VideoSection({
   trailId: string;
   t: (es: string, en: string) => string;
 }) {
+  const C = useC();
   const videoId = TRAIL_VIDEOS[trailId];
   if (!videoId) return null;
 
@@ -755,12 +776,12 @@ function VideoSection({
         </View>
       ) : (
         <TouchableOpacity
-          style={styles.videoButton}
+          style={[styles.videoButton, { borderColor: C.accent }]}
           onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${videoId}`)}
           activeOpacity={0.75}
         >
           <Ionicons name="play-circle-outline" size={22} color={C.accent} />
-          <Text style={styles.videoButtonText}>
+          <Text style={[styles.videoButtonText, { color: C.accent }]}>
             {t('Ver video en YouTube', 'Watch on YouTube')}
           </Text>
           <Ionicons name="open-outline" size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
@@ -779,9 +800,9 @@ function OverviewTab({
   lang: 'es' | 'en';
   t: (es: string, en: string) => string;
 }) {
+  const C = useC();
   return (
     <View style={styles.tabContent}>
-      {/* Elevation profile */}
       <SectionCard>
         <CardLabel text={t('Perfil de elevación', 'Elevation Profile')} />
         <ElevationProfile
@@ -791,31 +812,27 @@ function OverviewTab({
         />
       </SectionCard>
 
-      {/* Description */}
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
-        <Text style={styles.bodyText}>{trail.description}</Text>
+        <Text style={[styles.bodyText, { color: C.text }]}>{trail.description}</Text>
       </SectionCard>
 
-      {/* Best season */}
       <SectionCard>
         <CardLabel text={t('Mejor época', 'Best Season')} />
         <View style={styles.infoRow}>
           <Ionicons name="sunny-outline" size={16} color={C.accent} />
-          <Text style={styles.bodyText}>{trail.best_season}</Text>
+          <Text style={[styles.bodyText, { color: C.text }]}>{trail.best_season}</Text>
         </View>
       </SectionCard>
 
-      {/* Trailhead */}
       <SectionCard>
         <CardLabel text={t('Punto de inicio', 'Trailhead')} />
         <View style={styles.infoRow}>
           <Ionicons name="location-outline" size={16} color={C.accent} />
-          <Text style={[styles.bodyText, { flex: 1 }]}>{trail.trailhead}</Text>
+          <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.trailhead}</Text>
         </View>
       </SectionCard>
 
-      {/* Permits */}
       <SectionCard>
         <CardLabel text={t('Permisos', 'Permits')} />
         <View style={styles.infoRow}>
@@ -824,7 +841,7 @@ function OverviewTab({
             size={16}
             color={trail.permits_required ? '#fbbf24' : C.accent}
           />
-          <Text style={[styles.bodyText, { flex: 1 }]}>
+          <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>
             {trail.permits_required
               ? t(
                   'Se requiere permiso previo. Gestionarlo con anticipación ante la autoridad del parque.',
@@ -838,18 +855,16 @@ function OverviewTab({
         </View>
       </SectionCard>
 
-      {/* Tags */}
       {trail.tags.length > 0 && (
         <View style={styles.tagsRow}>
           {trail.tags.map((tag) => (
-            <View key={tag} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
+            <View key={tag} style={[styles.tag, { backgroundColor: C.surface, borderColor: C.border }]}>
+              <Text style={[styles.tagText, { color: C.muted }]}>{tag}</Text>
             </View>
           ))}
         </View>
       )}
 
-      {/* Video */}
       <VideoSection trailId={trail.id} t={t} />
     </View>
   );
@@ -862,6 +877,7 @@ function LogisticsTab({
   lines: string[];
   t: (es: string, en: string) => string;
 }) {
+  const C = useC();
   return (
     <View style={styles.tabContent}>
       <SectionCard>
@@ -869,7 +885,7 @@ function LogisticsTab({
         {lines.map((line, i) => (
           <View key={i} style={styles.bulletRow}>
             <View style={styles.bulletDot} />
-            <Text style={[styles.bodyText, { flex: 1 }]}>{line}</Text>
+            <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{line}</Text>
           </View>
         ))}
       </SectionCard>
@@ -886,6 +902,7 @@ function SafetyTab({
   difficulty: TrailDifficulty;
   t: (es: string, en: string) => string;
 }) {
+  const C = useC();
   const alertColor: Record<TrailDifficulty, string> = {
     facil: '#22c55e',
     moderado: '#fbbf24',
@@ -911,7 +928,7 @@ function SafetyTab({
         {bullets.map((b, i) => (
           <View key={i} style={styles.bulletRow}>
             <Ionicons name="shield-checkmark-outline" size={14} color={C.accent} style={{ marginTop: 2 }} />
-            <Text style={[styles.bodyText, { flex: 1 }]}>{b}</Text>
+            <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{b}</Text>
           </View>
         ))}
       </SectionCard>
@@ -920,6 +937,7 @@ function SafetyTab({
 }
 
 function GearTab({ categories }: { categories: { category: string; items: string[] }[] }) {
+  const C = useC();
   return (
     <View style={styles.tabContent}>
       {categories.map((cat) => (
@@ -928,7 +946,7 @@ function GearTab({ categories }: { categories: { category: string; items: string
           {cat.items.map((item, i) => (
             <View key={i} style={styles.bulletRow}>
               <Ionicons name="checkmark-outline" size={14} color={C.accent} style={{ marginTop: 2 }} />
-              <Text style={[styles.bodyText, { flex: 1 }]}>{item}</Text>
+              <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{item}</Text>
             </View>
           ))}
         </SectionCard>
