@@ -22,7 +22,6 @@ import { buildMessages } from '../../src/ai/promptBuilder';
 import { loadPack } from '../../src/knowledge/KnowledgeLoader';
 import { useSettingsStore } from '../../src/store/settingsStore';
 import type { KnowledgePack } from '../../src/knowledge/types';
-import { WebFooter } from '../../src/components/layout/WebFooter';
 import { WebLLMBanner } from '../../src/components/ui/WebLLMBanner';
 import { useWebLLM } from '../../src/ai/useWebLLM';
 
@@ -224,7 +223,14 @@ export default function AsistenteScreen() {
               )}
             </>
           )}
-          {Platform.OS === 'web' && !hasMessages && <WebFooter />}
+          {Platform.OS === 'web' && (
+            <View style={styles.aiDisclaimer}>
+              <Ionicons name="information-circle-outline" size={13} color={c.muted} />
+              <Text style={[styles.aiDisclaimerTxt, { color: c.muted }]}>
+                Sliabh IA puede equivocarse. Verificá siempre la información crítica de seguridad con guías y guardaparques.
+              </Text>
+            </View>
+          )}
         </ScrollView>
 
         {/* Input bar */}
@@ -264,6 +270,18 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   flex: { flex: 1 },
   headerBtn: { padding: 6 },
+  aiDisclaimer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 8,
+    maxWidth: 560,
+    alignSelf: 'center',
+  },
+  aiDisclaimerTxt: { fontSize: 11, lineHeight: 16, textAlign: 'center', flexShrink: 1 },
   scrollContent: { paddingTop: 16, paddingBottom: 24 },
   empty: { flex: 1, alignItems: 'center', paddingTop: 32 },
   sparkleCircle: {
