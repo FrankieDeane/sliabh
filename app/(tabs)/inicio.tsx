@@ -94,7 +94,7 @@ const REGIONS = [
     regionEs: 'Río Negro · Neuquén · Chubut',
     regionEn: 'Río Negro · Neuquén · Chubut',
     trailCount: 6,
-    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
+    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGF0YWdvbmlhfGVufDB8fDB8fHww',
   },
   {
     id: 'cuyo',
@@ -121,7 +121,7 @@ const REGIONS = [
     regionEs: 'Córdoba · San Luis',
     regionEn: 'Córdoba · San Luis',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1637707483880-6d680c36a322?w=500&auto=format&fit=crop&q=60',
+    photo: 'https://images.unsplash.com/photo-1637707483880-6d680c36a322?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNpZXJyYXN8ZW58MHx8MHx8fDA%3D',
   },
   {
     id: 'litoral',
@@ -130,7 +130,7 @@ const REGIONS = [
     regionEs: 'Misiones · Corrientes · Entre Ríos',
     regionEn: 'Misiones · Corrientes · Entre Ríos',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=500&auto=format&fit=crop&q=60',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZW50cmUlMjByaW9zJTIwYXJnZW50aW5hfGVufDB8fDB8fHww',
   },
 ];
 
@@ -144,7 +144,7 @@ const PARK_SPOTS = [
     tagEn: 'UNESCO · World Heritage',
     descEs: 'Bosques de alerces milenarios de hasta 2600 años, lagos turquesa y ecosistemas únicos en la Patagonia andina de Chubut.',
     descEn: 'Ancient alerce forests up to 2600 years old, turquoise lakes and unique ecosystems in the Andean Patagonia of Chubut.',
-    photo: 'https://www.lanacion.com.ar/resizer/v2/la-excursion-al-alerzal-milenario-es-muy-PVCDPJR5VVAWJIT4FVKD2XDA54.jpg?auth=77db1e8c9c8c3c24e1a65dd27c2e91f50ba86b39a7f0e86ce5e57a8ff9e9a94a&width=800&height=600&quality=70&smart=true',
+    photo: 'https://www.lanacion.com.ar/resizer/v2/la-excursion-al-alerzal-milenario-es-muy-PVCDPJR5VVAWJIT4FVKD2XDA54.jpg?auth=229b98a1980a83812a56d98a710ce265d07bc9e539fe33bc1ca97141f54cf6a0&width=1200&height=800&quality=70&smart=true',
     trailId: 'alerces-cascada-arrayanes',
     province: 'Chubut',
     trails: 3,
@@ -170,7 +170,7 @@ const PARK_SPOTS = [
     tagEn: 'Steppe · Condors · Santa Cruz',
     descEs: 'El parque más nuevo de Argentina protege estepa patagónica virgen, guanacos y cóndores. Vistas al lago Cochrane y vientos épicos de la Patagonia.',
     descEn: "Argentina's newest park protects pristine Patagonian steppe, guanacos and condors. Views to Cochrane lake and the epic Patagonian winds.",
-    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-jPY81gH1Nso?w=800&q=80&fit=crop&auto=format',
     trailId: 'pn-patagonia-ascension',
     province: 'Santa Cruz',
     trails: 2,
