@@ -36,16 +36,9 @@ export class CloudProvider implements AIProvider {
   }
 
   async isAvailable(): Promise<boolean> {
-    try {
-      const res = await fetch(this.endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: 'ping' }] }),
-        signal: AbortSignal.timeout(5000),
-      });
-      return res.ok;
-    } catch {
-      return false;
-    }
+    // Assume available on web — let generate() throw if the endpoint is down.
+    // Doing a real API call here wastes a token and causes false negatives when
+    // the API key is briefly unavailable.
+    return typeof window !== 'undefined';
   }
 }
