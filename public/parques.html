@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parques Nacionales de Argentina</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --surface: #0f1724;
+      --surface-2: #162035;
+      --text: #f0f9ff;
+      --muted: #64748b;
+      --border: #1e2d42;
+      --primary: #16a34a;
+      --primary-dark: #14532d;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    a, button { transition: .18s ease; }
+    .wrap { max-width: 1480px; margin: 0 auto; padding: 18px; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) 400px;
+      gap: 18px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .map-card { padding: 14px; }
+    .section-head { padding: 6px 4px 14px; }
+    .section-head h2 { margin: 0 0 6px; font-size: 1.5rem; }
+    .section-head p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; font-size: .95rem; }
+    .toolbar { display: grid; gap: 10px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .search {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      outline: none;
+    }
+    .search::placeholder { color: var(--muted); }
+    #map {
+      width: 100%;
+      height: 720px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 6px 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    .panel {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      min-height: 720px;
+      gap: 14px;
+    }
+    .kicker {
+      margin: 0;
+      font-size: 12px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 700;
+    }
+    .panel h3 { margin: 0; font-size: 1.7rem; line-height: 1.05; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .panel p { margin: 0; color: var(--muted); line-height: 1.6; font-size: .95rem; }
+    .park-list { display: grid; gap: 9px; }
+    .park-row {
+      text-align: left;
+      width: 100%;
+      color: var(--text);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .park-row.active { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+    .trail-box {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+    .trail-box strong { display: block; margin-bottom: 4px; color: var(--text); }
+    .subsection-title {
+      margin: 4px 0 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+    .region-block { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: auto; }
+    .custom-marker {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.96);
+      box-shadow: 0 8px 20px rgba(0,0,0,.4);
+    }
+    .cluster-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #fff; font-weight: 800;
+      border: 3px solid rgba(255,255,255,.96);
+      box-shadow: 0 16px 28px rgba(0,0,0,.4);
+      background: rgba(22,163,74,.92);
+    }
+    .leaflet-popup-content-wrapper { background: var(--surface); color: var(--text); border-radius: 12px; }
+    .leaflet-popup-tip { background: var(--surface); }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel { min-height: auto; }
+      #map { height: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section id="interactiveMap" class="layout">
+      <article class="card map-card">
+        <div class="section-head">
+          <h2>Explorá las áreas protegidas por región</h2>
+          <p>Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.</p>
+          <div class="toolbar">
+            <input id="searchInput" class="search" type="search" placeholder="Buscar parque, provincia o región" aria-label="Buscar área protegida" />
+            <div class="filters" id="regionFilters"></div>
+          </div>
+        </div>
+        <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:#0f5f60"></i> Patagonia</span>
+          <span><i class="dot" style="background:#8a6d3b"></i> Centro</span>
+          <span><i class="dot" style="background:#6a8f3f"></i> Noroeste (NOA)</span>
+          <span><i class="dot" style="background:#7a4f7f"></i> Noreste (NEA)</span>
+          <span><i class="dot" style="background:#315f86"></i> Áreas marinas</span>
+        </div>
+      </article>
+
+      <aside class="card panel" id="infoPanel">
+        <p class="kicker">Dataset cargado</p>
+        <h3>Áreas protegidas de Argentina</h3>
+        <div class="meta">
+          <span id="metaCount">55 áreas</span>
+          <span>Mapa listo</span>
+        </div>
+        <p>Este panel se actualiza al tocar un marcador. Elegí una región o buscá un parque para empezar.</p>
+        <p class="subsection-title">Áreas visibles en el filtro actual</p>
+        <div class="park-list" id="parkList"></div>
+        <p class="note">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
+      </aside>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script>
+    const parks = [
+      {name:'Parque Nacional Ansenuza',region:'Centro',lat:-30.66704,lng:-62.54672,province:'Córdoba',category:'Parque Nacional',year:'2022',surface:'661,416 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional Quebrada del Condorito',region:'Centro',lat:-31.69761,lng:-64.78331,province:'Córdoba',category:'Parque Nacional',year:'1996',surface:'35,396 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional San Guillermo',region:'Centro',lat:-29.23817,lng:-69.26616,province:'San Juan',category:'Parque Nacional',year:'1999',surface:'166,000 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#8a6d3b'},
+      {name:'Parque Nacional Sierra de las Quijadas',region:'Centro',lat:-32.55677,lng:-67.13459,province:'San Luis',category:'Parque Nacional',year:'1991',surface:'73,785 ha',ecoregions:'Chaco Seco, Monte de Sierras y Bolsones',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional Talampaya',region:'Centro',lat:-29.85015,lng:-67.87759,province:'La Rioja',category:'Parque Nacional',year:'1997',surface:'213,800 ha',ecoregions:'Monte de Sierras y Bolsones',international:'Patrimonio Mundial',color:'#8a6d3b'},
+      {name:'Parque Nacional Traslasierra',region:'Centro',lat:-30.99468,lng:-65.62670,province:'Córdoba',category:'Parque Nacional',year:'2018',surface:'44,019 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b'},
+      {name:'Reserva Natural Educativa Cerro Pistarini',region:'Centro',lat:-32.22414,lng:-64.41762,province:'Córdoba',category:'Reserva Natural Educativa',year:'2023',surface:'450 ha',ecoregions:'',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional Campos del Tuyú',region:'Centro Este',lat:-36.35444,lng:-56.87624,province:'Buenos Aires',category:'Parque Nacional',year:'2009',surface:'3,040 ha',ecoregions:'Pampa',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional Ciervo de los Pantanos',region:'Centro Este',lat:-34.23450,lng:-58.87724,province:'Buenos Aires',category:'Parque Nacional',year:'2018',surface:'5,200 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional El Palmar',region:'Centro Este',lat:-31.88216,lng:-58.25668,province:'Entre Ríos',category:'Parque Nacional',year:'1965',surface:'8,213 ha',ecoregions:'Espinal',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional Islas de Santa Fe',region:'Centro Este',lat:-32.27913,lng:-60.72000,province:'Santa Fe',category:'Parque Nacional',year:'2010',surface:'4,096 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional Pre-Delta',region:'Centro Este',lat:-32.14052,lng:-60.64033,province:'Entre Ríos',category:'Parque Nacional',year:'1992',surface:'2,608 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Reserva Natural Silvestre Marismas del Tuyú',region:'Centro Este',lat:-36.33159,lng:-56.78471,province:'Buenos Aires',category:'Reserva Natural Silvestre',year:'2023',surface:'352 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional Chaco',region:'Noreste',lat:-26.82658,lng:-59.65506,province:'Chaco',category:'Parque Nacional',year:'1954',surface:'14,981 ha',ecoregions:'Chaco Húmedo',international:'',color:'#7a4f7f'},
+      {name:'Parque Nacional El Impenetrable',region:'Noreste',lat:-25.00468,lng:-61.10564,province:'Chaco',category:'Parque Nacional',year:'2014',surface:'128,000 ha',ecoregions:'Chaco Seco',international:'',color:'#7a4f7f'},
+      {name:'Parque Nacional Iberá',region:'Noreste',lat:-27.93238,lng:-56.93083,province:'Corrientes',category:'Parque Nacional',year:'2018',surface:'195,094 ha',ecoregions:'Esteros del Iberá',international:'',color:'#7a4f7f'},
+      {name:'Parque Nacional Iguazú',region:'Noreste',lat:-25.66836,lng:-54.31053,province:'Misiones',category:'Parque Nacional',year:'1934',surface:'67,698 ha',ecoregions:'Selva Paranense',international:'Patrimonio Mundial',color:'#7a4f7f'},
+      {name:'Parque Nacional Laguna El Palmar',region:'Noreste',lat:-27.18443,lng:-58.67282,province:'Chaco',category:'Parque Nacional',year:'2023',surface:'5,600 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#7a4f7f'},
+      {name:'Parque Nacional Mburucuyá',region:'Noreste',lat:-28.01299,lng:-58.06922,province:'Corrientes',category:'Parque Nacional',year:'2002',surface:'17,086 ha',ecoregions:'Esteros del Iberá',international:'',color:'#7a4f7f'},
+      {name:'Parque Nacional Río Pilcomayo',region:'Noreste',lat:-25.06531,lng:-58.13715,province:'Formosa',category:'Parque Nacional',year:'1951',surface:'51,889 ha',ecoregions:'Chaco Húmedo',international:'Sitio RAMSAR',color:'#7a4f7f'},
+      {name:'Reserva Natural Educativa Colonia Benítez',region:'Noreste',lat:-27.31754,lng:-58.94984,province:'Chaco',category:'Reserva Natural Educativa',year:'1990',surface:'8 ha',ecoregions:'Chaco Húmedo',international:'',color:'#7a4f7f'},
+      {name:'Reserva Natural Estricta San Antonio',region:'Noreste',lat:-26.01709,lng:-53.78987,province:'Misiones',category:'Reserva Natural Estricta',year:'1990',surface:'480 ha',ecoregions:'Selva Paranense',international:'',color:'#7a4f7f'},
+      {name:'Reserva Natural Formosa',region:'Noreste',lat:-24.27366,lng:-61.80071,province:'Formosa',category:'Reserva Natural',year:'1968',surface:'9,005 ha',ecoregions:'Chaco Seco',international:'Reserva de Biósfera',color:'#7a4f7f'},
+      {name:'Reserva Natural Silvestre Parque Federal Campo San Juan',region:'Noreste',lat:-27.39436,lng:-55.64876,province:'Misiones',category:'Reserva Natural Silvestre',year:'2022',surface:'5,131 ha',ecoregions:'Campos y Malezales',international:'',color:'#7a4f7f'},
+      {name:'Monumento Natural Laguna de los Pozuelos',region:'Noroeste',lat:-22.34173,lng:-66.00193,province:'Jujuy',category:'Monumento Natural',year:'1980',surface:'16,000 ha',ecoregions:'Puna',international:'Reserva de Biósfera · Sitio RAMSAR',color:'#6a8f3f'},
+      {name:'Parque Nacional Aconquija',region:'Noroeste',lat:-27.19383,lng:-65.95758,province:'Tucumán',category:'Parque Nacional',year:'2018',surface:'93,313 ha',ecoregions:'Altos Andes, Yungas',international:'Patrimonio Mundial',color:'#6a8f3f'},
+      {name:'Parque Nacional Baritú',region:'Noroeste',lat:-22.58199,lng:-64.64422,province:'Salta',category:'Parque Nacional',year:'1974',surface:'72,439 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
+      {name:'Parque Nacional Calilegua',region:'Noroeste',lat:-23.66054,lng:-64.85000,province:'Jujuy',category:'Parque Nacional',year:'1979',surface:'76,306 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
+      {name:'Parque Nacional Copo',region:'Noroeste',lat:-25.82089,lng:-61.88005,province:'Santiago del Estero',category:'Parque Nacional',year:'2000',surface:'118,119 ha',ecoregions:'Chaco Seco',international:'',color:'#6a8f3f'},
+      {name:'Parque Nacional El Rey',region:'Noroeste',lat:-24.70046,lng:-64.62734,province:'Salta',category:'Parque Nacional',year:'1948',surface:'44,162 ha',ecoregions:'Yungas',international:'',color:'#6a8f3f'},
+      {name:'Parque Nacional Los Cardones',region:'Noroeste',lat:-25.27733,lng:-65.93186,province:'Salta',category:'Parque Nacional',year:'1996',surface:'64,117 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna, Yungas',international:'',color:'#6a8f3f'},
+      {name:'Reserva Nacional El Nogalar de los Toldos',region:'Noroeste',lat:-22.26581,lng:-64.75309,province:'Salta',category:'Reserva Nacional',year:'2006',surface:'3,275 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
+      {name:'Reserva Nacional Pizarro',region:'Noroeste',lat:-24.17000,lng:-64.06249,province:'Salta',category:'Reserva Nacional',year:'2015',surface:'7,837 ha',ecoregions:'Chaco Seco, Yungas',international:'',color:'#6a8f3f'},
+      {name:'Parque Interjurisdiccional Marino Isla Pingüino',region:'Patagonia Austral',lat:-48.15000,lng:-65.94458,province:'Santa Cruz',category:'Parque Interjurisdiccional Marino',year:'2012',surface:'159,526 ha',ecoregions:'Mar Argentino',international:'',color:'#0f5f60'},
+      {name:'Parque Interjurisdiccional Marino Makenke',region:'Patagonia Austral',lat:-49.54806,lng:-67.62472,province:'Santa Cruz',category:'Parque Interjurisdiccional Marino',year:'2012',surface:'72,663 ha',ecoregions:'Mar Argentino',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Bosques Petrificados de Jaramillo',region:'Patagonia Austral',lat:-47.69349,lng:-68.06604,province:'Santa Cruz',category:'Parque Nacional',year:'1954',surface:'78,543 ha',ecoregions:'Estepa Patagónica',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Los Glaciares',region:'Patagonia Austral',lat:-49.94690,lng:-73.15797,province:'Santa Cruz',category:'Parque Nacional',year:'1937',surface:'731,932 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Patrimonio Mundial',color:'#0f5f60'},
+      {name:'Parque Nacional Monte León',region:'Patagonia Austral',lat:-50.31667,lng:-68.97287,province:'Santa Cruz',category:'Parque Nacional',year:'2004',surface:'62,169 ha',ecoregions:'Estepa Patagónica',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Patagonia',region:'Patagonia Austral',lat:-47.15918,lng:-71.31701,province:'Santa Cruz',category:'Parque Nacional',year:'2015',surface:'106,424 ha',ecoregions:'Estepa Patagónica',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Perito Moreno',region:'Patagonia Austral',lat:-47.88697,lng:-72.25014,province:'Santa Cruz',category:'Parque Nacional',year:'1937',surface:'142,120 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Tierra del Fuego',region:'Patagonia Austral',lat:-54.64226,lng:-68.48597,province:'Tierra del Fuego',category:'Parque Nacional',year:'1960',surface:'68,909 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60'},
+      {name:'Reserva Natural Silvestre Isla de los Estados y Archipiélago de Año Nuevo',region:'Patagonia Austral',lat:-54.76715,lng:-64.27798,province:'Tierra del Fuego',category:'Reserva Natural Silvestre',year:'2016',surface:'52,784 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60'},
+      {name:'Parque Interjurisdiccional Marino Costero Patagonia Austral',region:'Patagonia Norte',lat:-45.07224,lng:-66.09692,province:'Chubut',category:'Parque Interjurisdiccional Marino Costero',year:'2009',surface:'103,574 ha',ecoregions:'Estepa Patagónica, Mar Argentino',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Islote Lobos',region:'Patagonia Norte',lat:-41.43785,lng:-65.06369,province:'Río Negro',category:'Parque Nacional',year:'2022',surface:'19,079 ha',ecoregions:'',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Lago Puelo',region:'Patagonia Norte',lat:-42.17903,lng:-71.68728,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'27,674 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Laguna Blanca',region:'Patagonia Norte',lat:-39.03034,lng:-70.35218,province:'Neuquén',category:'Parque Nacional',year:'1940',surface:'11,250 ha',ecoregions:'Estepa Patagónica',international:'Sitio RAMSAR',color:'#0f5f60'},
+      {name:'Parque Nacional Lanín',region:'Patagonia Norte',lat:-39.85001,lng:-71.43103,province:'Neuquén',category:'Parque Nacional',year:'1937',surface:'412,000 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Lihué Calel',region:'Patagonia Norte',lat:-37.93488,lng:-65.60471,province:'La Pampa',category:'Parque Nacional',year:'1976',surface:'32,514 ha',ecoregions:'Monte de Llanuras y Mesetas',international:'',color:'#0f5f60'},
+      {name:'Parque Nacional Los Alerces',region:'Patagonia Norte',lat:-42.84453,lng:-71.83818,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'259,822 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#0f5f60'},
+      {name:'Parque Nacional Los Arrayanes',region:'Patagonia Norte',lat:-40.82941,lng:-71.62874,province:'Neuquén',category:'Parque Nacional',year:'1971',surface:'1,796 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Área Marina Protegida Namuncurá - Banco Burdwood I',region:'Áreas Marinas',lat:-54.33145,lng:-59.23917,province:'Mar Argentino',category:'Área Marina Protegida',year:'2013',surface:'2,800,000 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
+      {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
+      {name:'Área Marina Protegida Yaganes',region:'Áreas Marinas',lat:-56.93301,lng:-65.45820,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'6,883,431 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'}
+    ];
+
+    const map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([-39.8, -65.4], 4);
+    L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
+      attribution: 'IGN Argentina · Leaflet',
+      maxZoom: 18
+    }).addTo(map);
+
+    const clusterGroup = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      maxClusterRadius: 46,
+      iconCreateFunction(cluster) {
+        return L.divIcon({
+          html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
+          className: '',
+          iconSize: [44, 44]
+        });
+      }
+    });
+
+    const sampleTrails = {
+      'Parque Nacional Los Glaciares': ['Laguna de los Tres · Difícil · 20 km', 'Mirador del Glaciar · Fácil · 3 km'],
+      'Parque Nacional Los Alerces': ['Sendero Alerzal · Moderado · 12 km', 'Miradores Lago Menéndez · Fácil · 4 km'],
+      'Parque Nacional Lago Puelo': ['Mirador del Lago · Fácil · 5 km', 'Pitranto Grande · Moderado · 9 km'],
+      'Parque Nacional Iguazú': ['Circuito Superior · Fácil · 2 km', 'Sendero Macuco · Moderado · 7 km'],
+      'Parque Nacional Nahuel Huapi': ['Cerro Campanario · Moderado', 'Bosque de Arrayanes · Fácil'],
+      'Parque Nacional Lanín': ['Ascenso al Lanín · Difícil', 'Lago Tromen · Moderado'],
+      'Parque Nacional Talampaya': ['Cañón principal · Guiado', 'Rutas triásicas · Corto'],
+      'Parque Nacional El Palmar': ['Sendero La Glorieta · Fácil', 'Sendero Yatay · Fácil'],
+      'Parque Nacional Calilegua': ['La Herradura · Moderado', 'Mirador del Valle · Fácil']
+    };
+
+    const filtersWrap = document.getElementById('regionFilters');
+    const parkList = document.getElementById('parkList');
+    const panel = document.getElementById('infoPanel');
+    const searchInput = document.getElementById('searchInput');
+    const metaCount = document.getElementById('metaCount');
+
+    function markerIcon(color) {
+      return L.divIcon({
+        className: '',
+        html: `<div class="custom-marker" style="background:${color}"></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+      });
+    }
+
+    const markers = parks.map(park => {
+      const marker = L.marker([park.lat, park.lng], { icon: markerIcon(park.color), title: park.name });
+      marker.parkData = park;
+      marker.on('click', () => {
+        renderPanel(park);
+        highlightListItem(park.name);
+        map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
+      });
+      return marker;
+    });
+
+    function renderPanel(park) {
+      const trails = sampleTrails[park.name] || ['Planificá tu ruta en la sección Planificar', 'Descargá el mapa offline de esta zona'];
+      panel.innerHTML = `
+        <p class="kicker">${park.region}</p>
+        <h3>${park.name}</h3>
+        <div class="meta">
+          <span>${park.category}</span>
+          <span>${park.province}</span>
+          <span>Creado ${park.year}</span>
+        </div>
+        <p>${park.name} pertenece al grupo ${park.region}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${park.ecoregions}` : ''}${park.international ? `. Estatus internacional: ${park.international}` : ''}.</p>
+        <p class="subsection-title">Senderos sugeridos</p>
+        ${trails.map(t => `<div class="trail-box"><strong>Sendero</strong>${t}</div>`).join('')}
+        <p class="note">Mapa base IGN Argentina · Datos SIB/APN.</p>
+      `;
+    }
+
+    function renderList(items) {
+      parkList.innerHTML = '';
+      items.slice(0, 18).forEach(park => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'park-row';
+        row.dataset.name = park.name;
+        row.innerHTML = `<strong>${park.name}</strong><div style="margin-top:4px;color:var(--muted);font-size:13px;">${park.region} · ${park.province}</div>`;
+        row.addEventListener('click', () => {
+          renderPanel(park);
+          highlightListItem(park.name);
+          map.flyTo([park.lat, park.lng], 7, { duration: 0.7 });
+        });
+        parkList.appendChild(row);
+      });
+      if (items.length > 18) {
+        const more = document.createElement('div');
+        more.className = 'trail-box';
+        more.innerHTML = `<strong>Más áreas visibles</strong>${items.length - 18} áreas protegidas adicionales coinciden con el filtro actual.`;
+        parkList.appendChild(more);
+      }
+    }
+
+    function highlightListItem(name) {
+      parkList.querySelectorAll('.park-row').forEach(el => el.classList.toggle('active', el.dataset.name === name));
+    }
+
+    const regions = ['Todas', ...new Set(parks.map(p => p.region))];
+    let currentRegion = 'Todas';
+    let currentSearch = '';
+
+    regions.forEach(region => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (region === 'Todas' ? ' active' : '');
+      btn.textContent = region;
+      btn.dataset.region = region;
+      btn.addEventListener('click', () => { currentRegion = region; applyFilters(); });
+      filtersWrap.appendChild(btn);
+    });
+
+    searchInput.addEventListener('input', e => {
+      currentSearch = e.target.value.trim().toLowerCase();
+      applyFilters();
+    });
+
+    function applyFilters() {
+      const filtered = parks.filter(park => {
+        const matchRegion = currentRegion === 'Todas' || park.region === currentRegion;
+        const hay = `${park.name} ${park.province} ${park.region} ${park.category}`.toLowerCase();
+        const matchSearch = !currentSearch || hay.includes(currentSearch);
+        return matchRegion && matchSearch;
+      });
+
+      clusterGroup.clearLayers();
+      const visibleMarkers = markers.filter(m => filtered.includes(m.parkData));
+      visibleMarkers.forEach(m => clusterGroup.addLayer(m));
+
+      if (visibleMarkers.length) {
+        const bounds = L.featureGroup(visibleMarkers).getBounds();
+        if (bounds.isValid()) map.fitBounds(bounds.pad(0.3));
+      }
+
+      metaCount.textContent = filtered.length + ' áreas';
+      renderList(filtered);
+      filtersWrap.querySelectorAll('.chip').forEach(btn => btn.classList.toggle('active', btn.dataset.region === currentRegion));
+      if (filtered.length) renderPanel(filtered[0]);
+    }
+
+    map.addLayer(clusterGroup);
+    applyFilters();
+  </script>
+</body>
+</html>

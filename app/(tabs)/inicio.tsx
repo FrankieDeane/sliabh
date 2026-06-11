@@ -26,8 +26,11 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
+// Pixabay video 203407 — mountain volcano forest sky clouds
+// Direct CDN URL requires Pixabay auth; we use their embed player muted+autoplay
 const HERO_VIDEO_URL = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
 const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-mountain-range-4048-large.mp4';
+const PIXABAY_EMBED_ID = '203407';
 
 // Featured routes — all Argentine
 const FEATURED = [
@@ -82,7 +85,7 @@ const REGIONS = [
     regionEs: 'Santa Cruz · Tierra del Fuego',
     regionEn: 'Santa Cruz · Tierra del Fuego',
     trailCount: 5,
-    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
   },
   {
     id: 'patagonia-norte',
@@ -91,7 +94,7 @@ const REGIONS = [
     regionEs: 'Río Negro · Neuquén · Chubut',
     regionEn: 'Río Negro · Neuquén · Chubut',
     trailCount: 6,
-    photo: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
   },
   {
     id: 'cuyo',
@@ -100,7 +103,7 @@ const REGIONS = [
     regionEs: 'Mendoza · San Juan · La Rioja',
     regionEn: 'Mendoza · San Juan · La Rioja',
     trailCount: 1,
-    photo: 'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=500&q=80&fit=crop',
   },
   {
     id: 'norte',
@@ -109,7 +112,7 @@ const REGIONS = [
     regionEs: 'Jujuy · Salta · Tucumán',
     regionEn: 'Jujuy · Salta · Tucumán',
     trailCount: 1,
-    photo: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&h=400&s=1',
   },
   {
     id: 'sierras-centrales',
@@ -118,7 +121,7 @@ const REGIONS = [
     regionEs: 'Córdoba · San Luis',
     regionEn: 'Córdoba · San Luis',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-1637707483880-6d680c36a322?w=500&auto=format&fit=crop&q=60',
   },
   {
     id: 'litoral',
@@ -127,7 +130,7 @@ const REGIONS = [
     regionEs: 'Misiones · Corrientes · Entre Ríos',
     regionEn: 'Misiones · Corrientes · Entre Ríos',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1546200547-f4c8c66de5d8?w=500&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=500&auto=format&fit=crop&q=60',
   },
 ];
 
@@ -276,26 +279,21 @@ export default function InicioScreen() {
           >
             {Platform.OS === 'web' && (
               // @ts-ignore
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={HERO_URI}
-                data-hero-video
-                data-hero-bg
+              <iframe
+                src={`https://www.pixabay.com/videos/embed/${PIXABAY_EMBED_ID}/?autoplay=1&loop=1&muted=1&controls=0&title=0&byline=0&portrait=0`}
                 style={{
                   position: 'absolute',
-                  top: 0, left: 0,
-                  width: '100%', height: '100%',
-                  objectFit: 'cover',
+                  top: '50%', left: '50%',
+                  width: '177.78vh', height: '56.25vw',
+                  minWidth: '100%', minHeight: '100%',
+                  transform: 'translate(-50%, -50%)',
+                  border: 'none',
                   pointerEvents: 'none',
                 }}
-                onError={(e: any) => { e.target.src = HERO_VIDEO_FALLBACK; }}
-              >
-                <source src={HERO_VIDEO_URL} type="video/mp4" />
-                <source src={HERO_VIDEO_FALLBACK} type="video/mp4" />
-              </video>
+                allow="autoplay; fullscreen"
+                title="Hero background video"
+                data-hero-video
+              />
             )}
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
             <View style={styles.heroGradientBottom} />
@@ -546,7 +544,7 @@ export default function InicioScreen() {
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
         {/* ── REGIÓN GRID — Ideas para tu próxima aventura ── */}
-        <View style={styles.section}>
+        <View style={styles.section} {...(Platform.OS === 'web' ? ({ id: 'region-section' } as any) : {})}>
           <View style={[styles.sectionHeaderRow, { paddingHorizontal: sidePad }]}>
             <View>
               <Text
