@@ -1,19 +1,26 @@
-/** SVG logo as a data URI — works with RN Image on web without bundler SVG config. */
+/** SVG logo as a data URI — stamp style matching the brand mark. */
 export const LOGO_URI =
   `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E` +
-  `%3Ccircle cx='100' cy='100' r='98' fill='%23060d1b'/%3E` +
-  `%3Ccircle cx='100' cy='100' r='95' fill='none' stroke='%2316a34a' stroke-width='3'/%3E` +
-  `%3Ccircle cx='100' cy='100' r='88' fill='none' stroke='rgba(34,197,94,0.2)' stroke-width='1'/%3E` +
-  `%3Cpath d='M10 148 L38 90 L58 112 L100 54 L142 112 L162 90 L190 148Z' fill='%230a2218'/%3E` +
-  `%3Cpath d='M10 148 L38 90 L58 112 L100 54 L142 112 L162 90 L190 148' fill='none' stroke='%2322c55e' stroke-width='2.2' stroke-linejoin='round'/%3E` +
-  `%3Cpath d='M100 54 L116 85 L84 85Z' fill='rgba(255,255,255,0.45)'/%3E` +
-  `%3Cellipse cx='100' cy='36' rx='7' ry='5' fill='%23f0fdf4'/%3E` +
-  `%3Ccircle cx='100' cy='27' r='6' fill='%23f0fdf4'/%3E` +
-  `%3Cpath d='M105 27 L112 29 L105 31Z' fill='%23f59e0b'/%3E` +
-  `%3Ccircle cx='102' cy='26' r='1.4' fill='%23060d1b'/%3E` +
-  `%3Cpath d='M93 34 C78 28 60 33 46 42 C58 36 76 35 90 38Z' fill='%23f0fdf4'/%3E` +
-  `%3Cpath d='M107 34 C122 28 140 33 154 42 C142 36 124 35 110 38Z' fill='%23f0fdf4'/%3E` +
-  `%3Cpath d='M100 41 L94 52 L100 49 L106 52Z' fill='%23f0fdf4'/%3E` +
-  `%3Ctext x='100' y='174' text-anchor='middle' font-family='Georgia,serif' font-size='19' font-weight='bold' fill='%2322c55e' letter-spacing='7'%3ESLIABH%3C/text%3E` +
-  `%3Ctext x='100' y='188' text-anchor='middle' font-family='Georgia,serif' font-size='7.5' fill='rgba(34,197,94,0.5)' letter-spacing='3.5'%3EARGAELIC%3C/text%3E` +
+  // Dark background circle
+  `%3Ccircle cx='100' cy='100' r='96' fill='%23060d1b' stroke='%2322c55e' stroke-width='5'/%3E` +
+  // Inner dashed ring
+  `%3Ccircle cx='100' cy='100' r='87' fill='none' stroke='%2322c55e' stroke-width='1.8' stroke-dasharray='4 3'/%3E` +
+  // Left peak
+  `%3Cpolygon points='28,150 63,82 82,110' fill='%2322c55e'/%3E` +
+  // Center peak (tallest)
+  `%3Cpolygon points='63,150 100,50 137,150' fill='%2322c55e'/%3E` +
+  // Right peak
+  `%3Cpolygon points='118,110 137,82 172,150' fill='%2322c55e'/%3E` +
+  // Snow cap
+  `%3Cpolygon points='100,50 113,78 87,78' fill='%23f0fdf4'/%3E` +
+  // Base band
+  `%3Crect x='28' y='142' width='144' height='14' fill='%2322c55e'/%3E` +
+  // Curved arc path for text
+  `%3Cpath id='a' d='M30,100 A70,70 0 0 1 170,100' fill='none'/%3E` +
+  // SLIABH text along arc
+  `%3Ctext font-family='Georgia,serif' font-size='21' font-weight='bold' fill='%23f0fdf4' letter-spacing='7'%3E%3CtextPath href='%23a' startOffset='13%25'%3ESLIABH%3C/textPath%3E%3C/text%3E` +
+  // Decorative dots
+  `%3Ccircle cx='56' cy='68' r='3' fill='%2322c55e'/%3E` +
+  `%3Ccircle cx='100' cy='43' r='3' fill='%2322c55e'/%3E` +
+  `%3Ccircle cx='144' cy='68' r='3' fill='%2322c55e'/%3E` +
   `%3C/svg%3E`;
