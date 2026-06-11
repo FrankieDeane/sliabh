@@ -26,12 +26,6 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-// Pixabay video 203407 — mountain volcano forest sky clouds
-// Direct CDN URL requires Pixabay auth; we use their embed player muted+autoplay
-const HERO_VIDEO_URL = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
-const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-mountain-range-4048-large.mp4';
-const PIXABAY_EMBED_ID = '203407';
-
 // Featured routes — all Argentine
 const FEATURED = [
   {
@@ -242,27 +236,12 @@ export default function InicioScreen() {
 
   const heroHeight = Platform.OS === 'web' ? undefined : 580;
 
-  const regionScrollRef = useRef<ScrollView>(null);
-
   useEffect(() => {
     injectWebStyles();
     animateHeroEntrance('[data-hero]');
     animateParallaxHero('[data-hero]');
     const timer = setTimeout(() => animateScrollReveal(), 300);
     return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (Platform.OS !== 'web') return;
-    let offset = 0;
-    const CARD_W_APPROX = 200 + 12;
-    const TOTAL = REGIONS.length * CARD_W_APPROX;
-    const interval = setInterval(() => {
-      offset += 1;
-      if (offset >= TOTAL / 2) offset = 0;
-      regionScrollRef.current?.scrollTo({ x: offset, animated: false });
-    }, 20);
-    return () => clearInterval(interval);
   }, []);
 
   const HERO_STATS = [
@@ -289,33 +268,8 @@ export default function InicioScreen() {
             source={{ uri: HERO_URI }}
             style={[StyleSheet.absoluteFillObject]}
             resizeMode="cover"
-            imageStyle={Platform.OS !== 'web' ? undefined : { opacity: 0 }}
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
-            {Platform.OS === 'web' && (
-              // @ts-ignore — real HTML5 video background (autoplay requires muted + playsInline)
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                poster={HERO_URI}
-                style={{
-                  position: 'absolute',
-                  top: '50%', left: '50%',
-                  width: '100%', height: '100%',
-                  minWidth: '100%', minHeight: '100%',
-                  objectFit: 'cover',
-                  transform: 'translate(-50%, -50%)',
-                  border: 'none',
-                  pointerEvents: 'none',
-                }}
-                data-hero-video
-              >
-                <source src={HERO_VIDEO_URL} type="video/mp4" />
-                <source src={HERO_VIDEO_FALLBACK} type="video/mp4" />
-              </video>
-            )}
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
             <View style={styles.heroGradientBottom} />
           </ImageBackground>
@@ -588,17 +542,11 @@ export default function InicioScreen() {
             </TouchableOpacity>
           </View>
 
-          <ScrollView
-            ref={regionScrollRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            scrollEnabled={Platform.OS !== 'web'}
-            contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12, paddingBottom: 4 }}
-          >
-            {[...REGIONS, ...REGIONS].map((region, idx) => (
+          <View style={[styles.regionGrid, { paddingHorizontal: sidePad }]}>
+            {REGIONS.map((region) => (
               <TouchableOpacity
-                key={`${region.id}-${idx}`}
-                style={styles.regionCard}
+                key={region.id}
+                style={[styles.regionGridCard, isWide ? styles.regionGridCardWide : styles.regionGridCardNarrow]}
                 activeOpacity={0.88}
                 onPress={() =>
                   router.push({
@@ -606,7 +554,7 @@ export default function InicioScreen() {
                     params: { region: region.nameEs.replace(' (NOA)', '') },
                   } as any)
                 }
-                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-dest-card': true } as any) : {})}
+                {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-reveal-card': true } as any) : {})}
               >
                 <ImageBackground
                   source={{ uri: region.photo }}
@@ -624,7 +572,7 @@ export default function InicioScreen() {
                 </View>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </View>
         </View>
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
@@ -909,6 +857,10 @@ const styles = StyleSheet.create({
 
   // Region cards
   regionCard: { width: 160, height: 200, borderRadius: 18, overflow: 'hidden' },
+  regionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
+  regionGridCard: { height: 200, borderRadius: 18, overflow: 'hidden' },
+  regionGridCardWide: { width: '31.5%', minWidth: 220 },
+  regionGridCardNarrow: { width: '47%', minWidth: 150 },
   regionGradient: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(7,11,20,0.45)',
