@@ -1,5 +1,5 @@
-/* Sliabh — Service Worker v3 */
-const CACHE = 'sliabh-v3';
+/* Sliabh — Service Worker v4 */
+const CACHE = 'sliabh-v4';
 const SHELL = [
   '/',
   '/index.html',
