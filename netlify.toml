@@ -10,12 +10,6 @@
 [functions]
   directory = "netlify/functions"
 
-# Netlify functions must be reachable before the catch-all SPA redirect.
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # expo-router with output:"single" emits a single-page app, so every route
 # must fall back to index.html for client-side routing to work.
 [[redirects]]
