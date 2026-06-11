@@ -80,6 +80,40 @@ function makeMarkerIcon(color: string) {
   });
 }
 
+// Cache icons by color to avoid creating new Leaflet objects on every render
+const iconCache: Record<string, any> = {};
+function getCachedIcon(color: string) {
+  if (!iconCache[color]) iconCache[color] = makeMarkerIcon(color);
+  return iconCache[color] ?? undefined;
+}
+
+function MarkerLayer({ markers, parkIcon, onMarkerPress }: {
+  markers: MapMarker[];
+  parkIcon: any;
+  onMarkerPress?: (id: string) => void;
+}) {
+  return (
+    <>
+      {markers.map((m) => {
+        const icon = m.color ? getCachedIcon(m.color) : (parkIcon ?? undefined);
+        return (
+          <Marker
+            key={m.id}
+            position={[m.lat, m.lon]}
+            icon={icon}
+            eventHandlers={{ click: () => onMarkerPress?.(m.id) }}
+          >
+            <Popup>
+              <strong>{m.name}</strong>
+              {m.subtitle ? <><br />{m.subtitle}</> : null}
+            </Popup>
+          </Marker>
+        );
+      })}
+    </>
+  );
+}
+
 function FlyToHandler({ flyTo }: { flyTo?: { lat: number; lon: number; zoom?: number } | null }) {
   const map = useMap ? useMap() : null;
   useEffect(() => {
@@ -175,22 +209,7 @@ export function MapLeaflet({
         />
         <ClickHandler onMapPress={onMapPress} />
         <FlyToHandler flyTo={flyTo} />
-        {markers.map((m) => {
-          const icon = m.color ? (makeMarkerIcon(m.color) ?? undefined) : (parkIcon ?? undefined);
-          return (
-            <Marker
-              key={m.id}
-              position={[m.lat, m.lon]}
-              icon={icon}
-              eventHandlers={{ click: () => onMarkerPress?.(m.id) }}
-            >
-              <Popup>
-                <strong>{m.name}</strong>
-                {m.subtitle ? <><br />{m.subtitle}</> : null}
-              </Popup>
-            </Marker>
-          );
-        })}
+        <MarkerLayer markers={markers} parkIcon={parkIcon} onMarkerPress={onMarkerPress} />
         {waypoints.map((wp, index) => (
           <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
             <Popup>

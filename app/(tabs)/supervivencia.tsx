@@ -530,10 +530,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f172a',
   },
   cardPhotoOverlay: {
-    position: 'absolute',
-    inset: 0,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(5,10,20,0.55)',
-  } as any,
+  },
   cardIcon: {
     position: 'absolute',
     top: 14,
