@@ -170,7 +170,7 @@ const PARK_SPOTS = [
     tagEn: 'Steppe · Condors · Santa Cruz',
     descEs: 'El parque más nuevo de Argentina protege estepa patagónica virgen, guanacos y cóndores. Vistas al lago Cochrane y vientos épicos de la Patagonia.',
     descEn: "Argentina's newest park protects pristine Patagonian steppe, guanacos and condors. Views to Cochrane lake and the epic Patagonian winds.",
-    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-jPY81gH1Nso?w=800&q=80&fit=crop&auto=format',
     trailId: 'pn-patagonia-ascension',
     province: 'Santa Cruz',
     trails: 2,
