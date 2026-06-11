@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Platform,
   useWindowDimensions,
+  Modal,
+  ScrollView,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -39,166 +41,206 @@ export function WebHeader() {
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
   const scrolled = useScrolled();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const NAV = [
-    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const },
-    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const },
-    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const },
-    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const },
-    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const },
+    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const },
+    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const, icon: 'trail-sign-outline' as const },
+    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const },
+    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'compass-outline' as const },
+    { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const, icon: 'chatbubble-outline' as const },
+    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const },
   ];
 
   const c = isDark
     ? {
-        bg: scrolled ? 'rgba(7,11,20,0.88)' : '#070b14',
+        bg: scrolled ? 'rgba(7,11,20,0.92)' : '#070b14',
         border: scrolled ? 'rgba(30,45,66,0.6)' : '#1e2d42',
         text: '#f0f9ff',
         muted: '#64748b',
         surface: '#0f1724',
+        drawerBg: '#0a1220',
       }
     : {
-        bg: scrolled ? 'rgba(255,255,255,0.88)' : '#ffffff',
+        bg: scrolled ? 'rgba(255,255,255,0.92)' : '#ffffff',
         border: scrolled ? 'rgba(226,232,240,0.6)' : '#e2e8f0',
         text: '#0f172a',
         muted: '#64748b',
         surface: '#f8fafc',
+        drawerBg: '#ffffff',
       };
 
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
   const isCompact = width < 720;
 
+  function navigate(href: string) {
+    setDrawerOpen(false);
+    router.push(href as any);
+  }
+
   return (
-    <View
-      style={[
-        styles.bar,
-        {
-          backgroundColor: c.bg,
-          borderBottomColor: c.border,
-        },
-      ]}
-      {...(scrolled ? ({ 'data-header-glass': true } as any) : {})}
-    >
-      <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
-        {/* Logo + wordmark */}
-        <TouchableOpacity
-          style={styles.brand}
-          onPress={() => router.push('/(tabs)/inicio')}
-          activeOpacity={0.8}
-        >
-          <Image source={{ uri: LOGO_URI }} style={styles.logo} />
-          {!isCompact && (
-            <View>
-              <Text style={[styles.brandName, { color: c.text }]}>Sliabh</Text>
-              <Text style={[styles.brandSub, { color: c.muted }]}>Argaelic</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-        {/* Nav links */}
-        {!isCompact && (
-          <View style={styles.nav}>
-            {NAV.map((n) => {
-              const active = pathname.includes(n.href.replace('/(tabs)', ''));
-              return (
-                <TouchableOpacity
-                  key={n.href}
-                  onPress={() => router.push(n.href)}
-                  style={styles.navItem}
-                  activeOpacity={0.7}
-                  {...({ 'data-nav-link': true } as any)}
-                >
-                  <Text
-                    style={[
-                      styles.navLabel,
-                      { color: active ? '#22c55e' : c.muted },
-                      active && styles.navLabelActive,
-                    ]}
-                  >
-                    {t(n.labelEs, n.labelEn)}
-                  </Text>
-                  {active && <View style={styles.navDot} />}
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
-
-        {/* Right: lang + theme + login / user */}
-        <View style={styles.right}>
-          {/* Language selector */}
-          <View style={[styles.langRow, { borderColor: c.border }]}>
-            <TouchableOpacity
-              onPress={() => setLang('es')}
-              style={[styles.langBtn, lang === 'es' && styles.langBtnActive]}
-              activeOpacity={0.8}
-              accessibilityLabel="Switch to Spanish"
-            >
-              <Text style={[styles.langBtnTxt, { color: lang === 'es' ? '#fff' : c.muted }]}>
-                ES
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setLang('en')}
-              style={[styles.langBtn, lang === 'en' && styles.langBtnActive]}
-              activeOpacity={0.8}
-              accessibilityLabel="Switch to English"
-            >
-              <Text style={[styles.langBtnTxt, { color: lang === 'en' ? '#fff' : c.muted }]}>
-                EN
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Theme toggle */}
+    <>
+      <View
+        style={[styles.bar, { backgroundColor: c.bg, borderBottomColor: c.border }]}
+        {...(scrolled ? ({ 'data-header-glass': true } as any) : {})}
+      >
+        <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
+          {/* Logo + wordmark */}
           <TouchableOpacity
-            onPress={toggleTheme}
-            style={[styles.iconBtn, { borderColor: c.border }]}
+            style={styles.brand}
+            onPress={() => navigate('/(tabs)/inicio')}
             activeOpacity={0.8}
-            accessibilityLabel={isDark ? t('Cambiar a modo claro', 'Switch to light mode') : t('Cambiar a modo oscuro', 'Switch to dark mode')}
           >
-            <Ionicons
-              name={isDark ? 'sunny-outline' : 'moon-outline'}
-              size={16}
-              color={c.muted}
-            />
+            <Image source={{ uri: LOGO_URI }} style={styles.logo} />
+            {!isCompact && (
+              <View>
+                <Text style={[styles.brandName, { color: c.text }]}>Sliabh</Text>
+                <Text style={[styles.brandSub, { color: c.muted }]}>Argaelic</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
-          {user ? (
-            <View style={styles.userRow}>
-              {!isCompact && (
-                <Text style={[styles.userName, { color: c.muted }]} numberOfLines={1}>
-                  {user.display_name ?? user.email.split('@')[0]}
-                </Text>
-              )}
-              <TouchableOpacity
-                onPress={signOut}
-                style={[styles.loginBtn, { borderColor: c.border }]}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="log-out-outline" size={15} color={c.muted} />
-                {!isCompact && (
-                  <Text style={[styles.loginBtnTxt, { color: c.muted }]}>
-                    {t('Salir', 'Sign out')}
-                  </Text>
-                )}
+          {/* Desktop nav links */}
+          {!isCompact && (
+            <View style={styles.nav}>
+              {NAV.map((n) => {
+                const active = pathname.includes(n.href.replace('/(tabs)', ''));
+                return (
+                  <TouchableOpacity
+                    key={n.href}
+                    onPress={() => navigate(n.href)}
+                    style={styles.navItem}
+                    activeOpacity={0.7}
+                    {...({ 'data-nav-link': true } as any)}
+                  >
+                    <Text style={[styles.navLabel, { color: active ? '#22c55e' : c.muted }, active && styles.navLabelActive]}>
+                      {t(n.labelEs, n.labelEn)}
+                    </Text>
+                    {active && <View style={styles.navDot} />}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
+
+          {/* Right controls */}
+          <View style={styles.right}>
+            {/* Language selector */}
+            <View style={[styles.langRow, { borderColor: c.border }]}>
+              <TouchableOpacity onPress={() => setLang('es')} style={[styles.langBtn, lang === 'es' && styles.langBtnActive]} activeOpacity={0.8}>
+                <Text style={[styles.langBtnTxt, { color: lang === 'es' ? '#fff' : c.muted }]}>ES</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setLang('en')} style={[styles.langBtn, lang === 'en' && styles.langBtnActive]} activeOpacity={0.8}>
+                <Text style={[styles.langBtnTxt, { color: lang === 'en' ? '#fff' : c.muted }]}>EN</Text>
               </TouchableOpacity>
             </View>
-          ) : (
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => router.push('/(auth)/login')}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="person-outline" size={15} color="#22c55e" />
-              <Text style={styles.loginBtnTxt}>
-                {t('Iniciar sesión', 'Sign in')}
-              </Text>
+
+            {/* Theme toggle */}
+            <TouchableOpacity onPress={toggleTheme} style={[styles.iconBtn, { borderColor: c.border }]} activeOpacity={0.8}>
+              <Ionicons name={isDark ? 'sunny-outline' : 'moon-outline'} size={16} color={c.muted} />
             </TouchableOpacity>
-          )}
+
+            {/* Mobile hamburger */}
+            {isCompact && (
+              <TouchableOpacity
+                onPress={() => setDrawerOpen(true)}
+                style={[styles.iconBtn, { borderColor: c.border }]}
+                activeOpacity={0.8}
+                accessibilityLabel="Open menu"
+              >
+                <Ionicons name="menu" size={20} color={c.text} />
+              </TouchableOpacity>
+            )}
+
+            {/* Desktop: user / login */}
+            {!isCompact && (
+              user ? (
+                <View style={styles.userRow}>
+                  <TouchableOpacity onPress={signOut} style={[styles.loginBtn, { borderColor: c.border }]} activeOpacity={0.8}>
+                    <Ionicons name="log-out-outline" size={15} color={c.muted} />
+                    <Text style={[styles.loginBtnTxt, { color: c.muted }]}>{t('Salir', 'Sign out')}</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(auth)/login')} activeOpacity={0.85}>
+                  <Ionicons name="person-outline" size={15} color="#22c55e" />
+                  <Text style={styles.loginBtnTxt}>{t('Iniciar sesión', 'Sign in')}</Text>
+                </TouchableOpacity>
+              )
+            )}
+          </View>
         </View>
       </View>
-    </View>
+
+      {/* Mobile drawer */}
+      {isCompact && (
+        <Modal
+          visible={drawerOpen}
+          animationType="fade"
+          transparent
+          onRequestClose={() => setDrawerOpen(false)}
+        >
+          <TouchableOpacity
+            style={styles.drawerBackdrop}
+            activeOpacity={1}
+            onPress={() => setDrawerOpen(false)}
+          >
+            <View
+              style={[styles.drawer, { backgroundColor: c.drawerBg, borderRightColor: c.border }]}
+              {...({ onClick: (e: any) => e.stopPropagation() } as any)}
+            >
+              {/* Drawer header */}
+              <View style={[styles.drawerHeader, { borderBottomColor: c.border }]}>
+                <Image source={{ uri: LOGO_URI }} style={styles.drawerLogo} />
+                <Text style={[styles.drawerBrand, { color: c.text }]}>Sliabh</Text>
+                <TouchableOpacity onPress={() => setDrawerOpen(false)} style={styles.drawerClose} activeOpacity={0.7}>
+                  <Ionicons name="close" size={22} color={c.muted} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Nav items */}
+              <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.drawerNav}>
+                {NAV.map((n) => {
+                  const active = pathname.includes(n.href.replace('/(tabs)', ''));
+                  return (
+                    <TouchableOpacity
+                      key={n.href}
+                      style={[styles.drawerItem, active && { backgroundColor: isDark ? 'rgba(34,197,94,0.08)' : 'rgba(22,163,74,0.07)' }]}
+                      onPress={() => navigate(n.href)}
+                      activeOpacity={0.75}
+                    >
+                      <View style={[styles.drawerItemIcon, { backgroundColor: active ? 'rgba(34,197,94,0.15)' : isDark ? '#162035' : '#f1f5f9' }]}>
+                        <Ionicons name={n.icon} size={18} color={active ? '#22c55e' : c.muted} />
+                      </View>
+                      <Text style={[styles.drawerItemLabel, { color: active ? '#22c55e' : c.text }]}>
+                        {t(n.labelEs, n.labelEn)}
+                      </Text>
+                      {active && <Ionicons name="chevron-forward" size={14} color="#22c55e" style={{ marginLeft: 'auto' }} />}
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+
+              {/* Drawer footer */}
+              <View style={[styles.drawerFooter, { borderTopColor: c.border }]}>
+                {user ? (
+                  <TouchableOpacity onPress={() => { setDrawerOpen(false); signOut(); }} style={styles.drawerFooterBtn}>
+                    <Ionicons name="log-out-outline" size={16} color={c.muted} />
+                    <Text style={[styles.drawerFooterTxt, { color: c.muted }]}>{t('Cerrar sesión', 'Sign out')}</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => navigate('/(auth)/login')} style={styles.drawerFooterBtn}>
+                    <Ionicons name="person-outline" size={16} color="#22c55e" />
+                    <Text style={[styles.drawerFooterTxt, { color: '#22c55e' }]}>{t('Iniciar sesión', 'Sign in')}</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      )}
+    </>
   );
 }
 
@@ -213,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 58,
-    gap: 24,
+    gap: 12,
   },
   brand: {
     flexDirection: 'row',
@@ -303,11 +345,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  userName: {
-    fontSize: 13,
-    fontWeight: '500',
-    maxWidth: 120,
-  },
   loginBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -323,5 +360,80 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#22c55e',
+  },
+  // Drawer
+  drawerBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    flexDirection: 'row',
+  },
+  drawer: {
+    width: 280,
+    height: '100%',
+    borderRightWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+  },
+  drawerLogo: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  drawerBrand: {
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    flex: 1,
+  },
+  drawerClose: {
+    padding: 4,
+  },
+  drawerNav: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 4,
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 13,
+    borderRadius: 12,
+  },
+  drawerItemIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  drawerItemLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  drawerFooter: {
+    borderTopWidth: 1,
+    padding: 16,
+  },
+  drawerFooterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+  },
+  drawerFooterTxt: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
