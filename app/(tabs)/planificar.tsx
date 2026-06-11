@@ -5,7 +5,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { WebHeader } from '../../src/components/layout/WebHeader';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useResponsive } from '../../src/hooks/useResponsive';
@@ -273,8 +272,17 @@ export default function PlanificarScreen() {
     <ScrollView
       style={{ flex: 1 }}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 80 }}
+      contentContainerStyle={{ paddingBottom: 0 }}
     >
+      <View style={[s.pageInner, isWide && s.pageInnerWide]}>
+      {/* Page header */}
+      <View style={[s.pageHeader, { borderBottomColor: c.border }]}>
+        <View style={s.pageHeaderLeft}>
+          <Ionicons name="map" size={20} color="#22c55e" />
+          <Text style={[s.pageHeaderTitle, { color: c.text }]}>Planificar</Text>
+        </View>
+        <Text style={[s.pageHeaderSub, { color: c.muted }]}>Diseñá tu caminata</Text>
+      </View>
       {/* Hero / route picker ───────────────────────── */}
       <View style={[s.heroCard, { backgroundColor: c.surface, borderColor: c.border }]}>
         <View style={s.heroTop}>
@@ -479,6 +487,9 @@ export default function PlanificarScreen() {
           )}
         </>
       )}
+      <View style={{ height: 64 }} />
+      </View>
+      {Platform.OS === 'web' && <WebFooter />}
     </ScrollView>
   );
 
@@ -486,19 +497,7 @@ export default function PlanificarScreen() {
 
   return (
     <KeyboardAvoidingView style={[s.root, { backgroundColor: c.bg }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      {isWeb && <WebHeader />}
-      <View style={[s.pageInner, isWide && s.pageInnerWide]}>
-        {/* Page header */}
-        <View style={[s.pageHeader, { borderBottomColor: c.border }]}>
-          <View style={s.pageHeaderLeft}>
-            <Ionicons name="map" size={20} color="#22c55e" />
-            <Text style={[s.pageHeaderTitle, { color: c.text }]}>Planificar</Text>
-          </View>
-          <Text style={[s.pageHeaderSub, { color: c.muted }]}>Diseñá tu caminata</Text>
-        </View>
-        {content}
-      </View>
-      {isWeb && <WebFooter />}
+      {content}
 
       <RoutePicker
         visible={pickerOpen}
@@ -512,7 +511,7 @@ export default function PlanificarScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1 },
-  pageInner: { flex: 1, maxWidth: 800, alignSelf: 'center', width: '100%' },
+  pageInner: { maxWidth: 800, alignSelf: 'center', width: '100%' },
   pageInnerWide: {},
   pageHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',

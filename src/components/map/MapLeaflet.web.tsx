@@ -40,6 +40,7 @@ export interface MapMarker {
   lon: number;
   name: string;
   subtitle?: string;
+  color?: string;
 }
 
 interface MapLeafletProps {
@@ -51,20 +52,33 @@ interface MapLeafletProps {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  layer?: 'osm' | 'topo' | 'dark';
+  layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
 }
 
 const TILE_URLS = {
   osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   topo: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
   dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  argenmap: 'https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png',
 };
 
 const TILE_ATTRIBUTIONS = {
   osm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   topo: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
   dark: '&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; OpenStreetMap',
+  argenmap: 'IGN Argentina &copy; Leaflet',
 };
+
+function makeMarkerIcon(color: string) {
+  if (!Leaflet) return null;
+  return Leaflet.divIcon({
+    html: `<div style="width:14px;height:14px;border-radius:50%;background:${color};border:2.5px solid rgba(255,255,255,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+    className: '',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10],
+  });
+}
 
 function FlyToHandler({ flyTo }: { flyTo?: { lat: number; lon: number; zoom?: number } | null }) {
   const map = useMap ? useMap() : null;
@@ -161,19 +175,22 @@ export function MapLeaflet({
         />
         <ClickHandler onMapPress={onMapPress} />
         <FlyToHandler flyTo={flyTo} />
-        {markers.map((m) => (
-          <Marker
-            key={m.id}
-            position={[m.lat, m.lon]}
-            icon={parkIcon ?? undefined}
-            eventHandlers={{ click: () => onMarkerPress?.(m.id) }}
-          >
-            <Popup>
-              <strong>{m.name}</strong>
-              {m.subtitle ? <><br />{m.subtitle}</> : null}
-            </Popup>
-          </Marker>
-        ))}
+        {markers.map((m) => {
+          const icon = m.color ? (makeMarkerIcon(m.color) ?? undefined) : (parkIcon ?? undefined);
+          return (
+            <Marker
+              key={m.id}
+              position={[m.lat, m.lon]}
+              icon={icon}
+              eventHandlers={{ click: () => onMarkerPress?.(m.id) }}
+            >
+              <Popup>
+                <strong>{m.name}</strong>
+                {m.subtitle ? <><br />{m.subtitle}</> : null}
+              </Popup>
+            </Marker>
+          );
+        })}
         {waypoints.map((wp, index) => (
           <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
             <Popup>

@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { animateScrollReveal } from '../../src/utils/gsapAnimations';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
@@ -30,7 +30,16 @@ export default function RutasScreen() {
   const { isDark } = useTheme();
   const { width } = useWindowDimensions();
   const router = useRouter();
+  const params = useLocalSearchParams<{ region?: string }>();
   const [region, setRegion] = useState<TrailRegion>('Todas');
+
+  // Deep link: /rutas?region=Patagonia%20Sur (from footer & home region cards)
+  useEffect(() => {
+    const requested = params.region;
+    if (requested && (TRAIL_REGIONS as readonly string[]).includes(requested)) {
+      setRegion(requested as TrailRegion);
+    }
+  }, [params.region]);
   const { t } = useLangStore();
 
   // Split layout state
