@@ -44,12 +44,12 @@ export function WebHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const NAV = [
-    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const },
-    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const, icon: 'trail-sign-outline' as const },
-    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const },
-    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'compass-outline' as const },
-    { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const, icon: 'chatbubble-outline' as const },
-    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const },
+    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'Explorá por región', labelEn: 'Explore by region', href: '/(tabs)/inicio' as const, icon: 'compass-outline' as const, scrollTo: 'region-section' as string | null },
+    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const, scrollTo: null as string | null },
   ];
 
   const c = isDark
@@ -74,8 +74,20 @@ export function WebHeader() {
   const sidePad = Math.max(16, (width - contentW) / 2);
   const isCompact = width < 720;
 
-  function navigate(href: string) {
+  function navigate(href: string, scrollTo?: string | null) {
     setDrawerOpen(false);
+    if (scrollTo && typeof window !== 'undefined') {
+      if (pathname.includes('/inicio')) {
+        const el = document.getElementById(scrollTo);
+        if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      }
+      router.push(href as any);
+      setTimeout(() => {
+        const el = document.getElementById(scrollTo);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 400);
+      return;
+    }
     router.push(href as any);
   }
 
@@ -105,11 +117,11 @@ export function WebHeader() {
           {!isCompact && (
             <View style={styles.nav}>
               {NAV.map((n) => {
-                const active = pathname.includes(n.href.replace('/(tabs)', ''));
+                const active = !n.scrollTo && pathname.includes(n.href.replace('/(tabs)', ''));
                 return (
                   <TouchableOpacity
-                    key={n.href}
-                    onPress={() => navigate(n.href)}
+                    key={n.labelEs}
+                    onPress={() => navigate(n.href, n.scrollTo)}
                     style={styles.navItem}
                     activeOpacity={0.7}
                     {...({ 'data-nav-link': true } as any)}
@@ -202,12 +214,12 @@ export function WebHeader() {
               {/* Nav items */}
               <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.drawerNav}>
                 {NAV.map((n) => {
-                  const active = pathname.includes(n.href.replace('/(tabs)', ''));
+                  const active = !n.scrollTo && pathname.includes(n.href.replace('/(tabs)', ''));
                   return (
                     <TouchableOpacity
-                      key={n.href}
+                      key={n.labelEs}
                       style={[styles.drawerItem, active && { backgroundColor: isDark ? 'rgba(34,197,94,0.08)' : 'rgba(22,163,74,0.07)' }]}
-                      onPress={() => navigate(n.href)}
+                      onPress={() => navigate(n.href, n.scrollTo)}
                       activeOpacity={0.75}
                     >
                       <View style={[styles.drawerItemIcon, { backgroundColor: active ? 'rgba(34,197,94,0.15)' : isDark ? '#162035' : '#f1f5f9' }]}>
