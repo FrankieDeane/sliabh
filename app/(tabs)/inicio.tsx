@@ -580,7 +580,12 @@ export default function InicioScreen() {
                 key={region.id}
                 style={styles.regionCard}
                 activeOpacity={0.88}
-                onPress={() => router.push('/(tabs)/rutas')}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(tabs)/rutas',
+                    params: { region: region.nameEs.replace(' (NOA)', '') },
+                  } as any)
+                }
                 {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-dest-card': true } as any) : {})}
               >
                 <ImageBackground

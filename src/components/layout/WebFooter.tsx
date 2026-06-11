@@ -23,12 +23,6 @@ const PREPARAR_LINKS = [
   { label: 'Contribuir', href: '/(tabs)/contribuir' as const },
 ];
 
-const SEGURIDAD_LINKS = [
-  { label: 'Supervivencia', href: '/(tabs)/supervivencia' as const },
-  { label: 'Si te perdés', href: '/(tabs)/supervivencia' as const },
-  { label: 'Qué llevar', href: '/(tabs)/supervivencia' as const },
-  { label: 'Sin señal', href: '/(tabs)/supervivencia' as const },
-];
 
 export function WebFooter() {
   const router = useRouter();
@@ -75,7 +69,12 @@ export function WebFooter() {
               <Text style={[styles.navLabel, { color: c.muted }]}>Todas las rutas</Text>
             </TouchableOpacity>
             {REGION_LINKS.map((r) => (
-              <TouchableOpacity key={r.region} style={styles.navItem} onPress={() => router.push('/(tabs)/rutas')} activeOpacity={0.7}>
+              <TouchableOpacity
+                key={r.region}
+                style={styles.navItem}
+                onPress={() => router.push({ pathname: '/(tabs)/rutas', params: { region: r.region } } as any)}
+                activeOpacity={0.7}
+              >
                 <Ionicons name="chevron-forward" size={11} color="#22c55e" />
                 <Text style={[styles.navLabel, { color: c.muted }]}>{r.label}</Text>
               </TouchableOpacity>
@@ -86,17 +85,6 @@ export function WebFooter() {
           <View style={styles.navCol}>
             <Text style={[styles.navTitle, { color: c.muted }]}>PREPARAR</Text>
             {PREPARAR_LINKS.map((n) => (
-              <TouchableOpacity key={n.href} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
-                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-                <Text style={[styles.navLabel, { color: c.muted }]}>{n.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Seguridad column */}
-          <View style={styles.navCol}>
-            <Text style={[styles.navTitle, { color: c.muted }]}>SEGURIDAD</Text>
-            {SEGURIDAD_LINKS.map((n) => (
               <TouchableOpacity key={n.label} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
                 <Ionicons name="chevron-forward" size={11} color="#22c55e" />
                 <Text style={[styles.navLabel, { color: c.muted }]}>{n.label}</Text>

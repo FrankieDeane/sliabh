@@ -22,6 +22,7 @@ import { buildMessages } from '../../src/ai/promptBuilder';
 import { loadPack } from '../../src/knowledge/KnowledgeLoader';
 import { useSettingsStore } from '../../src/store/settingsStore';
 import type { KnowledgePack } from '../../src/knowledge/types';
+import { WebFooter } from '../../src/components/layout/WebFooter';
 
 const MAX_CONTENT = 800;
 
@@ -207,6 +208,7 @@ export default function AsistenteScreen() {
               )}
             </>
           )}
+          {Platform.OS === 'web' && !hasMessages && <WebFooter />}
         </ScrollView>
 
         {/* Input bar */}

@@ -19,6 +19,7 @@ interface Guide {
   id: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
+  photo: string;
   titleEs: string;
   titleEn: string;
   taglineEs: string;
@@ -34,6 +35,7 @@ interface Guide {
 const GUIDES: Guide[] = [
   {
     id: 'perdido',
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1000&q=80&fit=crop&auto=format',
     icon: 'location-outline',
     color: '#ef4444',
     titleEs: 'Si te perdés',
@@ -57,6 +59,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'frio',
+    photo: 'https://images.unsplash.com/photo-1478827536114-da961b7f86d2?w=1000&q=80&fit=crop&auto=format',
     icon: 'snow-outline',
     color: '#60a5fa',
     titleEs: 'Frío extremo e hipotermia',
@@ -80,6 +83,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'refugio',
+    photo: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1000&q=80&fit=crop&auto=format',
     icon: 'home-outline',
     color: '#f59e0b',
     titleEs: 'Refugio improvisado',
@@ -105,6 +109,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'llevar',
+    photo: 'https://images.unsplash.com/photo-1501554728187-ce583db33af7?w=1000&q=80&fit=crop&auto=format',
     icon: 'bag-outline',
     color: '#22c55e',
     titleEs: 'Los 10 esenciales',
@@ -140,6 +145,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'sinsignal',
+    photo: 'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1000&q=80&fit=crop&auto=format',
     icon: 'wifi-outline',
     color: '#a78bfa',
     titleEs: 'Sin señal',
@@ -163,6 +169,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'orientacion',
+    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=1000&q=80&fit=crop&auto=format',
     icon: 'compass-outline',
     color: '#34d399',
     titleEs: 'Orientación',
@@ -186,6 +193,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'salud',
+    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1000&q=80&fit=crop&auto=format',
     icon: 'medkit-outline',
     color: '#fb923c',
     titleEs: 'Agotamiento, deshidratación y altura',
@@ -209,6 +217,7 @@ const GUIDES: Guide[] = [
   },
   {
     id: 'alimentacion',
+    photo: 'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=1000&q=80&fit=crop&auto=format',
     icon: 'nutrition-outline',
     color: '#fbbf24',
     titleEs: 'Alimentación de emergencia',
@@ -248,20 +257,28 @@ function GuideCard({ guide, c, t, expanded, onToggle }: {
       onPress={onToggle}
       {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
     >
-      {/* Header */}
-      <View style={styles.cardHeader}>
-        <View style={[styles.cardIcon, { backgroundColor: guide.color + '18', borderColor: guide.color + '40' }]}>
-          <Ionicons name={guide.icon} size={20} color={guide.color} />
+      {/* Photo banner */}
+      <View style={styles.cardPhoto}>
+        {Platform.OS === 'web' && (
+          // @ts-ignore
+          <img
+            src={guide.photo}
+            alt=""
+            loading="lazy"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        )}
+        <View style={styles.cardPhotoOverlay} />
+        <View style={[styles.cardIcon, { backgroundColor: guide.color + 'E6' }]}>
+          <Ionicons name={guide.icon} size={22} color="#fff" />
         </View>
-        <View style={styles.cardHeaderText}>
-          <Text style={[styles.cardTitle, { color: c.text }]}>{t(guide.titleEs, guide.titleEn)}</Text>
-          <Text style={[styles.cardTagline, { color: c.muted }]}>{t(guide.taglineEs, guide.taglineEn)}</Text>
+        <View style={styles.cardPhotoText}>
+          <Text style={styles.cardTitle}>{t(guide.titleEs, guide.titleEn)}</Text>
+          <Text style={styles.cardTagline}>{t(guide.taglineEs, guide.taglineEn)}</Text>
         </View>
-        <Ionicons
-          name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={18}
-          color={c.muted}
-        />
+        <View style={styles.cardChevron}>
+          <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color="#fff" />
+        </View>
       </View>
 
       {/* Quick bullets — always visible */}
@@ -503,29 +520,53 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 18,
     borderWidth: 1,
-    padding: 16,
-    gap: 12,
+    overflow: 'hidden',
+    gap: 0,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
+  cardPhoto: {
+    height: 160,
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: '#0f172a',
   },
+  cardPhotoOverlay: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(5,10,20,0.55)',
+  } as any,
   cardIcon: {
+    position: 'absolute',
+    top: 14,
+    left: 14,
     width: 40,
     height: 40,
     borderRadius: 12,
-    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
   },
-  cardHeaderText: { flex: 1, gap: 3 },
-  cardTitle: { fontSize: 16, fontWeight: '700', letterSpacing: -0.3 },
-  cardTagline: { fontSize: 12, lineHeight: 17 },
+  cardPhotoText: {
+    position: 'absolute',
+    bottom: 14,
+    left: 14,
+    right: 48,
+    gap: 3,
+  },
+  cardChevron: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardTitle: { fontSize: 17, fontWeight: '700', letterSpacing: -0.3, color: '#fff' },
+  cardTagline: { fontSize: 12, lineHeight: 17, color: 'rgba(255,255,255,0.75)' },
 
   // Quick bullets
-  quickList: { gap: 7, paddingLeft: 4 },
+  quickList: { gap: 7, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 14 },
   quickItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   quickDot: { width: 5, height: 5, borderRadius: 3, marginTop: 7, flexShrink: 0 },
   quickTxt: { fontSize: 13, lineHeight: 19, flex: 1, fontWeight: '500' },

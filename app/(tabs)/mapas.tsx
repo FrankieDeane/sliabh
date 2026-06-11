@@ -9,14 +9,13 @@ import { MapLeaflet } from '../../src/components/map/MapLeaflet';
 import { ContributeForm } from '../../src/components/contribute/ContributeForm';
 import { ThemeToggle } from '../../src/components/ui/ThemeToggle';
 import { OfflineBadge } from '../../src/components/ui/OfflineBadge';
-import { WebHeader } from '../../src/components/layout/WebHeader';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
 
-type MapLayer = 'dark' | 'topo' | 'osm';
+type MapLayer = 'dark' | 'topo' | 'osm' | 'argenmap';
 type DlState = 'idle' | 'downloading' | 'done';
 
 // ─── National parks data ──────────────────────────────────────────────────────
@@ -180,9 +179,136 @@ const NATIONAL_PARKS = [
   },
 ];
 
+// ─── Complete SIB/APN protected areas dataset (55 areas) ─────────────────────
+// Region-color map: Patagonia #22c55e, Norte/NOA #6a8f3f, Litoral #7a4f7f,
+// Cuyo/Sierras Centrales #8a6d3b, Áreas Marinas #315f86
+
+const ALL_PARKS_DATA = [
+  // ── Sierras Centrales (mapped from HTML "Centro") ──
+  { id: 'ansenuza', name: 'PN Ansenuza', region: 'Sierras Centrales', province: 'Córdoba', lat: -30.667, lng: -62.547, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#8a6d3b' },
+  { id: 'el-leoncito', name: 'PN El Leoncito', region: 'Cuyo', province: 'San Juan', lat: -31.889, lng: -69.265, category: 'Parque Nacional', international: '', color: '#c97c3e' },
+  { id: 'condorito', name: 'PN Quebrada del Condorito', region: 'Sierras Centrales', province: 'Córdoba', lat: -31.698, lng: -64.783, category: 'Parque Nacional', international: '', color: '#8a6d3b' },
+  { id: 'san-guillermo', name: 'PN San Guillermo', region: 'Cuyo', province: 'San Juan', lat: -29.238, lng: -69.266, category: 'Parque Nacional', international: 'Reserva de Biósfera · Patrimonio Mundial', color: '#c97c3e' },
+  { id: 'sierra-quijadas', name: 'PN Sierra de las Quijadas', region: 'Sierras Centrales', province: 'San Luis', lat: -32.557, lng: -67.135, category: 'Parque Nacional', international: '', color: '#8a6d3b' },
+  { id: 'traslasierra', name: 'PN Traslasierra', region: 'Sierras Centrales', province: 'Córdoba', lat: -30.995, lng: -65.627, category: 'Parque Nacional', international: '', color: '#8a6d3b' },
+  // ── Litoral (mapped from HTML "Centro Este" + "Noreste") ──
+  { id: 'campos-tuyu', name: 'PN Campos del Tuyú', region: 'Litoral', province: 'Buenos Aires', lat: -36.354, lng: -56.876, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  { id: 'ciervo-pantanos', name: 'PN Ciervo de los Pantanos', region: 'Litoral', province: 'Buenos Aires', lat: -34.235, lng: -58.877, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  { id: 'el-palmar', name: 'PN El Palmar', region: 'Litoral', province: 'Entre Ríos', lat: -31.882, lng: -58.257, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  { id: 'islas-santa-fe', name: 'PN Islas de Santa Fe', region: 'Litoral', province: 'Santa Fe', lat: -32.279, lng: -60.720, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  { id: 'pre-delta', name: 'PN Pre-Delta', region: 'Litoral', province: 'Entre Ríos', lat: -32.141, lng: -60.640, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  { id: 'chaco-pn', name: 'PN Chaco', region: 'Litoral', province: 'Chaco', lat: -26.827, lng: -59.655, category: 'Parque Nacional', international: '', color: '#7a4f7f' },
+  { id: 'el-impenetrable', name: 'PN El Impenetrable', region: 'Litoral', province: 'Chaco', lat: -25.005, lng: -61.106, category: 'Parque Nacional', international: '', color: '#7a4f7f' },
+  { id: 'ibera', name: 'PN Iberá', region: 'Litoral', province: 'Corrientes', lat: -27.932, lng: -56.931, category: 'Parque Nacional', international: '', color: '#7a4f7f' },
+  { id: 'mburucuya', name: 'PN Mburucuyá', region: 'Litoral', province: 'Corrientes', lat: -28.013, lng: -58.069, category: 'Parque Nacional', international: '', color: '#7a4f7f' },
+  { id: 'rio-pilcomayo', name: 'PN Río Pilcomayo', region: 'Litoral', province: 'Formosa', lat: -25.065, lng: -58.137, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#7a4f7f' },
+  // ── Norte / NOA (mapped from HTML "Noroeste") ──
+  { id: 'pozuelos', name: 'MN Laguna de los Pozuelos', region: 'Norte', province: 'Jujuy', lat: -22.342, lng: -66.002, category: 'Monumento Natural', international: 'Reserva de Biósfera · Sitio RAMSAR', color: '#6a8f3f' },
+  { id: 'aconquija', name: 'PN Aconquija', region: 'Norte', province: 'Tucumán', lat: -27.194, lng: -65.958, category: 'Parque Nacional', international: 'Patrimonio Mundial', color: '#6a8f3f' },
+  { id: 'baritu', name: 'PN Baritú', region: 'Norte', province: 'Salta', lat: -22.582, lng: -64.644, category: 'Parque Nacional', international: 'Reserva de Biósfera', color: '#6a8f3f' },
+  { id: 'copo', name: 'PN Copo', region: 'Norte', province: 'Santiago del Estero', lat: -25.821, lng: -61.880, category: 'Parque Nacional', international: '', color: '#6a8f3f' },
+  { id: 'el-rey', name: 'PN El Rey', region: 'Norte', province: 'Salta', lat: -24.700, lng: -64.627, category: 'Parque Nacional', international: '', color: '#6a8f3f' },
+  { id: 'los-cardones', name: 'PN Los Cardones', region: 'Norte', province: 'Salta', lat: -25.277, lng: -65.932, category: 'Parque Nacional', international: '', color: '#6a8f3f' },
+  // ── Patagonia Norte ──
+  { id: 'marino-costero', name: 'Parque Marino Costero Patagonia Austral', region: 'Patagonia Norte', province: 'Chubut', lat: -45.072, lng: -66.097, category: 'Parque Interjurisdiccional Marino', international: 'Reserva de Biósfera', color: '#22c55e' },
+  { id: 'islote-lobos', name: 'PN Islote Lobos', region: 'Patagonia Norte', province: 'Río Negro', lat: -41.438, lng: -65.064, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  { id: 'laguna-blanca', name: 'PN Laguna Blanca', region: 'Patagonia Norte', province: 'Neuquén', lat: -39.030, lng: -70.352, category: 'Parque Nacional', international: 'Sitio RAMSAR', color: '#22c55e' },
+  { id: 'lihue-calel', name: 'PN Lihué Calel', region: 'Patagonia Norte', province: 'La Pampa', lat: -37.935, lng: -65.605, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  { id: 'los-arrayanes', name: 'PN Los Arrayanes', region: 'Patagonia Norte', province: 'Neuquén', lat: -40.829, lng: -71.629, category: 'Parque Nacional', international: 'Reserva de Biósfera', color: '#22c55e' },
+  // ── Patagonia Sur ──
+  { id: 'isla-pinguino', name: 'Parque Marino Isla Pingüino', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -48.150, lng: -65.945, category: 'Parque Interjurisdiccional Marino', international: '', color: '#22c55e' },
+  { id: 'makenke', name: 'Parque Marino Makenke', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -49.548, lng: -67.625, category: 'Parque Interjurisdiccional Marino', international: '', color: '#22c55e' },
+  { id: 'bosques-petrificados', name: 'PN Bosques Petrificados de Jaramillo', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -47.693, lng: -68.066, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  { id: 'monte-leon', name: 'PN Monte León', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -50.317, lng: -68.973, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  { id: 'patagonia-pn', name: 'PN Patagonia', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -47.159, lng: -71.317, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  { id: 'perito-moreno', name: 'PN Perito Moreno', region: 'Patagonia Sur', province: 'Santa Cruz', lat: -47.887, lng: -72.250, category: 'Parque Nacional', international: '', color: '#22c55e' },
+  // ── Áreas Marinas ──
+  { id: 'burdwood-1', name: 'AMP Namuncurá - Banco Burdwood I', region: 'Patagonia Sur', province: 'Mar Argentino', lat: -54.331, lng: -59.239, category: 'Área Marina Protegida', international: '', color: '#315f86' },
+  { id: 'burdwood-2', name: 'AMP Namuncurá - Banco Burdwood II', region: 'Patagonia Sur', province: 'Mar Argentino', lat: -55.182, lng: -59.804, category: 'Área Marina Protegida', international: '', color: '#315f86' },
+  { id: 'yaganes', name: 'AMP Yaganes', region: 'Patagonia Sur', province: 'Mar Argentino', lat: -56.933, lng: -65.458, category: 'Área Marina Protegida', international: '', color: '#315f86' },
+];
+
+// Merge NATIONAL_PARKS curated data with ALL_PARKS_DATA for complete map markers
+const ALL_PARK_MARKERS = [
+  ...NATIONAL_PARKS.map(p => ({
+    id: p.id, name: p.name, region: p.region, province: p.province,
+    lat: p.coords.lat, lng: p.coords.lon,
+    category: 'Parque Nacional', international: p.unesco ? 'Patrimonio UNESCO' : '',
+    color: p.region === 'Patagonia Sur' || p.region === 'Patagonia Norte' ? '#22c55e'
+         : p.region === 'Norte' ? '#6a8f3f'
+         : p.region === 'Litoral' ? '#7a4f7f'
+         : '#c97c3e',
+  })),
+  ...ALL_PARKS_DATA.filter(pd => !NATIONAL_PARKS.find(np => np.id === pd.id)),
+];
+
+// ─── Region explorer (mirrors the official APN map of national parks) ────────
+// https://www.argentina.gob.ar/parquesnacionales/mapa-de-los-parques-nacionales-de-argentina
+
+const OFFICIAL_MAP_URL =
+  'https://www.argentina.gob.ar/parquesnacionales/mapa-de-los-parques-nacionales-de-argentina';
+
+const MAP_REGIONS = [
+  {
+    id: 'Patagonia Sur',
+    name: 'Patagonia Sur',
+    provinces: 'Santa Cruz · Tierra del Fuego',
+    center: { lat: -50.0, lon: -71.5, zoom: 6 },
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80&fit=crop&auto=format',
+    video: 'ZFtM28xYy14',
+    desc: 'El extremo austral del continente: glaciares vivos, agujas de granito y el campo de hielo más grande fuera de los polos. Acá están Los Glaciares (Fitz Roy, Perito Moreno), el PN Patagonia y el parque más austral del mundo, Tierra del Fuego.',
+  },
+  {
+    id: 'Patagonia Norte',
+    name: 'Patagonia Norte',
+    provinces: 'Río Negro · Neuquén · Chubut',
+    center: { lat: -41.5, lon: -71.4, zoom: 7 },
+    photo: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80&fit=crop&auto=format',
+    video: 'xK1eo4hKJVM',
+    desc: 'La región de los lagos y los bosques andino-patagónicos: Nahuel Huapi, Lanín, Los Alerces (UNESCO) y Lago Puelo. Refugios de montaña, volcanes y alerces de 2.600 años.',
+  },
+  {
+    id: 'Cuyo',
+    name: 'Cuyo',
+    provinces: 'Mendoza · San Juan · La Rioja',
+    center: { lat: -31.5, lon: -69.0, zoom: 6 },
+    photo: 'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=1200&q=80&fit=crop&auto=format',
+    video: 'smv2WXDzG5I',
+    desc: 'La alta montaña argentina: el Aconcagua (6.961 m, techo de América), los cañones rojos de Talampaya (UNESCO) e Ischigualasto. Desierto de altura, cóndores y expediciones.',
+  },
+  {
+    id: 'Norte',
+    name: 'Norte (NOA)',
+    provinces: 'Jujuy · Salta · Tucumán',
+    center: { lat: -23.5, lon: -65.2, zoom: 7 },
+    photo: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1200&q=80&fit=crop&auto=format',
+    video: '_0k0NG0R6jc',
+    desc: 'La Puna y las yungas: Quebrada de Humahuaca (UNESCO), el Cerro de los 7 Colores y la selva de Calilegua. Cultura andina viva, altura extrema y paisajes de otro planeta.',
+  },
+  {
+    id: 'Sierras Centrales',
+    name: 'Sierras Centrales',
+    provinces: 'Córdoba · San Luis',
+    center: { lat: -31.7, lon: -64.8, zoom: 8 },
+    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&fit=crop&auto=format',
+    video: 'mGsNkTL6vEQ',
+    desc: 'El corazón serrano del país: Los Gigantes (la escuela de escalada de Córdoba), el Champaquí (2.790 m) y la Quebrada del Condorito, donde los cóndores planean a la altura de tus ojos.',
+  },
+  {
+    id: 'Litoral',
+    name: 'Litoral',
+    provinces: 'Misiones · Corrientes · Entre Ríos',
+    center: { lat: -27.5, lon: -56.0, zoom: 6 },
+    photo: 'https://images.unsplash.com/photo-1546200547-f4c8c66de5d8?w=1200&q=80&fit=crop&auto=format',
+    video: 'uoMaOmEvbmc',
+    desc: 'La Argentina subtropical: las Cataratas del Iguazú (UNESCO, una de las 7 maravillas naturales), los Esteros del Iberá y la selva misionera. Agua, selva y biodiversidad sin igual.',
+  },
+];
+
 const LAYERS: { id: MapLayer; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { id: 'dark', label: 'Oscuro', icon: 'moon' },
+  { id: 'argenmap', label: 'IGN Argentina', icon: 'flag' },
   { id: 'topo', label: 'Topográfico', icon: 'trail-sign' },
+  { id: 'dark', label: 'Oscuro', icon: 'moon' },
   { id: 'osm', label: 'Estándar', icon: 'map' },
 ];
 
@@ -431,12 +557,13 @@ export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
   const { isWide } = useResponsive();
-  const [layer, setLayer] = useState<MapLayer>('topo');
+  const [layer, setLayer] = useState<MapLayer>('argenmap');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [contributeOpen, setContributeOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [parksOpen, setParksOpen] = useState(false);
   const [selectedPark, setSelectedPark] = useState<typeof NATIONAL_PARKS[0] | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<typeof MAP_REGIONS[0]>(MAP_REGIONS[0]);
   const [coord, setCoord] = useState<{ lat: number; lon: number } | null>(null);
 
   const c = isDark
@@ -446,13 +573,18 @@ export default function MapasScreen() {
   const effectiveLayer: MapLayer = !isDark && layer === 'dark' ? 'osm' : layer;
   const isWeb = Platform.OS === 'web';
 
-  const parkMarkers = NATIONAL_PARKS.map((p) => ({
+  const parkMarkers = ALL_PARK_MARKERS.map((p) => ({
     id: p.id,
-    lat: p.coords.lat,
-    lon: p.coords.lon,
+    lat: p.lat,
+    lon: p.lng,
     name: p.name,
     subtitle: `${p.province} · ${p.region}`,
+    color: p.color,
   }));
+
+  const filteredRegionParks = selectedRegion
+    ? ALL_PARK_MARKERS.filter((p) => p.region === selectedRegion.id)
+    : ALL_PARK_MARKERS;
 
   const mapSection = (
     <View style={s.mapWrapper}>
@@ -465,7 +597,14 @@ export default function MapasScreen() {
           const park = NATIONAL_PARKS.find((p) => p.id === id);
           if (park) setSelectedPark(park);
         }}
-        flyTo={selectedPark ? { lat: selectedPark.coords.lat, lon: selectedPark.coords.lon, zoom: 10 } : null}
+
+        flyTo={
+          selectedPark
+            ? { lat: selectedPark.coords.lat, lon: selectedPark.coords.lon, zoom: 10 }
+            : selectedRegion
+            ? { lat: selectedRegion.center.lat, lon: selectedRegion.center.lon, zoom: selectedRegion.center.zoom }
+            : null
+        }
         center={[-40.5, -68.0]}
         zoom={4}
       />
@@ -526,7 +665,63 @@ export default function MapasScreen() {
   if (isWide && isWeb) {
     return (
       <ScrollView style={[s.root, { backgroundColor: c.bg }]} showsVerticalScrollIndicator={false}>
-        <WebHeader />
+        {/* ── MAPA DE LOS PARQUES NACIONALES ── */}
+        <View style={[s.regionHeader, { borderBottomColor: c.border }]}>
+          <Text style={[s.regionEyebrow, { color: c.muted }]} {...({ 'data-eyebrow': true } as any)}>
+            MAPA DE LOS PARQUES NACIONALES
+          </Text>
+          <Text style={[s.regionTitle, { color: c.text }]} {...({ 'data-serif': true } as any)}>
+            Argentina, región por región
+          </Text>
+          <Text style={[s.regionSub, { color: c.muted }]}>
+            Elegí una región para recorrer el mapa, conocer sus parques y descargar la cartografía oficial.
+          </Text>
+          <View style={s.regionChips}>
+            {MAP_REGIONS.map((r) => {
+              const active = selectedRegion?.id === r.id;
+              return (
+                <TouchableOpacity
+                  key={r.id}
+                  onPress={() => { setSelectedRegion(r); setSelectedPark(null); }}
+                  style={[
+                    s.regionChip,
+                    active
+                      ? { backgroundColor: '#16a34a', borderColor: '#16a34a' }
+                      : { backgroundColor: 'transparent', borderColor: c.border },
+                  ]}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[s.regionChipTxt, { color: active ? '#fff' : c.muted }]}>{r.name}</Text>
+                </TouchableOpacity>
+              );
+            })}
+            <TouchableOpacity
+              style={[s.officialBtn, { borderColor: 'rgba(34,197,94,0.5)' }]}
+              onPress={() => Linking.openURL(OFFICIAL_MAP_URL)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="download-outline" size={14} color="#22c55e" />
+              <Text style={s.officialBtnTxt}>Mapa oficial APN</Text>
+            </TouchableOpacity>
+          </View>
+          {/* Color legend */}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, paddingTop: 16 }}>
+            {[
+              { color: '#22c55e', label: 'Patagonia' },
+              { color: '#c97c3e', label: 'Cuyo' },
+              { color: '#8a6d3b', label: 'Sierras Centrales' },
+              { color: '#6a8f3f', label: 'Norte / NOA' },
+              { color: '#7a4f7f', label: 'Litoral / NEA' },
+              { color: '#315f86', label: 'Áreas Marinas' },
+            ].map((l) => (
+              <View key={l.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: l.color }} />
+                <Text style={{ fontSize: 11, color: c.muted, fontWeight: '600' }}>{l.label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <View style={s.wideRow}>
           {mapSection}
           {selectedPark ? (
@@ -535,27 +730,39 @@ export default function MapasScreen() {
             </View>
           ) : (
             <View style={[s.parksSidebar, { backgroundColor: c.surface, borderColor: c.border }]}>
-              <Text style={[s.sidebarTitle, { color: c.text }]}>Parques Nacionales</Text>
-              <Text style={[s.sidebarSub, { color: c.muted }]}>{NATIONAL_PARKS.length} parques · Argentina</Text>
+              <Text style={[s.sidebarTitle, { color: c.text }]}>
+                {selectedRegion ? selectedRegion.name : 'Áreas Protegidas'}
+              </Text>
+              <Text style={[s.sidebarSub, { color: c.muted }]}>
+                {filteredRegionParks.length} áreas · {selectedRegion ? selectedRegion.provinces : 'Argentina'}
+              </Text>
               <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-                {NATIONAL_PARKS.map((park) => (
-                  <TouchableOpacity
-                    key={park.id}
-                    style={[s.parkItem, { borderBottomColor: c.border }]}
-                    onPress={() => setSelectedPark(park)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[s.parkItemDot, { backgroundColor: '#22c55e' }]} />
-                    <View style={{ flex: 1 }}>
-                      <View style={s.parkItemRow}>
-                        <Text style={[s.parkItemName, { color: c.text }]}>{park.name}</Text>
-                        {park.unesco && <Text style={s.unescoChip}>UNESCO</Text>}
+                {filteredRegionParks.map((park) => {
+                  const curated = NATIONAL_PARKS.find(np => np.id === park.id);
+                  return (
+                    <TouchableOpacity
+                      key={park.id}
+                      style={[s.parkItem, { borderBottomColor: c.border }]}
+                      onPress={() => curated ? setSelectedPark(curated) : undefined}
+                      activeOpacity={curated ? 0.7 : 1}
+                    >
+                      <View style={[s.parkItemDot, { backgroundColor: park.color }]} />
+                      <View style={{ flex: 1 }}>
+                        <View style={s.parkItemRow}>
+                          <Text style={[s.parkItemName, { color: c.text }]}>{park.name}</Text>
+                          {park.international?.includes('UNESCO') || park.international?.includes('Patrimonio Mundial') ? (
+                            <Text style={s.unescoChip}>UNESCO</Text>
+                          ) : null}
+                        </View>
+                        <Text style={[s.parkItemSub, { color: c.muted }]}>{park.province}</Text>
+                        {park.category !== 'Parque Nacional' && (
+                          <Text style={[s.parkItemSub, { color: c.muted, fontSize: 9 }]}>{park.category}</Text>
+                        )}
                       </View>
-                      <Text style={[s.parkItemSub, { color: c.muted }]}>{park.province} · {park.region}</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={14} color={c.muted} />
-                  </TouchableOpacity>
-                ))}
+                      {curated && <Ionicons name="chevron-forward" size={14} color={c.muted} />}
+                    </TouchableOpacity>
+                  );
+                })}
                 <View style={[s.dlAllBtn, { borderTopColor: c.border }]}>
                   <TouchableOpacity
                     style={s.dlAllInner}
@@ -570,6 +777,57 @@ export default function MapasScreen() {
             </View>
           )}
         </View>
+
+        {/* ── REGIÓN SELECCIONADA — descripción + video + parques ── */}
+        {selectedRegion && (
+          <View style={[s.regionDetail, { borderBottomColor: c.border }]}>
+            <View style={s.regionDetailRow}>
+              <View style={s.regionDetailLeft}>
+                <Text style={[s.regionDetailEyebrow, { color: c.muted }]} {...({ 'data-eyebrow': true } as any)}>
+                  {selectedRegion.provinces.toUpperCase()}
+                </Text>
+                <Text style={[s.regionDetailName, { color: c.text }]} {...({ 'data-serif': true } as any)}>
+                  {selectedRegion.name}
+                </Text>
+                <Text style={[s.regionDetailDesc, { color: c.muted }]}>{selectedRegion.desc}</Text>
+
+                <Text style={[s.regionParksLabel, { color: c.muted }]} {...({ 'data-eyebrow': true } as any)}>
+                  PARQUES DE LA REGIÓN
+                </Text>
+                <View style={s.regionParksWrap}>
+                  {filteredRegionParks.map((park) => {
+                    const curated = NATIONAL_PARKS.find(np => np.id === park.id);
+                    return (
+                      <TouchableOpacity
+                        key={park.id}
+                        style={[s.regionParkChip, { borderColor: c.border, backgroundColor: c.surface }]}
+                        onPress={() => curated ? setSelectedPark(curated) : undefined}
+                        activeOpacity={0.8}
+                      >
+                        <View style={[s.parkItemDot, { backgroundColor: park.color, width: 8, height: 8, borderRadius: 4 }]} />
+                        <Text style={[s.regionParkChipTxt, { color: c.text }]}>{park.name}</Text>
+                        {(park.international?.includes('UNESCO') || park.international?.includes('Patrimonio Mundial')) && (
+                          <Text style={s.unescoChip}>UNESCO</Text>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+
+              <View style={s.regionDetailRight}>
+                {/* @ts-ignore — iframe web-only */}
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedRegion.video}`}
+                  style={{ width: '100%', height: '100%', border: 'none', borderRadius: 4 }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={selectedRegion.name}
+                />
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* ── CENTRO DE DESCARGAS — always visible ── */}
         <View style={[s.dlCenter, { backgroundColor: c.bg }]}>
@@ -660,27 +918,32 @@ export default function MapasScreen() {
           <TouchableOpacity style={s.backdrop} activeOpacity={1} onPress={() => setParksOpen(false)}>
             <TouchableOpacity activeOpacity={1} style={[s.downloadSheet, { backgroundColor: c.surface, borderColor: c.border }]}>
               <View style={[s.handle, { backgroundColor: c.border }]} />
-              <Text style={[s.dlTitle, { color: c.text }]}>Parques Nacionales</Text>
-              <Text style={[s.dlSub, { color: c.muted }]}>{NATIONAL_PARKS.length} parques · Argentina</Text>
+              <Text style={[s.dlTitle, { color: c.text }]}>Áreas Protegidas</Text>
+              <Text style={[s.dlSub, { color: c.muted }]}>{ALL_PARK_MARKERS.length} áreas · Argentina</Text>
               <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 12 }}>
-                {NATIONAL_PARKS.map((park) => (
-                  <TouchableOpacity
-                    key={park.id}
-                    style={[s.parkItem, { borderBottomColor: c.border }]}
-                    onPress={() => { setSelectedPark(park); setParksOpen(false); }}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[s.parkItemDot, { backgroundColor: '#22c55e' }]} />
-                    <View style={{ flex: 1 }}>
-                      <View style={s.parkItemRow}>
-                        <Text style={[s.parkItemName, { color: c.text }]}>{park.name}</Text>
-                        {park.unesco && <Text style={s.unescoChip}>UNESCO</Text>}
+                {ALL_PARK_MARKERS.map((park) => {
+                  const curated = NATIONAL_PARKS.find(np => np.id === park.id);
+                  return (
+                    <TouchableOpacity
+                      key={park.id}
+                      style={[s.parkItem, { borderBottomColor: c.border }]}
+                      onPress={() => { if (curated) { setSelectedPark(curated); setParksOpen(false); } }}
+                      activeOpacity={curated ? 0.7 : 1}
+                    >
+                      <View style={[s.parkItemDot, { backgroundColor: park.color }]} />
+                      <View style={{ flex: 1 }}>
+                        <View style={s.parkItemRow}>
+                          <Text style={[s.parkItemName, { color: c.text }]}>{park.name}</Text>
+                          {(park.international?.includes('UNESCO') || park.international?.includes('Patrimonio Mundial')) && (
+                            <Text style={s.unescoChip}>UNESCO</Text>
+                          )}
+                        </View>
+                        <Text style={[s.parkItemSub, { color: c.muted }]}>{park.province}</Text>
                       </View>
-                      <Text style={[s.parkItemSub, { color: c.muted }]}>{park.province}</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={14} color={c.muted} />
-                  </TouchableOpacity>
-                ))}
+                      {curated && <Ionicons name="chevron-forward" size={14} color={c.muted} />}
+                    </TouchableOpacity>
+                  );
+                })}
               </ScrollView>
             </TouchableOpacity>
           </TouchableOpacity>
@@ -754,8 +1017,39 @@ export default function MapasScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1 },
-  wideRow: { flex: 1, flexDirection: 'row' },
+  // Explicit height: inside a ScrollView, flex:1 collapses to 0 and the map disappears.
+  wideRow: { height: 560, flexDirection: 'row' },
   mapWrapper: { flex: 1, position: 'relative' },
+
+  // Region explorer header
+  regionHeader: { paddingHorizontal: 40, paddingTop: 56, paddingBottom: 28, borderBottomWidth: 1, alignItems: 'center' },
+  regionEyebrow: { fontSize: 11, fontWeight: '600', letterSpacing: 4, marginBottom: 12 },
+  regionTitle: { fontSize: 38, fontWeight: '400', letterSpacing: -0.5, marginBottom: 10, textAlign: 'center' },
+  regionSub: { fontSize: 14, lineHeight: 22, textAlign: 'center', maxWidth: 580, marginBottom: 24 },
+  regionChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', alignItems: 'center' },
+  regionChip: { borderWidth: 1, borderRadius: 2, paddingHorizontal: 16, paddingVertical: 9 },
+  regionChipTxt: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase' },
+  officialBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 7,
+    borderWidth: 1, borderRadius: 2, paddingHorizontal: 16, paddingVertical: 9, marginLeft: 8,
+  },
+  officialBtnTxt: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, textTransform: 'uppercase', color: '#22c55e' },
+
+  // Region detail panel
+  regionDetail: { paddingHorizontal: 40, paddingVertical: 56, borderBottomWidth: 1, alignItems: 'center' },
+  regionDetailRow: { flexDirection: 'row', gap: 48, maxWidth: 1200, width: '100%' },
+  regionDetailLeft: { flex: 1.1, minWidth: 320 },
+  regionDetailRight: { flex: 1, minWidth: 320, height: 320 },
+  regionDetailEyebrow: { fontSize: 10, fontWeight: '600', letterSpacing: 3, marginBottom: 10 },
+  regionDetailName: { fontSize: 42, fontWeight: '400', letterSpacing: -1, marginBottom: 16 },
+  regionDetailDesc: { fontSize: 15, lineHeight: 26, marginBottom: 28 },
+  regionParksLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 3, marginBottom: 12 },
+  regionParksWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  regionParkChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1, borderRadius: 2, paddingHorizontal: 12, paddingVertical: 8,
+  },
+  regionParkChipTxt: { fontSize: 12, fontWeight: '600' },
 
   topSafe: { position: 'absolute', top: 0, left: 0, right: 0 },
   topBar: {
