@@ -51,7 +51,7 @@ const FEATURED = [
     distance: '110 km',
     daysEs: '18–22 días',
     daysEn: '18–22 days',
-    uri: 'https://images.unsplash.com/photo-Wjc8_-qVlPw?w=700&q=80&fit=crop&auto=format',
+    uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
     routeId: 'aconcagua-ruta-normal',
   },
   {
@@ -71,7 +71,7 @@ const FEATURED = [
     distance: '20 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=700&q=80&fit=crop&auto=format',
+    uri: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
     routeId: 'tierra-del-fuego-costera',
   },
 ];
@@ -157,7 +157,7 @@ const PARK_SPOTS = [
     tagEn: 'Unique microclimate · El Bolsón',
     descEs: 'El único lago de la Patagonia con salida al océano Pacífico. Vegetación valdiviana, arrayanes y las temperaturas más cálidas de la región.',
     descEn: 'The only lake in Patagonia that flows to the Pacific Ocean. Valdivian vegetation, arrayán trees and the warmest temperatures in the region.',
-    photo: 'https://images.unsplash.com/photo-zntOhVDyWog?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80&fit=crop&auto=format',
     trailId: 'lago-puelo-los-hitos',
     province: 'Chubut',
     trails: 2,
@@ -170,7 +170,7 @@ const PARK_SPOTS = [
     tagEn: 'Steppe · Condors · Santa Cruz',
     descEs: 'El parque más nuevo de Argentina protege estepa patagónica virgen, guanacos y cóndores. Vistas al lago Cochrane y vientos épicos de la Patagonia.',
     descEn: "Argentina's newest park protects pristine Patagonian steppe, guanacos and condors. Views to Cochrane lake and the epic Patagonian winds.",
-    photo: 'https://images.unsplash.com/photo-jPY81gH1Nso?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
     trailId: 'pn-patagonia-ascension',
     province: 'Santa Cruz',
     trails: 2,
@@ -189,7 +189,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/rutas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-8oYPewvmhnY?w=600&q=80',
+    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80',
     icon: 'map-outline' as const,
     titleEs: 'Mapas offline',
     titleEn: 'Offline maps',
@@ -198,7 +198,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/mapas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-i9O9yB20_b0?w=600&q=80',
+    photo: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80',
     icon: 'shield-checkmark-outline' as const,
     titleEs: 'Supervivencia',
     titleEn: 'Survival',
