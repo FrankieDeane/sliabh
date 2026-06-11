@@ -26,9 +26,8 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-// Pixabay video ID 292827 — Moraine Lake, Banff National Park
-const HERO_VIDEO_URL = 'https://pixabay.com/videos/download/video-292827_large.mp4';
-const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
+const HERO_VIDEO_URL = 'https://assets.mixkit.co/videos/preview/mixkit-rocky-mountains-aerial-view-4k-4379-large.mp4';
+const HERO_VIDEO_FALLBACK = 'https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-mountain-range-4048-large.mp4';
 
 // Featured routes — all Argentine
 const FEATURED = [
