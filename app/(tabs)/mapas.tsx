@@ -157,6 +157,256 @@ const NATIONAL_PARKS = [
     coords: { lat: -31.4, lon: -64.6 },
     unesco: false,
   },
+
+  // ── Litoral ──────────────────────────────────────────────────────────────
+  {
+    id: 'el-palmar',
+    name: 'El Palmar',
+    province: 'Entre Ríos',
+    region: 'Litoral',
+    area_km2: 85,
+    highlights: 'Palmares de yatay milenarios · Costa del río Uruguay · Vizcachas y ñandúes',
+    size: '38 MB',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=600&q=75&fit=crop',
+    coords: { lat: -31.85, lon: -58.30 },
+    unesco: false,
+  },
+  {
+    id: 'ibera',
+    name: 'Iberá',
+    province: 'Corrientes',
+    region: 'Litoral',
+    area_km2: 1832,
+    highlights: 'Esteros del Iberá · Yacarés, carpinchos y ciervo de los pantanos · Reintroducción de yaguareté',
+    size: '92 MB',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=600&q=75&fit=crop',
+    coords: { lat: -28.50, lon: -57.20 },
+    unesco: false,
+  },
+  {
+    id: 'mburucuya',
+    name: 'Mburucuyá',
+    province: 'Corrientes',
+    region: 'Litoral',
+    area_km2: 175,
+    highlights: 'Palmares de caranday · Lagunas y malezales · Flora subtropical',
+    size: '34 MB',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=600&q=75&fit=crop',
+    coords: { lat: -28.02, lon: -58.05 },
+    unesco: false,
+  },
+  {
+    id: 'pre-delta',
+    name: 'Pre-Delta',
+    province: 'Entre Ríos',
+    region: 'Litoral',
+    area_km2: 24,
+    highlights: 'Inicio del Delta del Paraná · Islas y arroyos · Aves acuáticas',
+    size: '22 MB',
+    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=600&q=75&fit=crop',
+    coords: { lat: -32.10, lon: -60.65 },
+    unesco: false,
+  },
+  {
+    id: 'chaco',
+    name: 'Chaco',
+    province: 'Chaco',
+    region: 'Litoral',
+    area_km2: 150,
+    highlights: 'Quebrachos centenarios · Monte chaqueño · Río Negro y madrejones',
+    size: '40 MB',
+    photo: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=75&fit=crop',
+    coords: { lat: -26.80, lon: -59.60 },
+    unesco: false,
+  },
+  {
+    id: 'el-impenetrable',
+    name: 'El Impenetrable',
+    province: 'Chaco',
+    region: 'Litoral',
+    area_km2: 1280,
+    highlights: 'Monte impenetrable · Río Bermejo y Teuquito · Yaguareté y tapir',
+    size: '78 MB',
+    photo: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=75&fit=crop',
+    coords: { lat: -25.10, lon: -61.10 },
+    unesco: false,
+  },
+
+  // ── Norte (NOA) ──────────────────────────────────────────────────────────
+  {
+    id: 'los-cardones',
+    name: 'Los Cardones',
+    province: 'Salta',
+    region: 'Norte',
+    area_km2: 650,
+    highlights: 'Cardones gigantes · Recta Tin-Tin · Valle Encantado y Puna',
+    size: '52 MB',
+    photo: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=75&fit=crop',
+    coords: { lat: -25.12, lon: -65.95 },
+    unesco: false,
+  },
+  {
+    id: 'baritu',
+    name: 'Baritú',
+    province: 'Salta',
+    region: 'Norte',
+    area_km2: 720,
+    highlights: 'Selva de yungas · Parque más aislado del país · Termas de Cayotal',
+    size: '60 MB',
+    photo: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=75&fit=crop',
+    coords: { lat: -22.45, lon: -64.72 },
+    unesco: false,
+  },
+  {
+    id: 'el-rey',
+    name: 'El Rey',
+    province: 'Salta',
+    region: 'Norte',
+    area_km2: 440,
+    highlights: 'Anfiteatro selvático · Yungas · Río Popayán y abundante avifauna',
+    size: '46 MB',
+    photo: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=75&fit=crop',
+    coords: { lat: -24.70, lon: -64.65 },
+    unesco: false,
+  },
+  {
+    id: 'aconquija',
+    name: 'Aconquija',
+    province: 'Tucumán',
+    region: 'Norte',
+    area_km2: 700,
+    highlights: 'Nevados del Aconquija · Yungas · Ruinas de La Ciudacita (inca)',
+    size: '58 MB',
+    photo: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=75&fit=crop',
+    coords: { lat: -27.25, lon: -65.95 },
+    unesco: false,
+  },
+
+  // ── Cuyo ─────────────────────────────────────────────────────────────────
+  {
+    id: 'sierra-quijadas',
+    name: 'Sierra de las Quijadas',
+    province: 'San Luis',
+    region: 'Cuyo',
+    area_km2: 1500,
+    highlights: 'Potrero de la Aguada · Cañones rojos · Huellas y fósiles de dinosaurios',
+    size: '54 MB',
+    photo: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=75&fit=crop',
+    coords: { lat: -32.50, lon: -67.00 },
+    unesco: false,
+  },
+  {
+    id: 'el-leoncito',
+    name: 'El Leoncito',
+    province: 'San Juan',
+    region: 'Cuyo',
+    area_km2: 760,
+    highlights: 'Observatorios astronómicos · Cielos más límpidos del país · Pampa del Leoncito',
+    size: '50 MB',
+    photo: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=75&fit=crop',
+    coords: { lat: -31.80, lon: -69.30 },
+    unesco: false,
+  },
+  {
+    id: 'san-guillermo',
+    name: 'San Guillermo',
+    province: 'San Juan',
+    region: 'Cuyo',
+    area_km2: 1660,
+    highlights: 'Vicuñas y guanacos · Puna de altura · Reserva de Biósfera UNESCO',
+    size: '64 MB',
+    photo: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=75&fit=crop',
+    coords: { lat: -29.10, lon: -69.35 },
+    unesco: true,
+  },
+
+  // ── Sierras Centrales ────────────────────────────────────────────────────
+  {
+    id: 'condorito',
+    name: 'Quebrada del Condorito',
+    province: 'Córdoba',
+    region: 'Sierras Centrales',
+    area_km2: 370,
+    highlights: 'Cóndores andinos · Pampa de Achala · Balcón Norte y Sur',
+    size: '44 MB',
+    photo: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=75&fit=crop',
+    coords: { lat: -31.65, lon: -64.68 },
+    unesco: false,
+  },
+
+  // ── Patagonia ────────────────────────────────────────────────────────────
+  {
+    id: 'los-arrayanes',
+    name: 'Los Arrayanes',
+    province: 'Neuquén',
+    region: 'Patagonia Norte',
+    area_km2: 17,
+    highlights: 'Bosque puro de arrayanes · Península Quetrihué · Villa La Angostura',
+    size: '20 MB',
+    photo: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&q=75&fit=crop',
+    coords: { lat: -40.55, lon: -71.55 },
+    unesco: false,
+  },
+  {
+    id: 'laguna-blanca',
+    name: 'Laguna Blanca',
+    province: 'Neuquén',
+    region: 'Patagonia Norte',
+    area_km2: 112,
+    highlights: 'Laguna esteparia · Cisnes de cuello negro · Aves acuáticas',
+    size: '30 MB',
+    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=75&fit=crop',
+    coords: { lat: -39.05, lon: -70.35 },
+    unesco: false,
+  },
+  {
+    id: 'perito-moreno-np',
+    name: 'PN Perito Moreno',
+    province: 'Santa Cruz',
+    region: 'Patagonia Sur',
+    area_km2: 1150,
+    highlights: 'Lagos turquesa · Cerro San Lorenzo · Estepa virgen y aislamiento total',
+    size: '70 MB',
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=75&fit=crop',
+    coords: { lat: -47.88, lon: -72.10 },
+    unesco: false,
+  },
+  {
+    id: 'monte-leon',
+    name: 'Monte León',
+    province: 'Santa Cruz',
+    region: 'Patagonia Sur',
+    area_km2: 627,
+    highlights: 'Costa atlántica · Pingüinera de Magallanes · La Olla y lobos marinos',
+    size: '48 MB',
+    photo: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=600&q=75&fit=crop',
+    coords: { lat: -50.35, lon: -68.90 },
+    unesco: false,
+  },
+  {
+    id: 'bosques-petrificados',
+    name: 'Bosques Petrificados',
+    province: 'Santa Cruz',
+    region: 'Patagonia Sur',
+    area_km2: 615,
+    highlights: 'Troncos petrificados jurásicos · Cerro Madre e Hija · Estepa fósil',
+    size: '42 MB',
+    photo: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=75&fit=crop',
+    coords: { lat: -47.70, lon: -68.00 },
+    unesco: false,
+  },
+  {
+    id: 'lihue-calel',
+    name: 'Lihué Calel',
+    province: 'La Pampa',
+    region: 'Sierras Centrales',
+    area_km2: 325,
+    highlights: 'Sierras en la llanura · Arte rupestre · Monte pampeano y pumas',
+    size: '36 MB',
+    photo: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=600&q=75&fit=crop',
+    coords: { lat: -38.00, lon: -65.60 },
+    unesco: false,
+  },
 ];
 
 // ─── Download card ────────────────────────────────────────────────────────────
@@ -167,33 +417,22 @@ function DownloadCard({
   c: any;
   onViewMap?: (lat: number, lon: number) => void;
 }) {
-  const [state, setState] = useState<DlState>('idle');
-  const [saved, setSaved] = useState(false);
-  const progress = useRef(new Animated.Value(0)).current;
+  const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
   const { width } = useWindowDimensions();
   const isNarrow = width < 400;
 
+  // Pre-cache tiles for true offline use in the background (no UI state needed)
   React.useEffect(() => {
-    isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
-      if (cached) { setState('done'); setSaved(true); }
-    });
+    if (isTileCachingSupported()) {
+      isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
+        if (!cached) {
+          downloadAreaTiles(park.coords.lat, park.coords.lon, () => {}).catch(() => {});
+        }
+      });
+    }
   }, []);
 
-  function handleDownload() {
-    if (state !== 'idle') return;
-    setState('downloading');
-    if (isTileCachingSupported()) {
-      downloadAreaTiles(park.coords.lat, park.coords.lon, (done, total) => {
-        progress.setValue(done / total);
-      }).then(() => { setState('done'); setSaved(true); });
-    } else {
-      Animated.timing(progress, {
-        toValue: 1, duration: 2800 + Math.random() * 1200, useNativeDriver: false,
-      }).start(() => { setState('done'); setSaved(true); });
-    }
-  }
-
-  function handleViewOffline() {
+  function handleViewMap() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       window.open(`/parques.html?lat=${park.coords.lat}&lng=${park.coords.lon}&zoom=10`, '_blank');
     } else if (onViewMap) {
@@ -201,7 +440,26 @@ function DownloadCard({
     }
   }
 
-  const progressWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  async function handlePdf() {
+    if (pdfState === 'working') return;
+    setPdfState('working');
+    try {
+      const { generateParkPDF } = await import('../../src/utils/parkPdf');
+      await generateParkPDF({
+        id: park.id,
+        name: park.name,
+        province: park.province,
+        region: park.region,
+        highlights: park.highlights,
+        size: park.size,
+        coords: park.coords,
+      });
+    } catch {
+      // swallow — user can retry
+    } finally {
+      setPdfState('idle');
+    }
+  }
 
   return (
     <View style={[dlS.card, { borderColor: c.border, backgroundColor: c.elevated }]}>
@@ -228,35 +486,34 @@ function DownloadCard({
         <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
         <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
 
-        {state === 'downloading' && (
+        {pdfState === 'working' && (
           <View style={[dlS.progressTrack, { backgroundColor: c.border }]}>
-            <Animated.View style={[dlS.progressFill, { width: progressWidth }]} />
+            <Animated.View style={[dlS.progressFill, { width: '100%' }]} />
           </View>
         )}
 
-        {/* Action button — always visible */}
-        {saved ? (
-          <TouchableOpacity style={[dlS.btn, dlS.btnSaved]} onPress={handleViewOffline} activeOpacity={0.8}>
-            <Ionicons name="map" size={13} color="#fff" />
-            <Text style={dlS.btnTxtWhite}>Ver guardado offline</Text>
+        {/* Two actions: open interactive map + download PDF */}
+        <View style={dlS.btnRow}>
+          <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
+            <Ionicons name="map-outline" size={13} color="#16a34a" />
+            <Text style={[dlS.btnTxt, { color: '#16a34a' }]}>Ver mapa</Text>
           </TouchableOpacity>
-        ) : (
           <TouchableOpacity
-            style={[dlS.btn, state === 'downloading' ? dlS.btnLoading : dlS.btnDownload]}
-            onPress={handleDownload}
+            style={[dlS.btn, dlS.btnDownload]}
+            onPress={handlePdf}
             activeOpacity={0.8}
-            disabled={state === 'downloading'}
+            disabled={pdfState === 'working'}
           >
             <Ionicons
-              name={state === 'downloading' ? 'cloud-download-outline' : 'download-outline'}
+              name={pdfState === 'working' ? 'cloud-download-outline' : 'download-outline'}
               size={13}
-              color={state === 'downloading' ? '#64748b' : '#fff'}
+              color="#fff"
             />
-            <Text style={[dlS.btnTxt, { color: state === 'downloading' ? '#64748b' : '#fff' }]}>
-              {state === 'downloading' ? 'Descargando…' : 'Guardar offline'}
+            <Text style={dlS.btnTxtWhite}>
+              {pdfState === 'working' ? 'Generando…' : 'Descargar PDF'}
             </Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
     </View>
   );
@@ -291,14 +548,13 @@ const dlS = StyleSheet.create({
   meta: { fontSize: 11 },
   progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
+  btnRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   btn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7,
-    alignSelf: 'flex-start',
   },
   btnDownload: { backgroundColor: '#16a34a' },
-  btnSaved: { backgroundColor: '#22c55e' },
-  btnLoading: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#64748b' },
+  btnView: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#16a34a' },
   btnTxt: { fontSize: 12, fontWeight: '600' },
   btnTxtWhite: { fontSize: 12, fontWeight: '600', color: '#fff' },
 });
