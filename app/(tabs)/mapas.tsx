@@ -167,33 +167,22 @@ function DownloadCard({
   c: any;
   onViewMap?: (lat: number, lon: number) => void;
 }) {
-  const [state, setState] = useState<DlState>('idle');
-  const [saved, setSaved] = useState(false);
-  const progress = useRef(new Animated.Value(0)).current;
+  const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
   const { width } = useWindowDimensions();
   const isNarrow = width < 400;
 
+  // Pre-cache tiles for true offline use in the background (no UI state needed)
   React.useEffect(() => {
-    isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
-      if (cached) { setState('done'); setSaved(true); }
-    });
+    if (isTileCachingSupported()) {
+      isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
+        if (!cached) {
+          downloadAreaTiles(park.coords.lat, park.coords.lon, () => {}).catch(() => {});
+        }
+      });
+    }
   }, []);
 
-  function handleDownload() {
-    if (state !== 'idle') return;
-    setState('downloading');
-    if (isTileCachingSupported()) {
-      downloadAreaTiles(park.coords.lat, park.coords.lon, (done, total) => {
-        progress.setValue(done / total);
-      }).then(() => { setState('done'); setSaved(true); });
-    } else {
-      Animated.timing(progress, {
-        toValue: 1, duration: 2800 + Math.random() * 1200, useNativeDriver: false,
-      }).start(() => { setState('done'); setSaved(true); });
-    }
-  }
-
-  function handleViewOffline() {
+  function handleViewMap() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       window.open(`/parques.html?lat=${park.coords.lat}&lng=${park.coords.lon}&zoom=10`, '_blank');
     } else if (onViewMap) {
@@ -201,7 +190,26 @@ function DownloadCard({
     }
   }
 
-  const progressWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  async function handlePdf() {
+    if (pdfState === 'working') return;
+    setPdfState('working');
+    try {
+      const { generateParkPDF } = await import('../../src/utils/parkPdf');
+      await generateParkPDF({
+        id: park.id,
+        name: park.name,
+        province: park.province,
+        region: park.region,
+        highlights: park.highlights,
+        size: park.size,
+        coords: park.coords,
+      });
+    } catch {
+      // swallow — user can retry
+    } finally {
+      setPdfState('idle');
+    }
+  }
 
   return (
     <View style={[dlS.card, { borderColor: c.border, backgroundColor: c.elevated }]}>
@@ -228,35 +236,34 @@ function DownloadCard({
         <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
         <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
 
-        {state === 'downloading' && (
+        {pdfState === 'working' && (
           <View style={[dlS.progressTrack, { backgroundColor: c.border }]}>
-            <Animated.View style={[dlS.progressFill, { width: progressWidth }]} />
+            <Animated.View style={[dlS.progressFill, { width: '100%' }]} />
           </View>
         )}
 
-        {/* Action button — always visible */}
-        {saved ? (
-          <TouchableOpacity style={[dlS.btn, dlS.btnSaved]} onPress={handleViewOffline} activeOpacity={0.8}>
-            <Ionicons name="map" size={13} color="#fff" />
-            <Text style={dlS.btnTxtWhite}>Ver guardado offline</Text>
+        {/* Two actions: open interactive map + download PDF */}
+        <View style={dlS.btnRow}>
+          <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
+            <Ionicons name="map-outline" size={13} color="#16a34a" />
+            <Text style={[dlS.btnTxt, { color: '#16a34a' }]}>Ver mapa</Text>
           </TouchableOpacity>
-        ) : (
           <TouchableOpacity
-            style={[dlS.btn, state === 'downloading' ? dlS.btnLoading : dlS.btnDownload]}
-            onPress={handleDownload}
+            style={[dlS.btn, dlS.btnDownload]}
+            onPress={handlePdf}
             activeOpacity={0.8}
-            disabled={state === 'downloading'}
+            disabled={pdfState === 'working'}
           >
             <Ionicons
-              name={state === 'downloading' ? 'cloud-download-outline' : 'download-outline'}
+              name={pdfState === 'working' ? 'cloud-download-outline' : 'download-outline'}
               size={13}
-              color={state === 'downloading' ? '#64748b' : '#fff'}
+              color="#fff"
             />
-            <Text style={[dlS.btnTxt, { color: state === 'downloading' ? '#64748b' : '#fff' }]}>
-              {state === 'downloading' ? 'Descargando…' : 'Guardar offline'}
+            <Text style={dlS.btnTxtWhite}>
+              {pdfState === 'working' ? 'Generando…' : 'Descargar PDF'}
             </Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
     </View>
   );
@@ -291,14 +298,13 @@ const dlS = StyleSheet.create({
   meta: { fontSize: 11 },
   progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
+  btnRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   btn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7,
-    alignSelf: 'flex-start',
   },
   btnDownload: { backgroundColor: '#16a34a' },
-  btnSaved: { backgroundColor: '#22c55e' },
-  btnLoading: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#64748b' },
+  btnView: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#16a34a' },
   btnTxt: { fontSize: 12, fontWeight: '600' },
   btnTxtWhite: { fontSize: 12, fontWeight: '600', color: '#fff' },
 });
