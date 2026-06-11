@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, Modal, ScrollView, Linking,
-  StyleSheet, Animated, Platform,
+  StyleSheet, Animated, Platform, useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,6 @@ import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../s
 
 type DlState = 'idle' | 'downloading' | 'done';
 
-// ─── Parks with offline download support ─────────────────────────────────────
 const NATIONAL_PARKS = [
   {
     id: 'glaciares',
@@ -34,7 +33,7 @@ const NATIONAL_PARKS = [
     area_km2: 7050,
     highlights: 'Bariloche · Cerro Tronador · Refugio Frey',
     size: '118 MB',
-    photo: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=75&fit=crop',
+    photo: 'https://bariloche.org/wp-content/uploads/2024/02/tronador-bariloche-febrero2024-franciscoraggio-barilocheorg.jpg',
     coords: { lat: -41.1, lon: -71.5 },
     unesco: false,
   },
@@ -46,7 +45,7 @@ const NATIONAL_PARKS = [
     area_km2: 3789,
     highlights: 'Volcán Lanín · Lago Huechulafquen · Araucarias',
     size: '87 MB',
-    photo: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&q=75&fit=crop',
+    photo: 'https://images.unsplash.com/photo-2-h6BfSHyR0?w=600&q=75&fit=crop',
     coords: { lat: -39.6, lon: -71.5 },
     unesco: false,
   },
@@ -70,7 +69,7 @@ const NATIONAL_PARKS = [
     area_km2: 630,
     highlights: 'Ushuaia · Canal Beagle · Lapataia · Fin del mundo',
     size: '73 MB',
-    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=75&fit=crop',
+    photo: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=600&q=75&fit=crop',
     coords: { lat: -54.8, lon: -68.5 },
     unesco: false,
   },
@@ -82,7 +81,7 @@ const NATIONAL_PARKS = [
     area_km2: 276,
     highlights: 'Microclima único · Bosque valdiviano · Trekking',
     size: '48 MB',
-    photo: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&q=75&fit=crop',
+    photo: 'https://images.unsplash.com/photo-zntOhVDyWog?w=600&q=75&fit=crop',
     coords: { lat: -42.07, lon: -71.63 },
     unesco: false,
   },
@@ -94,7 +93,7 @@ const NATIONAL_PARKS = [
     area_km2: 710,
     highlights: '6961 m · Ruta Normal · Valle de los Horcones',
     size: '96 MB',
-    photo: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=600&q=75&fit=crop',
+    photo: 'https://images.unsplash.com/photo-Wjc8_-qVlPw?w=600&q=75&fit=crop',
     coords: { lat: -32.65, lon: -70.01 },
     unesco: false,
   },
@@ -130,7 +129,7 @@ const NATIONAL_PARKS = [
     area_km2: 1720,
     highlights: 'UNESCO · 7 colores · Tilcara · Purmamarca',
     size: '64 MB',
-    photo: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=600&q=75&fit=crop',
+    photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&h=400&s=1',
     coords: { lat: -23.2, lon: -65.35 },
     unesco: true,
   },
@@ -154,17 +153,25 @@ const NATIONAL_PARKS = [
     area_km2: 340,
     highlights: 'Los Gigantes · Champaquí · La Ventana',
     size: '55 MB',
-    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=75&fit=crop',
+    photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/c3/f4/d9/el-paso-por-un-lugar.jpg?w=700&h=400&s=1',
     coords: { lat: -31.4, lon: -64.6 },
     unesco: false,
   },
 ];
 
 // ─── Download card ────────────────────────────────────────────────────────────
-function DownloadCard({ park, c }: { park: typeof NATIONAL_PARKS[0]; c: any }) {
+function DownloadCard({
+  park, c, onViewMap,
+}: {
+  park: typeof NATIONAL_PARKS[0];
+  c: any;
+  onViewMap?: (lat: number, lon: number) => void;
+}) {
   const [state, setState] = useState<DlState>('idle');
   const [saved, setSaved] = useState(false);
   const progress = useRef(new Animated.Value(0)).current;
+  const { width } = useWindowDimensions();
+  const isNarrow = width < 400;
 
   React.useEffect(() => {
     isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
@@ -186,15 +193,24 @@ function DownloadCard({ park, c }: { park: typeof NATIONAL_PARKS[0]; c: any }) {
     }
   }
 
+  function handleViewOffline() {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.open(`/parques.html?lat=${park.coords.lat}&lng=${park.coords.lon}&zoom=10`, '_blank');
+    } else if (onViewMap) {
+      onViewMap(park.coords.lat, park.coords.lon);
+    }
+  }
+
   const progressWidth = progress.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
 
   return (
-    <View style={[dlS.card, { borderColor: c.border }]}>
-      <View style={[dlS.photo, { backgroundColor: c.elevated }]}>
-        {Platform.OS === 'web' && (
+    <View style={[dlS.card, { borderColor: c.border, backgroundColor: c.elevated }]}>
+      {/* Photo */}
+      <View style={[dlS.photo, { backgroundColor: c.surface }]}>
+        {Platform.OS === 'web' ? (
           // @ts-ignore
           <img src={park.photo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={park.name} loading="lazy" />
-        )}
+        ) : null}
         <View style={dlS.photoOverlay} />
         <View style={dlS.sizeBadge}>
           <Text style={dlS.sizeTxt}>{park.size}</Text>
@@ -205,112 +221,143 @@ function DownloadCard({ park, c }: { park: typeof NATIONAL_PARKS[0]; c: any }) {
           </View>
         )}
       </View>
-      <View style={[dlS.body, { backgroundColor: c.elevated }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={[dlS.name, { color: c.text }]}>{park.name}</Text>
-          <Text style={[dlS.area, { color: c.muted }]} numberOfLines={1}>{park.highlights}</Text>
-          <Text style={[dlS.region, { color: c.muted }]}>{park.province} · {park.region}</Text>
-        </View>
+
+      {/* Body */}
+      <View style={dlS.body}>
+        <Text style={[dlS.name, { color: c.text }]} numberOfLines={1}>{park.name}</Text>
+        <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
+        <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
+
         {state === 'downloading' && (
           <View style={[dlS.progressTrack, { backgroundColor: c.border }]}>
             <Animated.View style={[dlS.progressFill, { width: progressWidth }]} />
           </View>
         )}
-        <View style={dlS.btnRow}>
-          {saved ? (
-            <TouchableOpacity
-              style={[dlS.btn, dlS.btnDone]}
-              onPress={() => {
-                // Open offline map for this park
-                if (Platform.OS === 'web' && typeof window !== 'undefined') {
-                  window.open(`/parques.html?lat=${park.coords.lat}&lng=${park.coords.lon}&zoom=10`, '_blank');
-                }
-              }}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="map" size={13} color="#fff" />
-              <Text style={[dlS.btnTxt, { color: '#fff' }]}>Ver guardado offline</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={[dlS.btn, state === 'downloading' && dlS.btnDl]}
-              onPress={handleDownload}
-              activeOpacity={0.8}
-            >
-              <Ionicons
-                name={state === 'downloading' ? 'cloud-download-outline' : 'download-outline'}
-                size={13}
-                color={state === 'downloading' ? '#64748b' : '#fff'}
-              />
-              <Text style={[dlS.btnTxt, state === 'downloading' ? { color: '#64748b' } : { color: '#fff' }]}>
-                {state === 'downloading' ? 'Descargando…' : 'Guardar offline'}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
+
+        {/* Action button — always visible */}
+        {saved ? (
+          <TouchableOpacity style={[dlS.btn, dlS.btnSaved]} onPress={handleViewOffline} activeOpacity={0.8}>
+            <Ionicons name="map" size={13} color="#fff" />
+            <Text style={dlS.btnTxtWhite}>Ver guardado offline</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[dlS.btn, state === 'downloading' ? dlS.btnLoading : dlS.btnDownload]}
+            onPress={handleDownload}
+            activeOpacity={0.8}
+            disabled={state === 'downloading'}
+          >
+            <Ionicons
+              name={state === 'downloading' ? 'cloud-download-outline' : 'download-outline'}
+              size={13}
+              color={state === 'downloading' ? '#64748b' : '#fff'}
+            />
+            <Text style={[dlS.btnTxt, { color: state === 'downloading' ? '#64748b' : '#fff' }]}>
+              {state === 'downloading' ? 'Descargando…' : 'Guardar offline'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 }
 
 const dlS = StyleSheet.create({
-  card: { borderRadius: 18, borderWidth: 1, overflow: 'hidden', marginBottom: 10, flexDirection: 'row', height: 120 },
-  photo: { width: 120, position: 'relative' },
+  card: {
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+    marginBottom: 12,
+    flexDirection: 'row',
+    minHeight: 130,
+  },
+  photo: { width: 110, flexShrink: 0, position: 'relative' },
   photoOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.15)' },
-  sizeBadge: { position: 'absolute', top: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  sizeBadge: {
+    position: 'absolute', top: 8, left: 8,
+    backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
   sizeTxt: { color: '#fff', fontSize: 9, fontWeight: '700' },
-  unescoBadge: { position: 'absolute', bottom: 8, left: 8, backgroundColor: '#16a34a', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  unescoBadge: {
+    position: 'absolute', bottom: 8, left: 8,
+    backgroundColor: '#16a34a', borderRadius: 6,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
   unescoTxt: { color: '#fff', fontSize: 9, fontWeight: '700' },
-  body: { flex: 1, padding: 12, gap: 6, justifyContent: 'space-between' },
-  name: { fontSize: 14, fontWeight: '700' },
-  area: { fontSize: 12, lineHeight: 16 },
-  region: { fontSize: 11 },
-  progressTrack: { height: 2, borderRadius: 1, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 1 },
-  btnRow: { flexDirection: 'row', gap: 6, alignItems: 'center' },
-  btn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#16a34a', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
-  btnDone: { backgroundColor: '#22c55e' },
-  btnDl: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#64748b' },
+  body: { flex: 1, padding: 12, gap: 4, justifyContent: 'space-between' },
+  name: { fontSize: 14, fontWeight: '700', lineHeight: 18 },
+  highlights: { fontSize: 12, lineHeight: 16 },
+  meta: { fontSize: 11 },
+  progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
+  btn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7,
+    alignSelf: 'flex-start',
+  },
+  btnDownload: { backgroundColor: '#16a34a' },
+  btnSaved: { backgroundColor: '#22c55e' },
+  btnLoading: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#64748b' },
   btnTxt: { fontSize: 12, fontWeight: '600' },
+  btnTxtWhite: { fontSize: 12, fontWeight: '600', color: '#fff' },
 });
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
+  const [downloadOpen, setDownloadOpen] = useState(false);
+  const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
     : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
 
+  function handleViewMap(lat: number, lon: number) {
+    setFlyTo({ lat, lon });
+    setDownloadOpen(false);
+  }
+
   // ── Native: full-screen map with Download FAB ─────────────────────────────
   if (Platform.OS !== 'web') {
     const { MapLeaflet } = require('../../src/components/map/MapLeaflet');
-    const [downloadOpen, setDownloadOpen] = useState(false);
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <MapLeaflet center={[-40.5, -68.0]} zoom={4} height="100%" layer="argenmap" />
+        <MapLeaflet
+          center={flyTo ? [flyTo.lat, flyTo.lon] : [-40.5, -68.0]}
+          zoom={flyTo ? 10 : 4}
+          flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 10 } : null}
+          height="100%"
+          layer="argenmap"
+        />
         <SafeAreaView edges={['bottom']} style={{ position: 'absolute', bottom: 0, right: 16 }}>
           <TouchableOpacity
-            style={{ backgroundColor: '#16a34a', borderRadius: 28, width: 56, height: 56, alignItems: 'center', justifyContent: 'center', marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }}
+            style={nS.fab}
             onPress={() => setDownloadOpen(true)}
           >
             <Ionicons name="download-outline" size={24} color="#fff" />
           </TouchableOpacity>
         </SafeAreaView>
+
         <Modal visible={downloadOpen} animationType="slide" transparent onRequestClose={() => setDownloadOpen(false)}>
-          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-            <View style={{ backgroundColor: c.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '85%', padding: 20 }}>
-              <View style={{ width: 40, height: 4, backgroundColor: c.border, borderRadius: 2, alignSelf: 'center', marginBottom: 16 }} />
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                <Text style={{ color: c.text, fontSize: 18, fontWeight: '800' }}>Mapas sin conexión</Text>
-                <TouchableOpacity onPress={() => setDownloadOpen(false)}>
+          <View style={nS.modalBackdrop}>
+            <View style={[nS.sheet, { backgroundColor: c.surface }]}>
+              {/* Handle */}
+              <View style={[nS.handle, { backgroundColor: c.border }]} />
+              {/* Header */}
+              <View style={nS.sheetHeader}>
+                <Text style={[nS.sheetTitle, { color: c.text }]}>Mapas sin conexión</Text>
+                <TouchableOpacity onPress={() => setDownloadOpen(false)} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
                   <Ionicons name="close" size={22} color={c.muted} />
                 </TouchableOpacity>
               </View>
-              <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={[nS.sheetSub, { color: c.muted }]}>
+                Descargá y accedé a los mapas sin señal.
+              </Text>
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
                 {NATIONAL_PARKS.map((park) => (
-                  <DownloadCard key={park.id} park={park} c={c} />
+                  <DownloadCard key={park.id} park={park} c={c} onViewMap={handleViewMap} />
                 ))}
               </ScrollView>
             </View>
@@ -323,7 +370,6 @@ export default function MapasScreen() {
   // ── Web: iframe map + offline downloads ──────────────────────────────────
   return (
     <ScrollView style={[s.root, { backgroundColor: c.bg }]} showsVerticalScrollIndicator={false}>
-      {/* Map header */}
       <View style={[s.mapHeader, { borderBottomColor: c.border, backgroundColor: c.surface }]}>
         <View style={s.mapHeaderInner}>
           <View>
@@ -339,7 +385,6 @@ export default function MapasScreen() {
         </View>
       </View>
 
-      {/* Fullscreen iframe map */}
       <View style={s.iframeWrapper}>
         {/* @ts-ignore */}
         <iframe
@@ -350,13 +395,12 @@ export default function MapasScreen() {
         />
       </View>
 
-      {/* Offline downloads */}
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>
           <Text style={[s.eyebrow, { color: c.muted }]}>CENTRO DE DESCARGAS</Text>
           <Text style={[s.sectionTitle, { color: c.text }]}>Mapas para llevar sin señal</Text>
           <Text style={[s.sectionSub, { color: c.muted }]}>
-            Guardá la cartografía de cada parque en tu dispositivo. Disponibles sin conexión a internet.
+            Guardá la cartografía de cada parque. Disponibles sin conexión — tocá "Ver guardado offline" para abrirlo.
           </Text>
         </View>
         <View style={s.dlGrid}>
@@ -370,6 +414,23 @@ export default function MapasScreen() {
     </ScrollView>
   );
 }
+
+const nS = StyleSheet.create({
+  fab: {
+    backgroundColor: '#16a34a', borderRadius: 28,
+    width: 56, height: 56,
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 16,
+    shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 4 },
+    elevation: 8,
+  },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
+  sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '88%', paddingHorizontal: 16, paddingTop: 12 },
+  handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+  sheetTitle: { fontSize: 18, fontWeight: '800' },
+  sheetSub: { fontSize: 13, marginBottom: 16 },
+});
 
 const s = StyleSheet.create({
   root: { flex: 1 },
