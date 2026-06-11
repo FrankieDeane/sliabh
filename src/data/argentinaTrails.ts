@@ -43,7 +43,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 18, max: 22, unit: 'dias' },
     coordinates: { lat: -32.6532, lon: -70.0109 },
     photo_uri:
-      'https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-sMJaf08ugD0?w=800&q=80&fit=crop&auto=format',
     tags: ['cima', 'nieve', 'alta montaña', 'aclimatación'],
     permits_required: true,
     best_season: 'Dic – Feb',
@@ -66,7 +66,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 8, max: 10, unit: 'horas' },
     coordinates: { lat: -49.2713, lon: -72.9856 },
     photo_uri:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-Wjc8_-qVlPw?w=800&q=80&fit=crop&auto=format',
     tags: ['laguna', 'vistas', 'glaciar', 'icónico'],
     permits_required: false,
     best_season: 'Nov – Mar',
@@ -89,7 +89,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -49.3055, lon: -72.9614 },
     photo_uri:
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?w=800&q=80&fit=crop&auto=format',
     tags: ['laguna', 'glaciar', 'vistas', 'patagonia'],
     permits_required: false,
     best_season: 'Nov – Mar',
@@ -112,7 +112,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 6, max: 8, unit: 'horas' },
     coordinates: { lat: -41.1855, lon: -71.4499 },
     photo_uri:
-      'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
     tags: ['refugio', 'lago', 'escalada', 'bosque'],
     permits_required: false,
     best_season: 'Nov – Abr',
@@ -135,7 +135,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 6, max: 8, unit: 'horas' },
     coordinates: { lat: -41.0817, lon: -71.5133 },
     photo_uri:
-      'https://images.unsplash.com/photo-1548248823-ce16a73b6d49?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
     tags: ['vistas', 'lago Nahuel Huapi', 'refugio', 'panorama'],
     permits_required: false,
     best_season: 'Dic – Mar',
@@ -158,7 +158,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 7, max: 9, unit: 'horas' },
     coordinates: { lat: -41.3298, lon: -71.8879 },
     photo_uri:
-      'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1548508444-8dfaf1f2b8a3?w=800&q=80&fit=crop&auto=format',
     tags: ['glaciar', 'volcán', 'cascada', 'bosque nativo'],
     permits_required: false,
     best_season: 'Dic – Mar',
@@ -180,7 +180,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 2, max: 3, unit: 'dias' },
     coordinates: { lat: -39.6356, lon: -71.4999 },
     photo_uri:
-      'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
     tags: ['volcán', 'cima', 'nieve', 'crampones'],
     permits_required: true,
     best_season: 'Dic – Mar',
@@ -203,7 +203,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 2, max: 2, unit: 'dias' },
     coordinates: { lat: -31.9838, lon: -64.9292 },
     photo_uri:
-      'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&q=80&fit=crop&auto=format',
+      'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/de/ad/94/cerro-champaqui.jpg?w=800&h=600&s=1',
     tags: ['cumbre', 'serranías', 'pastizales', 'sierras grandes'],
     permits_required: false,
     best_season: 'Mar – Nov',
@@ -225,7 +225,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -31.3682, lon: -64.7397 },
     photo_uri:
-      'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&q=80&fit=crop&auto=format',
     tags: ['granito', 'escalada deportiva', 'vias clásicas', 'sierras'],
     permits_required: false,
     best_season: 'Abr – Oct',
@@ -247,7 +247,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -38.0722, lon: -62.0258 },
     photo_uri:
-      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1455156218388-5e61b526818b?w=800&q=80&fit=crop&auto=format',
     tags: ['ventana natural', 'sierra de la ventana', 'vistas pampa', 'sudoeste bonaerense'],
     permits_required: true,
     best_season: 'Todo el año',
@@ -269,7 +269,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 2, max: 3, unit: 'dias' },
     coordinates: { lat: -23.2055, lon: -65.3497 },
     photo_uri:
-      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80&fit=crop&auto=format',
+      'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&h=400&s=1',
     tags: ['patrimonio UNESCO', 'cerro de los 7 colores', 'puna', 'pueblos originarios'],
     permits_required: false,
     best_season: 'Abr – Oct',
@@ -292,7 +292,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     duration: { min: 4, max: 6, unit: 'horas' },
     coordinates: { lat: -49.1047, lon: -72.8422 },
     photo_uri:
-      'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop&auto=format',
+      'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=800&q=80&fit=crop&auto=format',
     tags: ['lago glaciar', 'bosque nativo', 'fauna', 'fácil'],
     permits_required: false,
     best_season: 'Nov – Mar',
@@ -333,7 +333,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 1300,
     duration: { min: 6, max: 9, unit: 'horas' },
     coordinates: { lat: -42.1523, lon: -71.6380 },
-    photo_uri: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80&fit=crop&auto=format',
+    photo_uri: 'https://images.unsplash.com/photo-zntOhVDyWog?w=800&q=80&fit=crop&auto=format',
     tags: ['lago glaciar', 'frontera Chile', 'bosque valdiviano', 'microclima'],
     permits_required: false,
     best_season: 'Oct – Abr',
@@ -373,7 +373,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 150,
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -54.8019, lon: -68.5471 },
-    photo_uri: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=800&q=80&fit=crop&auto=format',
+    photo_uri: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=800&q=80&fit=crop&auto=format',
     tags: ['fin del mundo', 'Canal Beagle', 'bosque subantártico', 'fauna marina'],
     permits_required: false,
     best_season: 'Nov – Mar',

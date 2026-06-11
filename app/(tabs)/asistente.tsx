@@ -23,6 +23,8 @@ import { loadPack } from '../../src/knowledge/KnowledgeLoader';
 import { useSettingsStore } from '../../src/store/settingsStore';
 import type { KnowledgePack } from '../../src/knowledge/types';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { WebLLMBanner } from '../../src/components/ui/WebLLMBanner';
+import { useWebLLM } from '../../src/ai/useWebLLM';
 
 const MAX_CONTENT = 800;
 
@@ -46,6 +48,7 @@ export default function AsistenteScreen() {
   const [pack, setPack] = useState<KnowledgePack | null>(null);
   const [aiReachable, setAiReachable] = useState<boolean | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const webllm = useWebLLM();
   const { width } = useWindowDimensions();
 
   const contentW = Math.min(width, MAX_CONTENT);
@@ -79,9 +82,15 @@ export default function AsistenteScreen() {
         .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
       const aiMessages = buildMessages(query, history, pack);
 
-      await generate(aiMessages, (chunk, done) => {
-        updateMessage(assistantId, chunk, done);
-      });
+      if (webllm.status === 'ready' && webllm.provider) {
+        await webllm.provider.generate(aiMessages, (chunk, done) => {
+          updateMessage(assistantId, chunk, done);
+        });
+      } else {
+        await generate(aiMessages, (chunk, done) => {
+          updateMessage(assistantId, chunk, done);
+        });
+      }
       setAiReachable(true);
     } catch (e: any) {
       const isWeb = Platform.OS === 'web';
@@ -126,6 +135,13 @@ export default function AsistenteScreen() {
         >
           {!hasMessages ? (
             <View style={styles.empty}>
+              <WebLLMBanner
+                status={webllm.status}
+                progress={webllm.progress}
+                progressText={webllm.progressText}
+                onLoad={webllm.load}
+                isDark={isDark}
+              />
               <View style={[styles.sparkleCircle, { backgroundColor: '#16a34a' }]}>
                 <Ionicons name="sparkles" size={28} color="#fff" />
               </View>

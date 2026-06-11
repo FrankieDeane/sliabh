@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -51,7 +51,7 @@ const FEATURED = [
     distance: '110 km',
     daysEs: '18–22 días',
     daysEn: '18–22 days',
-    uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
+    uri: 'https://images.unsplash.com/photo-Wjc8_-qVlPw?w=700&q=80&fit=crop&auto=format',
     routeId: 'aconcagua-ruta-normal',
   },
   {
@@ -71,7 +71,7 @@ const FEATURED = [
     distance: '20 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
+    uri: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=700&q=80&fit=crop&auto=format',
     routeId: 'tierra-del-fuego-costera',
   },
 ];
@@ -144,7 +144,7 @@ const PARK_SPOTS = [
     tagEn: 'UNESCO · World Heritage',
     descEs: 'Bosques de alerces milenarios de hasta 2600 años, lagos turquesa y ecosistemas únicos en la Patagonia andina de Chubut.',
     descEn: 'Ancient alerce forests up to 2600 years old, turquoise lakes and unique ecosystems in the Andean Patagonia of Chubut.',
-    photo: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://www.lanacion.com.ar/resizer/v2/la-excursion-al-alerzal-milenario-es-muy-PVCDPJR5VVAWJIT4FVKD2XDA54.jpg?auth=77db1e8c9c8c3c24e1a65dd27c2e91f50ba86b39a7f0e86ce5e57a8ff9e9a94a&width=800&height=600&quality=70&smart=true',
     trailId: 'alerces-cascada-arrayanes',
     province: 'Chubut',
     trails: 3,
@@ -157,7 +157,7 @@ const PARK_SPOTS = [
     tagEn: 'Unique microclimate · El Bolsón',
     descEs: 'El único lago de la Patagonia con salida al océano Pacífico. Vegetación valdiviana, arrayanes y las temperaturas más cálidas de la región.',
     descEn: 'The only lake in Patagonia that flows to the Pacific Ocean. Valdivian vegetation, arrayán trees and the warmest temperatures in the region.',
-    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80&fit=crop&auto=format',
+    photo: 'https://images.unsplash.com/photo-zntOhVDyWog?w=800&q=80&fit=crop&auto=format',
     trailId: 'lago-puelo-los-hitos',
     province: 'Chubut',
     trails: 2,
@@ -189,7 +189,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/rutas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80',
+    photo: 'https://images.unsplash.com/photo-8oYPewvmhnY?w=600&q=80',
     icon: 'map-outline' as const,
     titleEs: 'Mapas offline',
     titleEn: 'Offline maps',
@@ -198,7 +198,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/mapas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80',
+    photo: 'https://images.unsplash.com/photo-i9O9yB20_b0?w=600&q=80',
     icon: 'shield-checkmark-outline' as const,
     titleEs: 'Supervivencia',
     titleEn: 'Survival',
@@ -242,12 +242,27 @@ export default function InicioScreen() {
 
   const heroHeight = Platform.OS === 'web' ? undefined : 580;
 
+  const regionScrollRef = useRef<ScrollView>(null);
+
   useEffect(() => {
     injectWebStyles();
     animateHeroEntrance('[data-hero]');
     animateParallaxHero('[data-hero]');
     const timer = setTimeout(() => animateScrollReveal(), 300);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    let offset = 0;
+    const CARD_W_APPROX = 200 + 12;
+    const TOTAL = REGIONS.length * CARD_W_APPROX;
+    const interval = setInterval(() => {
+      offset += 1;
+      if (offset >= TOTAL / 2) offset = 0;
+      regionScrollRef.current?.scrollTo({ x: offset, animated: false });
+    }, 20);
+    return () => clearInterval(interval);
   }, []);
 
   const HERO_STATS = [
@@ -568,13 +583,15 @@ export default function InicioScreen() {
           </View>
 
           <ScrollView
+            ref={regionScrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
+            scrollEnabled={Platform.OS !== 'web'}
             contentContainerStyle={{ paddingHorizontal: sidePad, gap: 12, paddingBottom: 4 }}
           >
-            {REGIONS.map((region) => (
+            {[...REGIONS, ...REGIONS].map((region, idx) => (
               <TouchableOpacity
-                key={region.id}
+                key={`${region.id}-${idx}`}
                 style={styles.regionCard}
                 activeOpacity={0.88}
                 onPress={() =>
