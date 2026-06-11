@@ -293,22 +293,28 @@ export default function InicioScreen() {
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
             {Platform.OS === 'web' && (
-              // @ts-ignore
-              <iframe
-                src={`https://www.pixabay.com/videos/embed/${PIXABAY_EMBED_ID}/?autoplay=1&loop=1&muted=1&controls=0&title=0&byline=0&portrait=0`}
+              // @ts-ignore — real HTML5 video background (autoplay requires muted + playsInline)
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                poster={HERO_URI}
                 style={{
                   position: 'absolute',
                   top: '50%', left: '50%',
-                  width: '177.78vh', height: '56.25vw',
+                  width: '100%', height: '100%',
                   minWidth: '100%', minHeight: '100%',
+                  objectFit: 'cover',
                   transform: 'translate(-50%, -50%)',
                   border: 'none',
                   pointerEvents: 'none',
                 }}
-                allow="autoplay; fullscreen"
-                title="Hero background video"
                 data-hero-video
-              />
+              >
+                <source src={HERO_VIDEO_URL} type="video/mp4" />
+                <source src={HERO_VIDEO_FALLBACK} type="video/mp4" />
+              </video>
             )}
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
             <View style={styles.heroGradientBottom} />
