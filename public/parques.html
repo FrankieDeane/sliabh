@@ -268,7 +268,6 @@
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script>
     const parks = [
-      {name:'Parque Nacional Ansenuza',region:'Centro',lat:-30.66704,lng:-62.54672,province:'Córdoba',category:'Parque Nacional',year:'2022',surface:'661,416 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#8a6d3b'},
       {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},
       {name:'Parque Nacional Quebrada del Condorito',region:'Centro',lat:-31.69761,lng:-64.78331,province:'Córdoba',category:'Parque Nacional',year:'1996',surface:'35,396 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b'},
       {name:'Parque Nacional San Guillermo',region:'Centro',lat:-29.23817,lng:-69.26616,province:'San Juan',category:'Parque Nacional',year:'1999',surface:'166,000 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#8a6d3b'},
@@ -874,27 +873,28 @@ ${trkpts}
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
 
+    function showTrailLayer() {
+      trailLayerVisible = true;
+      toggleBtn.classList.add('active');
+      map.addLayer(trailCluster);
+      trailPolylines.forEach(p => map.addLayer(p));
+      toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche — VISIBLES (${barilocheTrails.length} senderos)`;
+    }
+
+    function hideTrailLayer() {
+      trailLayerVisible = false;
+      toggleBtn.classList.remove('active');
+      map.removeLayer(trailCluster);
+      trailPolylines.forEach(p => map.removeLayer(p));
+      toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche (barilochetrekking.com)`;
+    }
+
     toggleBtn.addEventListener('click', () => {
-      trailLayerVisible = !trailLayerVisible;
-      toggleBtn.classList.toggle('active', trailLayerVisible);
-      if (trailLayerVisible) {
-        map.addLayer(trailCluster);
-        trailPolylines.forEach(p => map.addLayer(p));
-        // Fly to Bariloche area
-        map.flyTo([-41.15, -71.50], 10, { duration: 1.2 });
-        toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche — VISIBLES (${barilocheTrails.length} senderos)`;
-      } else {
-        map.removeLayer(trailCluster);
-        trailPolylines.forEach(p => map.removeLayer(p));
-        toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche (barilochetrekking.com)`;
-      }
+      if (trailLayerVisible) hideTrailLayer(); else showTrailLayer();
     });
 
-    // Auto-activate if URL param present
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('trails') === 'bariloche') {
-      setTimeout(() => toggleBtn.click(), 600);
-    }
+    // Show Bariloche trails by default on load
+    setTimeout(() => showTrailLayer(), 800);
   </script>
 </body>
 </html>
