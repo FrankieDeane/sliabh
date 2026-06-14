@@ -118,6 +118,12 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
               {trail.activity.replace('_', ' ')}
             </Text>
           </View>
+          {(trail as any).source === 'barilochetrekking.com' && (
+            <View style={styles.gpxBadge}>
+              <Ionicons name="navigate-outline" size={9} color="#93c5fd" />
+              <Text style={styles.gpxBadgeText}>GPX</Text>
+            </View>
+          )}
           {trail.best_season && (
             <Text style={[styles.seasonText, { color: c.muted }]}>{trail.best_season}</Text>
           )}
@@ -308,5 +314,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'capitalize' as const,
   },
+  gpxBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(59,130,246,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(59,130,246,0.35)',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  gpxBadgeText: { fontSize: 9, fontWeight: '800', color: '#93c5fd', letterSpacing: 0.5 },
   seasonText: { fontSize: 10 },
 });

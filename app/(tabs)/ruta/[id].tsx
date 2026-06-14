@@ -18,9 +18,13 @@ import {
   DIFFICULTY_LABEL,
   DIFFICULTY_COLOR,
 } from '../../../src/data/argentinaTrails';
+import { BARILOCHE_TRAILS } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
+import { downloadGpx } from '../../../src/utils/gpx';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
+
+const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 
 // ─── Theme context (avoids prop-drilling through all sub-components) ──────────
 type ThemeColors = { bg: string; surface: string; elevated: string; border: string; text: string; muted: string; accent: string };
@@ -431,7 +435,7 @@ export default function TrailDetailScreen() {
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
-  const trail = ARGENTINA_TRAILS.find((tr) => tr.id === id);
+  const trail = ALL_TRAILS.find((tr) => tr.id === id);
 
   const MAX_CONTENT = 800;
   const sidePad = Math.max(16, (width - Math.min(width, MAX_CONTENT)) / 2);
@@ -791,6 +795,119 @@ function VideoSection({
   );
 }
 
+function DownloadRow({
+  trail,
+  t,
+}: {
+  trail: (typeof ARGENTINA_TRAILS)[0] & { gpxTrack?: Array<{ lat: number; lon: number; ele?: number }>; long_description?: string; parking?: string; access_notes?: string; water_sources?: string; refugio?: string; namedWaypoints?: Array<{ lat: number; lon: number; name: string; description: string }> };
+  t: (es: string, en: string) => string;
+}) {
+  const C = useC();
+  const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
+  const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
+
+  async function handlePdf() {
+    if (pdfState === 'working') return;
+    setPdfState('working');
+    try {
+      const { generateTrailPDF } = await import('../../../src/utils/trailPdf');
+      await generateTrailPDF({
+        id: trail.id,
+        name: trail.name,
+        province: trail.province,
+        area: trail.area,
+        difficulty: trail.difficulty,
+        activity: trail.activity,
+        distance_km: trail.distance_km,
+        elevation_gain_m: trail.elevation_gain_m,
+        max_altitude_m: trail.max_altitude_m,
+        duration: trail.duration,
+        coords: { lat: trail.coordinates.lat, lon: trail.coordinates.lon },
+        description: trail.description,
+        long_description: (trail as any).long_description,
+        trailhead: trail.trailhead,
+        best_season: trail.best_season,
+        permits_required: trail.permits_required,
+        tags: trail.tags,
+        namedWaypoints: (trail as any).namedWaypoints,
+        parking: (trail as any).parking,
+        access_notes: (trail as any).access_notes,
+        water_sources: (trail as any).water_sources,
+        refugio: (trail as any).refugio,
+      });
+    } catch {
+      // swallow — user can retry
+    } finally {
+      setPdfState('idle');
+    }
+  }
+
+  function handleGpx() {
+    const gpxPoints = (trail as any).gpxTrack
+      ? (trail as any).gpxTrack.map((p: any) => ({ lat: p.lat, lon: p.lon, ele: p.ele, name: '' }))
+      : [{ lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead }];
+
+    const ok = downloadGpx(trail.name, gpxPoints, trail.description);
+    if (ok) {
+      setGpxState('done');
+      setTimeout(() => setGpxState('idle'), 2500);
+    }
+  }
+
+  if (Platform.OS !== 'web') return null;
+
+  return (
+    <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>
+      <View style={{ flex: 1 }}>
+        <Text style={[dlRowS.label, { color: C.muted }]}>{t('DESCARGAS OFFLINE', 'OFFLINE DOWNLOADS')}</Text>
+        <Text style={[dlRowS.sub, { color: C.text }]}>{t('Guardá la ruta en tu dispositivo', 'Save the route to your device')}</Text>
+      </View>
+      <View style={dlRowS.btns}>
+        <TouchableOpacity
+          style={[dlRowS.btn, dlRowS.btnBlue]}
+          onPress={handleGpx}
+          activeOpacity={0.8}
+        >
+          <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
+          <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[dlRowS.btn, dlRowS.btnGreen]}
+          onPress={handlePdf}
+          activeOpacity={0.8}
+          disabled={pdfState === 'working'}
+        >
+          <Ionicons name={pdfState === 'working' ? 'cloud-download-outline' : 'document-text-outline'} size={14} color="#86efac" />
+          <Text style={dlRowS.btnTxtGreen}>{pdfState === 'working' ? t('Generando…', 'Generating…') : 'PDF'}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const dlRowS = StyleSheet.create({
+  row: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  label: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
+  sub: { fontSize: 13, fontWeight: '600' },
+  btns: { flexDirection: 'row', gap: 8 },
+  btn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8,
+    borderWidth: 1,
+  },
+  btnBlue: { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' },
+  btnGreen: { backgroundColor: '#14532d', borderColor: '#22c55e' },
+  btnTxtBlue: { fontSize: 13, fontWeight: '700', color: '#93c5fd' },
+  btnTxtGreen: { fontSize: 13, fontWeight: '700', color: '#86efac' },
+});
+
 function OverviewTab({
   trail,
   lang,
@@ -803,6 +920,8 @@ function OverviewTab({
   const C = useC();
   return (
     <View style={styles.tabContent}>
+      <DownloadRow trail={trail as any} t={t} />
+
       <SectionCard>
         <CardLabel text={t('Perfil de elevación', 'Elevation Profile')} />
         <ElevationProfile
