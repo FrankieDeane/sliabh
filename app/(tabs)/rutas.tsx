@@ -19,6 +19,9 @@ import {
   filterByRegion,
   type TrailRegion,
 } from '../../src/data/argentinaTrails';
+import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
+
+const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { MapLeaflet } from '../../src/components/map/MapLeaflet';
@@ -74,7 +77,7 @@ export default function RutasScreen() {
         muted: '#64748b',
       };
 
-  const filtered = useMemo(() => filterByRegion(ARGENTINA_TRAILS, region), [region]);
+  const filtered = useMemo(() => filterByRegion(ALL_TRAILS, region), [region]);
   const [featured, ...rest] = filtered;
 
   const contentW = Math.min(width, MAX_CONTENT);
