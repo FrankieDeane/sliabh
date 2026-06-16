@@ -3,30 +3,24 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions } 
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
+import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 
 const MAX_CONTENT = 1200;
 
 const REGION_LINKS = [
-  { label: 'Patagonia Sur', region: 'Patagonia Sur' },
-  { label: 'Patagonia Norte', region: 'Patagonia Norte' },
-  { label: 'Cuyo & Aconcagua', region: 'Cuyo' },
-  { label: 'Norte (NOA)', region: 'Norte' },
-  { label: 'Sierras Centrales', region: 'Sierras Centrales' },
-  { label: 'Litoral', region: 'Litoral' },
+  { labelEs: 'Patagonia Sur', labelEn: 'Patagonia Sur', region: 'Patagonia Sur' },
+  { labelEs: 'Patagonia Norte', labelEn: 'Patagonia Norte', region: 'Patagonia Norte' },
+  { labelEs: 'Cuyo & Aconcagua', labelEn: 'Cuyo & Aconcagua', region: 'Cuyo' },
+  { labelEs: 'Norte (NOA)', labelEn: 'North (NOA)', region: 'Norte' },
+  { labelEs: 'Sierras Centrales', labelEn: 'Central Ranges', region: 'Sierras Centrales' },
+  { labelEs: 'Litoral', labelEn: 'Litoral', region: 'Litoral' },
 ];
-
-const PREPARAR_LINKS = [
-  { label: 'Mapas offline', href: '/(tabs)/mapas' as const },
-  { label: 'Planificar ruta', href: '/(tabs)/planificar' as const },
-  { label: 'Asistente IA', href: '/(tabs)/asistente' as const },
-  { label: 'Contribuir', href: '/(tabs)/contribuir' as const },
-];
-
 
 export function WebFooter() {
   const router = useRouter();
   const { theme } = useThemeStore();
+  const { t } = useLangStore();
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
 
@@ -53,7 +47,10 @@ export function WebFooter() {
               </View>
             </TouchableOpacity>
             <Text style={[styles.tagline, { color: c.muted }]}>
-              La plataforma de senderismo{'\n'}para explorar Argentina.{'\n'}Funciona con y sin señal.
+              {t(
+                'La plataforma de senderismo\npara explorar Argentina.\nFunciona con y sin señal.',
+                'The hiking platform\nto explore Argentina.\nWorks online and offline.',
+              )}
             </Text>
             <View style={[styles.emergencyBadge, { borderColor: c.border }]}>
               <Ionicons name="call-outline" size={12} color="#ef4444" />
@@ -63,10 +60,10 @@ export function WebFooter() {
 
           {/* Explorar column */}
           <View style={styles.navCol}>
-            <Text style={[styles.navTitle, { color: c.muted }]}>EXPLORAR</Text>
+            <Text style={[styles.navTitle, { color: c.muted }]}>{t('EXPLORAR', 'EXPLORE')}</Text>
             <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/rutas')} activeOpacity={0.7}>
               <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-              <Text style={[styles.navLabel, { color: c.muted }]}>Todas las rutas</Text>
+              <Text style={[styles.navLabel, { color: c.muted }]}>{t('Todas las rutas', 'All trails')}</Text>
             </TouchableOpacity>
             {REGION_LINKS.map((r) => (
               <TouchableOpacity
@@ -76,24 +73,30 @@ export function WebFooter() {
                 activeOpacity={0.7}
               >
                 <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-                <Text style={[styles.navLabel, { color: c.muted }]}>{r.label}</Text>
+                <Text style={[styles.navLabel, { color: c.muted }]}>{t(r.labelEs, r.labelEn)}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Preparar column */}
+          {/* Preparar / Prepare column */}
           <View style={styles.navCol}>
-            <Text style={[styles.navTitle, { color: c.muted }]}>PREPARAR</Text>
-            {PREPARAR_LINKS.map((n) => (
-              <TouchableOpacity key={n.label} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
+            <Text style={[styles.navTitle, { color: c.muted }]}>{t('PREPARAR', 'PREPARE')}</Text>
+            {([
+              { labelEs: 'Mapas offline', labelEn: 'Offline maps', href: '/(tabs)/mapas' as const },
+              { labelEs: 'Planificar ruta', labelEn: 'Plan a route', href: '/(tabs)/planificar' as const },
+              { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const },
+              { labelEs: 'Contribuir', labelEn: 'Contribute', href: '/(tabs)/contribuir' as const },
+            ]).map((n) => (
+              <TouchableOpacity key={n.labelEs} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
                 <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-                <Text style={[styles.navLabel, { color: c.muted }]}>{n.label}</Text>
+                <Text style={[styles.navLabel, { color: c.muted }]}>{t(n.labelEs, n.labelEn)}</Text>
               </TouchableOpacity>
             ))}
             <View style={[styles.infoCard, { backgroundColor: c.surface, borderColor: c.border }]}>
               <Text style={[styles.infoCardTxt, { color: c.muted }]}>
-                <Text style={{ color: '#22c55e', fontStyle: 'italic' }}>Sliabh</Text> es gaélico para{' '}
-                <Text style={{ color: '#22c55e' }}>"montaña"</Text>.
+                <Text style={{ color: '#22c55e', fontStyle: 'italic' }}>Sliabh</Text>{' '}
+                {t('es gaélico para', 'is Irish for')}{' '}
+                <Text style={{ color: '#22c55e' }}>{t('"montaña"', '"mountain"')}</Text>.
               </Text>
             </View>
           </View>
@@ -108,7 +111,7 @@ export function WebFooter() {
           </Text>
           <View style={styles.copyRight}>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />
-            <Text style={[styles.copySmall, { color: c.muted }]}>Hecho para exploradores de montaña</Text>
+            <Text style={[styles.copySmall, { color: c.muted }]}>{t('Hecho para exploradores de montaña', 'Made for mountain explorers')}</Text>
           </View>
         </View>
       </View>
