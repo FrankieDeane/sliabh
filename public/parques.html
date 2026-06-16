@@ -895,6 +895,40 @@ ${trkpts}
 
     // Show Bariloche trails by default on load
     setTimeout(() => showTrailLayer(), 800);
+
+    // ── Fly to coordinates from URL params (e.g. ?lat=-41.1&lng=-71.5&zoom=10) ──
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const lat = parseFloat(params.get('lat') || '');
+      const lng = parseFloat(params.get('lng') || '');
+      const zoom = parseInt(params.get('zoom') || '10', 10);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setTimeout(() => map.flyTo([lat, lng], zoom, { duration: 1.0 }), 600);
+        // Highlight the closest park in the panel
+        const closest = parks.reduce((best, p) => {
+          const d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
+          const bd = Math.abs(best.lat - lat) + Math.abs(best.lng - lng);
+          return d < bd ? p : best;
+        }, parks[0]);
+        if (closest) setTimeout(() => renderPanel(closest), 700);
+      }
+    })();
+
+    // ── Accept postMessage to fly to precise coordinates ───────────────────────
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'flyTo') return;
+      const { lat, lng, zoom } = e.data;
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        map.flyTo([lat, lng], zoom || 11, { duration: 1.0 });
+        // Find and render the closest park
+        const closest = parks.reduce((best, p) => {
+          const d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
+          const bd = Math.abs(best.lat - lat) + Math.abs(best.lng - lng);
+          return d < bd ? p : best;
+        }, parks[0]);
+        if (closest) renderPanel(closest);
+      }
+    });
   </script>
 </body>
 </html>

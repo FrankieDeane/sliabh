@@ -9,6 +9,7 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
+import { downloadGpx } from '../../src/utils/gpx';
 
 type DlState = 'idle' | 'downloading' | 'done';
 
@@ -411,13 +412,15 @@ const NATIONAL_PARKS = [
 
 // ─── Download card ────────────────────────────────────────────────────────────
 function DownloadCard({
-  park, c, onViewMap,
+  park, c, onViewMap, iframeRef,
 }: {
   park: typeof NATIONAL_PARKS[0];
   c: any;
   onViewMap?: (lat: number, lon: number) => void;
+  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
 }) {
   const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
+  const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
   const { width } = useWindowDimensions();
   const isNarrow = width < 400;
 
@@ -434,9 +437,29 @@ function DownloadCard({
 
   function handleViewMap() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      window.open(`/parques.html?lat=${park.coords.lat}&lng=${park.coords.lon}&zoom=10`, '_blank');
+      // Send postMessage to the embedded iframe — no new tab
+      if (iframeRef?.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          { type: 'flyTo', lat: park.coords.lat, lng: park.coords.lon, zoom: 11 },
+          '*',
+        );
+        // Scroll the iframe into view
+        iframeRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     } else if (onViewMap) {
       onViewMap(park.coords.lat, park.coords.lon);
+    }
+  }
+
+  function handleGpx() {
+    const ok = downloadGpx(
+      park.name,
+      [{ lat: park.coords.lat, lon: park.coords.lon, name: park.name }],
+      `${park.name} — ${park.province} · ${park.region}. ${park.highlights}`,
+    );
+    if (ok) {
+      setGpxState('done');
+      setTimeout(() => setGpxState('idle'), 2500);
     }
   }
 
@@ -492,12 +515,24 @@ function DownloadCard({
           </View>
         )}
 
-        {/* Two actions: open interactive map + download PDF */}
+        {/* Three actions: view map, GPX for GPS apps, PDF */}
         <View style={dlS.btnRow}>
           <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
             <Ionicons name="map-outline" size={13} color="#16a34a" />
             <Text style={[dlS.btnTxt, { color: '#16a34a' }]}>Ver mapa</Text>
           </TouchableOpacity>
+          {Platform.OS === 'web' && (
+            <TouchableOpacity style={[dlS.btn, dlS.btnGpx]} onPress={handleGpx} activeOpacity={0.8}>
+              <Ionicons
+                name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'}
+                size={13}
+                color="#93c5fd"
+              />
+              <Text style={[dlS.btnTxt, { color: '#93c5fd' }]}>
+                {gpxState === 'done' ? 'GPX listo' : 'GPX / OsmAnd'}
+              </Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={[dlS.btn, dlS.btnDownload]}
             onPress={handlePdf}
@@ -510,7 +545,7 @@ function DownloadCard({
               color="#fff"
             />
             <Text style={dlS.btnTxtWhite}>
-              {pdfState === 'working' ? 'Generando…' : 'Descargar PDF'}
+              {pdfState === 'working' ? 'Generando…' : 'PDF'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -555,6 +590,7 @@ const dlS = StyleSheet.create({
   },
   btnDownload: { backgroundColor: '#16a34a' },
   btnView: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#16a34a' },
+  btnGpx: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#3b82f6' },
   btnTxt: { fontSize: 12, fontWeight: '600' },
   btnTxtWhite: { fontSize: 12, fontWeight: '600', color: '#fff' },
 });
@@ -565,6 +601,7 @@ export default function MapasScreen() {
   const { isOffline } = useNetwork();
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -644,6 +681,7 @@ export default function MapasScreen() {
       <View style={s.iframeWrapper}>
         {/* @ts-ignore */}
         <iframe
+          ref={iframeRef as any}
           src="/parques.html"
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Mapa de Parques Nacionales de Argentina"
@@ -661,7 +699,7 @@ export default function MapasScreen() {
         </View>
         <View style={s.dlGrid}>
           {NATIONAL_PARKS.map((park) => (
-            <DownloadCard key={park.id} park={park} c={c} />
+            <DownloadCard key={park.id} park={park} c={c} iframeRef={iframeRef} />
           ))}
         </View>
       </View>
