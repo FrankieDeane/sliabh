@@ -1008,7 +1008,122 @@ function OverviewTab({
       )}
 
       <VideoSection trailId={trail.id} t={t} />
+
+      {trail.id === 'tierra-del-fuego-costera' && (
+        <PeninsulaMitreSection t={t} lang={lang} />
+      )}
     </View>
+  );
+}
+
+function PeninsulaMitreSection({
+  t,
+  lang,
+}: {
+  t: (es: string, en: string) => string;
+  lang: 'es' | 'en';
+}) {
+  const C = useC();
+
+  const chips = lang === 'es'
+    ? ['70 km aprox.', '7–14 días', 'Dificultad alta', 'Sin senderos marcados']
+    : ['70 km approx.', '7–14 days', 'High difficulty', 'No marked trails'];
+
+  const keyStats = [
+    { k: t('Inicio', 'Start'), v: 'Estancia Moat' },
+    { k: t('Final', 'End'), v: 'Bahía Sloggett / Puerto Español' },
+    { k: t('Terreno', 'Terrain'), v: t('Costa, turba, bosque', 'Coast, peat bog, forest') },
+    { k: t('Época', 'Season'), v: t('Nov–Abr', 'Nov–Apr') },
+  ];
+
+  const stages = lang === 'es' ? [
+    { day: 'Día 1', text: 'Traslado a Moat, trekking por el Canal Beagle y campamento en Casa Vieja.' },
+    { day: 'Día 2', text: 'Senderos altos hasta Cabo San Pío y campamento en Puesto Ibarra.' },
+    { day: 'Día 3', text: 'Llegada a Bahía Sloggett, con draga de oro histórica y campamento cercano.' },
+    { day: 'Día 4', text: 'Vadeo del Río López y llegada a Playa Dorada.' },
+    { day: 'Día 5', text: 'Avance hacia Playa Paraíso y campamento previo al tramo final.' },
+    { day: 'Día 6', text: 'Cuevas de Gardinier, Río Bonpland, Bahía Aguirre y Puerto Español.' },
+    { day: 'Días 7–8', text: 'Descanso o espera logística en Puerto Español.' },
+    { day: 'Día 9', text: 'Regreso en velero a Ushuaia por el Canal Beagle.' },
+  ] : [
+    { day: 'Day 1', text: 'Transfer to Moat, trekking along the Beagle Channel and camp at Casa Vieja.' },
+    { day: 'Day 2', text: 'High ridge trail to Cabo San Pío and camp at Puesto Ibarra.' },
+    { day: 'Day 3', text: 'Arrival at Bahía Sloggett, historic gold dredge and nearby camp.' },
+    { day: 'Day 4', text: 'Ford of Río López and arrival at Playa Dorada.' },
+    { day: 'Day 5', text: 'Advance to Playa Paraíso and camp before the final stretch.' },
+    { day: 'Day 6', text: 'Gardinier caves, Río Bonpland, Bahía Aguirre and Puerto Español.' },
+    { day: 'Days 7–8', text: 'Rest or logistics wait at Puerto Español.' },
+    { day: 'Day 9', text: 'Return by sailboat to Ushuaia along the Beagle Channel.' },
+  ];
+
+  const descriptionEs = 'Península Mitre ofrece una experiencia de hiking de expedición, remota y exigente. La costa sur es la travesía más conocida: combina acantilados bajos, playas rocosas, ríos que se cruzan según la marea y zonas de bosque subantártico.';
+  const descriptionEn = 'Península Mitre is a remote expedition hiking area at the eastern tip of Tierra del Fuego. The southern coast crossing is the best-known route: it combines low coastal cliffs, rocky beaches, river crossings, and subantarctic forest sections.';
+  const subDescEs = 'Es ideal para personas con experiencia previa, buen estado físico y capacidad de autosuficiencia. La temporada recomendada para particulares va del 1 de noviembre al 15 de abril, con registro obligatorio antes del ingreso.';
+  const subDescEn = 'Best suited for experienced hikers with strong fitness and self-sufficient camping skills. For private visitors, the official season runs from November 1st to April 15th, with mandatory registration before entry.';
+
+  return (
+    <SectionCard>
+      <CardLabel text={t('ÁREA NATURAL PROTEGIDA · EXPEDICIÓN', 'PROTECTED AREA · EXPEDITION')} />
+      <Text style={{ fontSize: 17, fontWeight: '800', color: C.accent, letterSpacing: -0.3 }}>
+        Península Mitre
+      </Text>
+      <Text style={{ fontSize: 13, color: C.muted }}>
+        {t('Ruta tipo expedición · Tierra del Fuego', 'Expedition route · Tierra del Fuego')}
+      </Text>
+
+      {/* Chips */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {chips.map((chip) => (
+          <View key={chip} style={[styles.tag, { backgroundColor: C.elevated, borderColor: C.border }]}>
+            <Text style={[styles.tagText, { color: C.text }]}>{chip}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Key stats */}
+      <View style={{ gap: 8 }}>
+        {keyStats.map(({ k, v }) => (
+          <View
+            key={k}
+            style={{ borderRadius: 10, padding: 12, backgroundColor: C.elevated, borderWidth: 1, borderColor: C.border }}
+          >
+            <Text style={{ fontSize: 11, color: C.muted, marginBottom: 2 }}>{k}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: C.text }}>{v}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Timeline */}
+      <Text style={[styles.cardLabel, { color: C.muted }]}>
+        {t('ETAPAS DE LA RUTA', 'ROUTE STAGES')}
+      </Text>
+      <View style={{ borderLeftWidth: 2, borderLeftColor: C.border, marginLeft: 8, paddingLeft: 16, gap: 12 }}>
+        {stages.map(({ day, text }) => (
+          <View key={day}>
+            <Text style={{ color: C.accent, fontWeight: '700', fontSize: 13 }}>{day}</Text>
+            <Text style={{ color: C.text, fontSize: 13, lineHeight: 20 }}>{text}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Descriptions */}
+      <Text style={[styles.bodyText, { color: C.text }]}>
+        {lang === 'es' ? descriptionEs : descriptionEn}
+      </Text>
+      <Text style={[styles.bodyText, { color: C.muted, fontSize: 13 }]}>
+        {lang === 'es' ? subDescEs : subDescEn}
+      </Text>
+
+      {/* Official info */}
+      <View style={{ backgroundColor: C.elevated, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: C.border }}>
+        <Text style={{ color: C.muted, fontSize: 12, lineHeight: 18 }}>
+          {t(
+            'Temporada: 1 Nov – 15 Abr. Registro de visitantes obligatorio. Equipo mínimo recomendado: GPS, tabla de mareas, dispositivo de comunicación, botiquín y comida para toda la expedición.',
+            'Season: 1 Nov – 15 Apr. Visitor registration is mandatory. Recommended minimum equipment: GPS, tide table, communication device, first-aid kit and enough food for the whole expedition.',
+          )}
+        </Text>
+      </View>
+    </SectionCard>
   );
 }
 
