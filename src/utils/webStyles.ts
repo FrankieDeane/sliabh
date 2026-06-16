@@ -192,6 +192,7 @@ export function injectWebStyles() {
       object-fit: cover !important;
       pointer-events: none !important;
       z-index: 0 !important;
+      animation: none !important;
     }
 
     /* ─────────────────────────────────────────────
