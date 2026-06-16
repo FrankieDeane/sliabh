@@ -834,6 +834,7 @@ function DownloadRow({
         access_notes: (trail as any).access_notes,
         water_sources: (trail as any).water_sources,
         refugio: (trail as any).refugio,
+        mapOverlayUrl: trail.mapOverlayUrl,
       });
     } catch {
       // swallow — user can retry
