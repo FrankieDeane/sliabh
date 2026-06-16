@@ -243,24 +243,6 @@ export default function InicioScreen() {
     animateHeroEntrance('[data-hero]');
     animateParallaxHero('[data-hero]');
     const timer = setTimeout(() => animateScrollReveal(), 300);
-
-    if (Platform.OS === 'web') {
-      const heroBg = document.querySelector('[data-hero-bg]') as HTMLElement | null;
-      if (heroBg && !heroBg.querySelector('[data-hero-video]')) {
-        const img = heroBg.querySelector('img') as HTMLImageElement | null;
-        if (img) img.style.opacity = '0';
-
-        const video = document.createElement('video');
-        video.setAttribute('data-hero-video', '');
-        video.autoplay = true;
-        video.muted = true;
-        video.loop = true;
-        (video as any).playsInline = true;
-        video.src = HERO_VIDEO_URL;
-        heroBg.insertBefore(video, heroBg.firstChild);
-      }
-    }
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -290,6 +272,25 @@ export default function InicioScreen() {
             resizeMode="cover"
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
+            {Platform.OS === 'web' && (
+              // @ts-ignore — raw DOM <video> via react-native-web (react-dom)
+              <video
+                data-hero-video=""
+                autoPlay
+                loop
+                playsInline
+                preload="auto"
+                poster={HERO_URI}
+                ref={(el: any) => {
+                  if (!el) return;
+                  el.muted = true; // set as property — React doesn't apply the `muted` attribute reliably
+                  const p = el.play();
+                  if (p && typeof p.catch === 'function') p.catch(() => {});
+                }}
+              >
+                <source src={HERO_VIDEO_URL} type="video/mp4" />
+              </video>
+            )}
             <View style={[StyleSheet.absoluteFillObject, styles.heroOverlay]} />
             <View style={styles.heroGradientBottom} />
           </ImageBackground>
