@@ -375,7 +375,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 150,
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -54.8019, lon: -68.5471 },
-    photo_uri: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=800&q=80&fit=crop&auto=format',
+    photo_uri: '/tierra-del-fuego.jpg',
     tags: ['fin del mundo', 'Canal Beagle', 'bosque subantártico', 'fauna marina'],
     permits_required: false,
     best_season: 'Nov – Mar',
