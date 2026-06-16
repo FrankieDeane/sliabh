@@ -67,7 +67,7 @@ const FEATURED = [
     distance: '20 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
+    uri: Platform.OS === 'web' ? '/tierra-del-fuego.jpg' : 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
     routeId: 'tierra-del-fuego-costera',
   },
 ];
