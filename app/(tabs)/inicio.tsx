@@ -26,8 +26,7 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-const HERO_VIDEO_URL =
-  'https://drive.google.com/uc?export=download&id=1QPBTwWq-WoM1vpnfMUcwO73kmL8VZSKi';
+const HERO_VIDEO_URL = '/hero-patagonia.mp4';
 
 // Featured routes — all Argentine
 const FEATURED = [
@@ -82,7 +81,7 @@ const REGIONS = [
     regionEs: 'Santa Cruz · Tierra del Fuego',
     regionEn: 'Santa Cruz · Tierra del Fuego',
     trailCount: 5,
-    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
+    photo: Platform.OS === 'web' ? '/tierra-del-fuego.jpg' : 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
   },
   {
     id: 'patagonia-norte',
