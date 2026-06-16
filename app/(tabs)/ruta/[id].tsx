@@ -803,7 +803,9 @@ function DownloadRow({
   t: (es: string, en: string) => string;
 }) {
   const C = useC();
+  const { width } = useWindowDimensions();
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
+  const narrow = width < 420;
 
   async function handleGpx() {
     const gpxPoints = (trail as any).gpxTrack
@@ -817,19 +819,16 @@ function DownloadRow({
         setTimeout(() => setGpxState('idle'), 2500);
       }
     } else {
-      // Native: write to app documents directory and open with OsmAnd or any GPX app
       try {
         const { FileSystem } = await import('expo-file-system') as any;
         const content = buildGpx(trail.name, gpxPoints, trail.description);
         const filename = `${trail.id.replace(/[^a-z0-9-]/gi, '-')}.gpx`;
         const uri = `${FileSystem.documentDirectory}${filename}`;
         await FileSystem.writeAsStringAsync(uri, content, { encoding: 'utf8' });
-        // Try opening with OsmAnd or the OS file handler
         const canOpen = await Linking.canOpenURL(uri);
         if (canOpen) {
           await Linking.openURL(uri);
         } else {
-          // Fallback: open OsmAnd directly via its deep link scheme
           await Linking.openURL(`osmand.api://import_gpx?url=${encodeURIComponent(uri)}`).catch(() => {
             Linking.openURL('market://details?id=net.osmand');
           });
@@ -842,62 +841,55 @@ function DownloadRow({
     }
   }
 
-  const pdfDirectUrl = (trail as any).pdfUrl as string | undefined;
-
-  if (Platform.OS !== 'web') {
-    return (
-      <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={[dlRowS.label, { color: C.muted }]}>{t('DESCARGAS OFFLINE', 'OFFLINE DOWNLOADS')}</Text>
-          <Text style={[dlRowS.sub, { color: C.text }]}>{t('Guardá la ruta en tu dispositivo', 'Save the route to your device')}</Text>
-        </View>
-        <View style={dlRowS.btns}>
-          <TouchableOpacity
-            style={[dlRowS.btn, dlRowS.btnBlue]}
-            onPress={handleGpx}
-            activeOpacity={0.8}
-          >
-            <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
-            <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
-          </TouchableOpacity>
-          {pdfDirectUrl && (
-            <TouchableOpacity
-              style={[dlRowS.btn, dlRowS.btnGreen]}
-              onPress={() => Linking.openURL(pdfDirectUrl)}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="document-text-outline" size={14} color="#86efac" />
-              <Text style={dlRowS.btnTxtGreen}>PDF</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-    );
+  function handlePdf(url: string) {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') window.open(url, '_blank');
+    } else {
+      Linking.openURL(url);
+    }
   }
 
+  const pdfDirectUrl = (trail as any).pdfUrl as string | undefined;
+
   return (
-    <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>
-      <View style={{ flex: 1 }}>
+    <View
+      style={[
+        dlRowS.row,
+        { backgroundColor: C.surface, borderColor: C.border },
+        narrow && dlRowS.rowNarrow,
+      ]}
+    >
+      <View style={narrow ? dlRowS.textBlockNarrow : { flex: 1 }}>
         <Text style={[dlRowS.label, { color: C.muted }]}>{t('DESCARGAS OFFLINE', 'OFFLINE DOWNLOADS')}</Text>
-        <Text style={[dlRowS.sub, { color: C.text }]}>{t('Guardá la ruta en tu dispositivo', 'Save the route to your device')}</Text>
+        <Text style={[dlRowS.sub, { color: C.text }]}>
+          {t('Guardá la ruta en tu dispositivo', 'Save the route to your device')}
+        </Text>
       </View>
-      <View style={dlRowS.btns}>
+
+      <View style={[dlRowS.btns, narrow && dlRowS.btnsNarrow]}>
         <TouchableOpacity
-          style={[dlRowS.btn, dlRowS.btnBlue]}
+          style={[dlRowS.btn, dlRowS.btnBlue, narrow && dlRowS.btnFull]}
           onPress={handleGpx}
           activeOpacity={0.8}
         >
-          <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
-          <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
+          <Ionicons
+            name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'}
+            size={15}
+            color="#93c5fd"
+          />
+          <Text style={dlRowS.btnTxtBlue}>
+            {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX'}
+          </Text>
         </TouchableOpacity>
+
         {pdfDirectUrl && (
           <TouchableOpacity
-            style={[dlRowS.btn, dlRowS.btnGreen]}
-            onPress={() => { if (typeof window !== 'undefined') window.open(pdfDirectUrl, '_blank'); }}
+            style={[dlRowS.btn, dlRowS.btnGreen, narrow && dlRowS.btnFull]}
+            onPress={() => handlePdf(pdfDirectUrl)}
             activeOpacity={0.8}
           >
-            <Ionicons name="document-text-outline" size={14} color="#86efac" />
-            <Text style={dlRowS.btnTxtGreen}>PDF</Text>
+            <Ionicons name="document-text-outline" size={15} color="#86efac" />
+            <Text style={dlRowS.btnTxtGreen}>{t('Mapa PDF', 'Map PDF')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -909,19 +901,27 @@ const dlRowS = StyleSheet.create({
   row: {
     borderRadius: 16,
     borderWidth: 1,
-    padding: 14,
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
+  rowNarrow: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 14,
+  },
+  textBlockNarrow: { width: '100%' },
   label: { fontSize: 9, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 },
   sub: { fontSize: 13, fontWeight: '600' },
   btns: { flexDirection: 'row', gap: 8 },
+  btnsNarrow: { flexDirection: 'row', gap: 10 },
   btn: {
-    flexDirection: 'row', alignItems: 'center', gap: 5,
-    borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6,
+    borderRadius: 999, paddingHorizontal: 16, paddingVertical: 10,
     borderWidth: 1,
   },
+  btnFull: { flex: 1 },
   btnBlue: { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' },
   btnGreen: { backgroundColor: '#14532d', borderColor: '#22c55e' },
   btnTxtBlue: { fontSize: 13, fontWeight: '700', color: '#93c5fd' },
