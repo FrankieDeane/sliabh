@@ -21,7 +21,7 @@ import {
 import { BARILOCHE_TRAILS } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
-import { downloadGpx } from '../../../src/utils/gpx';
+import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
 
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
@@ -842,19 +842,64 @@ function DownloadRow({
     }
   }
 
-  function handleGpx() {
+  async function handleGpx() {
     const gpxPoints = (trail as any).gpxTrack
       ? (trail as any).gpxTrack.map((p: any) => ({ lat: p.lat, lon: p.lon, ele: p.ele, name: '' }))
       : [{ lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead }];
 
-    const ok = downloadGpx(trail.name, gpxPoints, trail.description);
-    if (ok) {
-      setGpxState('done');
-      setTimeout(() => setGpxState('idle'), 2500);
+    if (Platform.OS === 'web') {
+      const ok = downloadGpx(trail.name, gpxPoints, trail.description);
+      if (ok) {
+        setGpxState('done');
+        setTimeout(() => setGpxState('idle'), 2500);
+      }
+    } else {
+      // Native: write to app documents directory and open with OsmAnd or any GPX app
+      try {
+        const { FileSystem } = await import('expo-file-system') as any;
+        const content = buildGpx(trail.name, gpxPoints, trail.description);
+        const filename = `${trail.id.replace(/[^a-z0-9-]/gi, '-')}.gpx`;
+        const uri = `${FileSystem.documentDirectory}${filename}`;
+        await FileSystem.writeAsStringAsync(uri, content, { encoding: 'utf8' });
+        // Try opening with OsmAnd or the OS file handler
+        const canOpen = await Linking.canOpenURL(uri);
+        if (canOpen) {
+          await Linking.openURL(uri);
+        } else {
+          // Fallback: open OsmAnd directly via its deep link scheme
+          await Linking.openURL(`osmand.api://import_gpx?url=${encodeURIComponent(uri)}`).catch(() => {
+            Linking.openURL('market://details?id=net.osmand');
+          });
+        }
+        setGpxState('done');
+        setTimeout(() => setGpxState('idle'), 2500);
+      } catch {
+        // swallow
+      }
     }
   }
 
-  if (Platform.OS !== 'web') return null;
+  if (Platform.OS !== 'web') {
+    // On native: show a simplified download row with GPX action
+    return (
+      <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={[dlRowS.label, { color: C.muted }]}>{t('DESCARGAS OFFLINE', 'OFFLINE DOWNLOADS')}</Text>
+          <Text style={[dlRowS.sub, { color: C.text }]}>{t('Guardá la ruta en tu dispositivo', 'Save the route to your device')}</Text>
+        </View>
+        <View style={dlRowS.btns}>
+          <TouchableOpacity
+            style={[dlRowS.btn, dlRowS.btnBlue]}
+            onPress={handleGpx}
+            activeOpacity={0.8}
+          >
+            <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
+            <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>

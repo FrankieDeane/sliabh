@@ -101,13 +101,37 @@ export default function RutasScreen() {
     : [-45.0, -69.0];
 
   // ── Filter chips ──
-  const filterChips = (
+  // On desktop split layout: wrap into a grid. On mobile: horizontal scroll.
+  const filterChips = isSplit || isWide ? (
+    <View style={[styles.chipsWrap, { paddingHorizontal: isSplit ? 16 : sidePad, paddingVertical: 14 }]}>
+      {TRAIL_REGIONS.map((r) => {
+        const active = region === r;
+        return (
+          <TouchableOpacity
+            key={r}
+            onPress={() => setRegion(r)}
+            style={[
+              styles.chip,
+              {
+                backgroundColor: active ? '#16a34a' : c.surface,
+                borderColor: active ? '#16a34a' : c.border,
+              },
+            ]}
+          >
+            <Text style={[styles.chipText, { color: active ? '#fff' : c.muted }]}>
+              {r}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  ) : (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={[
         styles.chips,
-        isSplit ? { paddingHorizontal: 16 } : { marginHorizontal: -sidePad, paddingHorizontal: sidePad },
+        { marginHorizontal: -sidePad, paddingHorizontal: sidePad },
       ]}
     >
       {TRAIL_REGIONS.map((r) => {
@@ -140,7 +164,7 @@ export default function RutasScreen() {
         <View style={styles.empty}>
           <Ionicons name="map-outline" size={40} color={c.muted} />
           <Text style={[styles.emptyText, { color: c.muted }]}>
-            Sin rutas para esta región aún
+            {t('Sin rutas para esta región aún', 'No trails for this region yet')}
           </Text>
         </View>
       ) : (
@@ -208,8 +232,10 @@ export default function RutasScreen() {
         <View style={[styles.footer, { borderTopColor: c.border }]}>
           <Ionicons name="information-circle-outline" size={14} color={c.muted} />
           <Text style={[styles.footerText, { color: c.muted }]}>
-            Senderos de Argentina curados por el equipo de Sliabh. Verifica siempre
-            las condiciones locales antes de salir a la montaña.
+            {t(
+              'Senderos de Argentina curados por el equipo de Sliabh. Verifica siempre las condiciones locales antes de salir a la montaña.',
+              'Argentina trails curated by the Sliabh team. Always verify local conditions before heading out.',
+            )}
           </Text>
         </View>
       )}
@@ -328,7 +354,7 @@ export default function RutasScreen() {
               {t('Rutas', 'Trails')}
             </Text>
             <Text style={[styles.headerSub, { color: c.muted }]}>
-              {ARGENTINA_TRAILS.length} {t('senderos en Argentina', 'trails across Argentina')}
+              {ALL_TRAILS.length} {t('senderos en Argentina', 'trails across Argentina')}
             </Text>
           </View>
 
@@ -352,6 +378,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 48 },
 
   chips: { flexDirection: 'row', gap: 8, paddingVertical: 16 },
+  chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, borderWidth: 1 },
   chipText: { fontSize: 13, fontWeight: '600' },
 
@@ -365,7 +392,7 @@ const styles = StyleSheet.create({
   },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  gridCell: { width: '48.5%' },
+  gridCell: { flexBasis: '48%', flexGrow: 1, minWidth: 280 },
 
   trailItemWrapper: { marginBottom: 2 },
 
@@ -384,7 +411,8 @@ const styles = StyleSheet.create({
 
   // Desktop split layout
   splitLeft: {
-    width: 380,
+    width: 400,
+    maxWidth: '45%' as any,
     flexShrink: 0,
     overflow: 'hidden',
   },
