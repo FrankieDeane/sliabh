@@ -27,6 +27,7 @@ export interface ArgentinaTrail {
   description: string;
   trailhead: string;
   mapOverlayUrl?: string;
+  pdfUrl?: string;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -374,13 +375,13 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 150,
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -54.8019, lon: -68.5471 },
-    photo_uri: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=800&q=80&fit=crop&auto=format',
+    photo_uri: 'https://images.unsplash.com/photo-zBVhMwd7g_A?w=800&q=80&fit=crop&auto=format',
     tags: ['fin del mundo', 'Canal Beagle', 'bosque subantártico', 'fauna marina'],
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Sendero costero por la orilla del Canal Beagle en el parque más austral del mundo. Bosque de lenga, pingüinos y lobos marinos en el Canal Beagle. El tren del Fin del Mundo sale desde aquí.',
     trailhead: 'Ushuaia (Tierra del Fuego)',
-    mapOverlayUrl: 'https://turismoushuaia.com/wp-content/uploads/2023/01/mapa-esp-1024x622.jpg',
+    pdfUrl: 'https://drive.google.com/file/d/1ICOIKpwfMirU4bER8HgiFCI0hggbsdnd/view?usp=sharing',
   },
 ];
 

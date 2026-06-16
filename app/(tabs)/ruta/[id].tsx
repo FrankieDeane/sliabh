@@ -803,45 +803,7 @@ function DownloadRow({
   t: (es: string, en: string) => string;
 }) {
   const C = useC();
-  const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
-
-  async function handlePdf() {
-    if (pdfState === 'working') return;
-    setPdfState('working');
-    try {
-      const { generateTrailPDF } = await import('../../../src/utils/trailPdf');
-      await generateTrailPDF({
-        id: trail.id,
-        name: trail.name,
-        province: trail.province,
-        area: trail.area,
-        difficulty: trail.difficulty,
-        activity: trail.activity,
-        distance_km: trail.distance_km,
-        elevation_gain_m: trail.elevation_gain_m,
-        max_altitude_m: trail.max_altitude_m,
-        duration: trail.duration,
-        coords: { lat: trail.coordinates.lat, lon: trail.coordinates.lon },
-        description: trail.description,
-        long_description: (trail as any).long_description,
-        trailhead: trail.trailhead,
-        best_season: trail.best_season,
-        permits_required: trail.permits_required,
-        tags: trail.tags,
-        namedWaypoints: (trail as any).namedWaypoints,
-        parking: (trail as any).parking,
-        access_notes: (trail as any).access_notes,
-        water_sources: (trail as any).water_sources,
-        refugio: (trail as any).refugio,
-        mapOverlayUrl: trail.mapOverlayUrl,
-      });
-    } catch {
-      // swallow — user can retry
-    } finally {
-      setPdfState('idle');
-    }
-  }
 
   async function handleGpx() {
     const gpxPoints = (trail as any).gpxTrack
@@ -880,8 +842,9 @@ function DownloadRow({
     }
   }
 
+  const pdfDirectUrl = (trail as any).pdfUrl as string | undefined;
+
   if (Platform.OS !== 'web') {
-    // On native: show a simplified download row with GPX action
     return (
       <View style={[dlRowS.row, { backgroundColor: C.surface, borderColor: C.border }]}>
         <View style={{ flex: 1 }}>
@@ -897,6 +860,16 @@ function DownloadRow({
             <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
             <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
           </TouchableOpacity>
+          {pdfDirectUrl && (
+            <TouchableOpacity
+              style={[dlRowS.btn, dlRowS.btnGreen]}
+              onPress={() => Linking.openURL(pdfDirectUrl)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="document-text-outline" size={14} color="#86efac" />
+              <Text style={dlRowS.btnTxtGreen}>PDF</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -917,15 +890,16 @@ function DownloadRow({
           <Ionicons name={gpxState === 'done' ? 'checkmark-outline' : 'navigate-outline'} size={14} color="#93c5fd" />
           <Text style={dlRowS.btnTxtBlue}>{gpxState === 'done' ? 'GPX listo' : 'GPX'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[dlRowS.btn, dlRowS.btnGreen]}
-          onPress={handlePdf}
-          activeOpacity={0.8}
-          disabled={pdfState === 'working'}
-        >
-          <Ionicons name={pdfState === 'working' ? 'cloud-download-outline' : 'document-text-outline'} size={14} color="#86efac" />
-          <Text style={dlRowS.btnTxtGreen}>{pdfState === 'working' ? t('Generando…', 'Generating…') : 'PDF'}</Text>
-        </TouchableOpacity>
+        {pdfDirectUrl && (
+          <TouchableOpacity
+            style={[dlRowS.btn, dlRowS.btnGreen]}
+            onPress={() => { if (typeof window !== 'undefined') window.open(pdfDirectUrl, '_blank'); }}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="document-text-outline" size={14} color="#86efac" />
+            <Text style={dlRowS.btnTxtGreen}>PDF</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
