@@ -70,7 +70,8 @@ const NATIONAL_PARKS = [
     area_km2: 630,
     highlights: 'Ushuaia · Canal Beagle · Lapataia · Fin del mundo',
     size: '73 MB',
-    photo: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=600&q=75&fit=crop',
+    photo: 'https://images.unsplash.com/photo-hgKzuj2nAsI?w=600&q=75&fit=crop',
+    mapOverlayUrl: 'https://turismoushuaia.com/wp-content/uploads/2023/01/mapa-esp-1024x622.jpg',
     coords: { lat: -54.8, lon: -68.5 },
     unesco: false,
   },
@@ -412,12 +413,12 @@ const NATIONAL_PARKS = [
 
 // ─── Download card ────────────────────────────────────────────────────────────
 function DownloadCard({
-  park, c, onViewMap, iframeRef,
+  park, c, onViewMap, onFlyTo,
 }: {
   park: typeof NATIONAL_PARKS[0];
   c: any;
   onViewMap?: (lat: number, lon: number) => void;
-  iframeRef?: React.RefObject<HTMLIFrameElement | null>;
+  onFlyTo?: (lat: number, lng: number, zoom: number) => void;
 }) {
   const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
@@ -437,15 +438,7 @@ function DownloadCard({
 
   function handleViewMap() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      // Send postMessage to the embedded iframe — no new tab
-      if (iframeRef?.current?.contentWindow) {
-        iframeRef.current.contentWindow.postMessage(
-          { type: 'flyTo', lat: park.coords.lat, lng: park.coords.lon, zoom: 11 },
-          '*',
-        );
-        // Scroll the iframe into view
-        iframeRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+      onFlyTo?.(park.coords.lat, park.coords.lon, 11);
     } else if (onViewMap) {
       onViewMap(park.coords.lat, park.coords.lon);
     }
@@ -476,6 +469,7 @@ function DownloadCard({
         highlights: park.highlights,
         size: park.size,
         coords: park.coords,
+        mapOverlayUrl: (park as any).mapOverlayUrl,
       });
     } catch {
       // swallow — user can retry
@@ -602,6 +596,26 @@ export default function MapasScreen() {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const iframeLoaded = useRef(false);
+  const pendingFlyTo = useRef<{ lat: number; lng: number; zoom: number } | null>(null);
+
+  function sendFlyTo(lat: number, lng: number, zoom: number) {
+    const msg = { type: 'flyTo', lat, lng, zoom };
+    if (iframeLoaded.current && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(msg, '*');
+    } else {
+      // Queue it; the onLoad handler will send it once the iframe is ready
+      pendingFlyTo.current = msg;
+    }
+  }
+
+  function handleIframeLoad() {
+    iframeLoaded.current = true;
+    if (pendingFlyTo.current && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(pendingFlyTo.current, '*');
+      pendingFlyTo.current = null;
+    }
+  }
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -686,6 +700,7 @@ export default function MapasScreen() {
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Mapa de Parques Nacionales de Argentina"
           loading="eager"
+          onLoad={handleIframeLoad}
         />
       </View>
 
@@ -699,7 +714,15 @@ export default function MapasScreen() {
         </View>
         <View style={s.dlGrid}>
           {NATIONAL_PARKS.map((park) => (
-            <DownloadCard key={park.id} park={park} c={c} iframeRef={iframeRef} />
+            <DownloadCard
+              key={park.id}
+              park={park}
+              c={c}
+              onFlyTo={(lat, lng, zoom) => {
+                sendFlyTo(lat, lng, zoom);
+                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }}
+            />
           ))}
         </View>
       </View>

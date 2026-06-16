@@ -8,6 +8,7 @@ export interface ParkPdfInput {
   highlights: string;
   size?: string;
   coords: { lat: number; lon: number };
+  mapOverlayUrl?: string; // Optional official map image to embed instead of tile map
 }
 
 // CartoDB Voyager tiles — CORS-enabled, so the canvas stays untainted and
@@ -91,12 +92,46 @@ async function buildMapImage(lat: number, lon: number): Promise<string> {
   return canvas.toDataURL('image/jpeg', 0.92);
 }
 
+/** Try to load an external image to a data-URL (requires CORS headers on origin). */
+function loadExternalMapImage(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext('2d')!.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      } catch {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
 /**
  * Generates a one-page reference map PDF for a national park and triggers a
  * download to the user's device. Fully client-side.
  */
 export async function generateParkPDF(park: ParkPdfInput): Promise<void> {
-  const mapData = await buildMapImage(park.coords.lat, park.coords.lon);
+  // Use official map image when provided; fall back to tile-based map
+  let mapData: string;
+  let mapIsOfficial = false;
+  if (park.mapOverlayUrl) {
+    const external = await loadExternalMapImage(park.mapOverlayUrl);
+    if (external) {
+      mapData = external;
+      mapIsOfficial = true;
+    } else {
+      mapData = await buildMapImage(park.coords.lat, park.coords.lon);
+    }
+  } else {
+    mapData = await buildMapImage(park.coords.lat, park.coords.lon);
+  }
 
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const pageW = 210;
@@ -125,16 +160,22 @@ export async function generateParkPDF(park: ParkPdfInput): Promise<void> {
   doc.setTextColor(100, 116, 139);
   doc.text(`${park.province} · ${park.region}`, margin, 47);
 
-  // Map image
+  // Map image — official overlay uses its natural 1024×622 ratio; tile map uses IMG_H/IMG_W
   const mapY = 52;
-  const mapH = (IMG_H / IMG_W) * contentW;
+  const mapAspect = mapIsOfficial ? (622 / 1024) : (IMG_H / IMG_W);
+  const mapH = mapAspect * contentW;
   doc.addImage(mapData, 'JPEG', margin, mapY, contentW, mapH);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.3);
   doc.rect(margin, mapY, contentW, mapH);
+  if (mapIsOfficial) {
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Mapa oficial · turismoushuaia.com', margin, mapY + mapH + 3);
+  }
 
   // Info block
-  let y = mapY + mapH + 10;
+  let y = mapY + mapH + (mapIsOfficial ? 14 : 10);
   doc.setTextColor(15, 23, 42);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);

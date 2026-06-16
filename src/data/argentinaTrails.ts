@@ -26,6 +26,7 @@ export interface ArgentinaTrail {
   best_season: string;
   description: string;
   trailhead: string;
+  mapOverlayUrl?: string;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -379,6 +380,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description: 'Sendero costero por la orilla del Canal Beagle en el parque más austral del mundo. Bosque de lenga, pingüinos y lobos marinos en el Canal Beagle. El tren del Fin del Mundo sale desde aquí.',
     trailhead: 'Ushuaia (Tierra del Fuego)',
+    mapOverlayUrl: 'https://turismoushuaia.com/wp-content/uploads/2023/01/mapa-esp-1024x622.jpg',
   },
 ];
 

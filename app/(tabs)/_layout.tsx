@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../src/store/themeStore';
+import { useLangStore } from '../../src/store/langStore';
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
@@ -25,6 +26,7 @@ function TabIcon({ icon, iconOutline, label, focused }: TabIconProps) {
 
 export default function TabLayout() {
   const { theme } = useThemeStore();
+  const { t } = useLangStore();
   const isDark = theme === 'dark';
 
   return (
@@ -53,7 +55,7 @@ export default function TabLayout() {
             <TabIcon
               icon="home"
               iconOutline="home-outline"
-              label="Inicio"
+              label={t('Inicio', 'Home')}
               focused={focused}
             />
           ),
@@ -66,7 +68,7 @@ export default function TabLayout() {
             <TabIcon
               icon="trail-sign"
               iconOutline="trail-sign-outline"
-              label="Rutas"
+              label={t('Rutas', 'Trails')}
               focused={focused}
             />
           ),
@@ -79,7 +81,7 @@ export default function TabLayout() {
             <TabIcon
               icon="map"
               iconOutline="map-outline"
-              label="Planificar"
+              label={t('Planificar', 'Plan')}
               focused={focused}
             />
           ),
@@ -92,7 +94,7 @@ export default function TabLayout() {
             <TabIcon
               icon="location"
               iconOutline="location-outline"
-              label="Mapas"
+              label={t('Mapas', 'Maps')}
               focused={focused}
             />
           ),
@@ -105,7 +107,7 @@ export default function TabLayout() {
             <TabIcon
               icon="pencil"
               iconOutline="pencil-outline"
-              label="Contribuir"
+              label={t('Contribuir', 'Contribute')}
               focused={focused}
             />
           ),
@@ -118,7 +120,7 @@ export default function TabLayout() {
             <TabIcon
               icon="chatbubble"
               iconOutline="chatbubble-outline"
-              label="IA"
+              label={t('IA', 'AI')}
               focused={focused}
             />
           ),
@@ -131,7 +133,7 @@ export default function TabLayout() {
             <TabIcon
               icon="shield-checkmark"
               iconOutline="shield-checkmark-outline"
-              label="Seguridad"
+              label={t('Seguridad', 'Safety')}
               focused={focused}
             />
           ),

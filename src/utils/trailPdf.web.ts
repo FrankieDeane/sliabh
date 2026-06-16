@@ -23,6 +23,7 @@ export interface TrailPdfInput {
   access_notes?: string;
   water_sources?: string;
   refugio?: string;
+  mapOverlayUrl?: string;
 }
 
 // CartoDB Voyager tiles — CORS-enabled, so the canvas stays untainted and
@@ -41,6 +42,26 @@ function project(lat: number, lon: number, z: number) {
   const sin = Math.sin((lat * Math.PI) / 180);
   const y = (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * worldSize;
   return { x, y };
+}
+
+function loadExternalMapImage(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext('2d')!.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      } catch {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
 }
 
 function loadTile(src: string): Promise<HTMLImageElement | null> {
@@ -126,7 +147,19 @@ const WAYPOINT_NUMS = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '
  * Fully client-side — no server required.
  */
 export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
-  const mapData = await buildMapImage(trail.coords.lat, trail.coords.lon);
+  let mapData: string;
+  let mapIsOfficial = false;
+  if (trail.mapOverlayUrl) {
+    const external = await loadExternalMapImage(trail.mapOverlayUrl);
+    if (external) {
+      mapData = external;
+      mapIsOfficial = true;
+    } else {
+      mapData = await buildMapImage(trail.coords.lat, trail.coords.lon);
+    }
+  } else {
+    mapData = await buildMapImage(trail.coords.lat, trail.coords.lon);
+  }
 
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const pageW = 210;
@@ -247,12 +280,18 @@ export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
 
   // 4. Map image
   y = statsY + 24;
-  const mapH = (IMG_H / IMG_W) * contentW;
+  const mapAspect = mapIsOfficial ? (622 / 1024) : (IMG_H / IMG_W);
+  const mapH = mapAspect * contentW;
   doc.addImage(mapData, 'JPEG', margin, y, contentW, mapH);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.3);
   doc.rect(margin, y, contentW, mapH);
-  y += mapH + 5;
+  if (mapIsOfficial) {
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Mapa oficial · turismoushuaia.com', margin, y + mapH + 3);
+  }
+  y += mapH + (mapIsOfficial ? 8 : 5);
 
   // 5. Tags row
   if (trail.tags.length > 0) {
