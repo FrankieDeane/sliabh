@@ -26,6 +26,9 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
+const HERO_VIDEO_URL =
+  'https://drive.google.com/uc?export=download&id=1QPBTwWq-WoM1vpnfMUcwO73kmL8VZSKi';
+
 // Featured routes — all Argentine
 const FEATURED = [
   {
@@ -241,6 +244,24 @@ export default function InicioScreen() {
     animateHeroEntrance('[data-hero]');
     animateParallaxHero('[data-hero]');
     const timer = setTimeout(() => animateScrollReveal(), 300);
+
+    if (Platform.OS === 'web') {
+      const heroBg = document.querySelector('[data-hero-bg]') as HTMLElement | null;
+      if (heroBg && !heroBg.querySelector('[data-hero-video]')) {
+        const img = heroBg.querySelector('img') as HTMLImageElement | null;
+        if (img) img.style.opacity = '0';
+
+        const video = document.createElement('video');
+        video.setAttribute('data-hero-video', '');
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        (video as any).playsInline = true;
+        video.src = HERO_VIDEO_URL;
+        heroBg.insertBefore(video, heroBg.firstChild);
+      }
+    }
+
     return () => clearTimeout(timer);
   }, []);
 
