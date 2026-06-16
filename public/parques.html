@@ -220,6 +220,51 @@
       .panel { min-height: auto; }
       #map { height: 520px; }
     }
+    /* ── Special park actions ────────────────────────────────────────────── */
+    .park-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .btn-action {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: 999px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: 1px solid; text-decoration: none;
+      font-family: inherit; transition: .18s ease;
+    }
+    .btn-action-blue { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+    .btn-action-blue:hover { background: #1d4ed8; }
+    .btn-action-green { background: #14532d; border-color: #22c55e; color: #86efac; }
+    .btn-action-green:hover { background: #16a34a; }
+    /* ── Article modal ───────────────────────────────────────────────────── */
+    #articleModal {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,.72); align-items: center; justify-content: center;
+    }
+    #articleModal.open { display: flex; }
+    .article-dialog {
+      background: #fff; border-radius: 16px;
+      width: min(960px, 96vw); height: 88vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.55);
+    }
+    .article-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; flex-shrink: 0;
+    }
+    .article-header-left { display: flex; align-items: center; gap: 10px; }
+    .article-badge {
+      background: #1e3a5f; color: #93c5fd; border: 1px solid #3b82f6;
+      border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700;
+    }
+    .article-title { font-size: 14px; font-weight: 700; color: #0f172a; }
+    .article-subtitle { font-size: 12px; color: #64748b; margin-top: 1px; }
+    .article-close {
+      background: none; border: none; cursor: pointer; color: #64748b;
+      font-size: 24px; line-height: 1; padding: 4px 8px; border-radius: 8px;
+    }
+    .article-close:hover { background: #f1f5f9; color: #0f172a; }
+    #articleIframe { flex: 1; border: none; background: #fff; }
+    .article-footer {
+      padding: 10px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc;
+      font-size: 11px; color: #94a3b8; flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -264,8 +309,29 @@
     </section>
   </div>
 
+  <!-- Article reader modal (in-app only, no download prompt) -->
+  <div id="articleModal">
+    <div class="article-dialog">
+      <div class="article-header">
+        <div class="article-header-left">
+          <span class="article-badge">SLIABH</span>
+          <div>
+            <div class="article-title" id="articleModalTitle">Documento oficial</div>
+            <div class="article-subtitle" id="articleModalSub">Área Marina Protegida</div>
+          </div>
+        </div>
+        <button class="article-close" onclick="closeArticle()" title="Cerrar">&times;</button>
+      </div>
+      <iframe id="articleIframe" src="" sandbox="allow-scripts allow-same-origin allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
+      <div class="article-footer">
+        Documento embebido dentro de Sliabh · Contenido oficial APN Argentina
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
     const parks = [
       {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},
@@ -321,7 +387,9 @@
       {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60'},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood I',region:'Áreas Marinas',lat:-54.33145,lng:-59.23917,province:'Mar Argentino',category:'Área Marina Protegida',year:'2013',surface:'2,800,000 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
-      {name:'Área Marina Protegida Yaganes',region:'Áreas Marinas',lat:-56.93301,lng:-65.45820,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'6,883,431 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'}
+      {name:'Área Marina Protegida Yaganes',region:'Áreas Marinas',lat:-56.93301,lng:-65.45820,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'6,883,431 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86',
+       mapPdfUrl:'https://www.argentina.gob.ar/sites/default/files/amp_yaganes_mapa_web.jpeg',
+       articleUrl:'https://docs.google.com/document/d/e/2PACX-1vSzB6wVlUb90mYYlVdbOlxuFgOAGd-Mf4TGNxZrycMUC6OaJe149mRD6u6IvyOahLq4FOCCzlKAM31a/pub'}
     ];
 
     const map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([-39.8, -65.4], 4);
@@ -383,6 +451,23 @@
 
     function renderPanel(park) {
       const trails = sampleTrails[park.name] || ['Planificá tu ruta en la sección Planificar', 'Descargá el mapa offline de esta zona'];
+
+      // Extra action buttons for parks with official resources
+      let extraActions = '';
+      if (park.mapPdfUrl || park.articleUrl) {
+        const pdfBtn = park.mapPdfUrl
+          ? `<button class="btn-action btn-action-green" onclick="downloadParkMapPDF(parks.find(p=>p.name==='${park.name.replace(/'/g,"\\'")}'))">
+               ⬇ Descargar mapa PDF
+             </button>`
+          : '';
+        const articleBtn = park.articleUrl
+          ? `<button class="btn-action btn-action-blue" onclick="openArticle('${park.articleUrl}','${park.name.replace(/'/g,"\\'")}')">
+               📄 Leer artículo oficial
+             </button>`
+          : '';
+        extraActions = `<div class="park-actions">${pdfBtn}${articleBtn}</div>`;
+      }
+
       panel.innerHTML = `
         <p class="kicker">${park.region}</p>
         <h3>${park.name}</h3>
@@ -392,6 +477,7 @@
           <span>Creado ${park.year}</span>
         </div>
         <p>${park.name} pertenece al grupo ${park.region}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${park.ecoregions}` : ''}${park.international ? `. Estatus internacional: ${park.international}` : ''}.</p>
+        ${extraActions}
         <p class="subsection-title">Senderos sugeridos</p>
         ${trails.map(t => `<div class="trail-box"><strong>Sendero</strong>${t}</div>`).join('')}
         <p class="note">Mapa base IGN Argentina · Datos SIB/APN.</p>
@@ -895,6 +981,158 @@ ${trkpts}
 
     // Show Bariloche trails by default on load
     setTimeout(() => showTrailLayer(), 800);
+
+    // ── Article reader modal ───────────────────────────────────────────────────
+    function openArticle(url, parkName) {
+      document.getElementById('articleModalTitle').textContent = parkName || 'Documento oficial';
+      document.getElementById('articleModalSub').textContent = 'Área Marina Protegida · Documentación oficial APN';
+      document.getElementById('articleIframe').src = url;
+      document.getElementById('articleModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeArticle() {
+      document.getElementById('articleModal').classList.remove('open');
+      document.getElementById('articleIframe').src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Close modal when clicking the backdrop
+    document.getElementById('articleModal').addEventListener('click', function(e) {
+      if (e.target === this) closeArticle();
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeArticle();
+    });
+
+    // ── Park map PDF generator ─────────────────────────────────────────────────
+    async function downloadParkMapPDF(park) {
+      if (!park || !park.mapPdfUrl) return;
+      if (typeof window.jspdf === 'undefined') {
+        alert('PDF aún cargando, intentá de nuevo en un momento.');
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const pageW = 210;
+      const margin = 14;
+      const contentW = pageW - margin * 2;
+
+      // Header band
+      doc.setFillColor(6, 13, 27);
+      doc.rect(0, 0, pageW, 26, 'F');
+      doc.setTextColor(34, 197, 94);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(17);
+      doc.text('SLIABH', margin, 13);
+      doc.setTextColor(240, 249, 255);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Mapa oficial · Áreas Marinas Protegidas de Argentina', margin, 20);
+
+      // Park title
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text(park.name, margin, 38);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(100, 116, 139);
+      doc.text(`${park.province} · ${park.region} · Creado ${park.year} · ${park.surface}`, margin, 44);
+
+      // Try to embed the official map image
+      let mapY = 50;
+      try {
+        const dataUrl = await fetchImageAsDataUrl(park.mapPdfUrl);
+        if (dataUrl) {
+          // Image is 1024×622 approx → aspect 0.607
+          const imgH = (622 / 1024) * contentW;
+          doc.addImage(dataUrl, 'JPEG', margin, mapY, contentW, imgH);
+          doc.setDrawColor(226, 232, 240);
+          doc.setLineWidth(0.3);
+          doc.rect(margin, mapY, contentW, imgH);
+          doc.setFontSize(7);
+          doc.setTextColor(148, 163, 184);
+          doc.text('Fuente: Administración de Parques Nacionales — www.argentina.gob.ar', margin, mapY + imgH + 3);
+          mapY = mapY + imgH + 10;
+        } else {
+          throw new Error('no data');
+        }
+      } catch (_) {
+        // CORS blocked — include a visible reference instead
+        doc.setFillColor(241, 245, 249);
+        doc.rect(margin, mapY, contentW, 22, 'F');
+        doc.setTextColor(71, 85, 105);
+        doc.setFontSize(9);
+        doc.text('Mapa oficial disponible en:', margin + 4, mapY + 9);
+        doc.setTextColor(37, 99, 235);
+        doc.text(park.mapPdfUrl, margin + 4, mapY + 16);
+        mapY += 30;
+      }
+
+      // Coordinates
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text('Coordenadas:', margin, mapY);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      doc.text(`${park.lat.toFixed(5)}, ${park.lng.toFixed(5)}`, margin + 32, mapY);
+      mapY += 8;
+
+      // Ecorregions
+      if (park.ecoregions) {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(15, 23, 42);
+        doc.text('Ecorregiones:', margin, mapY);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        const splitEco = doc.splitTextToSize(park.ecoregions, contentW - 36);
+        doc.text(splitEco, margin + 36, mapY);
+        mapY += splitEco.length * 5 + 3;
+      }
+
+      // Emergency footer
+      doc.setFillColor(248, 250, 252);
+      doc.rect(margin, mapY + 4, contentW, 16, 'F');
+      doc.setTextColor(220, 38, 38);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.text('Emergencias', margin + 4, mapY + 12);
+      doc.setTextColor(71, 85, 105);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Guardaparques / APN: 105      Guardacostas: 106      SOS: 911', margin + 4, mapY + 18);
+
+      // Disclaimer
+      doc.setFontSize(7);
+      doc.setTextColor(148, 163, 184);
+      const today = new Date().toLocaleDateString('es-AR');
+      doc.text(`Generado por Sliabh el ${today}. Mapa de referencia — no reemplaza la cartografía oficial de APN/IGN.`, margin, 285);
+
+      const filename = `sliabh-${park.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g,'')}.pdf`;
+      doc.save(filename);
+    }
+
+    // Try to convert an image URL to a base64 data URL (requires CORS headers)
+    function fetchImageAsDataUrl(url) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/jpeg', 0.88));
+          } catch { resolve(null); }
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    }
 
     // ── Fly to coordinates from URL params (e.g. ?lat=-41.1&lng=-71.5&zoom=10) ──
     (function () {
