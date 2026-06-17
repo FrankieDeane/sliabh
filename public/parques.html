@@ -704,8 +704,9 @@
       applyStaticLang();
       relabelFilters();
       updateTrailToggleLabel();
-      applyFilters();
-      if (currentPark) renderPanel(currentPark);
+      const savedPark = currentPark; // preserve user's selected park
+      applyFilters();                // re-renders list + metaCount in new lang; sets currentPark=filtered[0]
+      renderPanel(savedPark || currentPark); // re-render user's park (or first) in new lang
     });
 
     // ── Bariloche trekking layer (source: barilochetrekking.com) ─────────────
