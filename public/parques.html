@@ -269,7 +269,8 @@
       font-size: 11px; color: #94a3b8; flex-shrink: 0;
     }
   /* ── Mitre 3D mini-map ─────────────────────────────────── */
-  #park3dMap{height:240px;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin:10px 0 14px}
+  #park3dMap{height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin:10px 0 14px}
+  @media(max-width:768px){#park3dMap{height:300px}}
   .maplibregl-popup-content{background:rgba(7,11,20,.9)!important;border:1px solid #1e2d42!important;
     color:#f0f9ff!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important}
   .maplibregl-popup-tip{border-top-color:rgba(7,11,20,.9)!important}
