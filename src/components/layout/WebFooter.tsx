@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   topNarrow: { flexDirection: 'column' },
   brandCol: { flex: 1.6, minWidth: 200, gap: 14 },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  logo: { width: 64, height: 64 },
+  logo: { width: 96, height: 96 },
   brandName: { fontSize: 18, fontWeight: '800', letterSpacing: -0.4 },
   brandSub: { fontSize: 9, fontWeight: '600', letterSpacing: 2.5, textTransform: 'uppercase' },
   tagline: { fontSize: 13, lineHeight: 20 },
