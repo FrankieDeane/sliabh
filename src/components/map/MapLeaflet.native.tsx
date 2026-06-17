@@ -19,13 +19,14 @@ interface Props {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  layer?: 'osm' | 'topo' | 'dark';
+  layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
 }
 
-const TILE_URLS = {
+const TILE_URLS: Record<string, string> = {
   osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   topo: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
   dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+  argenmap: 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
 };
 
 function buildHTML(
@@ -171,15 +172,17 @@ export function MapLeaflet({
       ]}
     >
       <WebView
-        source={{ html }}
+        source={{ html, baseUrl: 'https://unpkg.com' }}
         onMessage={handleMessage}
         style={styles.webview}
         javaScriptEnabled
         domStorageEnabled
         originWhitelist={['*']}
-        mixedContentMode="compatibility"
+        mixedContentMode="always"
         scrollEnabled={false}
         allowFileAccess
+        allowUniversalAccessFromFileURLs
+        allowFileAccessFromFileURLs
       />
     </View>
   );
