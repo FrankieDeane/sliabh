@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Península Mitre · Sliabh</title>
+<link rel="icon" type="image/png" href="/logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
@@ -41,8 +42,7 @@
   }
   .topbar-inner{display:flex;align-items:center;justify-content:space-between;height:58px}
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px}
-  .brand .mark{width:26px;height:26px;border-radius:8px;
-    background:linear-gradient(135deg,var(--accent),#0e7a3a);display:grid;place-items:center;font-size:15px}
+  .brand .mark{height:32px;width:auto;display:block}
   .lang-toggle{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);
     border-radius:999px;padding:4px}
   .lang-toggle button{border:0;background:transparent;color:var(--muted);font-weight:700;
@@ -175,6 +175,11 @@
   .rel .b p{margin:0;font-size:12px;color:var(--muted)}
 
   footer{margin:46px 0 36px;text-align:center;color:var(--faint);font-size:12px;line-height:1.7}
+  footer img.footer-logo{height:36px;width:auto;display:block;margin:0 auto 10px;opacity:.7}
+  @media(max-width:600px){
+    footer{margin:32px 0 24px;font-size:11px;padding:0 16px}
+    footer img.footer-logo{height:28px}
+  }
 
   /* hide inactive language */
   [data-en]{display:none}
@@ -194,7 +199,7 @@
 
 <div class="topbar">
   <div class="wrap topbar-inner">
-    <a class="brand" href="/"><span class="mark">▲</span> SLIABH</a>
+    <a class="brand" href="/"><img class="mark" src="/logo.png" alt="Sliabh" /></a>
     <div class="lang-toggle" id="langToggle">
       <button data-lang="es" class="active">ES</button>
       <button data-lang="en">EN</button>
@@ -409,8 +414,9 @@
   </div>
 
   <footer>
-    <div data-es>Sliabh · Guía de montaña argentina · Contenido original con referencias de fuentes públicas.</div>
-    <div data-en>Sliabh · Argentine mountain guide · Original content with public-source references.</div>
+    <img class="footer-logo" src="/logo.png" alt="Sliabh" />
+    <div data-es>Guía de montaña argentina · Contenido original con referencias de fuentes públicas.</div>
+    <div data-en>Argentine mountain guide · Original content with public-source references.</div>
   </footer>
 </div>
 
