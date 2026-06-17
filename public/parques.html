@@ -393,7 +393,23 @@
       {name:'Parque Nacional Tierra del Fuego',region:'Patagonia Austral',lat:-54.64226,lng:-68.48597,province:'Tierra del Fuego',category:'Parque Nacional',year:'1960',surface:'68,909 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60',
        planUrl:'/ruta/tierra-del-fuego-costera',
        mapPdfUrl:'/mapa-tierra-del-fuego-costero.jpg',
-       photoUrl:'/tierra-del-fuego.jpg'},
+       photoUrl:'/tierra-del-fuego.jpg',
+       trailCenter:[-68.575,-54.843], trailZoom:12.2,
+       trailColor:'#22c55e',
+       trailWaypoints:[
+         {c:[-68.5375,-54.8262],label:'Bahía Ensenada',start:true},
+         {c:[-68.5620,-54.8340],label:'Mirador del Canal'},
+         {c:[-68.5820,-54.8430],label:'Laguna Verde'},
+         {c:[-68.6020,-54.8490],label:'Bahía Lapataia',end:true},
+       ],
+       trailCoords:[
+         [-68.5375,-54.8262],[-68.5430,-54.8284],[-68.5490,-54.8308],
+         [-68.5540,-54.8322],[-68.5590,-54.8336],[-68.5630,-54.8348],
+         [-68.5680,-54.8372],[-68.5720,-54.8392],[-68.5760,-54.8410],
+         [-68.5800,-54.8424],[-68.5835,-54.8436],[-68.5870,-54.8446],
+         [-68.5910,-54.8458],[-68.5950,-54.8468],[-68.5990,-54.8476],
+         [-68.6020,-54.8490],
+       ]},
       {name:'Reserva Natural Silvestre Isla de los Estados y Archipiélago de Año Nuevo',region:'Patagonia Austral',lat:-54.76715,lng:-64.27798,province:'Tierra del Fuego',category:'Reserva Natural Silvestre',year:'2016',surface:'52,784 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60'},
       {name:'Parque Interjurisdiccional Marino Costero Patagonia Austral',region:'Patagonia Norte',lat:-45.07224,lng:-66.09692,province:'Chubut',category:'Parque Interjurisdiccional Marino Costero',year:'2009',surface:'103,574 ha',ecoregions:'Estepa Patagónica, Mar Argentino',international:'Reserva de Biósfera',color:'#0f5f60'},
       {name:'Parque Nacional Islote Lobos',region:'Patagonia Norte',lat:-41.43785,lng:-65.06369,province:'Río Negro',category:'Parque Nacional',year:'2022',surface:'19,079 ha',ecoregions:'',international:'',color:'#0f5f60'},
@@ -632,10 +648,12 @@
       requestAnimationFrame(() => {
         const el = document.getElementById('park3dMap');
         if (!el) return;
+        const initCenter = park.trailCenter || [park.lng, park.lat];
+        const initZoom   = park.trailZoom   || 9.5;
         const gm = new maplibregl.Map({
           container: 'park3dMap',
           style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-          center: [park.lng, park.lat], zoom: 9.5, pitch: 50, bearing: 30,
+          center: initCenter, zoom: initZoom, pitch: 50, bearing: 30,
           antialias: true, attributionControl: false,
         });
         window._parkGlMap = gm;
@@ -649,12 +667,42 @@
           });
           gm.setTerrain({ source: 'dem', exaggeration: 2.8 });
 
-          // Park centre marker
-          const dot = document.createElement('div');
-          dot.style.cssText = `width:11px;height:11px;border-radius:50%;background:${park.color};border:2px solid #fff;box-shadow:0 0 0 4px ${park.color}55`;
-          new maplibregl.Marker({ element: dot }).setLngLat([park.lng, park.lat])
-            .setPopup(new maplibregl.Popup({ offset: 15, closeButton: false }).setHTML(`<strong>${park.name}</strong>`))
-            .addTo(gm);
+          // Park centre marker (hidden when a trail is shown)
+          if (!park.trailCoords) {
+            const dot = document.createElement('div');
+            dot.style.cssText = `width:11px;height:11px;border-radius:50%;background:${park.color};border:2px solid #fff;box-shadow:0 0 0 4px ${park.color}55`;
+            new maplibregl.Marker({ element: dot }).setLngLat([park.lng, park.lat])
+              .setPopup(new maplibregl.Popup({ offset: 15, closeButton: false }).setHTML(`<strong>${park.name}</strong>`))
+              .addTo(gm);
+          }
+
+          // Generic trail overlay (any park with trailCoords)
+          if (park.trailCoords) {
+            const tc = park.trailColor || '#22c55e';
+            gm.addSource('trail', {
+              type: 'geojson',
+              data: { type: 'Feature', geometry: { type: 'LineString', coordinates: park.trailCoords }}
+            });
+            gm.addLayer({ id: 'trail-glow', type: 'line', source: 'trail',
+              layout: {'line-join':'round','line-cap':'round'},
+              paint: {'line-color':tc,'line-width':10,'line-opacity':.18,'line-blur':7}
+            });
+            gm.addLayer({ id: 'trail-line', type: 'line', source: 'trail',
+              layout: {'line-join':'round','line-cap':'round'},
+              paint: {'line-color':tc,'line-width':3.5,'line-opacity':.95}
+            });
+            if (park.trailWaypoints) {
+              park.trailWaypoints.forEach(wp => {
+                const color = wp.start ? tc : wp.end ? '#3b82f6' : '#f0f9ff';
+                const size  = (wp.start || wp.end) ? 13 : 9;
+                const d = document.createElement('div');
+                d.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}55;cursor:pointer`;
+                new maplibregl.Marker({element:d}).setLngLat(wp.c)
+                  .setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML(`<strong>${wp.label}</strong>`))
+                  .addTo(gm);
+              });
+            }
+          }
 
           // Mitre expedition route overlay
           if (park.mitre) {
