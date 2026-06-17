@@ -419,7 +419,6 @@
             <span id="metaCount">55 áreas</span>
             <span data-i18n="pReady">Mapa listo</span>
           </div>
-          <p class="subsection-title" data-i18n="pVisible">Áreas visibles en el filtro actual</p>
           <div class="park-list" id="parkList" style="margin-top:6px"></div>
           <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
         </div>
@@ -767,6 +766,8 @@
       setTimeout(() => {
         const el = document.getElementById('park3dMap');
         if (!el) return;
+        el.style.width = '100%';
+        el.style.height = '100%';
         const initCenter = park.trailCenter || [park.lng, park.lat];
         const initZoom   = park.trailZoom   || 9.5;
         const gm = new maplibregl.Map({
@@ -779,6 +780,7 @@
         gm.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
         gm.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
         gm.on('load', () => {
+          gm.resize();
           gm.addSource('dem', {
             type: 'raster-dem',
             tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
@@ -851,7 +853,7 @@
             });
           }
         });
-      }, 80);
+      }, 200);
     }
 
     function renderList(items) {
