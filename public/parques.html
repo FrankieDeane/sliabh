@@ -376,7 +376,8 @@
       {name:'Parque Nacional Perito Moreno',region:'Patagonia Austral',lat:-47.88697,lng:-72.25014,province:'Santa Cruz',category:'Parque Nacional',year:'1937',surface:'142,120 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'',color:'#0f5f60'},
       {name:'Parque Nacional Tierra del Fuego',region:'Patagonia Austral',lat:-54.64226,lng:-68.48597,province:'Tierra del Fuego',category:'Parque Nacional',year:'1960',surface:'68,909 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60',
        planUrl:'/ruta/tierra-del-fuego-costera',
-       mapPdfUrl:'/mapa-tierra-del-fuego-costero.jpg'},
+       mapPdfUrl:'/mapa-tierra-del-fuego-costero.jpg',
+       photoUrl:'/tierra-del-fuego.jpg'},
       {name:'Reserva Natural Silvestre Isla de los Estados y Archipiélago de Año Nuevo',region:'Patagonia Austral',lat:-54.76715,lng:-64.27798,province:'Tierra del Fuego',category:'Reserva Natural Silvestre',year:'2016',surface:'52,784 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60'},
       {name:'Parque Interjurisdiccional Marino Costero Patagonia Austral',region:'Patagonia Norte',lat:-45.07224,lng:-66.09692,province:'Chubut',category:'Parque Interjurisdiccional Marino Costero',year:'2009',surface:'103,574 ha',ecoregions:'Estepa Patagónica, Mar Argentino',international:'Reserva de Biósfera',color:'#0f5f60'},
       {name:'Parque Nacional Islote Lobos',region:'Patagonia Norte',lat:-41.43785,lng:-65.06369,province:'Río Negro',category:'Parque Nacional',year:'2022',surface:'19,079 ha',ecoregions:'',international:'',color:'#0f5f60'},
@@ -507,7 +508,12 @@
         </div>
       ` : '';
 
+      const photoSection = park.photoUrl
+        ? `<img src="${park.photoUrl}" alt="${park.name}" style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);margin-bottom:14px" />`
+        : '';
+
       panel.innerHTML = `
+        ${photoSection}
         <p class="kicker">${park.region}</p>
         <h3>${park.name}</h3>
         <div class="meta">
