@@ -58,6 +58,9 @@
       cursor: pointer;
     }
     .chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .lang-toggle { display: flex; gap: 4px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px; flex: 0 0 auto; }
+    .lang-toggle button { border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 12px; padding: 6px 14px; border-radius: 999px; cursor: pointer; transition: .18s; }
+    .lang-toggle button.active { background: var(--primary); color: #fff; }
     .search {
       width: 100%;
       border: 1px solid var(--border);
@@ -272,8 +275,14 @@
     <section id="interactiveMap" class="layout">
       <article class="card map-card">
         <div class="section-head">
-          <h2>Explorá las áreas protegidas por región</h2>
-          <p>Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.</p>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+            <h2 id="i18nTitle">Explorá las áreas protegidas por región</h2>
+            <div class="lang-toggle" id="langToggle">
+              <button data-lang="es" class="active">ES</button>
+              <button data-lang="en">EN</button>
+            </div>
+          </div>
+          <p id="i18nIntro">Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.</p>
           <div class="toolbar">
             <input id="searchInput" class="search" type="search" placeholder="Buscar parque, provincia o región" aria-label="Buscar área protegida" />
             <div class="filters" id="regionFilters"></div>
@@ -281,30 +290,30 @@
         </div>
         <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
         <div class="legend">
-          <span><i class="dot" style="background:#0f5f60"></i> Patagonia</span>
-          <span><i class="dot" style="background:#8a6d3b"></i> Centro</span>
-          <span><i class="dot" style="background:#6a8f3f"></i> Noroeste (NOA)</span>
-          <span><i class="dot" style="background:#7a4f7f"></i> Noreste (NEA)</span>
-          <span><i class="dot" style="background:#315f86"></i> Áreas marinas</span>
-          <span><i class="dot" style="background:#3b82f6"></i> Senderos Bariloche</span>
+          <span><i class="dot" style="background:#0f5f60"></i> <span data-i18n="legPat">Patagonia</span></span>
+          <span><i class="dot" style="background:#8a6d3b"></i> <span data-i18n="legCen">Centro</span></span>
+          <span><i class="dot" style="background:#6a8f3f"></i> <span data-i18n="legNoa">Noroeste (NOA)</span></span>
+          <span><i class="dot" style="background:#7a4f7f"></i> <span data-i18n="legNea">Noreste (NEA)</span></span>
+          <span><i class="dot" style="background:#315f86"></i> <span data-i18n="legMar">Áreas marinas</span></span>
+          <span><i class="dot" style="background:#3b82f6"></i> <span data-i18n="legBar">Senderos Bariloche</span></span>
         </div>
         <button class="layer-toggle" id="trailLayerToggle">
           <span class="toggle-dot"></span>
-          Senderos de Bariloche (barilochetrekking.com)
+          <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
         </button>
       </article>
 
       <aside class="card panel" id="infoPanel">
-        <p class="kicker">Dataset cargado</p>
-        <h3>Áreas protegidas de Argentina</h3>
+        <p class="kicker" data-i18n="pKicker">Dataset cargado</p>
+        <h3 data-i18n="pTitle">Áreas protegidas de Argentina</h3>
         <div class="meta">
           <span id="metaCount">55 áreas</span>
-          <span>Mapa listo</span>
+          <span data-i18n="pReady">Mapa listo</span>
         </div>
-        <p>Este panel se actualiza al tocar un marcador. Elegí una región o buscá un parque para empezar.</p>
-        <p class="subsection-title">Áreas visibles en el filtro actual</p>
+        <p data-i18n="pIntro">Este panel se actualiza al tocar un marcador. Elegí una región o buscá un parque para empezar.</p>
+        <p class="subsection-title" data-i18n="pVisible">Áreas visibles en el filtro actual</p>
         <div class="park-list" id="parkList"></div>
-        <p class="note">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
+        <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
       </aside>
     </section>
   </div>
@@ -436,6 +445,70 @@
     const searchInput = document.getElementById('searchInput');
     const metaCount = document.getElementById('metaCount');
 
+    // ── i18n (ES / EN) ─────────────────────────────────────────────────────────
+    let lang = 'es';
+    const T = (es, en) => (lang === 'es' ? es : en);
+
+    const I18N_STATIC = {
+      i18nTitle:   ['Explorá las áreas protegidas por región', 'Explore protected areas by region'],
+      i18nIntro:   ['Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.',
+                    'Use the region filters or the search box to narrow the map. Tap any marker to see category, province, coordinates, ecoregions and suggested trails.'],
+      legPat: ['Patagonia', 'Patagonia'], legCen: ['Centro', 'Centre'],
+      legNoa: ['Noroeste (NOA)', 'Northwest (NOA)'], legNea: ['Noreste (NEA)', 'Northeast (NEA)'],
+      legMar: ['Áreas marinas', 'Marine areas'], legBar: ['Senderos Bariloche', 'Bariloche trails'],
+      pKicker: ['Dataset cargado', 'Dataset loaded'],
+      pTitle:  ['Áreas protegidas de Argentina', 'Protected areas of Argentina'],
+      pReady:  ['Mapa listo', 'Map ready'],
+      pIntro:  ['Este panel se actualiza al tocar un marcador. Elegí una región o buscá un parque para empezar.',
+                'This panel updates when you tap a marker. Pick a region or search a park to begin.'],
+      pVisible:['Áreas visibles en el filtro actual', 'Areas visible in the current filter'],
+      pNote:   ['Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.',
+                'IGN Argentina base map. Data based on the SIB/APN list of protected natural areas.'],
+    };
+
+    const REGION_EN = {
+      'Todas':'All', 'Centro':'Centre', 'Centro Este':'Centre-East', 'Noreste':'Northeast',
+      'Noroeste':'Northwest', 'Patagonia Austral':'Southern Patagonia', 'Patagonia Norte':'Northern Patagonia',
+      'Áreas Marinas':'Marine Areas',
+    };
+    const CATEGORY_EN = {
+      'Parque Nacional':'National Park', 'Reserva Nacional':'National Reserve',
+      'Reserva Natural':'Nature Reserve', 'Reserva Natural Educativa':'Educational Nature Reserve',
+      'Reserva Natural Silvestre':'Wild Nature Reserve', 'Reserva Natural Estricta':'Strict Nature Reserve',
+      'Monumento Natural':'Natural Monument', 'Parque Interjurisdiccional Marino':'Interjurisdictional Marine Park',
+      'Parque Interjurisdiccional Marino Costero':'Interjurisdictional Coastal Marine Park',
+      'Área Marina Protegida':'Marine Protected Area', 'Área Natural Protegida':'Protected Natural Area',
+    };
+    const TOKEN_EN = {
+      // international statuses
+      'Reserva de Biósfera':'Biosphere Reserve', 'Patrimonio Mundial':'World Heritage', 'Sitio RAMSAR':'RAMSAR Site',
+      // ecoregions
+      'Altos Andes':'High Andes', 'Monte de Sierras y Bolsones':'Monte of Ranges and Basins', 'Puna':'Puna',
+      'Chaco Seco':'Dry Chaco', 'Chaco Húmedo':'Humid Chaco', 'Yungas':'Yungas', 'Selva Paranense':'Paraná Rainforest',
+      'Esteros del Iberá':'Iberá Wetlands', 'Pampa':'Pampa', 'Delta e Islas del Paraná':'Paraná Delta & Islands',
+      'Espinal':'Espinal', 'Campos y Malezales':'Grasslands & Wetlands', 'Bosques Patagónicos':'Patagonian Forests',
+      'Estepa Patagónica':'Patagonian Steppe', 'Mar Argentino':'Argentine Sea', 'Monte de Llanuras y Mesetas':'Monte of Plains and Plateaus',
+    };
+    const DIFF_EN = { 'Difícil':'Hard', 'Moderado':'Moderate', 'Fácil':'Easy', 'Guiado':'Guided', 'Corto':'Short',
+      'Muy alta':'Very high', 'Alta':'High', 'Media-alta':'Medium-high', 'Media':'Medium' };
+
+    const trRegion = r => (lang === 'es' ? r : (REGION_EN[r] || r));
+    const trCategory = c => (lang === 'es' ? c : (CATEGORY_EN[c] || c));
+    const trTokens = (s, sep) => (lang === 'es' || !s) ? s : s.split(sep).map(x => TOKEN_EN[x.trim()] || x.trim()).join(sep);
+    const trIntl = s => trTokens(s, ' · ');
+    const trEco = s => trTokens(s, ', ');
+    const trDiff = s => { if (lang === 'es') return s; let o = s; for (const k in DIFF_EN) o = o.replace(k, DIFF_EN[k]); return o; };
+
+    function applyStaticLang() {
+      for (const key in I18N_STATIC) {
+        document.querySelectorAll(`[data-i18n="${key}"], #${key}`).forEach(el => {
+          el.textContent = I18N_STATIC[key][lang === 'es' ? 0 : 1];
+        });
+      }
+      searchInput.placeholder = T('Buscar parque, provincia o región', 'Search park, province or region');
+      document.documentElement.lang = lang;
+    }
+
     function markerIcon(color) {
       return L.divIcon({
         className: '',
@@ -456,7 +529,9 @@
       return marker;
     });
 
+    let currentPark = null;
     function renderPanel(park) {
+      currentPark = park;
       const trails = sampleTrails[park.name];
 
       // Extra action buttons for parks with official resources
@@ -464,47 +539,60 @@
       if (park.mapPdfUrl || park.articleUrl || park.planUrl) {
         const planBtn = park.planUrl
           ? `<button class="btn-action btn-action-blue" onclick="window.location.href='${park.planUrl}'">
-               🧭 Planificar ruta
+               🧭 ${T('Planificar ruta', 'Plan route')}
              </button>`
           : '';
         const pdfIsDirect = park.mapPdfUrl && /\.pdf($|\?)/i.test(park.mapPdfUrl);
         const pdfBtn = park.mapPdfUrl
           ? pdfIsDirect
             ? `<button class="btn-action btn-action-green" onclick="window.open('${park.mapPdfUrl}','_blank','noopener')">
-                 ⬇ Descargar mapa PDF
+                 ⬇ ${T('Descargar mapa PDF', 'Download map PDF')}
                </button>`
             : `<button class="btn-action btn-action-green" onclick="downloadParkMapPDF(parks.find(p=>p.name==='${park.name.replace(/'/g,"\\'")}'))">
-                 ⬇ Descargar mapa PDF
+                 ⬇ ${T('Descargar mapa PDF', 'Download map PDF')}
                </button>`
           : '';
         const articleBtn = park.articleUrl
           ? `<button class="btn-action btn-action-blue" onclick="openArticle('${park.articleUrl}','${park.name.replace(/'/g,"\\'")}')">
-               📄 Leer artículo oficial
+               📄 ${T('Leer artículo oficial', 'Read official article')}
              </button>`
           : '';
         extraActions = `<div class="park-actions">${planBtn}${pdfBtn}${articleBtn}</div>`;
       }
 
       const trailsSection = trails
-        ? `<p class="subsection-title">Senderos sugeridos</p>
-           ${trails.map(t => `<div class="trail-box"><strong>Sendero</strong>${t}</div>`).join('')}`
+        ? `<p class="subsection-title">${T('Senderos sugeridos', 'Suggested trails')}</p>
+           ${trails.map(t => `<div class="trail-box"><strong>${T('Sendero', 'Trail')}</strong>${trDiff(t)}</div>`).join('')}`
         : '';
 
       const mitreSection = park.mitre ? `
         <div style="margin-top:14px">
-          <p class="subsection-title" style="color:#22c55e;font-size:15px;font-weight:800;margin:0 0 8px">Expedición · Península Mitre</p>
+          <p class="subsection-title" style="color:#22c55e;font-size:15px;font-weight:800;margin:0 0 8px">${T('Expedición', 'Expedition')} · Península Mitre</p>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-            ${['70 km aprox.','7–14 días','Dificultad alta','Sin senderos marcados'].map(c=>`<span style="background:#162035;border:1px solid #1e2d42;color:#f0f9ff;padding:6px 12px;border-radius:999px;font-size:12px">${c}</span>`).join('')}
+            ${(lang==='es'
+              ? ['70 km aprox.','7–14 días','Dificultad alta','Sin senderos marcados']
+              : ['~70 km','7–14 days','High difficulty','No marked trails']
+            ).map(c=>`<span style="background:#162035;border:1px solid #1e2d42;color:#f0f9ff;padding:6px 12px;border-radius:999px;font-size:12px">${c}</span>`).join('')}
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-            ${[['Inicio','Estancia Moat'],['Final','Bahía Sloggett / Puerto Español'],['Terreno','Costa, turba, bosque'],['Época','Nov–Abr']].map(([k,v])=>`<div style="background:#0c1424;border:1px solid #1e2d42;border-radius:10px;padding:10px"><span style="font-size:11px;color:#64748b;display:block;margin-bottom:3px">${k}</span><strong style="font-size:13px">${v}</strong></div>`).join('')}
+            ${[[T('Inicio','Start'),'Estancia Moat'],[T('Final','End'),'Bahía Sloggett / Puerto Español'],[T('Terreno','Terrain'),T('Costa, turba, bosque','Coast, peat, forest')],[T('Época','Season'),T('Nov–Abr','Nov–Apr')]].map(([k,v])=>`<div style="background:#0c1424;border:1px solid #1e2d42;border-radius:10px;padding:10px"><span style="font-size:11px;color:#64748b;display:block;margin-bottom:3px">${k}</span><strong style="font-size:13px">${v}</strong></div>`).join('')}
           </div>
-          <p class="subsection-title">Etapas de la ruta</p>
+          <p class="subsection-title">${T('Etapas de la ruta', 'Route stages')}</p>
           <div style="border-left:2px solid #1e2d42;margin-left:8px;padding-left:14px">
-            ${[['Día 1','Traslado a Moat, trekking por el Canal Beagle y campamento en Casa Vieja.'],['Día 2','Senderos altos hasta Cabo San Pío y campamento en Puesto Ibarra.'],['Día 3','Llegada a Bahía Sloggett, con draga de oro histórica y campamento cercano.'],['Día 4','Vadeo del Río López y llegada a Playa Dorada.'],['Día 5','Avance hacia Playa Paraíso y campamento previo al tramo final.'],['Día 6','Cuevas de Gardinier, Río Bonpland, Bahía Aguirre y Puerto Español.'],['Días 7–8','Descanso o espera logística en Puerto Español.'],['Día 9','Regreso en velero a Ushuaia por el Canal Beagle.']].map(([d,txt])=>`<div style="margin-bottom:10px"><strong style="color:#22c55e;font-size:12px">${d}</strong><p style="margin:2px 0 0;font-size:13px;line-height:1.5;color:#f0f9ff">${txt}</p></div>`).join('')}
+            ${(lang==='es' ? [
+              ['Día 1','Trekking por el Canal Beagle y campamento en Casa Vieja.'],['Día 2','Senderos altos hasta Cabo San Pío y campamento en Puesto Ibarra.'],['Día 3','Llegada a Bahía Sloggett, con draga de oro histórica y campamento cercano.'],['Día 4','Vadeo del Río López y llegada a Playa Dorada.'],['Día 5','Avance hacia Playa Paraíso y campamento previo al tramo final.'],['Día 6','Cuevas de Gardinier, Río Bonpland, Bahía Aguirre y Puerto Español.'],['Días 7–8','Descanso o espera logística en Puerto Español.'],['Día 9','Regreso en velero a Ushuaia por el Canal Beagle.']
+            ] : [
+              ['Day 1','Trekking along the Beagle Channel and camp at Casa Vieja.'],['Day 2','High trails to Cabo San Pío and camp at Puesto Ibarra.'],['Day 3','Arrival at Bahía Sloggett, with a historic gold dredge and a nearby camp.'],['Day 4','Ford of Río López and arrival at Playa Dorada.'],['Day 5','Progress towards Playa Paraíso and camp before the final stretch.'],['Day 6','Gardiner caves, Río Bonpland, Bahía Aguirre and Puerto Español.'],['Days 7–8','Rest or logistics wait at Puerto Español.'],['Day 9','Return by sailboat to Ushuaia along the Beagle Channel.']
+            ]).map(([d,txt])=>`<div style="margin-bottom:10px"><strong style="color:#22c55e;font-size:12px">${d}</strong><p style="margin:2px 0 0;font-size:13px;line-height:1.5;color:#f0f9ff">${txt}</p></div>`).join('')}
           </div>
-          <p style="font-size:13px;line-height:1.6;margin:12px 0 6px">Península Mitre ofrece una experiencia de hiking de expedición, remota y exigente. La costa sur combina acantilados bajos, playas rocosas, ríos que se cruzan según la marea y bosque subantártico. Ideal para personas con experiencia previa y capacidad de autosuficiencia.</p>
-          <div class="note" style="font-size:12px">Temporada: 1 Nov – 15 Abr · Registro obligatorio · Equipo mínimo: GPS, tabla de mareas, dispositivo de comunicación, botiquín y comida para toda la expedición.</div>
+          <p style="font-size:13px;line-height:1.6;margin:12px 0 6px">${T(
+            'Península Mitre ofrece una experiencia de hiking de expedición, remota y exigente. La costa sur combina acantilados bajos, playas rocosas, ríos que se cruzan según la marea y bosque subantártico. Ideal para personas con experiencia previa y capacidad de autosuficiencia.',
+            'Península Mitre offers a remote, demanding expedition hiking experience. The southern coast combines low cliffs, rocky beaches, rivers forded according to the tide and subantarctic forest. Ideal for people with prior experience and self-sufficiency.'
+          )}</p>
+          <div class="note" style="font-size:12px">${T(
+            'Temporada: 1 Nov – 15 Abr · Registro obligatorio · Equipo mínimo: GPS, tabla de mareas, dispositivo de comunicación, botiquín y comida para toda la expedición.',
+            'Season: 1 Nov – 15 Apr · Mandatory registration · Minimum kit: GPS, tide table, communication device, first-aid kit and food for the whole expedition.'
+          )}</div>
         </div>
       ` : '';
 
@@ -514,18 +602,21 @@
 
       panel.innerHTML = `
         ${photoSection}
-        <p class="kicker">${park.region}</p>
+        <p class="kicker">${trRegion(park.region)}</p>
         <h3>${park.name}</h3>
         <div class="meta">
-          <span>${park.category}</span>
+          <span>${trCategory(park.category)}</span>
           <span>${park.province}</span>
-          <span>Creado ${park.year}</span>
+          <span>${T('Creado', 'Established')} ${park.year}</span>
         </div>
-        <p>${park.name} pertenece al grupo ${park.region}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${park.ecoregions}` : ''}${park.international ? `. Estatus internacional: ${park.international}` : ''}.</p>
+        <p>${T(
+          `${park.name} pertenece al grupo ${trRegion(park.region)}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${trEco(park.ecoregions)}` : ''}${park.international ? `. Estatus internacional: ${trIntl(park.international)}` : ''}.`,
+          `${park.name} belongs to the ${trRegion(park.region)} group, in ${park.province}. Registered area: ${park.surface}${park.ecoregions ? ` · Ecoregions: ${trEco(park.ecoregions)}` : ''}${park.international ? `. International status: ${trIntl(park.international)}` : ''}.`
+        )}</p>
         ${extraActions}
         ${mitreSection}
         ${trailsSection}
-        <p class="note">Mapa base IGN Argentina · Datos SIB/APN.</p>
+        <p class="note">${T('Mapa base IGN Argentina · Datos SIB/APN.', 'IGN Argentina base map · SIB/APN data.')}</p>
       `;
     }
 
@@ -536,7 +627,7 @@
         row.type = 'button';
         row.className = 'park-row';
         row.dataset.name = park.name;
-        row.innerHTML = `<strong>${park.name}</strong><div style="margin-top:4px;color:var(--muted);font-size:13px;">${park.region} · ${park.province}</div>`;
+        row.innerHTML = `<strong>${park.name}</strong><div style="margin-top:4px;color:var(--muted);font-size:13px;">${trRegion(park.region)} · ${park.province}</div>`;
         row.addEventListener('click', () => {
           renderPanel(park);
           highlightListItem(park.name);
@@ -547,7 +638,7 @@
       if (items.length > 18) {
         const more = document.createElement('div');
         more.className = 'trail-box';
-        more.innerHTML = `<strong>Más áreas visibles</strong>${items.length - 18} áreas protegidas adicionales coinciden con el filtro actual.`;
+        more.innerHTML = `<strong>${T('Más áreas visibles', 'More areas visible')}</strong>${T(`${items.length - 18} áreas protegidas adicionales coinciden con el filtro actual.`, `${items.length - 18} additional protected areas match the current filter.`)}`;
         parkList.appendChild(more);
       }
     }
@@ -563,11 +654,15 @@
     regions.forEach(region => {
       const btn = document.createElement('button');
       btn.className = 'chip' + (region === 'Todas' ? ' active' : '');
-      btn.textContent = region;
+      btn.textContent = trRegion(region);
       btn.dataset.region = region;
       btn.addEventListener('click', () => { currentRegion = region; applyFilters(); });
       filtersWrap.appendChild(btn);
     });
+
+    function relabelFilters() {
+      filtersWrap.querySelectorAll('.chip').forEach(btn => { btn.textContent = trRegion(btn.dataset.region); });
+    }
 
     searchInput.addEventListener('input', e => {
       currentSearch = e.target.value.trim().toLowerCase();
@@ -591,14 +686,27 @@
         if (bounds.isValid()) map.fitBounds(bounds.pad(0.3));
       }
 
-      metaCount.textContent = filtered.length + ' áreas';
+      metaCount.textContent = filtered.length + ' ' + T('áreas', 'areas');
       renderList(filtered);
       filtersWrap.querySelectorAll('.chip').forEach(btn => btn.classList.toggle('active', btn.dataset.region === currentRegion));
       if (filtered.length) renderPanel(filtered[0]);
     }
 
     map.addLayer(clusterGroup);
+    applyStaticLang();
     applyFilters();
+
+    // ── Language toggle wiring ─────────────────────────────────────────────────
+    document.getElementById('langToggle').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      lang = b.dataset.lang;
+      document.querySelectorAll('#langToggle button').forEach(x => x.classList.toggle('active', x === b));
+      applyStaticLang();
+      relabelFilters();
+      updateTrailToggleLabel();
+      applyFilters();
+      if (currentPark) renderPanel(currentPark);
+    });
 
     // ── Bariloche trekking layer (source: barilochetrekking.com) ─────────────
     const barilocheTrails = [
@@ -993,7 +1101,7 @@ ${trkpts}
           <p style="margin:0 0 8px;font-size:13px;color:#cbd5e1;line-height:1.5;">${trail.description}</p>
           <div>
             <button class="btn-gpx" onclick="downloadGpx(barilocheTrails.find(t=>t.id==='${trail.id}'))">⬇ GPX offline</button>
-            <a class="btn-pdf" href="https://sliabh.app/ruta/${trail.id}" target="_blank">Ver guía</a>
+            <a class="btn-pdf" href="https://sliabh.app/ruta/${trail.id}" target="_blank">${T('Ver guía', 'View guide')}</a>
           </div>
         `;
         return div;
@@ -1004,12 +1112,20 @@ ${trkpts}
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
 
+    function updateTrailToggleLabel() {
+      if (trailLayerVisible) {
+        toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Senderos de Bariloche — VISIBLES (${barilocheTrails.length} senderos)`, `Bariloche trails — VISIBLE (${barilocheTrails.length} trails)`)}`;
+      } else {
+        toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T('Senderos de Bariloche (barilochetrekking.com)', 'Bariloche trails (barilochetrekking.com)')}`;
+      }
+    }
+
     function showTrailLayer() {
       trailLayerVisible = true;
       toggleBtn.classList.add('active');
       map.addLayer(trailCluster);
       trailPolylines.forEach(p => map.addLayer(p));
-      toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche — VISIBLES (${barilocheTrails.length} senderos)`;
+      updateTrailToggleLabel();
     }
 
     function hideTrailLayer() {
@@ -1017,7 +1133,7 @@ ${trkpts}
       toggleBtn.classList.remove('active');
       map.removeLayer(trailCluster);
       trailPolylines.forEach(p => map.removeLayer(p));
-      toggleBtn.innerHTML = `<span class="toggle-dot"></span> Senderos de Bariloche (barilochetrekking.com)`;
+      updateTrailToggleLabel();
     }
 
     toggleBtn.addEventListener('click', () => {
@@ -1029,8 +1145,8 @@ ${trkpts}
 
     // ── Article reader modal ───────────────────────────────────────────────────
     function openArticle(url, parkName) {
-      document.getElementById('articleModalTitle').textContent = parkName || 'Documento oficial';
-      document.getElementById('articleModalSub').textContent = 'Área Marina Protegida · Documentación oficial APN';
+      document.getElementById('articleModalTitle').textContent = parkName || T('Documento oficial', 'Official document');
+      document.getElementById('articleModalSub').textContent = T('Área Marina Protegida · Documentación oficial APN', 'Marine Protected Area · Official APN documentation');
       document.getElementById('articleIframe').src = url;
       document.getElementById('articleModal').classList.add('open');
       document.body.style.overflow = 'hidden';
