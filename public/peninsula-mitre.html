@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Península Mitre · Sliabh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
   :root{
     --bg:#070b14; --bg2:#0a1322; --surface:#0f1724; --surface-2:#162035;
@@ -91,27 +93,18 @@
   .card.alt{border-style:dashed}
 
   /* ── 3D map container ─────────────────────────────────── */
-  .map-stage{perspective:1400px}
-  .map-3d{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--border);
-    box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .25s ease;
-    background:#08111d;min-height:460px}
-  .relief{position:absolute;inset:0;opacity:.9}
-  .map-grid{position:absolute;inset:0;
-    background-image:linear-gradient(rgba(124,138,160,.08) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(124,138,160,.08) 1px,transparent 1px);
-    background-size:42px 42px;mix-blend-mode:overlay}
-  .map-overlay{position:absolute;inset:0;
-    background:radial-gradient(120% 90% at 30% 20%,transparent 40%,rgba(7,11,20,.55) 100%)}
-  .map-label{position:absolute;font-size:11px;font-weight:700;color:var(--text);
-    background:rgba(7,11,20,.78);border:1px solid var(--border);padding:5px 9px;border-radius:9px;
-    transform:translateZ(40px);white-space:nowrap;display:flex;align-items:center;gap:6px}
-  .map-label::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);
-    box-shadow:0 0 0 3px rgba(34,197,94,.25)}
-  .map-label.end::before{background:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
-  .map-cap{position:absolute;left:16px;bottom:14px;font-size:12px;color:var(--muted);
-    background:rgba(7,11,20,.7);border:1px solid var(--border);padding:8px 12px;border-radius:10px;transform:translateZ(30px)}
-  .tilt-hint{position:absolute;right:16px;top:14px;font-size:11px;color:var(--muted);
-    background:rgba(7,11,20,.7);border:1px solid var(--border);padding:7px 11px;border-radius:999px;transform:translateZ(30px)}
+  .map-3d{border-radius:24px;overflow:hidden;border:1px solid var(--border);
+    box-shadow:var(--shadow);height:480px}
+  .map-ctrl{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+  .map-ctrl button{background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+    font-size:12px;font-weight:700;padding:7px 14px;border-radius:999px;cursor:pointer;transition:.18s}
+  .map-ctrl button:hover{border-color:rgba(34,197,94,.5);color:var(--accent)}
+  .map-ctrl .cap{font-size:12px;color:var(--muted);margin-left:auto}
+  /* MapLibre popup */
+  .maplibregl-popup-content{background:rgba(7,11,20,.92)!important;border:1px solid var(--border)!important;
+    color:var(--text)!important;border-radius:10px!important;padding:9px 13px!important;font-size:13px!important;font-family:inherit!important}
+  .maplibregl-popup-tip{border-top-color:rgba(7,11,20,.92)!important}
+  @media(max-width:900px){.map-3d{height:340px}}
 
   /* ── Elevation profile ────────────────────────────────── */
   .elev{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);
@@ -194,7 +187,6 @@
     .hero h1{font-size:36px}
     .stat-strip{grid-template-columns:repeat(2,1fr)}
     .cards,.terrain,.landmarks,.gallery,.desc-grid,.related{grid-template-columns:1fr}
-    .map-3d{min-height:340px}
   }
 </style>
 </head>
@@ -282,67 +274,16 @@
 
   <!-- 4 · 3D MAP -->
   <div class="section">
-    <h2 class="section-title" data-es>Mapa de relieve</h2>
-    <h2 class="section-title" data-en>Relief map</h2>
-    <p class="section-sub" data-es>Aproximación 3D del terreno. Mové el cursor para inclinar la vista y observar la costa, los ríos y el relieve antes de salir.</p>
-    <p class="section-sub" data-en>3D approximation of the terrain. Move your cursor to tilt the view and inspect the coastline, rivers and relief before heading out.</p>
-    <div class="map-stage">
-      <div class="map-3d" id="map3d">
-        <svg class="relief" viewBox="0 0 800 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#0c2230"/><stop offset="100%" stop-color="#07131c"/>
-            </linearGradient>
-            <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#15301f"/><stop offset="100%" stop-color="#0c1d14"/>
-            </linearGradient>
-            <linearGradient id="routeGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#3b82f6"/>
-            </linearGradient>
-            <filter id="routeShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity="0.6"/>
-            </filter>
-          </defs>
-          <rect width="800" height="460" fill="url(#sea)"/>
-          <!-- land mass -->
-          <path d="M0,40 C160,20 320,60 440,40 C600,15 720,70 800,55 L800,300 C700,330 560,300 430,330 C300,360 150,330 0,360 Z" fill="url(#land)"/>
-          <!-- shaded relief contours -->
-          <g fill="none" stroke="#2a4d36" stroke-width="1.2" opacity="0.55">
-            <path d="M40,120 C180,100 320,140 460,120 C600,100 700,140 790,128"/>
-            <path d="M60,170 C200,150 330,185 470,165 C610,148 710,182 790,172"/>
-            <path d="M80,215 C220,198 340,228 480,212 C620,196 720,225 790,216"/>
-            <path d="M120,258 C250,244 360,268 500,256 C630,244 730,266 790,260"/>
-          </g>
-          <!-- rivers -->
-          <g fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.6" stroke-linecap="round">
-            <path d="M250,40 C260,110 230,180 250,250"/>
-            <path d="M470,30 C480,120 450,200 470,300"/>
-            <path d="M620,50 C630,140 600,210 615,300"/>
-          </g>
-          <!-- coastline highlight -->
-          <path d="M0,360 C150,330 300,360 430,330 C560,300 700,330 800,300" fill="none" stroke="#1f6f4a" stroke-width="2.5" opacity="0.8"/>
-          <!-- ROUTE LINE (animated) -->
-          <path id="routePath" d="M70,330 C150,300 200,250 260,255 C330,260 360,200 430,210 C520,222 560,165 640,175 C700,182 720,150 745,135"
-                fill="none" stroke="url(#routeGrad)" stroke-width="4.5" stroke-linecap="round"
-                filter="url(#routeShadow)" stroke-dasharray="1200" stroke-dashoffset="1200">
-            <animate attributeName="stroke-dashoffset" from="1200" to="0" dur="3.5s" fill="freeze" begin="0.4s"/>
-          </path>
-          <circle r="6" fill="#34d399" stroke="#04140a" stroke-width="2">
-            <animateMotion dur="3.5s" fill="freeze" begin="0.4s"
-              path="M70,330 C150,300 200,250 260,255 C330,260 360,200 430,210 C520,222 560,165 640,175 C700,182 720,150 745,135"/>
-          </circle>
-        </svg>
-        <div class="map-grid"></div>
-        <div class="map-overlay"></div>
-        <div class="map-label" style="left:7%;top:68%">Estancia Moat</div>
-        <div class="map-label" style="left:30%;top:50%">Cabo San Pío</div>
-        <div class="map-label" style="left:52%;top:42%">Bahía Sloggett</div>
-        <div class="map-label end" style="left:88%;top:26%;transform:translateX(-100%) translateZ(40px)">Puerto Español</div>
-        <div class="tilt-hint" data-es>↕ Inclinar vista</div>
-        <div class="tilt-hint" data-en>↕ Tilt view</div>
-        <div class="map-cap" data-es>Relieve esquemático · no usar para navegación real</div>
-        <div class="map-cap" data-en>Schematic relief · not for real navigation</div>
-      </div>
+    <h2 class="section-title" data-es>Mapa 3D interactivo</h2>
+    <h2 class="section-title" data-en>Interactive 3D map</h2>
+    <p class="section-sub" data-es>Terreno real con altimetría. Arrastrá para rotar, pellizco/scroll para zoom. Los puntos marcan las etapas clave de la expedición.</p>
+    <p class="section-sub" data-en>Real terrain with altimetry. Drag to rotate, pinch/scroll to zoom. Pins mark the key expedition waypoints.</p>
+    <div id="map3d" class="map-3d"></div>
+    <div class="map-ctrl">
+      <button class="btn-map-reset">↩ <span data-es>Vista inicial</span><span data-en>Reset view</span></button>
+      <button class="btn-map-flat">▦ <span data-es>Mapa plano</span><span data-en>Flat map</span></button>
+      <span class="cap" data-es>Tiles © OSM · Relieve © AWS · No usar para navegación</span>
+      <span class="cap" data-en>Tiles © OSM · Relief © AWS · Not for navigation</span>
     </div>
 
     <!-- elevation profile -->
@@ -526,20 +467,93 @@
       <p data-es>${l.es[1]}</p><p data-en>${l.en[1]}</p></div>
     </div>`).join('');
 
-  // ── 3D tilt / parallax ────────────────────────────────
-  const map = document.getElementById('map3d');
-  const stage = map.parentElement;
-  let raf;
-  stage.addEventListener('mousemove', e => {
-    const r = stage.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      map.style.transform = `rotateX(${(-py*10).toFixed(2)}deg) rotateY(${(px*14).toFixed(2)}deg)`;
+  // ── MapLibre GL 3D terrain map ───────────────────────────
+  const WAYPOINTS = [
+    { coords: [-66.731, -54.972], label: 'Estancia Moat',  color: '#22c55e', start: true },
+    { coords: [-66.484, -55.058], label: 'Cabo San Pío',   color: '#34d399' },
+    { coords: [-65.728, -54.935], label: 'Bahía Sloggett', color: '#3b82f6' },
+    { coords: [-65.387, -54.862], label: 'Playa Dorada',   color: '#3b82f6' },
+    { coords: [-65.105, -54.797], label: 'Puerto Español', color: '#60a5fa', end: true },
+  ];
+
+  const INITIAL_VIEW = { center: [-65.95, -54.93], zoom: 8.8, pitch: 58, bearing: 68 };
+
+  const glMap = new maplibregl.Map({
+    container: 'map3d',
+    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    ...INITIAL_VIEW,
+    antialias: true,
+    attributionControl: false,
+  });
+
+  glMap.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+  glMap.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+
+  glMap.on('load', () => {
+    // ── Real terrain DEM (AWS Terrain Tiles, free, no key) ──
+    glMap.addSource('terrain-dem', {
+      type: 'raster-dem',
+      tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+      encoding: 'terrarium',
+      tileSize: 256,
+      maxzoom: 14,
+    });
+    glMap.setTerrain({ source: 'terrain-dem', exaggeration: 2.8 });
+
+    // ── Sky / atmosphere ────────────────────────────────────
+    glMap.setSky({ 'sky-color': '#0a1422', 'sky-horizon-blend': 0.5,
+      'horizon-color': '#0d2035', 'horizon-fog-blend': 0.3,
+      'fog-color': '#071020', 'fog-ground-blend': 0.9 });
+
+    // ── Route line ──────────────────────────────────────────
+    glMap.addSource('route', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: { type: 'LineString', coordinates: WAYPOINTS.map(w => w.coords) },
+      },
+    });
+    glMap.addLayer({
+      id: 'route-glow', type: 'line', source: 'route',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#22c55e', 'line-width': 10, 'line-opacity': 0.18, 'line-blur': 6 },
+    });
+    glMap.addLayer({
+      id: 'route-line', type: 'line', source: 'route',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: { 'line-color': '#22c55e', 'line-width': 3.5, 'line-opacity': 0.9 },
+    });
+
+    // ── Waypoint markers ────────────────────────────────────
+    WAYPOINTS.forEach(({ coords, label, color, start, end }) => {
+      const el = document.createElement('div');
+      const size = (start || end) ? 14 : 10;
+      el.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};
+        border:2px solid #fff;box-shadow:0 0 0 3px ${color}55,0 2px 8px rgba(0,0,0,.5);
+        cursor:pointer;transition:.2s`;
+      el.addEventListener('mouseenter', () => { el.style.transform = 'scale(1.4)'; });
+      el.addEventListener('mouseleave', () => { el.style.transform = 'scale(1)'; });
+      new maplibregl.Marker({ element: el })
+        .setLngLat(coords)
+        .setPopup(
+          new maplibregl.Popup({ offset: 16, closeButton: false })
+            .setHTML(`<strong style="color:#f0f9ff">${label}</strong>`)
+        )
+        .addTo(glMap);
     });
   });
-  stage.addEventListener('mouseleave', () => { map.style.transform = 'rotateX(0) rotateY(0)'; });
+
+  // ── Control buttons ─────────────────────────────────────
+  document.querySelector('.btn-map-reset').addEventListener('click', () => {
+    glMap.flyTo({ ...INITIAL_VIEW, duration: 1800 });
+  });
+
+  let flatMode = false;
+  document.querySelector('.btn-map-flat').addEventListener('click', () => {
+    flatMode = !flatMode;
+    glMap.easeTo({ pitch: flatMode ? 0 : INITIAL_VIEW.pitch, bearing: flatMode ? 0 : INITIAL_VIEW.bearing, duration: 900 });
+    glMap.setTerrain(flatMode ? null : { source: 'terrain-dem', exaggeration: 2.8 });
+  });
 </script>
 </body>
 </html>
