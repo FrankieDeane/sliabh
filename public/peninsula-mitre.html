@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Península Mitre · Sliabh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  :root{
+    --bg:#070b14; --bg2:#0a1322; --surface:#0f1724; --surface-2:#162035;
+    --elevated:#1b2740; --text:#f0f9ff; --muted:#7c8aa0; --faint:#4a586e;
+    --border:#1e2d42; --accent:#22c55e; --accent-2:#34d399; --blue:#3b82f6;
+    --amber:#fbbf24; --red:#ef4444; --radius:20px;
+    --shadow:0 24px 60px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(34,197,94,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(59,130,246,.07), transparent 55%),
+      linear-gradient(180deg,#060a12 0%, var(--bg) 100%);
+    background-attachment:fixed;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent)}
+  h1,h2,h3{margin:0;letter-spacing:-.02em}
+  .section{margin-top:34px}
+  .section-title{font-size:24px;font-weight:800;margin-bottom:6px}
+  .section-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:18px;max-width:680px}
+
+  /* ── Top language bar ─────────────────────────────────── */
+  .topbar{
+    position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(7,11,20,.72);border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;height:58px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px}
+  .brand .mark{width:26px;height:26px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),#0e7a3a);display:grid;place-items:center;font-size:15px}
+  .lang-toggle{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);
+    border-radius:999px;padding:4px}
+  .lang-toggle button{border:0;background:transparent;color:var(--muted);font-weight:700;
+    font-size:12px;padding:7px 16px;border-radius:999px;cursor:pointer;transition:.18s}
+  .lang-toggle button.active{background:var(--accent);color:#04140a}
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero{position:relative;margin-top:22px;border-radius:28px;overflow:hidden;
+    border:1px solid var(--border);box-shadow:var(--shadow)}
+  .hero-grid{display:grid;grid-template-columns:1.25fr .9fr;min-height:440px}
+  .hero-media{position:relative;overflow:hidden;background:#06101a}
+  .hero-media img{width:100%;height:100%;object-fit:cover;display:block;
+    transform:scale(1.04);transition:transform 6s ease}
+  .hero:hover .hero-media img{transform:scale(1.12)}
+  .hero-media::after{content:'';position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent 40%,rgba(7,11,20,.55) 100%),
+               linear-gradient(0deg,rgba(7,11,20,.8),transparent 55%)}
+  .hero-copy{padding:34px;display:flex;flex-direction:column;justify-content:center;
+    background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%)}
+  .hero h1{font-size:46px;line-height:1.02;font-weight:900;margin:10px 0 6px}
+  .hero .loc{color:var(--muted);font-size:15px;display:flex;align-items:center;gap:7px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .badge{font-size:12px;font-weight:700;padding:7px 12px;border-radius:999px;
+    border:1px solid var(--border);background:var(--surface-2)}
+  .badge.warn{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.12);color:#fca5a5}
+  .badge.accent{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.12);color:#86efac}
+
+  /* ── Stat strip ───────────────────────────────────────── */
+  .stat-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;
+    background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-top:18px}
+  .stat{background:linear-gradient(180deg,var(--surface),var(--bg2));padding:16px 14px}
+  .stat .k{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);font-weight:800}
+  .stat .v{font-size:16px;font-weight:800;margin-top:5px}
+  .stat .v small{font-size:11px;color:var(--muted);font-weight:600}
+
+  /* ── Cards ────────────────────────────────────────────── */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:.2s}
+  .card:hover{transform:translateY(-3px);border-color:rgba(34,197,94,.4)}
+  .card .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+    font-size:20px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:12px}
+  .card h3{font-size:17px;font-weight:800;margin-bottom:6px}
+  .card .tag{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--accent)}
+  .card p{color:var(--muted);font-size:13px;line-height:1.6;margin:8px 0 0}
+  .card .meta{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+  .card .meta span{font-size:12px;color:var(--text);font-weight:600;display:flex;gap:5px;align-items:center}
+  .card.alt{border-style:dashed}
+
+  /* ── 3D map container ─────────────────────────────────── */
+  .map-stage{perspective:1400px}
+  .map-3d{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--border);
+    box-shadow:var(--shadow);transform-style:preserve-3d;transition:transform .25s ease;
+    background:#08111d;min-height:460px}
+  .relief{position:absolute;inset:0;opacity:.9}
+  .map-grid{position:absolute;inset:0;
+    background-image:linear-gradient(rgba(124,138,160,.08) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(124,138,160,.08) 1px,transparent 1px);
+    background-size:42px 42px;mix-blend-mode:overlay}
+  .map-overlay{position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 30% 20%,transparent 40%,rgba(7,11,20,.55) 100%)}
+  .map-label{position:absolute;font-size:11px;font-weight:700;color:var(--text);
+    background:rgba(7,11,20,.78);border:1px solid var(--border);padding:5px 9px;border-radius:9px;
+    transform:translateZ(40px);white-space:nowrap;display:flex;align-items:center;gap:6px}
+  .map-label::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+  .map-label.end::before{background:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.25)}
+  .map-cap{position:absolute;left:16px;bottom:14px;font-size:12px;color:var(--muted);
+    background:rgba(7,11,20,.7);border:1px solid var(--border);padding:8px 12px;border-radius:10px;transform:translateZ(30px)}
+  .tilt-hint{position:absolute;right:16px;top:14px;font-size:11px;color:var(--muted);
+    background:rgba(7,11,20,.7);border:1px solid var(--border);padding:7px 11px;border-radius:999px;transform:translateZ(30px)}
+
+  /* ── Elevation profile ────────────────────────────────── */
+  .elev{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;margin-top:14px}
+  .elev .legend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px}
+
+  /* ── Terrain explainer ────────────────────────────────── */
+  .terrain{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .terrain .t{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px}
+  .terrain .t .ic{font-size:22px}
+  .terrain .t h4{margin:10px 0 4px;font-size:14px}
+  .terrain .t p{margin:0;font-size:12px;color:var(--muted);line-height:1.55}
+
+  /* ── Timeline ─────────────────────────────────────────── */
+  .timeline{position:relative;padding-left:30px}
+  .timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(180deg,var(--accent),var(--blue))}
+  .stage{position:relative;margin-bottom:18px;background:var(--surface);border:1px solid var(--border);
+    border-radius:16px;padding:16px 18px}
+  .stage::before{content:'';position:absolute;left:-26px;top:20px;width:12px;height:12px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 3px rgba(34,197,94,.2)}
+  .stage .d{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase}
+  .stage h4{margin:4px 0 4px;font-size:16px}
+  .stage p{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+
+  /* ── Landmarks ────────────────────────────────────────── */
+  .landmarks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .lm{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:13px 15px}
+  .lm .n{width:26px;height:26px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);
+    display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--accent);flex:0 0 auto}
+  .lm h4{margin:0 0 2px;font-size:14px}
+  .lm p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}
+
+  /* ── Gallery ──────────────────────────────────────────── */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .gallery figure{margin:0;position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+  .gallery img{width:100%;height:230px;object-fit:cover;display:block;transition:transform .5s}
+  .gallery figure:hover img{transform:scale(1.07)}
+  .gallery figcaption{position:absolute;left:12px;bottom:10px;font-size:12px;font-weight:600;
+    background:rgba(7,11,20,.72);border:1px solid var(--border);padding:5px 10px;border-radius:8px}
+
+  /* ── Safety ───────────────────────────────────────────── */
+  .safety{background:linear-gradient(135deg,rgba(239,68,68,.1),var(--surface));
+    border:1px solid rgba(239,68,68,.35);border-radius:var(--radius);padding:22px}
+  .safety h3{font-size:18px;display:flex;align-items:center;gap:9px}
+  .safety ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.8}
+  .safety .official{margin-top:16px;background:var(--surface-2);border:1px solid var(--border);
+    border-radius:14px;padding:14px;font-size:13px;color:var(--text)}
+
+  /* ── Bilingual descriptions ───────────────────────────── */
+  .desc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .desc{background:linear-gradient(180deg,var(--surface),var(--bg2));border:1px solid var(--border);
+    border-radius:var(--radius);padding:22px}
+  .desc .flag{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--accent);text-transform:uppercase}
+  .desc h3{font-size:18px;margin:6px 0 10px}
+  .desc p{color:var(--muted);font-size:14px;line-height:1.75;margin:0 0 12px}
+
+  /* ── Related ──────────────────────────────────────────── */
+  .related{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .rel{display:block;background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    overflow:hidden;transition:.2s}
+  .rel:hover{transform:translateY(-3px);border-color:rgba(34,197,94,.4)}
+  .rel img{width:100%;height:130px;object-fit:cover;display:block}
+  .rel .b{padding:14px}
+  .rel .b .tag{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase}
+  .rel .b h4{margin:5px 0 4px;font-size:15px}
+  .rel .b p{margin:0;font-size:12px;color:var(--muted)}
+
+  footer{margin:46px 0 36px;text-align:center;color:var(--faint);font-size:12px;line-height:1.7}
+
+  /* hide inactive language */
+  [data-en]{display:none}
+  body.en [data-es]{display:none}
+  body.en [data-en]{display:revert}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-media{min-height:240px}
+    .hero h1{font-size:36px}
+    .stat-strip{grid-template-columns:repeat(2,1fr)}
+    .cards,.terrain,.landmarks,.gallery,.desc-grid,.related{grid-template-columns:1fr}
+    .map-3d{min-height:340px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/"><span class="mark">▲</span> SLIABH</a>
+    <div class="lang-toggle" id="langToggle">
+      <button data-lang="es" class="active">ES</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 1 · HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div class="hero-media">
+        <img src="/tierra-del-fuego.jpg" alt="Península Mitre, Tierra del Fuego" />
+      </div>
+      <div class="hero-copy">
+        <span class="eyebrow" data-es>Expedición costera · Tierra del Fuego</span>
+        <span class="eyebrow" data-en>Coastal expedition · Tierra del Fuego</span>
+        <h1>Península<br>Mitre</h1>
+        <div class="loc">📍 <span data-es>Extremo oriental de Tierra del Fuego, Argentina</span><span data-en>Eastern tip of Tierra del Fuego, Argentina</span></div>
+        <div class="badges">
+          <span class="badge warn" data-es>⚠ Sin senderos marcados</span>
+          <span class="badge warn" data-en>⚠ No marked trails</span>
+          <span class="badge accent" data-es>Autosuficiencia total</span>
+          <span class="badge accent" data-en>Full self-sufficiency</span>
+          <span class="badge" data-es>Navegación GPS + mareas</span>
+          <span class="badge" data-en>GPS + tide navigation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat"><div class="k" data-es>Distancia</div><div class="k" data-en>Distance</div><div class="v">~70 <small>km</small></div></div>
+    <div class="stat"><div class="k" data-es>Duración</div><div class="k" data-en>Duration</div><div class="v">7–9 <small data-es>días</small><small data-en>days</small></div></div>
+    <div class="stat"><div class="k" data-es>Dificultad</div><div class="k" data-en>Difficulty</div><div class="v" style="color:#fca5a5" data-es>Alta</div><div class="v" style="color:#fca5a5" data-en>High</div></div>
+    <div class="stat"><div class="k" data-es>Relieve</div><div class="k" data-en>Relief</div><div class="v">+1.8k <small>m acum.</small></div></div>
+    <div class="stat"><div class="k" data-es>Inicio</div><div class="k" data-en>Start</div><div class="v" style="font-size:14px">Est. Moat</div></div>
+    <div class="stat"><div class="k" data-es>Final</div><div class="k" data-en>End</div><div class="v" style="font-size:14px">Pto. Español</div></div>
+    <div class="stat"><div class="k" data-es>Temporada</div><div class="k" data-en>Season</div><div class="v" style="font-size:14px">Nov–Abr</div></div>
+  </div>
+
+  <!-- 3 · ROUTE SUMMARY CARDS -->
+  <div class="section">
+    <h2 class="section-title" data-es>Rutas de la expedición</h2>
+    <h2 class="section-title" data-en>Expedition routes</h2>
+    <p class="section-sub" data-es>Tres formas de recorrer la península según experiencia, tiempo disponible y logística de salida.</p>
+    <p class="section-sub" data-en>Three ways to cross the peninsula depending on experience, available time and exit logistics.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ic">🌊</div>
+        <span class="tag" data-es>Ruta principal</span><span class="tag" data-en>Main route</span>
+        <h3 data-es>Travesía de la costa sur</h3><h3 data-en>Southern coast crossing</h3>
+        <p data-es>El recorrido clásico de Moat a Puerto Español por playas, acantilados bajos y bosque subantártico.</p>
+        <p data-en>The classic Moat-to-Puerto-Español traverse along beaches, low cliffs and subantarctic forest.</p>
+        <div class="meta"><span>📏 ~70 km</span><span>🗓 7–9 <span data-es>días</span><span data-en>days</span></span><span style="color:#fca5a5">● <span data-es>Alta</span><span data-en>High</span></span></div>
+      </div>
+      <div class="card">
+        <div class="ic">🧭</div>
+        <span class="tag" data-es>Ruta opcional</span><span class="tag" data-en>Optional route</span>
+        <h3 data-es>Circuito de la costa norte</h3><h3 data-en>Northern coast loop</h3>
+        <p data-es>Variante más expuesta al viento del Atlántico, con turbales extensos y menos refugios naturales.</p>
+        <p data-en>A more Atlantic-wind-exposed variant with vast peat bogs and fewer natural shelters.</p>
+        <div class="meta"><span>📏 ~85 km</span><span>🗓 9–11 <span data-es>días</span><span data-en>days</span></span><span style="color:#fca5a5">● <span data-es>Muy alta</span><span data-en>Very high</span></span></div>
+      </div>
+      <div class="card alt">
+        <div class="ic">⛺</div>
+        <span class="tag" data-es>Expedición corta</span><span class="tag" data-en>Short expedition</span>
+        <h3>Cabo San Pío + Bahía Sloggett</h3>
+        <p data-es>Alternativa más breve para probar el terreno: ida y vuelta a los dos hitos más accesibles.</p>
+        <p data-en>A shorter alternative to test the terrain: out-and-back to the two most accessible landmarks.</p>
+        <div class="meta"><span>📏 ~32 km</span><span>🗓 3–4 <span data-es>días</span><span data-en>days</span></span><span style="color:#fbbf24">● <span data-es>Media-alta</span><span data-en>Medium-high</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · 3D MAP -->
+  <div class="section">
+    <h2 class="section-title" data-es>Mapa de relieve</h2>
+    <h2 class="section-title" data-en>Relief map</h2>
+    <p class="section-sub" data-es>Aproximación 3D del terreno. Mové el cursor para inclinar la vista y observar la costa, los ríos y el relieve antes de salir.</p>
+    <p class="section-sub" data-en>3D approximation of the terrain. Move your cursor to tilt the view and inspect the coastline, rivers and relief before heading out.</p>
+    <div class="map-stage">
+      <div class="map-3d" id="map3d">
+        <svg class="relief" viewBox="0 0 800 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0c2230"/><stop offset="100%" stop-color="#07131c"/>
+            </linearGradient>
+            <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#15301f"/><stop offset="100%" stop-color="#0c1d14"/>
+            </linearGradient>
+            <linearGradient id="routeGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#3b82f6"/>
+            </linearGradient>
+            <filter id="routeShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity="0.6"/>
+            </filter>
+          </defs>
+          <rect width="800" height="460" fill="url(#sea)"/>
+          <!-- land mass -->
+          <path d="M0,40 C160,20 320,60 440,40 C600,15 720,70 800,55 L800,300 C700,330 560,300 430,330 C300,360 150,330 0,360 Z" fill="url(#land)"/>
+          <!-- shaded relief contours -->
+          <g fill="none" stroke="#2a4d36" stroke-width="1.2" opacity="0.55">
+            <path d="M40,120 C180,100 320,140 460,120 C600,100 700,140 790,128"/>
+            <path d="M60,170 C200,150 330,185 470,165 C610,148 710,182 790,172"/>
+            <path d="M80,215 C220,198 340,228 480,212 C620,196 720,225 790,216"/>
+            <path d="M120,258 C250,244 360,268 500,256 C630,244 730,266 790,260"/>
+          </g>
+          <!-- rivers -->
+          <g fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.6" stroke-linecap="round">
+            <path d="M250,40 C260,110 230,180 250,250"/>
+            <path d="M470,30 C480,120 450,200 470,300"/>
+            <path d="M620,50 C630,140 600,210 615,300"/>
+          </g>
+          <!-- coastline highlight -->
+          <path d="M0,360 C150,330 300,360 430,330 C560,300 700,330 800,300" fill="none" stroke="#1f6f4a" stroke-width="2.5" opacity="0.8"/>
+          <!-- ROUTE LINE (animated) -->
+          <path id="routePath" d="M70,330 C150,300 200,250 260,255 C330,260 360,200 430,210 C520,222 560,165 640,175 C700,182 720,150 745,135"
+                fill="none" stroke="url(#routeGrad)" stroke-width="4.5" stroke-linecap="round"
+                filter="url(#routeShadow)" stroke-dasharray="1200" stroke-dashoffset="1200">
+            <animate attributeName="stroke-dashoffset" from="1200" to="0" dur="3.5s" fill="freeze" begin="0.4s"/>
+          </path>
+          <circle r="6" fill="#34d399" stroke="#04140a" stroke-width="2">
+            <animateMotion dur="3.5s" fill="freeze" begin="0.4s"
+              path="M70,330 C150,300 200,250 260,255 C330,260 360,200 430,210 C520,222 560,165 640,175 C700,182 720,150 745,135"/>
+          </circle>
+        </svg>
+        <div class="map-grid"></div>
+        <div class="map-overlay"></div>
+        <div class="map-label" style="left:7%;top:68%">Estancia Moat</div>
+        <div class="map-label" style="left:30%;top:50%">Cabo San Pío</div>
+        <div class="map-label" style="left:52%;top:42%">Bahía Sloggett</div>
+        <div class="map-label end" style="left:88%;top:26%;transform:translateX(-100%) translateZ(40px)">Puerto Español</div>
+        <div class="tilt-hint" data-es>↕ Inclinar vista</div>
+        <div class="tilt-hint" data-en>↕ Tilt view</div>
+        <div class="map-cap" data-es>Relieve esquemático · no usar para navegación real</div>
+        <div class="map-cap" data-en>Schematic relief · not for real navigation</div>
+      </div>
+    </div>
+
+    <!-- elevation profile -->
+    <div class="elev">
+      <span class="eyebrow" data-es>Perfil de elevación aproximado</span>
+      <span class="eyebrow" data-en>Approximate elevation profile</span>
+      <svg viewBox="0 0 800 150" style="width:100%;display:block;margin-top:10px" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="elevFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22c55e" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#22c55e" stop-opacity="0.02"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,120 C60,110 90,70 140,85 C200,103 230,55 300,65 C360,73 390,30 450,45 C520,62 560,40 620,75 C680,108 720,60 800,90 L800,150 L0,150 Z" fill="url(#elevFill)"/>
+        <path d="M0,120 C60,110 90,70 140,85 C200,103 230,55 300,65 C360,73 390,30 450,45 C520,62 560,40 620,75 C680,108 720,60 800,90" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="legend"><span>0 km · Moat</span><span style="color:var(--accent);font-weight:700">↑ ~1.800 m <span data-es>acumulado</span><span data-en>cumulative</span></span><span>~70 km · Pto. Español</span></div>
+    </div>
+  </div>
+
+  <!-- 5 · TERRAIN / DIFFICULTY -->
+  <div class="section">
+    <h2 class="section-title" data-es>Terreno y dificultad</h2>
+    <h2 class="section-title" data-en>Terrain & difficulty</h2>
+    <p class="section-sub" data-es>No existen senderos señalizados. El avance se hace por huellas de ganado, tramos de costa, vadeos de río y movimiento atento a las mareas.</p>
+    <p class="section-sub" data-en>There are no marked trails. Progress is made via cattle tracks, coastal stretches, river fords and tide-aware movement.</p>
+    <div class="terrain">
+      <div class="t"><div class="ic">🐄</div><h4 data-es>Huellas de ganado</h4><h4 data-en>Cattle tracks</h4><p data-es>Sendas difusas que aparecen y desaparecen; exigen lectura constante del terreno.</p><p data-en>Faint paths that come and go; they demand constant terrain reading.</p></div>
+      <div class="t"><div class="ic">🌊</div><h4 data-es>Tramos de costa</h4><h4 data-en>Coastal stretches</h4><p data-es>Playas de canto rodado y acantilados bajos, transitables solo con marea baja.</p><p data-en>Shingle beaches and low cliffs, passable only at low tide.</p></div>
+      <div class="t"><div class="ic">🏞</div><h4 data-es>Vadeos de río</h4><h4 data-en>River fords</h4><p data-es>Ríos Chico, López y Bonpland se cruzan a pie según caudal y horario de marea.</p><p data-en>Ríos Chico, López and Bonpland are forded on foot depending on flow and tide timing.</p></div>
+      <div class="t"><div class="ic">⏱</div><h4 data-es>Mareas</h4><h4 data-en>Tides</h4><p data-es>La tabla de mareas define el horario de avance: tramos enteros se cierran con marea alta.</p><p data-en>The tide table sets the marching schedule: whole sections close at high tide.</p></div>
+    </div>
+  </div>
+
+  <!-- 6 · ITINERARY -->
+  <div class="section">
+    <h2 class="section-title" data-es>Itinerario por etapas</h2>
+    <h2 class="section-title" data-en>Stage-by-stage itinerary</h2>
+    <p class="section-sub" data-es>Ruta principal de la costa sur. Los tiempos varían según clima, mareas y estado del grupo.</p>
+    <p class="section-sub" data-en>Main southern-coast route. Times vary with weather, tides and group condition.</p>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <!-- 7 · LANDMARKS -->
+  <div class="section">
+    <h2 class="section-title" data-es>Puntos clave</h2>
+    <h2 class="section-title" data-en>Key landmarks</h2>
+    <div class="landmarks" id="landmarks"></div>
+  </div>
+
+  <!-- 8 · GALLERY -->
+  <div class="section">
+    <h2 class="section-title" data-es>Galería</h2>
+    <h2 class="section-title" data-en>Gallery</h2>
+    <div class="gallery">
+      <figure><img src="/tierra-del-fuego.jpg" alt="Costa de Península Mitre"><figcaption data-es>Costa sur</figcaption><figcaption data-en>Southern coast</figcaption></figure>
+      <figure><img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/e7da4844c24a7c3c52d6244b85378c75f5fe8f60.jpg" alt="Trekkers"><figcaption data-es>Travesía</figcaption><figcaption data-en>Crossing</figcaption></figure>
+      <figure><img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/1cb5de975eedd6595cb5e9956b436c0feb391024.jpg" alt="Campamento"><figcaption data-es>Campamento</figcaption><figcaption data-en>Camp</figcaption></figure>
+    </div>
+  </div>
+
+  <!-- 9 · SAFETY -->
+  <div class="section">
+    <div class="safety">
+      <h3>⚠ <span data-es>Seguridad y acceso oficial</span><span data-en>Safety & official access</span></h3>
+      <ul>
+        <li data-es>Registro de visitantes obligatorio antes del ingreso al área protegida.</li>
+        <li data-en>Mandatory visitor registration before entering the protected area.</li>
+        <li data-es>Llevá GPS, tabla de mareas, dispositivo de comunicación satelital y botiquín completo.</li>
+        <li data-en>Carry GPS, a tide table, a satellite communication device and a full first-aid kit.</li>
+        <li data-es>Autosuficiencia total: no hay refugios, comercios ni rescate inmediato.</li>
+        <li data-en>Full self-sufficiency: there are no shelters, shops or immediate rescue.</li>
+        <li data-es>Cruzá los ríos solo con marea baja y caudal seguro; esperá si hace falta.</li>
+        <li data-en>Cross rivers only at low tide and safe flow; wait if necessary.</li>
+        <li data-es>Recomendado para grupos con experiencia previa en travesías remotas.</li>
+        <li data-en>Recommended for groups with prior experience in remote expeditions.</li>
+      </ul>
+      <div class="official">
+        <strong data-es>Temporada oficial:</strong><strong data-en>Official season:</strong>
+        <span data-es> 1 de noviembre – 15 de abril · Comida para toda la expedición · Plan de ruta dejado con un contacto de confianza.</span>
+        <span data-en> November 1st – April 15th · Food for the whole expedition · Route plan left with a trusted contact.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 · BILINGUAL DESCRIPTIONS -->
+  <div class="section">
+    <div class="desc-grid">
+      <div class="desc">
+        <span class="flag">🇦🇷 Español</span>
+        <h3>Descripción</h3>
+        <p>Península Mitre es uno de los últimos grandes territorios salvajes de Sudamérica, en el extremo oriental de Tierra del Fuego. La travesía de la costa sur combina acantilados bajos, playas de canto rodado, ríos que se cruzan según la marea y bosque subantártico empapado por el viento del Atlántico.</p>
+        <p>Es una experiencia de expedición, no una caminata casual: sin senderos marcados, sin señal estable y sin infraestructura. Está pensada para personas con experiencia previa, buen estado físico y capacidad de autosuficiencia. La temporada recomendada va del 1 de noviembre al 15 de abril, con registro obligatorio antes del ingreso.</p>
+      </div>
+      <div class="desc">
+        <span class="flag">🇬🇧 English</span>
+        <h3>Description</h3>
+        <p>Península Mitre is one of South America's last great wilderness areas, at the eastern tip of Tierra del Fuego. The southern-coast crossing combines low cliffs, shingle beaches, rivers forded according to the tide, and subantarctic forest soaked by the Atlantic wind.</p>
+        <p>This is an expedition, not a casual hike: no marked trails, no stable signal and no infrastructure. It is designed for people with prior experience, strong fitness and self-sufficiency. The recommended season runs from November 1st to April 15th, with mandatory registration before entry.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 · RELATED -->
+  <div class="section">
+    <h2 class="section-title" data-es>Rutas relacionadas</h2>
+    <h2 class="section-title" data-en>Related routes</h2>
+    <div class="related">
+      <a class="rel" href="/ruta/tierra-del-fuego-costera">
+        <img src="/tierra-del-fuego.jpg" alt="Tierra del Fuego Costero">
+        <div class="b"><span class="tag" data-es>Travesía</span><span class="tag" data-en>Traverse</span><h4>Tierra del Fuego Costero</h4><p data-es>Ficha completa con GPX y mapa</p><p data-en>Full sheet with GPX and map</p></div>
+      </a>
+      <a class="rel" href="/parques.html">
+        <img src="/mapa-tierra-del-fuego-costero.jpg" alt="Parques Nacionales">
+        <div class="b"><span class="tag" data-es>Mapa</span><span class="tag" data-en>Map</span><h4 data-es>Áreas protegidas</h4><h4 data-en>Protected areas</h4><p data-es>Explorá los parques en el mapa</p><p data-en>Explore the parks on the map</p></div>
+      </a>
+      <a class="rel" href="/">
+        <img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/e63cdd25279d514e21d3070293258ba886fdd51e.jpg" alt="Más rutas">
+        <div class="b"><span class="tag" data-es>Explorar</span><span class="tag" data-en>Explore</span><h4 data-es>Más expediciones</h4><h4 data-en>More expeditions</h4><p data-es>Volver al inicio de Sliabh</p><p data-en>Back to Sliabh home</p></div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div data-es>Sliabh · Guía de montaña argentina · Contenido original con referencias de fuentes públicas.</div>
+    <div data-en>Sliabh · Argentine mountain guide · Original content with public-source references.</div>
+  </footer>
+</div>
+
+<script>
+  // ── Bilingual toggle ──────────────────────────────────
+  const toggle = document.getElementById('langToggle');
+  toggle.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    document.body.classList.toggle('en', b.dataset.lang === 'en');
+    document.documentElement.lang = b.dataset.lang;
+    toggle.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+  });
+
+  // ── Stages (bilingual data) ───────────────────────────
+  const stages = [
+    {d:'01', es:['Estancia Moat → Canal Beagle','Traslado al punto de inicio y primeros kilómetros por la costa del Beagle. Campamento en Casa Vieja.'],
+                en:['Estancia Moat → Beagle Channel','Transfer to the trailhead and first kilometres along the Beagle coast. Camp at Casa Vieja.']},
+    {d:'02', es:['Hacia Cabo San Pío','Senderos altos sobre el faro más austral del continente. Campamento en Puesto Ibarra.'],
+                en:['Towards Cabo San Pío','High trails above the continent\'s southernmost lighthouse. Camp at Puesto Ibarra.']},
+    {d:'03', es:['Bahía Sloggett','Llegada a la bahía con su histórica draga de oro. Campamento cercano.'],
+                en:['Bahía Sloggett','Arrival at the bay with its historic gold dredge. Nearby camp.']},
+    {d:'04', es:['Vadeo del Río López → Playa Dorada','Cruce de río según marea y avance hasta la playa.'],
+                en:['Ford Río López → Playa Dorada','River crossing by tide and progress to the beach.']},
+    {d:'05', es:['Playa Paraíso','Avance costero y campamento previo al tramo final.'],
+                en:['Playa Paraíso','Coastal progress and camp before the final stretch.']},
+    {d:'06', es:['Gardiner Caves → Bahía Aguirre → Puerto Español','Cuevas, Río Bonpland y llegada al punto final de la travesía.'],
+                en:['Gardiner Caves → Bahía Aguirre → Puerto Español','Caves, Río Bonpland and arrival at the route\'s end point.']},
+    {d:'07–08', es:['Puerto Español','Descanso o espera logística según la ventana de regreso.'],
+                en:['Puerto Español','Rest or logistics wait depending on the return window.']},
+    {d:'09', es:['Regreso a Ushuaia','Navegación en velero por el Canal Beagle de vuelta a la ciudad.'],
+                en:['Return to Ushuaia','Sailboat navigation along the Beagle Channel back to the city.']},
+  ];
+  document.getElementById('timeline').innerHTML = stages.map(s => `
+    <div class="stage">
+      <div class="d" data-es>Etapa ${s.d}</div><div class="d" data-en>Stage ${s.d}</div>
+      <h4 data-es>${s.es[0]}</h4><h4 data-en>${s.en[0]}</h4>
+      <p data-es>${s.es[1]}</p><p data-en>${s.en[1]}</p>
+    </div>`).join('');
+
+  // ── Landmarks ─────────────────────────────────────────
+  const landmarks = [
+    {es:['Estancia Moat','Punto de partida y última conexión terrestre con Ushuaia.'], en:['Estancia Moat','Starting point and last land connection with Ushuaia.']},
+    {es:['Cabo San Pío','Faro más austral de la parte continental, sobre acantilados.'], en:['Cabo San Pío','Southernmost lighthouse of the mainland, atop cliffs.']},
+    {es:['Bahía Sloggett','Bahía histórica con una draga de oro abandonada.'], en:['Bahía Sloggett','Historic bay with an abandoned gold dredge.']},
+    {es:['Playa Dorada','Extensa playa de arena tras el vadeo del Río López.'], en:['Playa Dorada','Long sandy beach after fording Río López.']},
+    {es:['Bahía Aguirre','Amplia bahía abierta al Atlántico, tramo final.'], en:['Bahía Aguirre','Wide bay open to the Atlantic, final stretch.']},
+    {es:['Puerto Español','Punto final de la travesía y embarque de regreso.'], en:['Puerto Español','Route end point and return embarkation.']},
+    {es:['Río Chico / Río López','Vadeos clave condicionados por el horario de marea.'], en:['Río Chico / Río López','Key fords governed by tide timing.']},
+    {es:['Gardiner Caves','Cuevas costeras cerca del Río Bonpland.'], en:['Gardiner Caves','Coastal caves near Río Bonpland.']},
+  ];
+  document.getElementById('landmarks').innerHTML = landmarks.map((l,i) => `
+    <div class="lm">
+      <div class="n">${i+1}</div>
+      <div><h4 data-es>${l.es[0]}</h4><h4 data-en>${l.en[0]}</h4>
+      <p data-es>${l.es[1]}</p><p data-en>${l.en[1]}</p></div>
+    </div>`).join('');
+
+  // ── 3D tilt / parallax ────────────────────────────────
+  const map = document.getElementById('map3d');
+  const stage = map.parentElement;
+  let raf;
+  stage.addEventListener('mousemove', e => {
+    const r = stage.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      map.style.transform = `rotateX(${(-py*10).toFixed(2)}deg) rotateY(${(px*14).toFixed(2)}deg)`;
+    });
+  });
+  stage.addEventListener('mouseleave', () => { map.style.transform = 'rotateX(0) rotateY(0)'; });
+</script>
+</body>
+</html>
