@@ -391,7 +391,8 @@
        planUrl:'/ruta/tierra-del-fuego-costera',
        mitre:true},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood I',region:'Áreas Marinas',lat:-54.33145,lng:-59.23917,province:'Mar Argentino',category:'Área Marina Protegida',year:'2013',surface:'2,800,000 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
-      {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
+      {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86',
+       mapPdfUrl:'https://marpatagonico.org/descargas/AMP-yaganes-burdwoodII.pdf'},
       {name:'Área Marina Protegida Yaganes',region:'Áreas Marinas',lat:-56.93301,lng:-65.45820,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'6,883,431 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86',
        mapPdfUrl:'https://www.argentina.gob.ar/sites/default/files/amp_yaganes_mapa_web.jpeg',
        articleUrl:'https://docs.google.com/document/d/e/2PACX-1vSzB6wVlUb90mYYlVdbOlxuFgOAGd-Mf4TGNxZrycMUC6OaJe149mRD6u6IvyOahLq4FOCCzlKAM31a/pub'}
@@ -465,10 +466,15 @@
                🧭 Planificar ruta
              </button>`
           : '';
+        const pdfIsDirect = park.mapPdfUrl && /\.pdf($|\?)/i.test(park.mapPdfUrl);
         const pdfBtn = park.mapPdfUrl
-          ? `<button class="btn-action btn-action-green" onclick="downloadParkMapPDF(parks.find(p=>p.name==='${park.name.replace(/'/g,"\\'")}'))">
-               ⬇ Descargar mapa PDF
-             </button>`
+          ? pdfIsDirect
+            ? `<button class="btn-action btn-action-green" onclick="window.open('${park.mapPdfUrl}','_blank','noopener')">
+                 ⬇ Descargar mapa PDF
+               </button>`
+            : `<button class="btn-action btn-action-green" onclick="downloadParkMapPDF(parks.find(p=>p.name==='${park.name.replace(/'/g,"\\'")}'))">
+                 ⬇ Descargar mapa PDF
+               </button>`
           : '';
         const articleBtn = park.articleUrl
           ? `<button class="btn-action btn-action-blue" onclick="openArticle('${park.articleUrl}','${park.name.replace(/'/g,"\\'")}')">
