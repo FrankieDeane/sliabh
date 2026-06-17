@@ -770,50 +770,50 @@ const styles = StyleSheet.create({
   heroInner: { justifyContent: 'space-between', paddingBottom: 0 },
   heroCenterBlock: {
     flex: 1, justifyContent: 'center', alignItems: 'center',
-    paddingHorizontal: 24, paddingBottom: 80,
+    paddingBottom: 48,
   },
   heroEyebrow: {
     fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.65)',
-    letterSpacing: 5, textTransform: 'uppercase', marginBottom: 26, textAlign: 'center',
+    letterSpacing: 5, textTransform: 'uppercase', marginBottom: 20, textAlign: 'center',
   },
   heroTitle: {
     fontWeight: '400', color: '#fff', letterSpacing: -1,
-    marginBottom: 22, textAlign: 'center',
+    marginBottom: 18, textAlign: 'center',
   },
   heroSub: {
-    fontSize: 18, color: 'rgba(255,255,255,0.78)', lineHeight: 28,
-    marginBottom: 44, textAlign: 'center', fontStyle: 'italic',
+    fontSize: 15, color: 'rgba(255,255,255,0.78)', lineHeight: 24,
+    marginBottom: 36, textAlign: 'center', fontStyle: 'italic',
   },
-  heroCtas: { flexDirection: 'row', gap: 14, flexWrap: 'wrap', justifyContent: 'center' },
+  heroCtas: { flexDirection: 'row', gap: 12, flexWrap: 'wrap', justifyContent: 'center' },
   heroBtnPrimary: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: '#ffffff', paddingHorizontal: 34, paddingVertical: 17,
+    backgroundColor: '#ffffff', paddingHorizontal: 28, paddingVertical: 15,
     borderRadius: 2,
   },
   heroBtnPrimaryTxt: {
-    color: '#0a0f1a', fontSize: 12, fontWeight: '700',
-    letterSpacing: 2.5, textTransform: 'uppercase',
+    color: '#0a0f1a', fontSize: 11, fontWeight: '700',
+    letterSpacing: 2, textTransform: 'uppercase',
   },
   heroBtnSecondary: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingHorizontal: 34, paddingVertical: 17, borderRadius: 2,
+    paddingHorizontal: 28, paddingVertical: 15, borderRadius: 2,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)',
     backgroundColor: 'transparent',
   },
   heroBtnSecondaryTxt: {
-    color: '#fff', fontSize: 12, fontWeight: '600',
-    letterSpacing: 2.5, textTransform: 'uppercase',
+    color: '#fff', fontSize: 11, fontWeight: '600',
+    letterSpacing: 2, textTransform: 'uppercase',
   },
   heroStatsStrip: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(7,11,20,0.55)', paddingVertical: 14, paddingHorizontal: 20,
+    backgroundColor: 'rgba(7,11,20,0.55)', paddingVertical: 12, paddingHorizontal: 16,
     flexWrap: 'wrap', gap: 4,
   },
   heroStatText: {
-    fontSize: 12, fontWeight: '600', color: 'rgba(255,255,255,0.72)',
-    letterSpacing: 0.5, paddingHorizontal: 8,
+    fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.72)',
+    letterSpacing: 0.5, paddingHorizontal: 6,
   },
-  heroStatDivider: { width: 1, height: 14, backgroundColor: 'rgba(255,255,255,0.2)' },
+  heroStatDivider: { width: 1, height: 12, backgroundColor: 'rgba(255,255,255,0.2)' },
 
   // Feature cards
   featureSection: { paddingTop: 48, paddingBottom: 4 },
