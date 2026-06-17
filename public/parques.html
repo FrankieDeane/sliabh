@@ -373,9 +373,9 @@
       font-size: 11px; color: #94a3b8; flex-shrink: 0;
     }
   /* ── Mitre 3D mini-map ─────────────────────────────────── */
-  .maplibregl-popup-content{background:rgba(7,11,20,.9)!important;border:1px solid #1e2d42!important;
-    color:#f0f9ff!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important}
-  .maplibregl-popup-tip{border-top-color:rgba(7,11,20,.9)!important}
+  .maplibregl-popup-content{background:rgba(255,255,255,.96)!important;border:1px solid #cbd5e1!important;
+    color:#0f172a!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important;font-weight:600!important}
+  .maplibregl-popup-tip{border-top-color:rgba(255,255,255,.96)!important}
   </style>
 </head>
 <body>
@@ -761,14 +761,14 @@
 
       // ── 3D terrain mini-map for every park ──────────────────
       if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         const el = document.getElementById('park3dMap');
         if (!el) return;
         const initCenter = park.trailCenter || [park.lng, park.lat];
         const initZoom   = park.trailZoom   || 9.5;
         const gm = new maplibregl.Map({
           container: 'park3dMap',
-          style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+          style: 'https://tiles.openfreemap.org/styles/liberty',
           center: initCenter, zoom: initZoom, pitch: 50, bearing: 30,
           antialias: true, attributionControl: false,
         });
@@ -848,7 +848,7 @@
             });
           }
         });
-      });
+      }, 80);
     }
 
     function renderList(items) {
