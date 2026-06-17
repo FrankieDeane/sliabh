@@ -387,6 +387,9 @@
       {name:'Parque Nacional Los Alerces',region:'Patagonia Norte',lat:-42.84453,lng:-71.83818,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'259,822 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#0f5f60'},
       {name:'Parque Nacional Los Arrayanes',region:'Patagonia Norte',lat:-40.82941,lng:-71.62874,province:'Neuquén',category:'Parque Nacional',year:'1971',surface:'1,796 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
       {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Área Natural Protegida Península Mitre',region:'Patagonia Austral',lat:-54.57,lng:-65.20,province:'Tierra del Fuego',category:'Área Natural Protegida',year:'2020',surface:'368,000 ha',ecoregions:'Bosques Patagónicos, Mar Argentino',international:'',color:'#1a5c3a',
+       planUrl:'/ruta/tierra-del-fuego-costera',
+       mitre:true},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood I',region:'Áreas Marinas',lat:-54.33145,lng:-59.23917,province:'Mar Argentino',category:'Área Marina Protegida',year:'2013',surface:'2,800,000 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
       {name:'Área Marina Protegida Yaganes',region:'Áreas Marinas',lat:-56.93301,lng:-65.45820,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'6,883,431 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86',
@@ -480,6 +483,24 @@
            ${trails.map(t => `<div class="trail-box"><strong>Sendero</strong>${t}</div>`).join('')}`
         : '';
 
+      const mitreSection = park.mitre ? `
+        <div style="margin-top:14px">
+          <p class="subsection-title" style="color:#22c55e;font-size:15px;font-weight:800;margin:0 0 8px">Expedición · Península Mitre</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            ${['70 km aprox.','7–14 días','Dificultad alta','Sin senderos marcados'].map(c=>`<span style="background:#162035;border:1px solid #1e2d42;color:#f0f9ff;padding:6px 12px;border-radius:999px;font-size:12px">${c}</span>`).join('')}
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            ${[['Inicio','Estancia Moat'],['Final','Bahía Sloggett / Puerto Español'],['Terreno','Costa, turba, bosque'],['Época','Nov–Abr']].map(([k,v])=>`<div style="background:#0c1424;border:1px solid #1e2d42;border-radius:10px;padding:10px"><span style="font-size:11px;color:#64748b;display:block;margin-bottom:3px">${k}</span><strong style="font-size:13px">${v}</strong></div>`).join('')}
+          </div>
+          <p class="subsection-title">Etapas de la ruta</p>
+          <div style="border-left:2px solid #1e2d42;margin-left:8px;padding-left:14px">
+            ${[['Día 1','Traslado a Moat, trekking por el Canal Beagle y campamento en Casa Vieja.'],['Día 2','Senderos altos hasta Cabo San Pío y campamento en Puesto Ibarra.'],['Día 3','Llegada a Bahía Sloggett, con draga de oro histórica y campamento cercano.'],['Día 4','Vadeo del Río López y llegada a Playa Dorada.'],['Día 5','Avance hacia Playa Paraíso y campamento previo al tramo final.'],['Día 6','Cuevas de Gardinier, Río Bonpland, Bahía Aguirre y Puerto Español.'],['Días 7–8','Descanso o espera logística en Puerto Español.'],['Día 9','Regreso en velero a Ushuaia por el Canal Beagle.']].map(([d,txt])=>`<div style="margin-bottom:10px"><strong style="color:#22c55e;font-size:12px">${d}</strong><p style="margin:2px 0 0;font-size:13px;line-height:1.5;color:#f0f9ff">${txt}</p></div>`).join('')}
+          </div>
+          <p style="font-size:13px;line-height:1.6;margin:12px 0 6px">Península Mitre ofrece una experiencia de hiking de expedición, remota y exigente. La costa sur combina acantilados bajos, playas rocosas, ríos que se cruzan según la marea y bosque subantártico. Ideal para personas con experiencia previa y capacidad de autosuficiencia.</p>
+          <div class="note" style="font-size:12px">Temporada: 1 Nov – 15 Abr · Registro obligatorio · Equipo mínimo: GPS, tabla de mareas, dispositivo de comunicación, botiquín y comida para toda la expedición.</div>
+        </div>
+      ` : '';
+
       panel.innerHTML = `
         <p class="kicker">${park.region}</p>
         <h3>${park.name}</h3>
@@ -490,6 +511,7 @@
         </div>
         <p>${park.name} pertenece al grupo ${park.region}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${park.ecoregions}` : ''}${park.international ? `. Estatus internacional: ${park.international}` : ''}.</p>
         ${extraActions}
+        ${mitreSection}
         ${trailsSection}
         <p class="note">Mapa base IGN Argentina · Datos SIB/APN.</p>
       `;
