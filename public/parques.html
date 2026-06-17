@@ -547,9 +547,10 @@
     ];
 
     const map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([-39.8, -65.4], 4);
-    L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
-      attribution: 'IGN Argentina · Leaflet',
-      maxZoom: 18
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
     const clusterGroup = L.markerClusterGroup({
@@ -660,7 +661,9 @@
     const markers = parks.map(park => {
       const marker = L.marker([park.lat, park.lng], { icon: markerIcon(park.color), title: park.name });
       marker.parkData = park;
-      marker.on('click', () => {
+      marker.on('click', (e) => {
+        L.DomEvent.stopPropagation(e);
+        map.closePopup();
         renderPanel(park);
         highlightListItem(park.name);
         map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
