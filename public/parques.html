@@ -342,39 +342,6 @@
     .btn-action-blue:hover { background: #1d4ed8; }
     .btn-action-green { background: #14532d; border-color: #22c55e; color: #86efac; }
     .btn-action-green:hover { background: #16a34a; }
-    /* ── Article modal ───────────────────────────────────────────────────── */
-    #articleModal {
-      display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(0,0,0,.72); align-items: center; justify-content: center;
-    }
-    #articleModal.open { display: flex; }
-    .article-dialog {
-      background: #fff; border-radius: 16px;
-      width: min(960px, 96vw); height: 88vh;
-      display: flex; flex-direction: column; overflow: hidden;
-      box-shadow: 0 32px 80px rgba(0,0,0,.55);
-    }
-    .article-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; flex-shrink: 0;
-    }
-    .article-header-left { display: flex; align-items: center; gap: 10px; }
-    .article-badge {
-      background: #1e3a5f; color: #93c5fd; border: 1px solid #3b82f6;
-      border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700;
-    }
-    .article-title { font-size: 14px; font-weight: 700; color: #0f172a; }
-    .article-subtitle { font-size: 12px; color: #64748b; margin-top: 1px; }
-    .article-close {
-      background: none; border: none; cursor: pointer; color: #64748b;
-      font-size: 24px; line-height: 1; padding: 4px 8px; border-radius: 8px;
-    }
-    .article-close:hover { background: #f1f5f9; color: #0f172a; }
-    #articleIframe { flex: 1; border: none; background: #fff; }
-    .article-footer {
-      padding: 10px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc;
-      font-size: 11px; color: #94a3b8; flex-shrink: 0;
-    }
   /* ── Mitre 3D mini-map ─────────────────────────────────── */
   .maplibregl-popup-content{background:rgba(255,255,255,.96)!important;border:1px solid #cbd5e1!important;
     color:#0f172a!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important;font-weight:600!important}
@@ -421,11 +388,17 @@
         </div>
         <!-- Park list strip at bottom of left pane -->
         <div id="parkListPanel" class="card">
-          <div class="meta" style="margin-bottom:6px">
-            <span id="metaCount">55 áreas</span>
-            <span data-i18n="pReady">Mapa listo</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="meta">
+              <span id="metaCount">55 áreas</span>
+              <span data-i18n="pReady">Mapa listo</span>
+            </div>
+            <div style="display:flex;gap:4px">
+              <button id="listScrollUp" onclick="document.getElementById('parkList').scrollBy({top:-120,behavior:'smooth'})" title="Subir" style="background:var(--surface-2);border:1px solid var(--border);color:var(--muted);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0">↑</button>
+              <button id="listScrollDown" onclick="document.getElementById('parkList').scrollBy({top:120,behavior:'smooth'})" title="Bajar" style="background:var(--surface-2);border:1px solid var(--border);color:var(--muted);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0">↓</button>
+            </div>
           </div>
-          <div class="park-list" id="parkList" style="margin-top:6px"></div>
+          <div class="park-list" id="parkList" style="margin-top:6px;overflow-y:auto;max-height:150px"></div>
           <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
         </div>
       </div>
@@ -448,26 +421,6 @@
     <div id="footerText">Mapa base IGN Argentina · Datos SIB/APN · Sliabh</div>
   </footer>
 
-  <!-- Article reader modal (in-app only, no download prompt) -->
-  <div id="articleModal">
-    <div class="article-dialog">
-      <div class="article-header">
-        <div class="article-header-left">
-          <span class="article-badge">SLIABH</span>
-          <div>
-            <div class="article-title" id="articleModalTitle">Documento oficial</div>
-            <div class="article-subtitle" id="articleModalSub">Área Marina Protegida</div>
-          </div>
-        </div>
-        <button class="article-close" onclick="closeArticle()" title="Cerrar">&times;</button>
-      </div>
-      <iframe id="articleIframe" src="" sandbox="allow-scripts allow-same-origin allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>
-      <div class="article-footer">
-        Documento embebido dentro de Sliabh · Contenido oficial APN Argentina
-      </div>
-    </div>
-  </div>
-
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
@@ -476,22 +429,22 @@
   <script>
     const parks = [
       {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},
-      {name:'Parque Nacional Quebrada del Condorito',region:'Centro',lat:-31.69761,lng:-64.78331,province:'Córdoba',category:'Parque Nacional',year:'1996',surface:'35,396 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b'},
+      {name:'Parque Nacional Quebrada del Condorito',region:'Centro',lat:-31.69761,lng:-64.78331,province:'Córdoba',category:'Parque Nacional',year:'1996',surface:'35,396 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b',photoUrl:'/sliabh-sierras-de-cordoba.jpg'},
       {name:'Parque Nacional San Guillermo',region:'Centro',lat:-29.23817,lng:-69.26616,province:'San Juan',category:'Parque Nacional',year:'1999',surface:'166,000 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#8a6d3b'},
       {name:'Parque Nacional Sierra de las Quijadas',region:'Centro',lat:-32.55677,lng:-67.13459,province:'San Luis',category:'Parque Nacional',year:'1991',surface:'73,785 ha',ecoregions:'Chaco Seco, Monte de Sierras y Bolsones',international:'Sitio RAMSAR',color:'#8a6d3b'},
-      {name:'Parque Nacional Talampaya',region:'Centro',lat:-29.85015,lng:-67.87759,province:'La Rioja',category:'Parque Nacional',year:'1997',surface:'213,800 ha',ecoregions:'Monte de Sierras y Bolsones',international:'Patrimonio Mundial',color:'#8a6d3b'},
+      {name:'Parque Nacional Talampaya',region:'Centro',lat:-29.85015,lng:-67.87759,province:'La Rioja',category:'Parque Nacional',year:'1997',surface:'213,800 ha',ecoregions:'Monte de Sierras y Bolsones',international:'Patrimonio Mundial',color:'#8a6d3b',photoUrl:'/sliabh-talampaya.jpg'},
       {name:'Parque Nacional Traslasierra',region:'Centro',lat:-30.99468,lng:-65.62670,province:'Córdoba',category:'Parque Nacional',year:'2018',surface:'44,019 ha',ecoregions:'Chaco Seco',international:'',color:'#8a6d3b'},
       {name:'Reserva Natural Educativa Cerro Pistarini',region:'Centro',lat:-32.22414,lng:-64.41762,province:'Córdoba',category:'Reserva Natural Educativa',year:'2023',surface:'450 ha',ecoregions:'',international:'',color:'#8a6d3b'},
       {name:'Parque Nacional Campos del Tuyú',region:'Centro Este',lat:-36.35444,lng:-56.87624,province:'Buenos Aires',category:'Parque Nacional',year:'2009',surface:'3,040 ha',ecoregions:'Pampa',international:'Sitio RAMSAR',color:'#8a6d3b'},
       {name:'Parque Nacional Ciervo de los Pantanos',region:'Centro Este',lat:-34.23450,lng:-58.87724,province:'Buenos Aires',category:'Parque Nacional',year:'2018',surface:'5,200 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
-      {name:'Parque Nacional El Palmar',region:'Centro Este',lat:-31.88216,lng:-58.25668,province:'Entre Ríos',category:'Parque Nacional',year:'1965',surface:'8,213 ha',ecoregions:'Espinal',international:'Sitio RAMSAR',color:'#8a6d3b'},
+      {name:'Parque Nacional El Palmar',region:'Centro Este',lat:-31.88216,lng:-58.25668,province:'Entre Ríos',category:'Parque Nacional',year:'1965',surface:'8,213 ha',ecoregions:'Espinal',international:'Sitio RAMSAR',color:'#8a6d3b',photoUrl:'/sliabh-el-palmar-corrientes.jpg'},
       {name:'Parque Nacional Islas de Santa Fe',region:'Centro Este',lat:-32.27913,lng:-60.72000,province:'Santa Fe',category:'Parque Nacional',year:'2010',surface:'4,096 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
       {name:'Parque Nacional Pre-Delta',region:'Centro Este',lat:-32.14052,lng:-60.64033,province:'Entre Ríos',category:'Parque Nacional',year:'1992',surface:'2,608 ha',ecoregions:'Delta e Islas del Paraná',international:'Sitio RAMSAR',color:'#8a6d3b'},
       {name:'Reserva Natural Silvestre Marismas del Tuyú',region:'Centro Este',lat:-36.33159,lng:-56.78471,province:'Buenos Aires',category:'Reserva Natural Silvestre',year:'2023',surface:'352 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#8a6d3b'},
-      {name:'Parque Nacional Chaco',region:'Noreste',lat:-26.82658,lng:-59.65506,province:'Chaco',category:'Parque Nacional',year:'1954',surface:'14,981 ha',ecoregions:'Chaco Húmedo',international:'',color:'#7a4f7f'},
-      {name:'Parque Nacional El Impenetrable',region:'Noreste',lat:-25.00468,lng:-61.10564,province:'Chaco',category:'Parque Nacional',year:'2014',surface:'128,000 ha',ecoregions:'Chaco Seco',international:'',color:'#7a4f7f'},
-      {name:'Parque Nacional Iberá',region:'Noreste',lat:-27.93238,lng:-56.93083,province:'Corrientes',category:'Parque Nacional',year:'2018',surface:'195,094 ha',ecoregions:'Esteros del Iberá',international:'',color:'#7a4f7f'},
-      {name:'Parque Nacional Iguazú',region:'Noreste',lat:-25.66836,lng:-54.31053,province:'Misiones',category:'Parque Nacional',year:'1934',surface:'67,698 ha',ecoregions:'Selva Paranense',international:'Patrimonio Mundial',color:'#7a4f7f'},
+      {name:'Parque Nacional Chaco',region:'Noreste',lat:-26.82658,lng:-59.65506,province:'Chaco',category:'Parque Nacional',year:'1954',surface:'14,981 ha',ecoregions:'Chaco Húmedo',international:'',color:'#7a4f7f',photoUrl:'/sliabh-chaco.jpg'},
+      {name:'Parque Nacional El Impenetrable',region:'Noreste',lat:-25.00468,lng:-61.10564,province:'Chaco',category:'Parque Nacional',year:'2014',surface:'128,000 ha',ecoregions:'Chaco Seco',international:'',color:'#7a4f7f',photoUrl:'/sliabh-chacho-el-impenetrable.jpg'},
+      {name:'Parque Nacional Iberá',region:'Noreste',lat:-27.93238,lng:-56.93083,province:'Corrientes',category:'Parque Nacional',year:'2018',surface:'195,094 ha',ecoregions:'Esteros del Iberá',international:'',color:'#7a4f7f',photoUrl:'/sliabh-ibera.jpg'},
+      {name:'Parque Nacional Iguazú',region:'Noreste',lat:-25.66836,lng:-54.31053,province:'Misiones',category:'Parque Nacional',year:'1934',surface:'67,698 ha',ecoregions:'Selva Paranense',international:'Patrimonio Mundial',color:'#7a4f7f',photoUrl:'/sliabh-iguazu.jpg'},
       {name:'Parque Nacional Laguna El Palmar',region:'Noreste',lat:-27.18443,lng:-58.67282,province:'Chaco',category:'Parque Nacional',year:'2023',surface:'5,600 ha',ecoregions:'Sitio RAMSAR',international:'',color:'#7a4f7f'},
       {name:'Parque Nacional Mburucuyá',region:'Noreste',lat:-28.01299,lng:-58.06922,province:'Corrientes',category:'Parque Nacional',year:'2002',surface:'17,086 ha',ecoregions:'Esteros del Iberá',international:'',color:'#7a4f7f'},
       {name:'Parque Nacional Río Pilcomayo',region:'Noreste',lat:-25.06531,lng:-58.13715,province:'Formosa',category:'Parque Nacional',year:'1951',surface:'51,889 ha',ecoregions:'Chaco Húmedo',international:'Sitio RAMSAR',color:'#7a4f7f'},
@@ -500,12 +453,12 @@
       {name:'Reserva Natural Formosa',region:'Noreste',lat:-24.27366,lng:-61.80071,province:'Formosa',category:'Reserva Natural',year:'1968',surface:'9,005 ha',ecoregions:'Chaco Seco',international:'Reserva de Biósfera',color:'#7a4f7f'},
       {name:'Reserva Natural Silvestre Parque Federal Campo San Juan',region:'Noreste',lat:-27.39436,lng:-55.64876,province:'Misiones',category:'Reserva Natural Silvestre',year:'2022',surface:'5,131 ha',ecoregions:'Campos y Malezales',international:'',color:'#7a4f7f'},
       {name:'Monumento Natural Laguna de los Pozuelos',region:'Noroeste',lat:-22.34173,lng:-66.00193,province:'Jujuy',category:'Monumento Natural',year:'1980',surface:'16,000 ha',ecoregions:'Puna',international:'Reserva de Biósfera · Sitio RAMSAR',color:'#6a8f3f'},
-      {name:'Parque Nacional Aconquija',region:'Noroeste',lat:-27.19383,lng:-65.95758,province:'Tucumán',category:'Parque Nacional',year:'2018',surface:'93,313 ha',ecoregions:'Altos Andes, Yungas',international:'Patrimonio Mundial',color:'#6a8f3f'},
-      {name:'Parque Nacional Baritú',region:'Noroeste',lat:-22.58199,lng:-64.64422,province:'Salta',category:'Parque Nacional',year:'1974',surface:'72,439 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
-      {name:'Parque Nacional Calilegua',region:'Noroeste',lat:-23.66054,lng:-64.85000,province:'Jujuy',category:'Parque Nacional',year:'1979',surface:'76,306 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
+      {name:'Parque Nacional Aconquija',region:'Noroeste',lat:-27.19383,lng:-65.95758,province:'Tucumán',category:'Parque Nacional',year:'2018',surface:'93,313 ha',ecoregions:'Altos Andes, Yungas',international:'Patrimonio Mundial',color:'#6a8f3f',photoUrl:'/sliabh-aconcagua.jpg'},
+      {name:'Parque Nacional Baritú',region:'Noroeste',lat:-22.58199,lng:-64.64422,province:'Salta',category:'Parque Nacional',year:'1974',surface:'72,439 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f',photoUrl:'/sliabh-jujuy.jpg'},
+      {name:'Parque Nacional Calilegua',region:'Noroeste',lat:-23.66054,lng:-64.85000,province:'Jujuy',category:'Parque Nacional',year:'1979',surface:'76,306 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f',photoUrl:'/calilegua.jpg'},
       {name:'Parque Nacional Copo',region:'Noroeste',lat:-25.82089,lng:-61.88005,province:'Santiago del Estero',category:'Parque Nacional',year:'2000',surface:'118,119 ha',ecoregions:'Chaco Seco',international:'',color:'#6a8f3f'},
       {name:'Parque Nacional El Rey',region:'Noroeste',lat:-24.70046,lng:-64.62734,province:'Salta',category:'Parque Nacional',year:'1948',surface:'44,162 ha',ecoregions:'Yungas',international:'',color:'#6a8f3f'},
-      {name:'Parque Nacional Los Cardones',region:'Noroeste',lat:-25.27733,lng:-65.93186,province:'Salta',category:'Parque Nacional',year:'1996',surface:'64,117 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna, Yungas',international:'',color:'#6a8f3f'},
+      {name:'Parque Nacional Los Cardones',region:'Noroeste',lat:-25.27733,lng:-65.93186,province:'Salta',category:'Parque Nacional',year:'1996',surface:'64,117 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna, Yungas',international:'',color:'#6a8f3f',photoUrl:'/sliabh-humahuaca.jpg'},
       {name:'Reserva Nacional El Nogalar de los Toldos',region:'Noroeste',lat:-22.26581,lng:-64.75309,province:'Salta',category:'Reserva Nacional',year:'2006',surface:'3,275 ha',ecoregions:'Yungas',international:'Reserva de Biósfera',color:'#6a8f3f'},
       {name:'Reserva Nacional Pizarro',region:'Noroeste',lat:-24.17000,lng:-64.06249,province:'Salta',category:'Reserva Nacional',year:'2015',surface:'7,837 ha',ecoregions:'Chaco Seco, Yungas',international:'',color:'#6a8f3f'},
       {name:'Parque Interjurisdiccional Marino Isla Pingüino',region:'Patagonia Austral',lat:-48.15000,lng:-65.94458,province:'Santa Cruz',category:'Parque Interjurisdiccional Marino',year:'2012',surface:'159,526 ha',ecoregions:'Mar Argentino',international:'',color:'#0f5f60'},
@@ -538,13 +491,13 @@
       {name:'Reserva Natural Silvestre Isla de los Estados y Archipiélago de Año Nuevo',region:'Patagonia Austral',lat:-54.76715,lng:-64.27798,province:'Tierra del Fuego',category:'Reserva Natural Silvestre',year:'2016',surface:'52,784 ha',ecoregions:'Bosques Patagónicos',international:'',color:'#0f5f60'},
       {name:'Parque Interjurisdiccional Marino Costero Patagonia Austral',region:'Patagonia Norte',lat:-45.07224,lng:-66.09692,province:'Chubut',category:'Parque Interjurisdiccional Marino Costero',year:'2009',surface:'103,574 ha',ecoregions:'Estepa Patagónica, Mar Argentino',international:'Reserva de Biósfera',color:'#0f5f60'},
       {name:'Parque Nacional Islote Lobos',region:'Patagonia Norte',lat:-41.43785,lng:-65.06369,province:'Río Negro',category:'Parque Nacional',year:'2022',surface:'19,079 ha',ecoregions:'',international:'',color:'#0f5f60'},
-      {name:'Parque Nacional Lago Puelo',region:'Patagonia Norte',lat:-42.17903,lng:-71.68728,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'27,674 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Lago Puelo',region:'Patagonia Norte',lat:-42.17903,lng:-71.68728,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'27,674 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60',photoUrl:'/sliabh-lago-puelo.jpg'},
       {name:'Parque Nacional Laguna Blanca',region:'Patagonia Norte',lat:-39.03034,lng:-70.35218,province:'Neuquén',category:'Parque Nacional',year:'1940',surface:'11,250 ha',ecoregions:'Estepa Patagónica',international:'Sitio RAMSAR',color:'#0f5f60'},
-      {name:'Parque Nacional Lanín',region:'Patagonia Norte',lat:-39.85001,lng:-71.43103,province:'Neuquén',category:'Parque Nacional',year:'1937',surface:'412,000 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Lanín',region:'Patagonia Norte',lat:-39.85001,lng:-71.43103,province:'Neuquén',category:'Parque Nacional',year:'1937',surface:'412,000 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60',photoUrl:'/sliabh-lanin.jpg'},
       {name:'Parque Nacional Lihué Calel',region:'Patagonia Norte',lat:-37.93488,lng:-65.60471,province:'La Pampa',category:'Parque Nacional',year:'1976',surface:'32,514 ha',ecoregions:'Monte de Llanuras y Mesetas',international:'',color:'#0f5f60'},
-      {name:'Parque Nacional Los Alerces',region:'Patagonia Norte',lat:-42.84453,lng:-71.83818,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'259,822 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#0f5f60'},
+      {name:'Parque Nacional Los Alerces',region:'Patagonia Norte',lat:-42.84453,lng:-71.83818,province:'Chubut',category:'Parque Nacional',year:'1937',surface:'259,822 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera · Patrimonio Mundial',color:'#0f5f60',photoUrl:'/sliabh-los-alerces.jpg'},
       {name:'Parque Nacional Los Arrayanes',region:'Patagonia Norte',lat:-40.82941,lng:-71.62874,province:'Neuquén',category:'Parque Nacional',year:'1971',surface:'1,796 ha',ecoregions:'Bosques Patagónicos',international:'Reserva de Biósfera',color:'#0f5f60'},
-      {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60'},
+      {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60',photoUrl:'/sliabh-explore-explorar.jpg'},
       {name:'Área Natural Protegida Península Mitre',region:'Patagonia Austral',lat:-54.57,lng:-65.20,province:'Tierra del Fuego',category:'Área Natural Protegida',year:'2020',surface:'368,000 ha',ecoregions:'Bosques Patagónicos, Mar Argentino',international:'',color:'#1a5c3a',
        planUrl:'/ruta/tierra-del-fuego-costera',
        mitre:true},
@@ -704,12 +657,7 @@
                  ⬇ ${T('Descargar mapa PDF', 'Download map PDF')}
                </button>`
           : '';
-        const articleBtn = park.articleUrl
-          ? `<button class="btn-action btn-action-blue" onclick="openArticle('${park.articleUrl}','${park.name.replace(/'/g,"\\'")}')">
-               📄 ${T('Leer artículo oficial', 'Read official article')}
-             </button>`
-          : '';
-        extraActions = `<div class="park-actions">${planBtn}${pdfBtn}${articleBtn}</div>`;
+        extraActions = `<div class="park-actions">${planBtn}${pdfBtn}</div>`;
       }
 
       const trailsSection = trails
@@ -748,12 +696,9 @@
         </div>
       ` : '';
 
-      const photoSection = park.photoUrl
-        ? `<img src="${park.photoUrl}" alt="${park.name}" style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);margin-bottom:14px" />`
-        : '';
-
       // Populate the info overlay on the 3D map
       panel.innerHTML = `
+        ${park.photoUrl ? `<img src="${park.photoUrl}" alt="${park.name}" style="width:100%;height:130px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block">` : ''}
         <p class="kicker">${trRegion(park.region)}</p>
         <h3>${park.name}</h3>
         <div class="meta">
@@ -1391,29 +1336,11 @@ ${trkpts}
     // Show Bariloche trails by default on load
     setTimeout(() => showTrailLayer(), 800);
 
-    // ── Article reader modal ───────────────────────────────────────────────────
-    function openArticle(url, parkName) {
-      document.getElementById('articleModalTitle').textContent = parkName || T('Documento oficial', 'Official document');
-      document.getElementById('articleModalSub').textContent = T('Área Marina Protegida · Documentación oficial APN', 'Marine Protected Area · Official APN documentation');
-      document.getElementById('articleIframe').src = url;
-      document.getElementById('articleModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeArticle() {
-      document.getElementById('articleModal').classList.remove('open');
-      document.getElementById('articleIframe').src = '';
-      document.body.style.overflow = '';
-    }
-
-    // Close modal when clicking the backdrop
-    document.getElementById('articleModal').addEventListener('click', function(e) {
-      if (e.target === this) closeArticle();
-    });
-
-    // Close modal on Escape key
+    // Close modal on Escape key (used by split close)
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeArticle();
+      if (e.key === 'Escape' && interactiveMap.classList.contains('split')) {
+        document.getElementById('closeSplit').click();
+      }
     });
 
     // ── Park map PDF generator ─────────────────────────────────────────────────

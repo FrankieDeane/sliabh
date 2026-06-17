@@ -26,8 +26,8 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
   if (!document.querySelector('link[rel="icon"]')) {
     const icon = document.createElement('link');
     icon.rel = 'icon';
-    icon.type = 'image/svg+xml';
-    icon.href = '/favicon.svg';
+    icon.type = 'image/png';
+    icon.href = '/favicon.png';
     document.head.appendChild(icon);
   }
   document.title = 'Sliabh — Explora la montaña';

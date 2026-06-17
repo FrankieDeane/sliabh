@@ -104,7 +104,7 @@ export function WebHeader() {
             onPress={() => navigate('/(tabs)/inicio')}
             activeOpacity={0.8}
           >
-            <Image source={{ uri: LOGO_URI }} style={styles.logo} />
+            <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" />
             {!isCompact && (
               <View>
                 <Text style={[styles.brandName, { color: c.text }]}>Sliabh</Text>
@@ -204,7 +204,7 @@ export function WebHeader() {
             >
               {/* Drawer header */}
               <View style={[styles.drawerHeader, { borderBottomColor: c.border }]}>
-                <Image source={{ uri: LOGO_URI }} style={styles.drawerLogo} />
+                <Image source={{ uri: LOGO_URI }} style={styles.drawerLogo} resizeMode="contain" />
                 <Text style={[styles.drawerBrand, { color: c.text }]}>Sliabh</Text>
                 <TouchableOpacity onPress={() => setDrawerOpen(false)} style={styles.drawerClose} activeOpacity={0.7}>
                   <Ionicons name="close" size={22} color={c.muted} />
@@ -276,9 +276,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   logo: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
   },
   brandName: {
     fontSize: 16,
@@ -397,9 +396,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   drawerLogo: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
   },
   drawerBrand: {
     fontSize: 18,

@@ -35,16 +35,12 @@ export function WebFooter() {
   return (
     <View style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.border }]}>
       <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
-        <View style={[styles.top, isWide ? styles.topWide : styles.topNarrow]}>
+        <View style={[styles.top, isWide ? styles.topWide : styles.topNarrow, { flexWrap: isWide ? 'nowrap' : 'wrap' }]}>
 
           {/* Brand column */}
           <View style={styles.brandCol}>
             <TouchableOpacity style={styles.brand} onPress={() => router.push('/(tabs)/inicio')} activeOpacity={0.8}>
-              <Image source={{ uri: LOGO_URI }} style={styles.logo} />
-              <View>
-                <Text style={[styles.brandName, { color: c.text }]}>Sliabh</Text>
-                <Text style={[styles.brandSub, { color: c.muted }]}>Argaelic</Text>
-              </View>
+              <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" />
             </TouchableOpacity>
             <Text style={[styles.tagline, { color: c.muted }]}>
               {t(
@@ -125,9 +121,9 @@ const styles = StyleSheet.create({
   top: { gap: 32, marginBottom: 32 },
   topWide: { flexDirection: 'row', alignItems: 'flex-start' },
   topNarrow: { flexDirection: 'column' },
-  brandCol: { flex: 1.6, gap: 14 },
+  brandCol: { flex: 1.6, minWidth: 200, gap: 14 },
   brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  logo: { width: 44, height: 44, borderRadius: 22 },
+  logo: { width: 64, height: 64 },
   brandName: { fontSize: 18, fontWeight: '800', letterSpacing: -0.4 },
   brandSub: { fontSize: 9, fontWeight: '600', letterSpacing: 2.5, textTransform: 'uppercase' },
   tagline: { fontSize: 13, lineHeight: 20 },
@@ -137,7 +133,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   emergencyTxt: { fontSize: 11, fontWeight: '600' },
-  navCol: { flex: 1, gap: 10 },
+  navCol: { flex: 1, minWidth: 140, gap: 10 },
   navTitle: { fontSize: 9, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 },
   navItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   navLabel: { fontSize: 13, fontWeight: '500' },
