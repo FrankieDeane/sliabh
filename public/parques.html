@@ -89,6 +89,8 @@
     #map {
       flex: 1;
       min-height: 0;
+      width: 100%;
+      max-width: 100%;
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -161,16 +163,6 @@
       text-decoration: none;
       margin-top: 6px;
       margin-left: 6px;
-    }
-    /* ── Park list strip (bottom of left pane) ──────── */
-    #parkListPanel {
-      flex-shrink: 0;
-      max-height: 200px;
-      overflow-y: auto;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 0 0 var(--radius) var(--radius);
-      padding: 10px 14px 12px;
     }
     /* ── Draggable divider ───────────────────────────── */
     #splitHandle {
@@ -326,7 +318,6 @@
       #map { height: 52vw; min-height: 280px; }
       #interactiveMap.split #splitHandle { display: none; }
       #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
-      #parkListPanel { max-height: 130px; }
       footer { padding: 16px 14px; font-size: 11px; }
       footer img { height: 26px !important; }
     }
@@ -385,21 +376,6 @@
             <span class="toggle-dot"></span>
             <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
           </button>
-        </div>
-        <!-- Park list strip at bottom of left pane -->
-        <div id="parkListPanel" class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <div class="meta">
-              <span id="metaCount">55 áreas</span>
-              <span data-i18n="pReady">Mapa listo</span>
-            </div>
-            <div style="display:flex;gap:4px">
-              <button id="listScrollUp" onclick="document.getElementById('parkList').scrollBy({top:-120,behavior:'smooth'})" title="Subir" style="background:var(--surface-2);border:1px solid var(--border);color:var(--muted);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0">↑</button>
-              <button id="listScrollDown" onclick="document.getElementById('parkList').scrollBy({top:120,behavior:'smooth'})" title="Bajar" style="background:var(--surface-2);border:1px solid var(--border);color:var(--muted);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0">↓</button>
-            </div>
-          </div>
-          <div class="park-list" id="parkList" style="margin-top:6px;overflow-y:auto;max-height:150px"></div>
-          <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
         </div>
       </div>
 
@@ -509,7 +485,15 @@
        articleUrl:'https://docs.google.com/document/d/e/2PACX-1vSzB6wVlUb90mYYlVdbOlxuFgOAGd-Mf4TGNxZrycMUC6OaJe149mRD6u6IvyOahLq4FOCCzlKAM31a/pub'}
     ];
 
-    const map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([-39.8, -65.4], 4);
+    const map = L.map('map', {
+      zoomControl: true,
+      scrollWheelZoom: true,
+      dragging: true,
+      touchZoom: true,
+      tap: true,
+      tapTolerance: 15,
+    }).setView([-39.8, -65.4], 4);
+    window.addEventListener('resize', () => map.invalidateSize());
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
@@ -542,11 +526,9 @@
     };
 
     const filtersWrap = document.getElementById('regionFilters');
-    const parkList = document.getElementById('parkList');
     const panel = document.getElementById('parkInfoOverlay');
     const interactiveMap = document.getElementById('interactiveMap');
     const searchInput = document.getElementById('searchInput');
-    const metaCount = document.getElementById('metaCount');
 
     // ── i18n (ES / EN) ─────────────────────────────────────────────────────────
     let lang = 'es';
@@ -628,7 +610,6 @@
         L.DomEvent.stopPropagation(e);
         map.closePopup();
         renderPanel(park);
-        highlightListItem(park.name);
         map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
       });
       return marker;
@@ -812,33 +793,6 @@
       }, 200);
     }
 
-    function renderList(items) {
-      parkList.innerHTML = '';
-      items.slice(0, 18).forEach(park => {
-        const row = document.createElement('button');
-        row.type = 'button';
-        row.className = 'park-row';
-        row.dataset.name = park.name;
-        row.innerHTML = `<strong>${park.name}</strong><div style="margin-top:4px;color:var(--muted);font-size:13px;">${trRegion(park.region)} · ${park.province}</div>`;
-        row.addEventListener('click', () => {
-          renderPanel(park);
-          highlightListItem(park.name);
-          map.flyTo([park.lat, park.lng], 7, { duration: 0.7 });
-        });
-        parkList.appendChild(row);
-      });
-      if (items.length > 18) {
-        const more = document.createElement('div');
-        more.className = 'trail-box';
-        more.innerHTML = `<strong>${T('Más áreas visibles', 'More areas visible')}</strong>${T(`${items.length - 18} áreas protegidas adicionales coinciden con el filtro actual.`, `${items.length - 18} additional protected areas match the current filter.`)}`;
-        parkList.appendChild(more);
-      }
-    }
-
-    function highlightListItem(name) {
-      parkList.querySelectorAll('.park-row').forEach(el => el.classList.toggle('active', el.dataset.name === name));
-    }
-
     const regions = ['Todas', ...new Set(parks.map(p => p.region))];
     let currentRegion = 'Todas';
     let currentSearch = '';
@@ -878,8 +832,6 @@
         if (bounds.isValid()) map.fitBounds(bounds.pad(0.3));
       }
 
-      metaCount.textContent = filtered.length + ' ' + T('áreas', 'areas');
-      renderList(filtered);
       filtersWrap.querySelectorAll('.chip').forEach(btn => btn.classList.toggle('active', btn.dataset.region === currentRegion));
       if (filtered.length) renderPanel(filtered[0]);
     }
