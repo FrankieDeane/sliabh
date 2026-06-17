@@ -315,6 +315,9 @@
     @media (max-width: 900px) {
       #interactiveMap { flex-direction: column; height: auto; }
       #leftPane { flex: 0 0 auto !important; }
+      /* flex:none lets .map-card size to its content instead of collapsing to
+         0 px in an indefinite-height flex parent (which overflow:hidden then clips) */
+      .map-card { flex: none; }
       #map { height: 52vw; min-height: 280px; }
       #interactiveMap.split #splitHandle { display: none; }
       #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
