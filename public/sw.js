@@ -1,5 +1,5 @@
-/* Sliabh — Service Worker v23 */
-const CACHE = 'sliabh-v23';
+/* Sliabh — Service Worker v24 */
+const CACHE = 'sliabh-v24';
 const TILE_CACHE = 'sliabh-tiles-v1';
 
 self.addEventListener('install', (e) => {
