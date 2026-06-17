@@ -1,5 +1,5 @@
-/* Sliabh — Service Worker v19 */
-const CACHE = 'sliabh-v19';
+/* Sliabh — Service Worker v20 */
+const CACHE = 'sliabh-v20';
 const SHELL = [
   '/',
   '/index.html',
@@ -39,16 +39,14 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
+  // Network-first: always try to get fresh content, fall back to cache offline
   e.respondWith(
-    caches.match(e.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(e.request).then((res) => {
-        if (res.ok && url.origin === self.location.origin) {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, clone));
-        }
-        return res;
-      }).catch(() => caches.match('/') || new Response('Offline', { status: 503 }));
-    })
+    fetch(e.request).then((res) => {
+      if (res.ok && url.origin === self.location.origin) {
+        const clone = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, clone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request).then((cached) => cached || caches.match('/') || new Response('Offline', { status: 503 })))
   );
 });
