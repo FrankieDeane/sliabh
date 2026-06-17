@@ -31,10 +31,23 @@
     }
     a, button { transition: .18s ease; }
     .wrap { max-width: 1480px; margin: 0 auto; padding: 18px; }
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) 400px;
-      gap: 18px;
+    /* ── Split-screen layout ─────────────────────────── */
+    #interactiveMap {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      height: calc(100vh - 56px);
+    }
+    #leftPane {
+      flex: 0 0 100%;
+      min-width: 280px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: flex-basis .32s cubic-bezier(.4,0,.2,1);
+    }
+    #interactiveMap.split #leftPane {
+      flex-basis: var(--left-w, 55%);
     }
     .card {
       background: var(--surface);
@@ -42,7 +55,7 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .map-card { padding: 14px; }
+    .map-card { padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
     .section-head { padding: 6px 4px 14px; }
     .section-head h2 { margin: 0 0 6px; font-size: 1.5rem; }
     .section-head p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; font-size: .95rem; }
@@ -73,8 +86,8 @@
     }
     .search::placeholder { color: var(--muted); }
     #map {
-      width: 100%;
-      height: 720px;
+      flex: 1;
+      min-height: 0;
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -148,13 +161,101 @@
       margin-top: 6px;
       margin-left: 6px;
     }
-    .panel {
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      min-height: 720px;
-      gap: 14px;
+    /* ── Park list strip (bottom of left pane) ──────── */
+    #parkListPanel {
+      flex-shrink: 0;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 10px 14px 12px;
     }
+    /* ── Draggable divider ───────────────────────────── */
+    #splitHandle {
+      flex-shrink: 0;
+      width: 0;
+      overflow: hidden;
+      cursor: col-resize;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+      transition: width .32s cubic-bezier(.4,0,.2,1);
+      z-index: 20;
+    }
+    #interactiveMap.split #splitHandle { width: 7px; }
+    #splitHandle::before {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 44px;
+      background: var(--muted);
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    #interactiveMap.split #splitHandle::before { opacity: 1; }
+    #splitHandle:hover, #splitHandle.dragging { background: rgba(22,163,74,.22); }
+    #splitHandle:hover::before, #splitHandle.dragging::before { background: var(--primary); }
+    /* ── Right pane: full-height 3D map ─────────────── */
+    #rightPane {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      display: none;
+    }
+    #interactiveMap.split #rightPane { display: block; }
+    #park3dMap { width:100%; height:100%; border-radius:0; border:none; margin:0; }
+    /* ── Park info overlay on 3D map ────────────────── */
+    #parkInfoOverlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      max-width: 260px;
+      min-width: 180px;
+      background: rgba(7,11,20,.86);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      max-height: calc(100% - 80px);
+      overflow-y: auto;
+    }
+    #parkInfoOverlay .kicker { margin:0 0 4px; font-size:11px; color:var(--primary); text-transform:uppercase; letter-spacing:.1em; font-weight:700; }
+    #parkInfoOverlay h3 { margin:0 0 8px; font-size:1.05rem; line-height:1.15; }
+    #parkInfoOverlay .meta { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+    #parkInfoOverlay .meta span { padding:4px 8px; border-radius:999px; background:var(--surface-2); color:#cbd5e1; font-size:11px; font-weight:600; }
+    /* ── Close / back button ─────────────────────────── */
+    #closeSplit {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 10;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(7,11,20,.86);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: .18s ease;
+      font-family: inherit;
+      line-height: 1;
+      padding: 0;
+    }
+    #closeSplit:hover { background: rgba(220,38,38,.22); border-color:#ef4444; color:#ef4444; }
     .kicker {
       margin: 0;
       font-size: 12px;
@@ -218,10 +319,13 @@
     }
     .leaflet-popup-content-wrapper { background: var(--surface); color: var(--text); border-radius: 12px; }
     .leaflet-popup-tip { background: var(--surface); }
-    @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr; }
-      .panel { min-height: auto; }
-      #map { height: 520px; }
+    @media (max-width: 900px) {
+      #interactiveMap { flex-direction: column; height: auto; }
+      #leftPane { flex: 0 0 auto !important; }
+      #map { height: 52vw; min-height: 280px; }
+      #interactiveMap.split #splitHandle { display: none; }
+      #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
+      #parkListPanel { max-height: 130px; }
     }
     /* ── Special park actions ────────────────────────────────────────────── */
     .park-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
@@ -269,7 +373,6 @@
       font-size: 11px; color: #94a3b8; flex-shrink: 0;
     }
   /* ── Mitre 3D mini-map ─────────────────────────────────── */
-  #park3dMap{height:240px;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin:10px 0 14px}
   .maplibregl-popup-content{background:rgba(7,11,20,.9)!important;border:1px solid #1e2d42!important;
     color:#f0f9ff!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important}
   .maplibregl-popup-tip{border-top-color:rgba(7,11,20,.9)!important}
@@ -277,49 +380,61 @@
 </head>
 <body>
   <div class="wrap">
-    <section id="interactiveMap" class="layout">
-      <article class="card map-card">
-        <div class="section-head">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-            <h2 id="i18nTitle">Explorá las áreas protegidas por región</h2>
-            <div class="lang-toggle" id="langToggle">
-              <button data-lang="es" class="active">ES</button>
-              <button data-lang="en">EN</button>
+    <section id="interactiveMap">
+
+      <!-- LEFT PANE: Leaflet Argentina map -->
+      <div id="leftPane">
+        <div class="card map-card">
+          <div class="section-head">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+              <h2 id="i18nTitle">Explorá las áreas protegidas por región</h2>
+              <div class="lang-toggle" id="langToggle">
+                <button data-lang="es" class="active">ES</button>
+                <button data-lang="en">EN</button>
+              </div>
+            </div>
+            <p id="i18nIntro">Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.</p>
+            <div class="toolbar">
+              <input id="searchInput" class="search" type="search" placeholder="Buscar parque, provincia o región" aria-label="Buscar área protegida" />
+              <div class="filters" id="regionFilters"></div>
             </div>
           </div>
-          <p id="i18nIntro">Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.</p>
-          <div class="toolbar">
-            <input id="searchInput" class="search" type="search" placeholder="Buscar parque, provincia o región" aria-label="Buscar área protegida" />
-            <div class="filters" id="regionFilters"></div>
+          <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
+          <div class="legend">
+            <span><i class="dot" style="background:#0f5f60"></i> <span data-i18n="legPat">Patagonia</span></span>
+            <span><i class="dot" style="background:#8a6d3b"></i> <span data-i18n="legCen">Centro</span></span>
+            <span><i class="dot" style="background:#6a8f3f"></i> <span data-i18n="legNoa">Noroeste (NOA)</span></span>
+            <span><i class="dot" style="background:#7a4f7f"></i> <span data-i18n="legNea">Noreste (NEA)</span></span>
+            <span><i class="dot" style="background:#315f86"></i> <span data-i18n="legMar">Áreas marinas</span></span>
+            <span><i class="dot" style="background:#3b82f6"></i> <span data-i18n="legBar">Senderos Bariloche</span></span>
           </div>
+          <button class="layer-toggle" id="trailLayerToggle">
+            <span class="toggle-dot"></span>
+            <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
+          </button>
         </div>
-        <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
-        <div class="legend">
-          <span><i class="dot" style="background:#0f5f60"></i> <span data-i18n="legPat">Patagonia</span></span>
-          <span><i class="dot" style="background:#8a6d3b"></i> <span data-i18n="legCen">Centro</span></span>
-          <span><i class="dot" style="background:#6a8f3f"></i> <span data-i18n="legNoa">Noroeste (NOA)</span></span>
-          <span><i class="dot" style="background:#7a4f7f"></i> <span data-i18n="legNea">Noreste (NEA)</span></span>
-          <span><i class="dot" style="background:#315f86"></i> <span data-i18n="legMar">Áreas marinas</span></span>
-          <span><i class="dot" style="background:#3b82f6"></i> <span data-i18n="legBar">Senderos Bariloche</span></span>
+        <!-- Park list strip at bottom of left pane -->
+        <div id="parkListPanel" class="card">
+          <div class="meta" style="margin-bottom:6px">
+            <span id="metaCount">55 áreas</span>
+            <span data-i18n="pReady">Mapa listo</span>
+          </div>
+          <p class="subsection-title" data-i18n="pVisible">Áreas visibles en el filtro actual</p>
+          <div class="park-list" id="parkList" style="margin-top:6px"></div>
+          <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
         </div>
-        <button class="layer-toggle" id="trailLayerToggle">
-          <span class="toggle-dot"></span>
-          <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
-        </button>
-      </article>
+      </div>
 
-      <aside class="card panel" id="infoPanel">
-        <p class="kicker" data-i18n="pKicker">Dataset cargado</p>
-        <h3 data-i18n="pTitle">Áreas protegidas de Argentina</h3>
-        <div class="meta">
-          <span id="metaCount">55 áreas</span>
-          <span data-i18n="pReady">Mapa listo</span>
-        </div>
-        <p data-i18n="pIntro">Este panel se actualiza al tocar un marcador. Elegí una región o buscá un parque para empezar.</p>
-        <p class="subsection-title" data-i18n="pVisible">Áreas visibles en el filtro actual</p>
-        <div class="park-list" id="parkList"></div>
-        <p class="note" data-i18n="pNote">Mapa base IGN Argentina. Datos basados en el listado SIB/APN de áreas naturales protegidas.</p>
-      </aside>
+      <!-- DRAGGABLE SPLIT HANDLE -->
+      <div id="splitHandle" aria-hidden="true" title="Arrastrá para ajustar el ancho"></div>
+
+      <!-- RIGHT PANE: MapLibre 3D terrain (CARTO) -->
+      <div id="rightPane">
+        <div id="park3dMap"></div>
+        <div id="parkInfoOverlay"></div>
+        <button id="closeSplit" title="Cerrar vista 3D">×</button>
+      </div>
+
     </section>
   </div>
 
@@ -464,7 +579,8 @@
 
     const filtersWrap = document.getElementById('regionFilters');
     const parkList = document.getElementById('parkList');
-    const panel = document.getElementById('infoPanel');
+    const panel = document.getElementById('parkInfoOverlay');
+    const interactiveMap = document.getElementById('interactiveMap');
     const searchInput = document.getElementById('searchInput');
     const metaCount = document.getElementById('metaCount');
 
@@ -623,25 +739,25 @@
         ? `<img src="${park.photoUrl}" alt="${park.name}" style="width:100%;height:200px;object-fit:cover;border-radius:14px;border:1px solid var(--border);margin-bottom:14px" />`
         : '';
 
+      // Populate the info overlay on the 3D map
       panel.innerHTML = `
-        ${photoSection}
         <p class="kicker">${trRegion(park.region)}</p>
         <h3>${park.name}</h3>
         <div class="meta">
           <span>${trCategory(park.category)}</span>
           <span>${park.province}</span>
           <span>${T('Creado', 'Established')} ${park.year}</span>
+          ${park.surface ? `<span>${park.surface}</span>` : ''}
         </div>
-        <div id="park3dMap"></div>
-        <p>${T(
-          `${park.name} pertenece al grupo ${trRegion(park.region)}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${trEco(park.ecoregions)}` : ''}${park.international ? `. Estatus internacional: ${trIntl(park.international)}` : ''}.`,
-          `${park.name} belongs to the ${trRegion(park.region)} group, in ${park.province}. Registered area: ${park.surface}${park.ecoregions ? ` · Ecoregions: ${trEco(park.ecoregions)}` : ''}${park.international ? `. International status: ${trIntl(park.international)}` : ''}.`
-        )}</p>
+        ${park.international ? `<div style="font-size:11px;color:#fbbf24;margin-bottom:6px">${trIntl(park.international)}</div>` : ''}
+        ${park.ecoregions ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px">${trEco(park.ecoregions)}</div>` : ''}
         ${extraActions}
-        ${mitreSection}
-        ${trailsSection}
-        <p class="note">${T('Mapa base IGN Argentina · Datos SIB/APN.', 'IGN Argentina base map · SIB/APN data.')}</p>
+        ${mitreSection ? `<p style="font-size:11px;color:var(--primary);margin:6px 0 0;font-weight:700">${T('Expedición', 'Expedition')} · Península Mitre</p>` : ''}
       `;
+
+      // Activate split view
+      interactiveMap.classList.add('split');
+      setTimeout(() => map.invalidateSize(), 340);
 
       // ── 3D terrain mini-map for every park ──────────────────
       if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
@@ -1427,6 +1543,52 @@ ${trkpts}
         }, parks[0]);
         if (closest) setTimeout(() => renderPanel(closest), 700);
       }
+    })();
+
+    // ── Close split view ──────────────────────────────────────────────────────
+    document.getElementById('closeSplit').addEventListener('click', () => {
+      interactiveMap.classList.remove('split');
+      interactiveMap.style.removeProperty('--left-w');
+      if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
+      setTimeout(() => map.invalidateSize(), 340);
+    });
+
+    // ── Drag to resize split handle ───────────────────────────────────────────
+    (function () {
+      const handle = document.getElementById('splitHandle');
+      let dragging = false, startX = 0, startW = 0;
+
+      function beginDrag(clientX) {
+        dragging = true;
+        startX = clientX;
+        startW = document.getElementById('leftPane').getBoundingClientRect().width;
+        handle.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+      }
+      function moveDrag(clientX) {
+        if (!dragging) return;
+        const totalW = interactiveMap.getBoundingClientRect().width;
+        const newW = Math.max(260, Math.min(totalW - 260, startW + (clientX - startX)));
+        interactiveMap.style.setProperty('--left-w', newW + 'px');
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        handle.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        map.invalidateSize();
+        if (window._parkGlMap) window._parkGlMap.resize();
+      }
+
+      handle.addEventListener('mousedown', e => { beginDrag(e.clientX); e.preventDefault(); });
+      document.addEventListener('mousemove', e => moveDrag(e.clientX));
+      document.addEventListener('mouseup', endDrag);
+
+      handle.addEventListener('touchstart', e => { beginDrag(e.touches[0].clientX); }, { passive: true });
+      document.addEventListener('touchmove', e => { moveDrag(e.touches[0].clientX); }, { passive: true });
+      document.addEventListener('touchend', endDrag);
     })();
 
     // ── Accept postMessage to fly to precise coordinates ───────────────────────
