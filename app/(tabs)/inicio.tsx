@@ -57,7 +57,7 @@ const FEATURED = [
     distance: '18 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=700&q=80&fit=crop&auto=format',
+    uri: '/sliabh-los-alerces.jpg',
     routeId: 'alerces-cascada-arrayanes',
   },
   {
@@ -81,7 +81,7 @@ const REGIONS = [
     regionEs: 'Santa Cruz · Tierra del Fuego',
     regionEn: 'Santa Cruz · Tierra del Fuego',
     trailCount: 5,
-    photo: Platform.OS === 'web' ? '/tierra-del-fuego.jpg' : 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60',
+    photo: '/tierra-del-fuego.jpg',
   },
   {
     id: 'patagonia-norte',
@@ -90,7 +90,7 @@ const REGIONS = [
     regionEs: 'Río Negro · Neuquén · Chubut',
     regionEn: 'Río Negro · Neuquén · Chubut',
     trailCount: 6,
-    photo: 'https://plus.unsplash.com/premium_photo-1671211755030-a90e6a3193cf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGF0YWdvbmlhfGVufDB8fDB8fHww',
+    photo: '/sliabh-explore-explorar.jpg',
   },
   {
     id: 'cuyo',
@@ -99,7 +99,7 @@ const REGIONS = [
     regionEs: 'Mendoza · San Juan · La Rioja',
     regionEn: 'Mendoza · San Juan · La Rioja',
     trailCount: 1,
-    photo: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=500&q=80&fit=crop',
+    photo: '/sliabh-aconcagua.jpg',
   },
   {
     id: 'norte',
@@ -108,7 +108,7 @@ const REGIONS = [
     regionEs: 'Jujuy · Salta · Tucumán',
     regionEn: 'Jujuy · Salta · Tucumán',
     trailCount: 1,
-    photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&h=400&s=1',
+    photo: '/sliabh-humahuaca.jpg',
   },
   {
     id: 'sierras-centrales',
@@ -117,7 +117,7 @@ const REGIONS = [
     regionEs: 'Córdoba · San Luis',
     regionEn: 'Córdoba · San Luis',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1637707483880-6d680c36a322?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHNpZXJyYXN8ZW58MHx8MHx8fDA%3D',
+    photo: '/sliabh-sierras-de-cordoba.jpg',
   },
   {
     id: 'litoral',
@@ -126,7 +126,7 @@ const REGIONS = [
     regionEs: 'Misiones · Corrientes · Entre Ríos',
     regionEn: 'Misiones · Corrientes · Entre Ríos',
     trailCount: 2,
-    photo: 'https://images.unsplash.com/photo-1626288215937-747af7be5b7b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZW50cmUlMjByaW9zJTIwYXJnZW50aW5hfGVufDB8fDB8fHww',
+    photo: '/sliabh-ibera.jpg',
   },
 ];
 
@@ -140,7 +140,7 @@ const PARK_SPOTS = [
     tagEn: 'UNESCO · World Heritage',
     descEs: 'Bosques de alerces milenarios de hasta 2600 años, lagos turquesa y ecosistemas únicos en la Patagonia andina de Chubut.',
     descEn: 'Ancient alerce forests up to 2600 years old, turquoise lakes and unique ecosystems in the Andean Patagonia of Chubut.',
-    photo: 'https://www.lanacion.com.ar/resizer/v2/la-excursion-al-alerzal-milenario-es-muy-PVCDPJR5VVAWJIT4FVKD2XDA54.jpg?auth=229b98a1980a83812a56d98a710ce265d07bc9e539fe33bc1ca97141f54cf6a0&width=1200&height=800&quality=70&smart=true',
+    photo: '/sliabh-los-alerces.jpg',
     trailId: 'alerces-cascada-arrayanes',
     province: 'Chubut',
     trails: 3,
@@ -153,7 +153,7 @@ const PARK_SPOTS = [
     tagEn: 'Unique microclimate · El Bolsón',
     descEs: 'El único lago de la Patagonia con salida al océano Pacífico. Vegetación valdiviana, arrayanes y las temperaturas más cálidas de la región.',
     descEn: 'The only lake in Patagonia that flows to the Pacific Ocean. Valdivian vegetation, arrayán trees and the warmest temperatures in the region.',
-    photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80&fit=crop&auto=format',
+    photo: '/sliabh-lago-puelo.jpg',
     trailId: 'lago-puelo-los-hitos',
     province: 'Chubut',
     trails: 2,
@@ -166,7 +166,7 @@ const PARK_SPOTS = [
     tagEn: 'Steppe · Condors · Santa Cruz',
     descEs: 'El parque más nuevo de Argentina protege estepa patagónica virgen, guanacos y cóndores. Vistas al lago Cochrane y vientos épicos de la Patagonia.',
     descEn: "Argentina's newest park protects pristine Patagonian steppe, guanacos and condors. Views to Cochrane lake and the epic Patagonian winds.",
-    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+    photo: '/tierra-del-fuego.jpg',
     trailId: 'pn-patagonia-ascension',
     province: 'Santa Cruz',
     trails: 2,
@@ -176,7 +176,7 @@ const PARK_SPOTS = [
 // Quick-action feature cards
 const FEATURE_CARDS = [
   {
-    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80',
+    photo: '/sliabh-lanin.jpg',
     icon: 'compass-outline' as const,
     titleEs: 'Explorar',
     titleEn: 'Explore',
@@ -185,7 +185,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/rutas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80',
+    photo: '/sliabh-explore-explorar.jpg',
     icon: 'map-outline' as const,
     titleEs: 'Mapas offline',
     titleEn: 'Offline maps',
@@ -194,7 +194,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/mapas' as const,
   },
   {
-    photo: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80',
+    photo: '/sliabh-talampaya.jpg',
     icon: 'shield-checkmark-outline' as const,
     titleEs: 'Supervivencia',
     titleEn: 'Survival',
