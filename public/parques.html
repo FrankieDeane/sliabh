@@ -269,7 +269,7 @@
       font-size: 11px; color: #94a3b8; flex-shrink: 0;
     }
   /* ── Mitre 3D mini-map ─────────────────────────────────── */
-  #mitre3dMap{height:260px;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px}
+  #park3dMap{height:240px;border-radius:14px;overflow:hidden;border:1px solid var(--border);margin:10px 0 14px}
   .maplibregl-popup-content{background:rgba(7,11,20,.9)!important;border:1px solid #1e2d42!important;
     color:#f0f9ff!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important}
   .maplibregl-popup-tip{border-top-color:rgba(7,11,20,.9)!important}
@@ -575,7 +575,6 @@
       const mitreSection = park.mitre ? `
         <div style="margin-top:14px">
           <p class="subsection-title" style="color:#22c55e;font-size:15px;font-weight:800;margin:0 0 8px">${T('Expedición', 'Expedition')} · Península Mitre</p>
-          <div id="mitre3dMap"></div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
             ${(lang==='es'
               ? ['70 km aprox.','7–14 días','Dificultad alta','Sin senderos marcados']
@@ -617,6 +616,7 @@
           <span>${park.province}</span>
           <span>${T('Creado', 'Established')} ${park.year}</span>
         </div>
+        <div id="park3dMap"></div>
         <p>${T(
           `${park.name} pertenece al grupo ${trRegion(park.region)}, en ${park.province}. Superficie registrada: ${park.surface}${park.ecoregions ? ` · Ecorregiones: ${trEco(park.ecoregions)}` : ''}${park.international ? `. Estatus internacional: ${trIntl(park.international)}` : ''}.`,
           `${park.name} belongs to the ${trRegion(park.region)} group, in ${park.province}. Registered area: ${park.surface}${park.ecoregions ? ` · Ecoregions: ${trEco(park.ecoregions)}` : ''}${park.international ? `. International status: ${trIntl(park.international)}` : ''}.`
@@ -627,27 +627,38 @@
         <p class="note">${T('Mapa base IGN Argentina · Datos SIB/APN.', 'IGN Argentina base map · SIB/APN data.')}</p>
       `;
 
-      if (park.mitre) {
-        if (window._mitreGlMap) { window._mitreGlMap.remove(); window._mitreGlMap = null; }
-        requestAnimationFrame(() => {
-          const el = document.getElementById('mitre3dMap');
-          if (!el) return;
-          const gm = new maplibregl.Map({
-            container: 'mitre3dMap',
-            style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-            center: [-65.95, -54.93], zoom: 8.0, pitch: 52, bearing: 65,
-            antialias: true, attributionControl: false,
+      // ── 3D terrain mini-map for every park ──────────────────
+      if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
+      requestAnimationFrame(() => {
+        const el = document.getElementById('park3dMap');
+        if (!el) return;
+        const gm = new maplibregl.Map({
+          container: 'park3dMap',
+          style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+          center: [park.lng, park.lat], zoom: 9.5, pitch: 50, bearing: 30,
+          antialias: true, attributionControl: false,
+        });
+        window._parkGlMap = gm;
+        gm.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+        gm.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+        gm.on('load', () => {
+          gm.addSource('dem', {
+            type: 'raster-dem',
+            tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+            encoding: 'terrarium', tileSize: 256, maxzoom: 14,
           });
-          window._mitreGlMap = gm;
-          gm.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-          gm.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
-          gm.on('load', () => {
-            gm.addSource('dem', {
-              type: 'raster-dem',
-              tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
-              encoding: 'terrarium', tileSize: 256, maxzoom: 14,
-            });
-            gm.setTerrain({ source: 'dem', exaggeration: 2.8 });
+          gm.setTerrain({ source: 'dem', exaggeration: 2.8 });
+
+          // Park centre marker
+          const dot = document.createElement('div');
+          dot.style.cssText = `width:11px;height:11px;border-radius:50%;background:${park.color};border:2px solid #fff;box-shadow:0 0 0 4px ${park.color}55`;
+          new maplibregl.Marker({ element: dot }).setLngLat([park.lng, park.lat])
+            .setPopup(new maplibregl.Popup({ offset: 15, closeButton: false }).setHTML(`<strong>${park.name}</strong>`))
+            .addTo(gm);
+
+          // Mitre expedition route overlay
+          if (park.mitre) {
+            gm.easeTo({ center: [-65.95, -54.93], zoom: 8.0, bearing: 65, pitch: 52, duration: 800 });
             gm.addSource('route', {
               type: 'geojson',
               data: { type: 'Feature', geometry: { type: 'LineString',
@@ -665,15 +676,15 @@
             [[-66.731,-54.972,'Estancia Moat','#22c55e'],[-66.484,-55.058,'Cabo San Pío','#34d399'],
              [-65.728,-54.935,'Bahía Sloggett','#3b82f6'],[-65.387,-54.862,'Playa Dorada','#3b82f6'],
              [-65.105,-54.797,'Puerto Español','#60a5fa']].forEach(([lng,lat,label,color]) => {
-              const dot = document.createElement('div');
-              dot.style.cssText = `width:9px;height:9px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}44;cursor:pointer`;
-              new maplibregl.Marker({element:dot}).setLngLat([lng,lat])
+              const d = document.createElement('div');
+              d.style.cssText = `width:9px;height:9px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}44;cursor:pointer`;
+              new maplibregl.Marker({element:d}).setLngLat([lng,lat])
                 .setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML(`<strong>${label}</strong>`))
                 .addTo(gm);
             });
-          });
+          }
         });
-      }
+      });
     }
 
     function renderList(items) {
