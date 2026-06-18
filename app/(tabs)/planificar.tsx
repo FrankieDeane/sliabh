@@ -405,7 +405,7 @@ export default function PlanificarScreen() {
               <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                 <TouchableOpacity
                   style={s.aiBtn}
-                  onPress={() => router.push('/(tabs)/asistente')}
+                  onPress={() => router.push('/(tabs)/faq')}
                   activeOpacity={0.8}
                 >
                   <Ionicons name="sparkles-outline" size={16} color="#22c55e" />

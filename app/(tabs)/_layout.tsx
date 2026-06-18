@@ -114,7 +114,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="asistente"
+        name="faq"
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
