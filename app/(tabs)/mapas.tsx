@@ -669,6 +669,13 @@ export default function MapasScreen() {
       { key: 'topo',     label: t('Topo', 'Topo') },
       { key: 'osm',      label: 'OSM' },
     ];
+    const parkMarkers = NATIONAL_PARKS.filter(p => p.coords).map(p => ({
+      id: p.id,
+      lat: p.coords.lat,
+      lon: p.coords.lon,
+      name: p.name,
+      subtitle: p.province,
+    }));
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <MapLeaflet
@@ -677,6 +684,11 @@ export default function MapasScreen() {
           flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 10 } : null}
           height="100%"
           layer={mapLayer}
+          markers={parkMarkers}
+          onMarkerPress={(id: string) => {
+            const park = NATIONAL_PARKS.find(p => p.id === id);
+            if (park) setFlyTo({ lat: park.coords.lat, lon: park.coords.lon });
+          }}
         />
 
         {/* Layer switcher — top-left */}
