@@ -80,7 +80,7 @@ export function WebFooter() {
             {([
               { labelEs: 'Mapas offline', labelEn: 'Offline maps', href: '/(tabs)/mapas' as const },
               { labelEs: 'Planificar ruta', labelEn: 'Plan a route', href: '/(tabs)/planificar' as const },
-              { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const },
+              { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/asistente' as const },
               { labelEs: 'Contribuir', labelEn: 'Contribute', href: '/(tabs)/contribuir' as const },
             ]).map((n) => (
               <TouchableOpacity key={n.labelEs} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
