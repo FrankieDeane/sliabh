@@ -45,7 +45,7 @@ export function WebHeader() {
 
   const NAV = [
     { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Explorá por región', labelEn: 'Explore by region', href: '/(tabs)/inicio' as const, icon: 'compass-outline' as const, scrollTo: 'region-section' as string | null },
+    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const, icon: 'trail-sign-outline' as const, scrollTo: null as string | null },
     { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
     { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
     { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },

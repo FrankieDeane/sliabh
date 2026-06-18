@@ -43,6 +43,12 @@ export default function RutasScreen() {
       setRegion(requested as TrailRegion);
     }
   }, [params.region]);
+
+  // Keep region in URL so back-navigation from trail detail restores the filter
+  function handleSetRegion(r: TrailRegion) {
+    setRegion(r);
+    router.setParams({ region: r });
+  }
   const { t } = useLangStore();
 
   // Split layout state
@@ -109,7 +115,7 @@ export default function RutasScreen() {
         return (
           <TouchableOpacity
             key={r}
-            onPress={() => setRegion(r)}
+            onPress={() => handleSetRegion(r)}
             style={[
               styles.chip,
               {
@@ -139,7 +145,7 @@ export default function RutasScreen() {
         return (
           <TouchableOpacity
             key={r}
-            onPress={() => setRegion(r)}
+            onPress={() => handleSetRegion(r)}
             style={[
               styles.chip,
               {
@@ -283,6 +289,7 @@ export default function RutasScreen() {
             zoom={activeTrailId ? 10 : 5}
             height="100%"
             layer="dark"
+            showPolyline={false}
           />
         </View>
       </View>
@@ -341,6 +348,7 @@ export default function RutasScreen() {
             zoom={5}
             height="100%"
             layer="dark"
+            showPolyline={false}
           />
         </View>
       ) : (

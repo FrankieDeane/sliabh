@@ -20,6 +20,7 @@ interface Props {
   zoom?: number;
   height?: number | string;
   layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
+  showPolyline?: boolean;
 }
 
 const TILE_URLS: Record<string, string> = {
@@ -35,9 +36,11 @@ function buildHTML(
   tileUrl: string,
   waypoints: Array<{ lat: number; lon: number; name: string }>,
   parkMarkers: MapMarker[] = [],
+  showPolyline = true,
 ): string {
   const waypointsJson = JSON.stringify(waypoints);
   const parkMarkersJson = JSON.stringify(parkMarkers);
+  const showPolylineJson = JSON.stringify(showPolyline);
   // Replace {s} with 'a' for native WebView since subdomains are handled in browser
   const nativeTileUrl = tileUrl.replace('{s}', 'a');
   return `<!DOCTYPE html>
@@ -88,7 +91,7 @@ function buildHTML(
       latlngs.push([wp.lat, wp.lon]);
     });
 
-    if (latlngs.length > 1) {
+    if (latlngs.length > 1 && ${showPolylineJson}) {
       routeLine = L.polyline(latlngs, { color: '#16a34a', weight: 3, opacity: 0.85 }).addTo(map);
     }
   }
@@ -138,11 +141,12 @@ export function MapLeaflet({
   zoom = 10,
   height = 400,
   layer = 'osm',
+  showPolyline = true,
 }: Props) {
   const tileUrl = TILE_URLS[layer] ?? TILE_URLS.osm;
   const effectiveCenter: [number, number] = flyTo ? [flyTo.lat, flyTo.lon] : center;
   const effectiveZoom = flyTo?.zoom ?? zoom;
-  const html = buildHTML(effectiveCenter, effectiveZoom, tileUrl, waypoints, markers);
+  const html = buildHTML(effectiveCenter, effectiveZoom, tileUrl, waypoints, markers, showPolyline);
 
   const handleMessage = useCallback(
     (event: any) => {

@@ -81,17 +81,15 @@ const NATIONAL_PARKS = [
     unesco: false,
     trailId: 'bahia-mitre',
     gpxPoints: [
-      { lat: -54.283, lon: -66.692, name: 'Cabo San Pablo (inicio)' },
-      { lat: -54.400, lon: -66.440 },
-      { lat: -54.455, lon: -66.290, name: 'Arroyo Irigoyen' },
-      { lat: -54.560, lon: -65.970 },
-      { lat: -54.668, lon: -65.710, name: 'Cabo Irigoyen' },
-      { lat: -54.760, lon: -65.500 },
-      { lat: -54.788, lon: -65.400, name: 'Bahía Buen Suceso' },
-      { lat: -54.800, lon: -65.240 },
-      { lat: -54.798, lon: -65.117, name: 'Cabo San Diego' },
-      { lat: -54.748, lon: -65.048 },
-      { lat: -54.672, lon: -65.010, name: 'Bahía Mitre (fin)' },
+      { lat: -54.170, lon: -65.930, name: 'Cabo San Pablo (inicio)' },
+      { lat: -54.340, lon: -65.780, name: 'Arroyo Irigoyen' },
+      { lat: -54.520, lon: -65.620 },
+      { lat: -54.660, lon: -65.460, name: 'Cabo Irigoyen' },
+      { lat: -54.780, lon: -65.310 },
+      { lat: -54.820, lon: -65.270, name: 'Bahía Buen Suceso' },
+      { lat: -54.800, lon: -65.115, name: 'Cabo San Diego' },
+      { lat: -54.755, lon: -65.030 },
+      { lat: -54.700, lon: -64.990, name: 'Bahía Mitre (fin)' },
     ],
   },
   {
@@ -107,6 +105,29 @@ const NATIONAL_PARKS = [
     coords: { lat: -54.8, lon: -68.5 },
     unesco: false,
     trailId: 'tierra-del-fuego-costera',
+  },
+  {
+    id: 'dientes-navarino',
+    name: 'Dientes de Navarino',
+    province: 'Magallanes (Chile)',
+    region: 'Patagonia Sur',
+    area_km2: 0,
+    highlights: 'Circuito más austral del mundo · Isla Navarino · Pasos de alta montaña · Lagunas glaciarias',
+    size: '62 MB',
+    photo: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=600&q=75&fit=crop',
+    coords: { lat: -54.932, lon: -67.613 },
+    unesco: false,
+    trailId: 'dientes-circuit',
+    gpxPoints: [
+      { lat: -54.9320, lon: -67.6130, name: 'Puerto Williams (inicio)' },
+      { lat: -54.9640, lon: -67.5700, name: 'Base Dientes' },
+      { lat: -54.9810, lon: -67.5460, name: 'Paso de los Dientes' },
+      { lat: -55.0030, lon: -67.5080, name: 'Laguna del Salto' },
+      { lat: -55.0120, lon: -67.4760, name: 'Paso Virginia' },
+      { lat: -55.0010, lon: -67.4440, name: 'Laguna Virginia' },
+      { lat: -54.9820, lon: -67.4120, name: 'Paso Guerrico' },
+      { lat: -54.9320, lon: -67.6130, name: 'Puerto Williams (fin)' },
+    ],
   },
   {
     id: 'lago-puelo',
@@ -648,6 +669,13 @@ export default function MapasScreen() {
       { key: 'topo',     label: t('Topo', 'Topo') },
       { key: 'osm',      label: 'OSM' },
     ];
+    const parkMarkers = NATIONAL_PARKS.filter(p => p.coords).map(p => ({
+      id: p.id,
+      lat: p.coords.lat,
+      lon: p.coords.lon,
+      name: p.name,
+      subtitle: p.province,
+    }));
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <MapLeaflet
@@ -656,6 +684,11 @@ export default function MapasScreen() {
           flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 10 } : null}
           height="100%"
           layer={mapLayer}
+          markers={parkMarkers}
+          onMarkerPress={(id: string) => {
+            const park = NATIONAL_PARKS.find(p => p.id === id);
+            if (park) setFlyTo({ lat: park.coords.lat, lon: park.coords.lon });
+          }}
         />
 
         {/* Layer switcher — top-left */}
