@@ -314,13 +314,18 @@
     .leaflet-popup-tip { background: var(--surface); }
     @media (max-width: 900px) {
       #interactiveMap { flex-direction: column; height: auto; }
-      #leftPane { flex: 0 0 auto !important; }
-      /* flex:none lets .map-card size to its content instead of collapsing to
-         0 px in an indefinite-height flex parent (which overflow:hidden then clips) */
-      .map-card { flex: none; }
-      /* flex:none on #map prevents flex-basis:0 (from the base flex:1 rule) from
-         collapsing the height to 0 in an auto-height mobile flex column */
-      #map { height: 56vw; min-height: 300px; flex: none; }
+      #leftPane { flex: 0 0 auto !important; overflow: visible; }
+      /* flex:none lets .map-card size to its content; overflow:visible prevents
+         the border-radius clip from creating a compositing layer that hides tiles */
+      .map-card { flex: none; overflow: visible; }
+      /* flex:none prevents flex-basis:0 collapse; remove border-radius+overflow:hidden
+         combo that triggers iOS Safari compositing bug with Leaflet tiles */
+      #map { height: 56vw; min-height: 300px; flex: none; overflow: visible; border-radius: 10px; }
+      /* Compact the section-head so the map stays above the fold */
+      .section-head p { display: none; }
+      .filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+      .filters::-webkit-scrollbar { display: none; }
+      .section-head { padding-bottom: 10px; }
       #interactiveMap.split #splitHandle { display: none; }
       #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
       footer { padding: 16px 14px; font-size: 11px; }
@@ -500,12 +505,15 @@
     }).setView([-39.8, -65.4], 4);
     window.addEventListener('resize', () => map.invalidateSize());
     requestAnimationFrame(function() { map.invalidateSize(); });
-    setTimeout(function() { map.invalidateSize(); }, 300);
-    setTimeout(function() { map.invalidateSize(); }, 900);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    setTimeout(function() { map.invalidateSize(); }, 200);
+    setTimeout(function() { map.invalidateSize(); }, 600);
+    setTimeout(function() { map.invalidateSize(); }, 1500);
+    window.addEventListener('load', function() { map.invalidateSize(); });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: ['a','b','c'],
       maxZoom: 19,
-      crossOrigin: true
+      crossOrigin: 'anonymous',
     }).addTo(map);
 
     const clusterGroup = L.markerClusterGroup({
