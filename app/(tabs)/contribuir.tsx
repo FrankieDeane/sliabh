@@ -17,6 +17,7 @@ import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useContribStore } from '../../src/store/contributionStore';
+import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import type { ContribType } from '../../src/store/contributionStore';
 
@@ -26,56 +27,68 @@ const HERO_URI =
   'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&q=85&fit=crop&auto=format';
 
 const STATS = [
-  { value: '247', label: 'Rutas', icon: 'trail-sign-outline' as const },
-  { value: '1.840', label: 'Contribuidores', icon: 'people-outline' as const },
-  { value: '5.200', label: 'Puntos', icon: 'star-outline' as const },
+  { value: '247', labelEs: 'Rutas', labelEn: 'Routes', icon: 'trail-sign-outline' as const },
+  { value: '1.840', labelEs: 'Contribuidores', labelEn: 'Contributors', icon: 'people-outline' as const },
+  { value: '5.200', labelEs: 'Puntos', labelEn: 'Points', icon: 'star-outline' as const },
 ];
 
 const CONTRIB_TYPES: Array<{
   id: ContribType;
   icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  desc: string;
+  labelEs: string;
+  labelEn: string;
+  descEs: string;
+  descEn: string;
   color: string;
   bg: string;
 }> = [
   {
     id: 'nueva_ruta',
     icon: 'trail-sign-outline',
-    label: 'Nueva Ruta',
-    desc: 'Agrega un sendero que aún no está en el mapa',
+    labelEs: 'Nueva Ruta',
+    labelEn: 'New Route',
+    descEs: 'Agrega un sendero que aún no está en el mapa',
+    descEn: 'Add a trail that is not yet on the map',
     color: '#22c55e',
     bg: 'rgba(34,197,94,0.12)',
   },
   {
     id: 'punto_interes',
     icon: 'location-outline',
-    label: 'Punto de Interés',
-    desc: 'Campamentos, refugios, fuentes de agua',
+    labelEs: 'Punto de Interés',
+    labelEn: 'Point of Interest',
+    descEs: 'Campamentos, refugios, fuentes de agua',
+    descEn: 'Campsites, huts, water sources',
     color: '#38bdf8',
     bg: 'rgba(56,189,248,0.12)',
   },
   {
     id: 'alerta',
     icon: 'warning-outline',
-    label: 'Alerta',
-    desc: 'Peligros, caminos cortados, condiciones adversas',
+    labelEs: 'Alerta',
+    labelEn: 'Alert',
+    descEs: 'Peligros, caminos cortados, condiciones adversas',
+    descEn: 'Hazards, closed paths, adverse conditions',
     color: '#f87171',
     bg: 'rgba(248,113,113,0.12)',
   },
   {
     id: 'edicion_ruta',
     icon: 'create-outline',
-    label: 'Corregir Ruta',
-    desc: 'Actualiza datos incorrectos de una ruta existente',
+    labelEs: 'Corregir Ruta',
+    labelEn: 'Correct Route',
+    descEs: 'Actualiza datos incorrectos de una ruta existente',
+    descEn: 'Update incorrect data on an existing route',
     color: '#fbbf24',
     bg: 'rgba(251,191,36,0.12)',
   },
   {
     id: 'nota',
     icon: 'document-text-outline',
-    label: 'Reporte de Sendero',
-    desc: 'Condiciones actuales, temporada, nivel de dificultad',
+    labelEs: 'Reporte de Sendero',
+    labelEn: 'Trail Report',
+    descEs: 'Condiciones actuales, temporada, nivel de dificultad',
+    descEn: 'Current conditions, season, difficulty level',
     color: '#a78bfa',
     bg: 'rgba(167,139,250,0.12)',
   },
@@ -84,44 +97,53 @@ const CONTRIB_TYPES: Array<{
 const RECENT_ACTIVITY = [
   {
     user: 'Martín R.',
-    action: 'agregó una nueva ruta en Bariloche',
-    time: 'hace 2h',
+    actionEs: 'agregó una nueva ruta en Bariloche',
+    actionEn: 'added a new route in Bariloche',
+    timeEs: 'hace 2h',
+    timeEn: '2h ago',
     icon: 'trail-sign-outline' as keyof typeof Ionicons.glyphMap,
     color: '#22c55e',
   },
   {
     user: 'Ana G.',
-    action: 'reportó el estado del Circuito W',
-    time: 'hace 5h',
+    actionEs: 'reportó el estado del Circuito W',
+    actionEn: 'reported the condition of Circuito W',
+    timeEs: 'hace 5h',
+    timeEn: '5h ago',
     icon: 'document-text-outline' as keyof typeof Ionicons.glyphMap,
     color: '#a78bfa',
   },
   {
     user: 'Carlos P.',
-    action: 'marcó un refugio cerca de Fitz Roy',
-    time: 'hace 1d',
+    actionEs: 'marcó un refugio cerca de Fitz Roy',
+    actionEn: 'marked a hut near Fitz Roy',
+    timeEs: 'hace 1d',
+    timeEn: '1d ago',
     icon: 'home-outline' as keyof typeof Ionicons.glyphMap,
     color: '#38bdf8',
   },
   {
     user: 'Laura M.',
-    action: 'publicó alerta de nieve en Aconcagua',
-    time: 'hace 2d',
+    actionEs: 'publicó alerta de nieve en Aconcagua',
+    actionEn: 'posted a snow alert on Aconcagua',
+    timeEs: 'hace 2d',
+    timeEn: '2d ago',
     icon: 'warning-outline' as keyof typeof Ionicons.glyphMap,
     color: '#f87171',
   },
 ];
 
-const STEPS: { icon: keyof typeof Ionicons.glyphMap; title: string; desc: string }[] = [
-  { icon: 'list-outline', title: 'Elige el tipo', desc: 'Ruta, punto de interés, alerta o reporte' },
-  { icon: 'create-outline', title: 'Añade detalles', desc: 'Nombre, descripción y ubicación' },
-  { icon: 'checkmark-done-outline', title: 'Envía', desc: 'El equipo revisa en 24–48 horas' },
+const STEPS: { icon: keyof typeof Ionicons.glyphMap; titleEs: string; titleEn: string; descEs: string; descEn: string }[] = [
+  { icon: 'list-outline', titleEs: 'Elige el tipo', titleEn: 'Choose the type', descEs: 'Ruta, punto de interés, alerta o reporte', descEn: 'Route, point of interest, alert or report' },
+  { icon: 'create-outline', titleEs: 'Añade detalles', titleEn: 'Add details', descEs: 'Nombre, descripción y ubicación', descEn: 'Name, description and location' },
+  { icon: 'checkmark-done-outline', titleEs: 'Envía', titleEn: 'Submit', descEs: 'El equipo revisa en 24–48 horas', descEn: 'The team reviews within 24–48 hours' },
 ];
 
 export default function ContribuirScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
   const { pending } = useContribStore();
+  const { t, lang } = useLangStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<ContribType | undefined>(undefined);
   const insets = useSafeAreaInsets();
@@ -156,15 +178,17 @@ export default function ContribuirScreen() {
           <View style={[styles.heroInner, { paddingTop: insets.top + 20, paddingHorizontal: sidePad }]}>
             <View style={styles.heroBrand}>
               <Ionicons name="people" size={13} color="#22c55e" />
-              <Text style={styles.heroBrandText}>COMUNIDAD</Text>
+              <Text style={styles.heroBrandText}>{t('COMUNIDAD', 'COMMUNITY')}</Text>
             </View>
-            <Text style={styles.heroTitle}>Sé parte del{'\n'}mapa vivo</Text>
+            <Text style={styles.heroTitle}>{t('Sé parte del\nmapa vivo', 'Be part of\nthe living map')}</Text>
             <Text style={styles.heroSub}>
-              Tu conocimiento en la montaña tiene valor. Más de 1.800 senderistas
-              ya contribuyeron a hacer este mapa mejor.
+              {t(
+                'Tu conocimiento en la montaña tiene valor. Más de 1.800 senderistas ya contribuyeron a hacer este mapa mejor.',
+                'Your mountain knowledge has value. Over 1,800 hikers have already contributed to making this map better.',
+              )}
             </Text>
             <View style={styles.heroCtas}>
-              <Button label="Añadir contribución" leftIcon="add" onPress={() => openModal()} />
+              <Button label={t('Añadir contribución', 'Add contribution')} leftIcon="add" onPress={() => openModal()} />
             </View>
           </View>
         </ImageBackground>
@@ -172,22 +196,22 @@ export default function ContribuirScreen() {
         {/* ── STATS ── */}
         <View style={[styles.statsRow, { marginHorizontal: sidePad }]}>
           {STATS.map((s) => (
-            <View key={s.label} style={[styles.statCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <View key={s.labelEs} style={[styles.statCard, { backgroundColor: c.surface, borderColor: c.border }]}>
               <Ionicons name={s.icon} size={18} color="#22c55e" style={{ marginBottom: 6 }} />
               <Text style={styles.statValue}>{s.value}</Text>
-              <Text style={[styles.statLabel, { color: c.muted }]}>{s.label}</Text>
+              <Text style={[styles.statLabel, { color: c.muted }]}>{lang === 'en' ? s.labelEn : s.labelEs}</Text>
             </View>
           ))}
         </View>
 
         {/* ── CONTRIBUTION TYPES ── */}
         <View style={[styles.section, { paddingHorizontal: sidePad }]}>
-          <Text style={[styles.sectionTitle, { color: c.muted }]}>¿QUÉ PUEDES APORTAR?</Text>
+          <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('¿QUÉ PUEDES APORTAR?', 'WHAT CAN YOU CONTRIBUTE?')}</Text>
           <View style={[styles.typesGrid, isWide && styles.typesGridWide]}>
-            {CONTRIB_TYPES.map((t) => (
+            {CONTRIB_TYPES.map((ct) => (
               <TouchableOpacity
-                key={t.id}
-                onPress={() => openModal(t.id)}
+                key={ct.id}
+                onPress={() => openModal(ct.id)}
                 activeOpacity={0.78}
                 style={[
                   styles.typeCard,
@@ -195,12 +219,12 @@ export default function ContribuirScreen() {
                   { backgroundColor: c.surface, borderColor: c.border },
                 ]}
               >
-                <View style={[styles.typeIconWrap, { backgroundColor: t.bg }]}>
-                  <Ionicons name={t.icon} size={22} color={t.color} />
+                <View style={[styles.typeIconWrap, { backgroundColor: ct.bg }]}>
+                  <Ionicons name={ct.icon} size={22} color={ct.color} />
                 </View>
                 <View style={styles.typeText}>
-                  <Text style={[styles.typeLabel, { color: c.text }]}>{t.label}</Text>
-                  <Text style={[styles.typeDesc, { color: c.muted }]}>{t.desc}</Text>
+                  <Text style={[styles.typeLabel, { color: c.text }]}>{lang === 'en' ? ct.labelEn : ct.labelEs}</Text>
+                  <Text style={[styles.typeDesc, { color: c.muted }]}>{lang === 'en' ? ct.descEn : ct.descEs}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color={c.muted} />
               </TouchableOpacity>
@@ -210,7 +234,7 @@ export default function ContribuirScreen() {
 
         {/* ── COMMUNITY ACTIVITY ── */}
         <View style={[styles.section, { paddingHorizontal: sidePad }]}>
-          <Text style={[styles.sectionTitle, { color: c.muted }]}>ACTIVIDAD RECIENTE</Text>
+          <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('ACTIVIDAD RECIENTE', 'RECENT ACTIVITY')}</Text>
           <View style={[styles.activityCard, { backgroundColor: c.surface, borderColor: c.border }]}>
             {RECENT_ACTIVITY.map((a, i) => (
               <View
@@ -226,9 +250,9 @@ export default function ContribuirScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.activityText, { color: c.text }]}>
                     <Text style={{ fontWeight: '700' }}>{a.user}</Text>
-                    {' '}{a.action}
+                    {' '}{lang === 'en' ? a.actionEn : a.actionEs}
                   </Text>
-                  <Text style={[styles.activityTime, { color: c.muted }]}>{a.time}</Text>
+                  <Text style={[styles.activityTime, { color: c.muted }]}>{lang === 'en' ? a.timeEn : a.timeEs}</Text>
                 </View>
               </View>
             ))}
@@ -238,7 +262,7 @@ export default function ContribuirScreen() {
         {/* ── MY CONTRIBUTIONS ── */}
         {pending.length > 0 && (
           <View style={[styles.section, { paddingHorizontal: sidePad }]}>
-            <Text style={[styles.sectionTitle, { color: c.muted }]}>MIS CONTRIBUCIONES</Text>
+            <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('MIS CONTRIBUCIONES', 'MY CONTRIBUTIONS')}</Text>
             {pending.slice(0, 5).map((p) => (
               <View key={p.id} style={[styles.pendingRow, { backgroundColor: c.surface, borderColor: c.border }]}>
                 <View style={{ flex: 1 }}>
@@ -247,7 +271,7 @@ export default function ContribuirScreen() {
                 </View>
                 <View style={[styles.statusPill, { backgroundColor: p.synced ? 'rgba(34,197,94,0.15)' : 'rgba(245,158,11,0.15)' }]}>
                   <Text style={[styles.statusText, { color: p.synced ? '#22c55e' : '#fbbf24' }]}>
-                    {p.synced ? 'Enviada' : 'Pendiente'}
+                    {p.synced ? t('Enviada', 'Submitted') : t('Pendiente', 'Pending')}
                   </Text>
                 </View>
               </View>
@@ -257,11 +281,11 @@ export default function ContribuirScreen() {
 
         {/* ── HOW IT WORKS ── */}
         <View style={[styles.section, { paddingHorizontal: sidePad }]}>
-          <Text style={[styles.sectionTitle, { color: c.muted }]}>¿CÓMO FUNCIONA?</Text>
+          <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('¿CÓMO FUNCIONA?', 'HOW DOES IT WORK?')}</Text>
           <View style={[styles.stepsCard, { backgroundColor: c.surface, borderColor: c.border }]}>
             {STEPS.map((s, i) => (
               <View
-                key={s.title}
+                key={s.titleEs}
                 style={[
                   styles.stepRow,
                   i < STEPS.length - 1 && styles.stepRowBorder,
@@ -272,8 +296,8 @@ export default function ContribuirScreen() {
                   <Ionicons name={s.icon} size={20} color="#22c55e" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.stepTitle, { color: c.text }]}>{s.title}</Text>
-                  <Text style={[styles.stepDesc, { color: c.muted }]}>{s.desc}</Text>
+                  <Text style={[styles.stepTitle, { color: c.text }]}>{lang === 'en' ? s.titleEn : s.titleEs}</Text>
+                  <Text style={[styles.stepDesc, { color: c.muted }]}>{lang === 'en' ? s.descEn : s.descEs}</Text>
                 </View>
               </View>
             ))}
@@ -285,8 +309,8 @@ export default function ContribuirScreen() {
           <Ionicons name="flash-outline" size={16} color="#fbbf24" />
           <Text style={styles.offlineNoteText}>
             {isOffline && unsynced.length > 0
-              ? `${unsynced.length} contribución(es) se enviarán al reconectar.`
-              : 'Funciona sin conexión. Sincronización automática al reconectar.'}
+              ? t(`${unsynced.length} contribución(es) se enviarán al reconectar.`, `${unsynced.length} contribution(s) will be sent when reconnected.`)
+              : t('Funciona sin conexión. Sincronización automática al reconectar.', 'Works offline. Automatic sync when reconnected.')}
           </Text>
         </View>
 
@@ -296,7 +320,7 @@ export default function ContribuirScreen() {
       <Modal visible={modalOpen} animationType="slide" presentationStyle="pageSheet">
         <View style={{ flex: 1, backgroundColor: c.bg }}>
           <View style={[styles.modalHeader, { borderBottomColor: c.border }]}>
-            <Text style={[styles.modalTitle, { color: c.text }]}>Nueva contribución</Text>
+            <Text style={[styles.modalTitle, { color: c.text }]}>{t('Nueva contribución', 'New contribution')}</Text>
             <TouchableOpacity onPress={() => setModalOpen(false)}>
               <Ionicons name="close" size={24} color={c.muted} />
             </TouchableOpacity>

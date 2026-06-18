@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
+import { useLangStore } from '../../src/utils/../store/langStore';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
 import { downloadGpx } from '../../src/utils/gpx';
 
@@ -80,26 +81,21 @@ const NATIONAL_PARKS = [
     unesco: false,
     trailId: 'bahia-mitre',
     gpxPoints: [
-      { lat: -54.07, lon: -66.36, name: 'Cabo San Pablo (inicio)' },
-      { lat: -54.12, lon: -66.27 },
-      { lat: -54.18, lon: -66.16 },
-      { lat: -54.24, lon: -66.05, name: 'Puerto San Pablo' },
-      { lat: -54.30, lon: -65.96 },
-      { lat: -54.35, lon: -65.87 },
-      { lat: -54.40, lon: -65.79 },
-      { lat: -54.44, lon: -65.73, name: 'Cabo Peñas' },
-      { lat: -54.48, lon: -65.67 },
-      { lat: -54.52, lon: -65.63 },
-      { lat: -54.55, lon: -65.59 },
-      { lat: -54.58, lon: -65.56 },
-      { lat: -54.61, lon: -65.53 },
-      { lat: -54.64, lon: -65.51 },
-      { lat: -54.67, lon: -65.50 },
-      { lat: -54.70, lon: -65.49 },
-      { lat: -54.73, lon: -65.49 },
-      { lat: -54.76, lon: -65.50 },
-      { lat: -54.79, lon: -65.52 },
-      { lat: -54.82, lon: -65.51, name: 'Bahía Mitre (fin)' },
+      { lat: -54.093, lon: -66.172, name: 'Cabo San Pablo (inicio)' },
+      { lat: -54.120, lon: -66.093 },
+      { lat: -54.165, lon: -66.018 },
+      { lat: -54.203, lon: -65.940, name: 'Arroyo Irigoyen' },
+      { lat: -54.255, lon: -65.870 },
+      { lat: -54.305, lon: -65.800 },
+      { lat: -54.390, lon: -65.672 },
+      { lat: -54.430, lon: -65.628, name: 'Bahía Valentín' },
+      { lat: -54.485, lon: -65.530 },
+      { lat: -54.510, lon: -65.470, name: 'Cabo Irigoyen' },
+      { lat: -54.572, lon: -65.348 },
+      { lat: -54.638, lon: -65.258 },
+      { lat: -54.665, lon: -65.228, name: 'Cabo San Diego' },
+      { lat: -54.710, lon: -65.112 },
+      { lat: -54.722, lon: -65.053, name: 'Bahía Mitre (fin)' },
     ],
   },
   {
@@ -468,6 +464,7 @@ function DownloadCard({
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const { t } = useLangStore();
   const isNarrow = width < 400;
 
   // Pre-cache tiles for true offline use in the background (no UI state needed)
@@ -539,7 +536,7 @@ function DownloadCard({
         <View style={dlS.btnRow}>
           <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
             <Ionicons name="map-outline" size={13} color="#16a34a" />
-            <Text style={[dlS.btnTxt, { color: '#16a34a' }]}>Ver mapa</Text>
+            <Text style={[dlS.btnTxt, { color: '#16a34a' }]}>{t('Ver mapa', 'View map')}</Text>
           </TouchableOpacity>
           {Platform.OS === 'web' && (
             <TouchableOpacity style={[dlS.btn, dlS.btnGpx]} onPress={handleGpx} activeOpacity={0.8}>
@@ -549,7 +546,7 @@ function DownloadCard({
                 color="#93c5fd"
               />
               <Text style={[dlS.btnTxt, { color: '#93c5fd' }]}>
-                {gpxState === 'done' ? 'GPX listo' : 'GPX / OsmAnd'}
+                {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX / OsmAnd'}
               </Text>
             </TouchableOpacity>
           )}
@@ -560,7 +557,7 @@ function DownloadCard({
               activeOpacity={0.8}
             >
               <Ionicons name="information-circle-outline" size={13} color="#fff" />
-              <Text style={dlS.btnTxtWhite}>Más info</Text>
+              <Text style={dlS.btnTxtWhite}>{t('Más info', 'More info')}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -612,6 +609,7 @@ const dlS = StyleSheet.create({
 export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
+  const { t } = useLangStore();
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -673,13 +671,13 @@ export default function MapasScreen() {
               <View style={[nS.handle, { backgroundColor: c.border }]} />
               {/* Header */}
               <View style={nS.sheetHeader}>
-                <Text style={[nS.sheetTitle, { color: c.text }]}>Mapas sin conexión</Text>
+                <Text style={[nS.sheetTitle, { color: c.text }]}>{t('Mapas sin conexión', 'Offline maps')}</Text>
                 <TouchableOpacity onPress={() => setDownloadOpen(false)} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
                   <Ionicons name="close" size={22} color={c.muted} />
                 </TouchableOpacity>
               </View>
               <Text style={[nS.sheetSub, { color: c.muted }]}>
-                Descargá y accedé a los mapas sin señal.
+                {t('Descargá y accedé a los mapas sin señal.', 'Download and access maps without signal.')}
               </Text>
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
                 {NATIONAL_PARKS.map((park) => (
@@ -699,13 +697,13 @@ export default function MapasScreen() {
       <View style={[s.mapHeader, { borderBottomColor: c.border, backgroundColor: c.surface }]}>
         <View style={s.mapHeaderInner}>
           <View>
-            <Text style={[s.eyebrow, { color: c.muted }]}>MAPA INTERACTIVO</Text>
-            <Text style={[s.pageTitle, { color: c.text }]}>Parques Nacionales de Argentina</Text>
+            <Text style={[s.eyebrow, { color: c.muted }]}>{t('MAPA INTERACTIVO', 'INTERACTIVE MAP')}</Text>
+            <Text style={[s.pageTitle, { color: c.text }]}>{t('Parques Nacionales de Argentina', 'National Parks of Argentina')}</Text>
           </View>
           {isOffline && (
             <View style={[s.offlineBadge, { backgroundColor: 'rgba(251,191,36,0.12)', borderColor: 'rgba(251,191,36,0.3)' }]}>
               <Ionicons name="cloud-offline-outline" size={13} color="#fbbf24" />
-              <Text style={{ color: '#fbbf24', fontSize: 12, fontWeight: '600' }}>Sin señal</Text>
+              <Text style={{ color: '#fbbf24', fontSize: 12, fontWeight: '600' }}>{t('Sin señal', 'Offline')}</Text>
             </View>
           )}
         </View>
@@ -725,10 +723,13 @@ export default function MapasScreen() {
 
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>
-          <Text style={[s.eyebrow, { color: c.muted }]}>CENTRO DE DESCARGAS</Text>
-          <Text style={[s.sectionTitle, { color: c.text }]}>Mapas para llevar sin señal</Text>
+          <Text style={[s.eyebrow, { color: c.muted }]}>{t('CENTRO DE DESCARGAS', 'DOWNLOAD CENTER')}</Text>
+          <Text style={[s.sectionTitle, { color: c.text }]}>{t('Mapas para llevar sin señal', 'Maps to take offline')}</Text>
           <Text style={[s.sectionSub, { color: c.muted }]}>
-            Guardá la cartografía de cada parque. Disponibles sin conexión — tocá "Ver guardado offline" para abrirlo.
+            {t(
+              'Guardá la cartografía de cada parque. Disponibles sin conexión — tocá "Ver mapa" para ubicarlo.',
+              'Save each park\'s cartography. Available offline — tap "View map" to locate it.',
+            )}
           </Text>
         </View>
         <View style={s.dlGrid}>
