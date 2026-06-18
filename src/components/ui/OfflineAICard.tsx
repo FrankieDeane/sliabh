@@ -24,7 +24,7 @@ export function OfflineAICard() {
     <TouchableOpacity
       style={[styles.card, { backgroundColor: cardBg, borderColor: cardBorder }]}
       activeOpacity={0.85}
-      onPress={() => router.push('/(tabs)/asistente')}
+      onPress={() => router.push('/(tabs)/faq')}
       accessibilityRole="button"
       accessibilityLabel={t('Abrir asistente IA', 'Open AI assistant')}
       {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
