@@ -491,7 +491,7 @@
       {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60',photoUrl:'/sliabh-explore-explorar.jpg'},
       {name:'Área Natural Protegida Península Mitre',region:'Patagonia Austral',lat:-54.57,lng:-65.20,province:'Tierra del Fuego',category:'Área Natural Protegida',year:'2020',surface:'368,000 ha',ecoregions:'Bosques Patagónicos, Mar Argentino',international:'',color:'#1a5c3a',
        planUrl:'/ruta/tierra-del-fuego-costera',
-       mitre:true, trailColor:'#22c55e', trailCenter:[-65.78,-54.45], trailZoom:9.0,
+       mitre:true, trailColor:'#22c55e', trailCenter:[-65.94,-54.44], trailZoom:8.5,
        trailCoords:[
          [-66.36,-54.07],[-66.27,-54.12],[-66.16,-54.18],[-66.05,-54.24],
          [-65.96,-54.30],[-65.87,-54.35],[-65.79,-54.40],[-65.73,-54.44],
@@ -521,10 +521,9 @@
     setTimeout(function() { map.invalidateSize(); }, 600);
     setTimeout(function() { map.invalidateSize(); }, 1500);
     window.addEventListener('load', function() { map.invalidateSize(); });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: ['a','b','c'],
-      maxZoom: 19,
+    L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
+      attribution: 'IGN Argentina · Leaflet',
+      maxZoom: 18,
       crossOrigin: 'anonymous',
     }).addTo(map);
 
@@ -804,8 +803,8 @@
             }
           }
 
-          // Mitre expedition route overlay
-          if (park.mitre) {
+          // Mitre expedition route overlay (only when no dedicated trailCoords set)
+          if (park.mitre && !park.trailCoords) {
             gm.easeTo({ center: [-65.95, -54.93], zoom: 8.0, bearing: 65, pitch: 52, duration: 800 });
             gm.addSource('route', {
               type: 'geojson',
