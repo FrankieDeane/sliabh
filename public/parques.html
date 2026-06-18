@@ -409,7 +409,7 @@
 
   <footer style="text-align:center;padding:24px 18px;color:#4a586e;font-size:12px;line-height:1.7">
     <img src="/logo.png" alt="Sliabh" style="height:72px;width:auto;display:block;margin:0 auto 12px">
-    <div id="footerText">Mapa base IGN Argentina · Datos SIB/APN · Sliabh</div>
+    <div id="footerText">Mapa base OpenStreetMap / IGN Argentina · Datos SIB/APN · Sliabh</div>
   </footer>
 
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
@@ -521,11 +521,49 @@
     setTimeout(function() { map.invalidateSize(); }, 600);
     setTimeout(function() { map.invalidateSize(); }, 1500);
     window.addEventListener('load', function() { map.invalidateSize(); });
-    L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
-      attribution: 'IGN Argentina · Leaflet',
+
+    // OpenStreetMap — primary, always available
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: ['a','b','c'],
+      maxZoom: 19,
+      crossOrigin: 'anonymous',
+    });
+
+    // OpenTopoMap — topographic
+    const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
+      subdomains: ['a','b','c'],
+      maxZoom: 17,
+      crossOrigin: 'anonymous',
+    });
+
+    // IGN ArgenMap — Argentina official (may be unavailable)
+    const ignLayer = L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
+      attribution: 'IGN Argentina',
       maxZoom: 18,
       crossOrigin: 'anonymous',
-    }).addTo(map);
+    });
+
+    // Load OSM first; if IGN responds within 4 s swap to it, otherwise stay on OSM
+    osmLayer.addTo(map);
+    const ignTest = new Image();
+    ignTest.crossOrigin = 'anonymous';
+    const ignTestTimeout = setTimeout(() => { ignTest.src = ''; }, 4000);
+    ignTest.onload = () => {
+      clearTimeout(ignTestTimeout);
+      map.removeLayer(osmLayer);
+      ignLayer.addTo(map);
+    };
+    ignTest.onerror = () => clearTimeout(ignTestTimeout);
+    ignTest.src = 'https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/4/4/6.png';
+
+    // Layer switcher control
+    L.control.layers(
+      { 'OpenStreetMap': osmLayer, 'OpenTopoMap': topoLayer, 'IGN ArgenMap': ignLayer },
+      {},
+      { position: 'topright', collapsed: true }
+    ).addTo(map);
 
     const clusterGroup = L.markerClusterGroup({
       showCoverageOnHover: false,
