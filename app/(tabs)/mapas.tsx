@@ -68,6 +68,41 @@ const NATIONAL_PARKS = [
     trailId: 'alerces-cascada-arrayanes',
   },
   {
+    id: 'bahia-mitre',
+    name: 'Bahía Mitre',
+    province: 'Tierra del Fuego',
+    region: 'Patagonia Sur',
+    area_km2: 3680,
+    highlights: 'Costa atlántica virgen · Travesía extrema · Aislamiento total · Bosque subantártico',
+    size: '85 MB',
+    photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=75&fit=crop',
+    coords: { lat: -54.57, lon: -65.20 },
+    unesco: false,
+    trailId: 'bahia-mitre',
+    gpxPoints: [
+      { lat: -54.07, lon: -66.36, name: 'Cabo San Pablo (inicio)' },
+      { lat: -54.12, lon: -66.27 },
+      { lat: -54.18, lon: -66.16 },
+      { lat: -54.24, lon: -66.05, name: 'Puerto San Pablo' },
+      { lat: -54.30, lon: -65.96 },
+      { lat: -54.35, lon: -65.87 },
+      { lat: -54.40, lon: -65.79 },
+      { lat: -54.44, lon: -65.73, name: 'Cabo Peñas' },
+      { lat: -54.48, lon: -65.67 },
+      { lat: -54.52, lon: -65.63 },
+      { lat: -54.55, lon: -65.59 },
+      { lat: -54.58, lon: -65.56 },
+      { lat: -54.61, lon: -65.53 },
+      { lat: -54.64, lon: -65.51 },
+      { lat: -54.67, lon: -65.50 },
+      { lat: -54.70, lon: -65.49 },
+      { lat: -54.73, lon: -65.49 },
+      { lat: -54.76, lon: -65.50 },
+      { lat: -54.79, lon: -65.52 },
+      { lat: -54.82, lon: -65.51, name: 'Bahía Mitre (fin)' },
+    ],
+  },
+  {
     id: 'tierradelfuego',
     name: 'Tierra del Fuego',
     province: 'Tierra del Fuego',
@@ -462,9 +497,11 @@ function DownloadCard({
   }
 
   function handleGpx() {
+    const gpxPoints = (park as any).gpxPoints;
+    const points = gpxPoints ?? [{ lat: park.coords.lat, lon: park.coords.lon, name: park.name }];
     const ok = downloadGpx(
       park.name,
-      [{ lat: park.coords.lat, lon: park.coords.lon, name: park.name }],
+      points,
       `${park.name} — ${park.province} · ${park.region}. ${park.highlights}`,
     );
     if (ok) {
