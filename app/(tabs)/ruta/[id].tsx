@@ -23,6 +23,10 @@ import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
+// Platform-specific 3D map — .web.tsx / .native.tsx resolved by bundler
+const TrailMap3D = Platform.OS === 'web'
+  ? require('../../../src/components/map/TrailMap3D.web').default
+  : require('../../../src/components/map/TrailMap3D.native').default;
 
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 
@@ -654,43 +658,70 @@ function ElevationProfile({
   distanceKm,
   gainM,
   maxAltM,
+  gpxTrack,
 }: {
   distanceKm: number;
   gainM: number;
   maxAltM: number;
+  gpxTrack?: Array<{ lat: number; lon: number; ele?: number }>;
 }) {
   const C = useC();
   if (Platform.OS !== 'web') return null;
 
-  const baseAlt = maxAltM - gainM;
   const W = 400;
   const H = 90;
   const pad = 2;
 
-  // Plausible ascent profile: steepens in the middle, slight descent at end
-  const rawPts = [
-    { x: 0, y: baseAlt },
-    { x: distanceKm * 0.1, y: baseAlt + gainM * 0.05 },
-    { x: distanceKm * 0.28, y: baseAlt + gainM * 0.3 },
-    { x: distanceKm * 0.48, y: baseAlt + gainM * 0.62 },
-    { x: distanceKm * 0.65, y: maxAltM },
-    { x: distanceKm * 0.78, y: maxAltM - gainM * 0.08 },
-    { x: distanceKm * 0.9, y: maxAltM - gainM * 0.18 },
-    { x: distanceKm, y: maxAltM - gainM * 0.28 },
-  ];
+  // Build points from real track when elevation data is available;
+  // fall back to synthetic curve when it isn't.
+  const hasRealEle = gpxTrack && gpxTrack.length >= 2 && gpxTrack.some((p) => p.ele != null);
 
+  let rawPts: Array<{ x: number; y: number }>;
+
+  if (hasRealEle) {
+    // Haversine cumulative distance along the track
+    const R = 6371;
+    const haversineKm = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) => {
+      const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+      const dLon = ((b.lon - a.lon) * Math.PI) / 180;
+      const s =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((a.lat * Math.PI) / 180) *
+          Math.cos((b.lat * Math.PI) / 180) *
+          Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+    };
+    let cumDist = 0;
+    rawPts = gpxTrack!.map((p, i) => {
+      if (i > 0) cumDist += haversineKm(gpxTrack![i - 1], p);
+      return { x: cumDist, y: p.ele ?? maxAltM - gainM };
+    });
+  } else {
+    const baseAlt = maxAltM - gainM;
+    rawPts = [
+      { x: 0,               y: baseAlt },
+      { x: distanceKm * 0.10, y: baseAlt + gainM * 0.05 },
+      { x: distanceKm * 0.28, y: baseAlt + gainM * 0.30 },
+      { x: distanceKm * 0.48, y: baseAlt + gainM * 0.62 },
+      { x: distanceKm * 0.65, y: maxAltM },
+      { x: distanceKm * 0.78, y: maxAltM - gainM * 0.08 },
+      { x: distanceKm * 0.90, y: maxAltM - gainM * 0.18 },
+      { x: distanceKm,        y: maxAltM - gainM * 0.28 },
+    ];
+  }
+
+  const totalX = rawPts[rawPts.length - 1].x || distanceKm;
   const minY = Math.min(...rawPts.map((p) => p.y));
   const maxY = Math.max(...rawPts.map((p) => p.y));
   const rangeY = maxY - minY || 1;
 
-  const toSvg = (x: number, y: number) => [
-    pad + (x / distanceKm) * (W - 2 * pad),
+  const toSvg = (x: number, y: number): [number, number] => [
+    pad + (x / totalX) * (W - 2 * pad),
     pad + (1 - (y - minY) / rangeY) * (H - 2 * pad - 10),
-  ] as [number, number];
+  ];
 
   const pts = rawPts.map((p) => toSvg(p.x, p.y));
 
-  // Smooth bezier path
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
   for (let i = 1; i < pts.length; i++) {
     const [px, py] = pts[i - 1];
@@ -700,7 +731,9 @@ function ElevationProfile({
   }
   const fillD = `${d} L ${pts[pts.length - 1][0]} ${H} L ${pts[0][0]} ${H} Z`;
 
-  const peakPt = pts[4];
+  // Peak dot: highest elevation point
+  const peakIdx = rawPts.reduce((best, p, i) => (p.y > rawPts[best].y ? i : best), 0);
+  const peakPt = pts[peakIdx];
 
   return (
     <View style={{ marginTop: 8 }}>
@@ -719,7 +752,6 @@ function ElevationProfile({
         <path d={fillD} fill="url(#elevFill)" />
         {/* @ts-ignore */}
         <path d={d} fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        {/* Peak dot */}
         {/* @ts-ignore */}
         <circle cx={peakPt[0]} cy={peakPt[1]} r="4" fill="#22c55e" />
         {/* @ts-ignore */}
@@ -951,8 +983,20 @@ function OverviewTab({
           distanceKm={trail.distance_km}
           gainM={trail.elevation_gain_m}
           maxAltM={trail.max_altitude_m}
+          gpxTrack={(trail as any).gpxTrack}
         />
       </SectionCard>
+
+      {(trail as any).gpxTrack?.length >= 2 && (
+        <SectionCard>
+          <CardLabel text={t('Mapa 3D del terreno', '3D Terrain Map')} />
+          <TrailMap3D
+            track={(trail as any).gpxTrack}
+            trailName={trail.name}
+            height={320}
+          />
+        </SectionCard>
+      )}
 
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
