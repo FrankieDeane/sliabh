@@ -315,19 +315,24 @@
     @media (max-width: 900px) {
       #interactiveMap { flex-direction: column; height: auto; }
       #leftPane { flex: 0 0 auto !important; overflow: visible; }
-      /* flex:none lets .map-card size to its content; overflow:visible prevents
-         the border-radius clip from creating a compositing layer that hides tiles */
-      .map-card { flex: none; overflow: visible; }
-      /* flex:none prevents flex-basis:0 collapse; remove border-radius+overflow:hidden
-         combo that triggers iOS Safari compositing bug with Leaflet tiles */
-      #map { height: 56vw; min-height: 300px; flex: none; overflow: visible; border-radius: 10px; }
-      /* Compact the section-head so the map stays above the fold */
+      .map-card { flex: none; overflow: visible; padding: 10px; }
+      /* Taller map; no overflow:hidden+border-radius combo (iOS Safari compositing fix) */
+      #map { height: clamp(280px, 68vw, 420px); flex: none; overflow: visible; border-radius: 10px; }
+      /* Compact section-head */
       .section-head p { display: none; }
+      .section-head h2 { font-size: 1.15rem; }
+      .section-head { padding-bottom: 8px; }
       .filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
       .filters::-webkit-scrollbar { display: none; }
-      .section-head { padding-bottom: 10px; }
+      /* Hide legend + layer-toggle to reclaim vertical space */
+      .legend { display: none; }
+      .layer-toggle { display: none; }
+      /* Split: no handle, right pane full-width below */
       #interactiveMap.split #splitHandle { display: none; }
-      #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
+      #interactiveMap.split #rightPane { display: block; height: clamp(300px, 70vw, 440px); overflow: hidden; }
+      /* Park info: bottom-sheet on mobile instead of top-left overlay */
+      #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 52%; padding: 14px 16px 16px; }
+      #parkInfoOverlay h3 { font-size: 1.05rem; }
       footer { padding: 16px 14px; font-size: 11px; }
       footer img { height: 26px !important; }
     }
@@ -486,7 +491,14 @@
       {name:'Parque Nacional Nahuel Huapi',region:'Patagonia Norte',lat:-40.95411,lng:-71.53639,province:'Neuquén y Río Negro',category:'Parque Nacional',year:'1934',surface:'717,261 ha',ecoregions:'Bosques Patagónicos, Estepa Patagónica',international:'Reserva de Biósfera',color:'#0f5f60',photoUrl:'/sliabh-explore-explorar.jpg'},
       {name:'Área Natural Protegida Península Mitre',region:'Patagonia Austral',lat:-54.57,lng:-65.20,province:'Tierra del Fuego',category:'Área Natural Protegida',year:'2020',surface:'368,000 ha',ecoregions:'Bosques Patagónicos, Mar Argentino',international:'',color:'#1a5c3a',
        planUrl:'/ruta/tierra-del-fuego-costera',
-       mitre:true},
+       mitre:true, trailColor:'#22c55e', trailCenter:[-65.78,-54.45], trailZoom:9.0,
+       trailCoords:[
+         [-66.36,-54.07],[-66.27,-54.12],[-66.16,-54.18],[-66.05,-54.24],
+         [-65.96,-54.30],[-65.87,-54.35],[-65.79,-54.40],[-65.73,-54.44],
+         [-65.67,-54.48],[-65.63,-54.52],[-65.59,-54.55],[-65.56,-54.58],
+         [-65.53,-54.61],[-65.51,-54.64],[-65.50,-54.67],[-65.49,-54.70],
+         [-65.49,-54.73],[-65.50,-54.76],[-65.52,-54.79],[-65.51,-54.82],
+       ]},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood I',region:'Áreas Marinas',lat:-54.33145,lng:-59.23917,province:'Mar Argentino',category:'Área Marina Protegida',year:'2013',surface:'2,800,000 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86'},
       {name:'Área Marina Protegida Namuncurá - Banco Burdwood II',region:'Áreas Marinas',lat:-55.18245,lng:-59.80421,province:'Mar Argentino',category:'Área Marina Protegida',year:'2018',surface:'3,233,630 ha',ecoregions:'Mar Argentino',international:'',color:'#315f86',
        mapPdfUrl:'https://marpatagonico.org/descargas/AMP-yaganes-burdwoodII.pdf'},
@@ -626,7 +638,10 @@
         L.DomEvent.stopPropagation(e);
         map.closePopup();
         renderPanel(park);
-        map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
+        // skip flyTo when trailCoords exist — renderPanel fitBounds handles navigation
+        if (!park.trailCoords) {
+          map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
+        }
       });
       return marker;
     });
@@ -713,6 +728,17 @@
       // Activate split view
       interactiveMap.classList.add('split');
       setTimeout(() => map.invalidateSize(), 340);
+
+      // Draw trail polyline on LEFT Leaflet map
+      if (window._leafletTrailLine) { map.removeLayer(window._leafletTrailLine); window._leafletTrailLine = null; }
+      if (park.trailCoords && park.trailCoords.length > 1) {
+        const tc = park.trailColor || '#22c55e';
+        const latlngs = park.trailCoords.map(c => [c[1], c[0]]); // [lng,lat] → [lat,lng]
+        window._leafletTrailLine = L.polyline(latlngs, {
+          color: tc, weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round',
+        }).addTo(map);
+        setTimeout(() => { map.fitBounds(window._leafletTrailLine.getBounds().pad(0.2)); }, 400);
+      }
 
       // ── 3D terrain mini-map for every park ──────────────────
       if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
@@ -1461,6 +1487,7 @@ ${trkpts}
       interactiveMap.classList.remove('split');
       interactiveMap.style.removeProperty('--left-w');
       if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
+      if (window._leafletTrailLine) { map.removeLayer(window._leafletTrailLine); window._leafletTrailLine = null; }
       setTimeout(() => map.invalidateSize(), 340);
     });
 
