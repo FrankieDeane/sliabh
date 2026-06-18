@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import {
-  View, Text, TouchableOpacity, Modal, ScrollView, Linking,
-  StyleSheet, Animated, Platform, useWindowDimensions,
+  View, Text, TouchableOpacity, Modal, ScrollView,
+  StyleSheet, Platform, useWindowDimensions,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
@@ -25,6 +26,7 @@ const NATIONAL_PARKS = [
     photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=75&fit=crop',
     coords: { lat: -49.3, lon: -73.05 },
     unesco: true,
+    trailId: 'fitz-roy-laguna-tres',
   },
   {
     id: 'nahuel',
@@ -37,6 +39,7 @@ const NATIONAL_PARKS = [
     photo: 'https://bariloche.org/wp-content/uploads/2024/02/tronador-bariloche-febrero2024-franciscoraggio-barilocheorg.jpg',
     coords: { lat: -41.1, lon: -71.5 },
     unesco: false,
+    trailId: 'refugio-frey-bariloche',
   },
   {
     id: 'lanin',
@@ -49,6 +52,7 @@ const NATIONAL_PARKS = [
     photo: 'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&q=75&fit=crop',
     coords: { lat: -39.6, lon: -71.5 },
     unesco: false,
+    trailId: 'volcan-lanin',
   },
   {
     id: 'alerces',
@@ -61,6 +65,7 @@ const NATIONAL_PARKS = [
     photo: 'https://www.lanacion.com.ar/resizer/v2/la-excursion-al-alerzal-milenario-es-muy-PVCDPJR5VVAWJIT4FVKD2XDA54.jpg?auth=229b98a1980a83812a56d98a710ce265d07bc9e539fe33bc1ca97141f54cf6a0&width=1200&height=800&quality=70&smart=true',
     coords: { lat: -42.8, lon: -71.6 },
     unesco: true,
+    trailId: 'alerces-cascada-arrayanes',
   },
   {
     id: 'tierradelfuego',
@@ -74,6 +79,7 @@ const NATIONAL_PARKS = [
     mapOverlayUrl: 'https://turismoushuaia.com/wp-content/uploads/2023/01/mapa-esp-1024x622.jpg',
     coords: { lat: -54.8, lon: -68.5 },
     unesco: false,
+    trailId: 'tierra-del-fuego-costera',
   },
   {
     id: 'lago-puelo',
@@ -86,6 +92,7 @@ const NATIONAL_PARKS = [
     photo: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=75&fit=crop',
     coords: { lat: -42.07, lon: -71.63 },
     unesco: false,
+    trailId: 'lago-puelo-los-hitos',
   },
   {
     id: 'aconcagua',
@@ -98,6 +105,7 @@ const NATIONAL_PARKS = [
     photo: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=600&q=75&fit=crop',
     coords: { lat: -32.65, lon: -70.01 },
     unesco: false,
+    trailId: 'aconcagua-ruta-normal',
   },
   {
     id: 'talampaya',
@@ -134,6 +142,7 @@ const NATIONAL_PARKS = [
     photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&h=400&s=1',
     coords: { lat: -23.2, lon: -65.35 },
     unesco: true,
+    trailId: 'quebrada-humahuaca-trek',
   },
   {
     id: 'calilegua',
@@ -158,6 +167,7 @@ const NATIONAL_PARKS = [
     photo: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/c3/f4/d9/el-paso-por-un-lugar.jpg?w=700&h=400&s=1',
     coords: { lat: -31.4, lon: -64.6 },
     unesco: false,
+    trailId: 'los-gigantes-cordoba',
   },
 
   // ── Litoral ──────────────────────────────────────────────────────────────
@@ -420,8 +430,8 @@ function DownloadCard({
   onViewMap?: (lat: number, lon: number) => void;
   onFlyTo?: (lat: number, lng: number, zoom: number) => void;
 }) {
-  const [pdfState, setPdfState] = useState<'idle' | 'working'>('idle');
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const isNarrow = width < 400;
 
@@ -444,6 +454,13 @@ function DownloadCard({
     }
   }
 
+  function handleMoreInfo() {
+    const trailId = (park as any).trailId;
+    if (trailId) {
+      router.push({ pathname: '/(tabs)/ruta/[id]', params: { id: trailId } } as any);
+    }
+  }
+
   function handleGpx() {
     const ok = downloadGpx(
       park.name,
@@ -453,28 +470,6 @@ function DownloadCard({
     if (ok) {
       setGpxState('done');
       setTimeout(() => setGpxState('idle'), 2500);
-    }
-  }
-
-  async function handlePdf() {
-    if (pdfState === 'working') return;
-    setPdfState('working');
-    try {
-      const { generateParkPDF } = await import('../../src/utils/parkPdf');
-      await generateParkPDF({
-        id: park.id,
-        name: park.name,
-        province: park.province,
-        region: park.region,
-        highlights: park.highlights,
-        size: park.size,
-        coords: park.coords,
-        mapOverlayUrl: (park as any).mapOverlayUrl,
-      });
-    } catch {
-      // swallow — user can retry
-    } finally {
-      setPdfState('idle');
     }
   }
 
@@ -503,13 +498,7 @@ function DownloadCard({
         <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
         <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
 
-        {pdfState === 'working' && (
-          <View style={[dlS.progressTrack, { backgroundColor: c.border }]}>
-            <Animated.View style={[dlS.progressFill, { width: '100%' }]} />
-          </View>
-        )}
-
-        {/* Three actions: view map, GPX for GPS apps, PDF */}
+        {/* Actions: view map, GPX for GPS apps, More Info */}
         <View style={dlS.btnRow}>
           <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
             <Ionicons name="map-outline" size={13} color="#16a34a" />
@@ -527,21 +516,16 @@ function DownloadCard({
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            style={[dlS.btn, dlS.btnDownload]}
-            onPress={handlePdf}
-            activeOpacity={0.8}
-            disabled={pdfState === 'working'}
-          >
-            <Ionicons
-              name={pdfState === 'working' ? 'cloud-download-outline' : 'download-outline'}
-              size={13}
-              color="#fff"
-            />
-            <Text style={dlS.btnTxtWhite}>
-              {pdfState === 'working' ? 'Generando…' : 'PDF'}
-            </Text>
-          </TouchableOpacity>
+          {(park as any).trailId && (
+            <TouchableOpacity
+              style={[dlS.btn, dlS.btnInfo]}
+              onPress={handleMoreInfo}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="information-circle-outline" size={13} color="#fff" />
+              <Text style={dlS.btnTxtWhite}>Más info</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -575,14 +559,12 @@ const dlS = StyleSheet.create({
   name: { fontSize: 17, fontWeight: '700', lineHeight: 22 },
   highlights: { fontSize: 14, lineHeight: 20 },
   meta: { fontSize: 13 },
-  progressTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#22c55e', borderRadius: 2 },
   btnRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   btn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9,
   },
-  btnDownload: { backgroundColor: '#16a34a' },
+  btnInfo: { backgroundColor: '#16a34a' },
   btnView: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#16a34a' },
   btnGpx: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#3b82f6' },
   btnTxt: { fontSize: 13, fontWeight: '600' },
