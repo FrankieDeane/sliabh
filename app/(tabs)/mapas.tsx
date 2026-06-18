@@ -80,17 +80,6 @@ const NATIONAL_PARKS = [
     coords: { lat: -54.57, lon: -65.20 },
     unesco: false,
     trailId: 'bahia-mitre',
-    gpxPoints: [
-      { lat: -54.170, lon: -65.930, name: 'Cabo San Pablo (inicio)' },
-      { lat: -54.340, lon: -65.780, name: 'Arroyo Irigoyen' },
-      { lat: -54.520, lon: -65.620 },
-      { lat: -54.660, lon: -65.460, name: 'Cabo Irigoyen' },
-      { lat: -54.780, lon: -65.310 },
-      { lat: -54.820, lon: -65.270, name: 'Bahía Buen Suceso' },
-      { lat: -54.800, lon: -65.115, name: 'Cabo San Diego' },
-      { lat: -54.755, lon: -65.030 },
-      { lat: -54.700, lon: -64.990, name: 'Bahía Mitre (fin)' },
-    ],
   },
   {
     id: 'tierradelfuego',
