@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, Modal, ScrollView,
-  StyleSheet, Platform, useWindowDimensions,
+  StyleSheet, Platform, useWindowDimensions, ImageBackground,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -764,6 +764,46 @@ export default function MapasScreen() {
         />
       </View>
 
+      {/* ── GPS OFFLINE BANNER ── */}
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1400&q=85&fit=crop' }}
+        style={s.gpsBannerBg}
+        resizeMode="cover"
+      >
+        <View style={s.gpsBannerOverlay} />
+        <View style={s.gpsBannerContent}>
+          <View style={{ flex: 1, gap: 12 }}>
+            <View style={s.gpsBannerBadge}>
+              <Ionicons name="navigate" size={13} color="#22c55e" />
+              <Text style={s.gpsBannerBadgeTxt}>{t('GPS SIN SEÑAL', 'OFFLINE GPS')}</Text>
+            </View>
+            <Text style={s.gpsBannerTitle}>
+              {t('Descargá el mapa.\nNavegá sin internet.', 'Download the map.\nNavigate without internet.')}
+            </Text>
+            <Text style={s.gpsBannerSub}>
+              {t(
+                'El chip GPS de tu celular recibe señal de satélites sin necesitar datos. Descargá el mapa del parque antes de salir — tu posición aparece en tiempo real aunque no tengas señal.',
+                "Your phone's GPS chip receives satellite signals without data. Download the park map before you leave — your position appears in real time even without signal.",
+              )}
+            </Text>
+          </View>
+          <View style={s.gpsBannerSteps}>
+            {([
+              { num: '1', es: 'Descargá abajo', en: 'Download below' },
+              { num: '2', es: 'Salí sin señal', en: 'Go off-grid' },
+              { num: '3', es: 'GPS en tiempo real', en: 'Real-time GPS' },
+            ] as const).map((step) => (
+              <View key={step.num} style={s.gpsBannerStep}>
+                <View style={s.gpsBannerStepNum}>
+                  <Text style={s.gpsBannerStepNumTxt}>{step.num}</Text>
+                </View>
+                <Text style={s.gpsBannerStepTxt}>{t(step.es, step.en)}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ImageBackground>
+
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>
           <Text style={[s.eyebrow, { color: c.muted }]}>{t('CENTRO DE DESCARGAS', 'DOWNLOAD CENTER')}</Text>
@@ -834,6 +874,31 @@ const s = StyleSheet.create({
   pageTitle: { fontSize: 22, fontWeight: '800', letterSpacing: -0.4 },
   offlineBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
   iframeWrapper: { width: '100%', height: 900 as any },
+  // GPS offline banner
+  gpsBannerBg: { width: '100%', minHeight: 260 },
+  gpsBannerOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(7,11,20,0.72)' },
+  gpsBannerContent: {
+    flexDirection: 'row', flexWrap: 'wrap', gap: 32,
+    paddingHorizontal: 32, paddingVertical: 40,
+    maxWidth: 1200, alignSelf: 'center', width: '100%',
+  },
+  gpsBannerBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start',
+    backgroundColor: 'rgba(34,197,94,0.15)', borderWidth: 1,
+    borderColor: 'rgba(34,197,94,0.3)', borderRadius: 999,
+    paddingHorizontal: 12, paddingVertical: 5,
+  },
+  gpsBannerBadgeTxt: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: '#22c55e' },
+  gpsBannerTitle: { fontSize: 28, fontWeight: '800', color: '#f0f9ff', letterSpacing: -0.6, lineHeight: 34 },
+  gpsBannerSub: { fontSize: 14, color: 'rgba(240,249,255,0.72)', lineHeight: 22, maxWidth: 560 },
+  gpsBannerSteps: { justifyContent: 'center', gap: 14, minWidth: 200 },
+  gpsBannerStep: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  gpsBannerStepNum: {
+    width: 28, height: 28, borderRadius: 14, backgroundColor: '#22c55e',
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  },
+  gpsBannerStepNumTxt: { fontSize: 12, fontWeight: '800', color: '#000' },
+  gpsBannerStepTxt: { fontSize: 14, color: 'rgba(240,249,255,0.85)', fontWeight: '600' },
   dlSection: { paddingTop: 48, paddingBottom: 32 },
   dlHeader: { paddingHorizontal: 24, marginBottom: 24, maxWidth: 1200, alignSelf: 'center', width: '100%' },
   sectionTitle: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5, marginBottom: 8 },

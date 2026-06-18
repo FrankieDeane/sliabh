@@ -188,6 +188,16 @@ const FAQ_DATA: Array<{
       },
       {
         q: {
+          es: '¿Puedo ver mi posición GPS sin internet en la montaña?',
+          en: 'Can I see my GPS position in the mountains without internet?',
+        },
+        a: {
+          es: 'Sí, y es una de las ventajas más importantes de Sliabh. El chip GPS de tu celular recibe señal directamente de satélites — no necesita internet ni señal móvil para funcionar. Esto es igual a como funciona un GPS de senderismo dedicado. El único requisito es descargar el mapa del parque antes de salir, mientras tenés Wi-Fi. Una vez descargado, tu punto azul se mueve en tiempo real sobre el mapa aunque estés en medio de la Patagonia sin cobertura.',
+          en: 'Yes, and this is one of Sliabh\'s most important advantages. Your phone\'s GPS chip receives signals directly from satellites — it does not need internet or mobile signal to work. This is the same way a dedicated hiking GPS device works. The only requirement is to download the park map before you leave, while you have Wi-Fi. Once downloaded, your blue dot moves in real time on the map even if you are in the middle of Patagonia with no coverage.',
+        },
+      },
+      {
+        q: {
           es: '¿Qué es Argenmap?',
           en: 'What is Argenmap?',
         },
@@ -198,12 +208,12 @@ const FAQ_DATA: Array<{
       },
       {
         q: {
-          es: '¿Puedo descargar mapas para uso offline?',
-          en: 'Can I download maps for offline use?',
+          es: '¿Cómo descargo el mapa de un parque para usarlo sin señal?',
+          en: 'How do I download a park map to use without signal?',
         },
         a: {
-          es: 'Los mapas se pre-cachean automáticamente cuando visitás un parque. Para garantizar el acceso offline, abrí el mapa de cada parque mientras tenés conexión. Los tiles se guardan en el almacenamiento local del dispositivo.',
-          en: 'Maps are automatically pre-cached when you visit a park. To ensure offline access, open the map of each park while you have a connection. Tiles are saved in the device\'s local storage.',
+          es: 'Es muy simple: 1) Andá a la sección "Mapas" con Wi-Fi o datos. 2) Encontrá el parque que vas a visitar y tocá "Descargar mapa". Los tiles se guardan automáticamente en tu dispositivo. 3) Listo — la próxima vez que abras el mapa de ese parque, cargará desde tu teléfono sin necesitar internet. Combinado con el GPS de tu celular, vas a ver tu posición en tiempo real aunque no tengas señal.',
+          en: 'It\'s very simple: 1) Go to the "Maps" section with Wi-Fi or data. 2) Find the park you are going to visit and tap "Download map". Tiles are saved automatically on your device. 3) Done — the next time you open that park\'s map, it will load from your phone without needing internet. Combined with your phone\'s GPS, you will see your real-time position even without signal.',
         },
       },
       {
