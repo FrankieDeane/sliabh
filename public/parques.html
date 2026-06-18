@@ -318,7 +318,9 @@
       /* flex:none lets .map-card size to its content instead of collapsing to
          0 px in an indefinite-height flex parent (which overflow:hidden then clips) */
       .map-card { flex: none; }
-      #map { height: 52vw; min-height: 280px; }
+      /* flex:none on #map prevents flex-basis:0 (from the base flex:1 rule) from
+         collapsing the height to 0 in an auto-height mobile flex column */
+      #map { height: 56vw; min-height: 300px; flex: none; }
       #interactiveMap.split #splitHandle { display: none; }
       #interactiveMap.split #rightPane { display: block; height: 62vw; min-height: 320px; }
       footer { padding: 16px 14px; font-size: 11px; }
@@ -498,6 +500,8 @@
     }).setView([-39.8, -65.4], 4);
     window.addEventListener('resize', () => map.invalidateSize());
     requestAnimationFrame(function() { map.invalidateSize(); });
+    setTimeout(function() { map.invalidateSize(); }, 300);
+    setTimeout(function() { map.invalidateSize(); }, 900);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,

@@ -28,6 +28,7 @@ export interface ArgentinaTrail {
   trailhead: string;
   mapOverlayUrl?: string;
   pdfUrl?: string;
+  gpxTrack?: Array<{ lat: number; lon: number; name?: string; ele?: number }>;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -361,6 +362,48 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description: 'Ascenso al mirador principal del Parque Nacional Patagonia con vistas al lago Cochrane y la estepa infinita. El parque protege ecosistemas únicos de estepa patagónica y guanaco silvestre. Vientos fuertes son frecuentes.',
     trailhead: 'Villa O\'Higgins o Cochrane (Santa Cruz)',
+  },
+  {
+    id: 'bahia-mitre',
+    name: 'Bahía Mitre — Travesía Costera',
+    province: 'Tierra del Fuego',
+    area: 'Área Natural Protegida Península Mitre',
+    region: 'patagonia-sur',
+    activity: 'travesia',
+    difficulty: 'extremo',
+    distance_km: 100,
+    elevation_gain_m: 1800,
+    max_altitude_m: 450,
+    duration: { min: 8, max: 12, unit: 'dias' },
+    coordinates: { lat: -54.57, lon: -65.20 },
+    photo_uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+    tags: ['costa atlántica', 'extremo', 'aislamiento', 'Tierra del Fuego', 'bosque subantártico', 'autosuficiencia'],
+    permits_required: false,
+    best_season: 'Nov – Feb',
+    description: 'Una de las travesías más remotas y salvajes del mundo. Desde Cabo San Pablo se recorre la costa atlántica virgen de la Península Mitre hasta Bahía Mitre, sin caminos ni infraestructura. Turba, ríos, costas rocosas y bosque subantártico. Requiere navegación GPS, experiencia en alta montaña y autosuficiencia total.',
+    trailhead: 'Cabo San Pablo (Tierra del Fuego)',
+    gpxTrack: [
+      { lat: -54.07, lon: -66.36, name: 'Cabo San Pablo (inicio)' },
+      { lat: -54.12, lon: -66.27 },
+      { lat: -54.18, lon: -66.16 },
+      { lat: -54.24, lon: -66.05, name: 'Puerto San Pablo' },
+      { lat: -54.30, lon: -65.96 },
+      { lat: -54.35, lon: -65.87 },
+      { lat: -54.40, lon: -65.79 },
+      { lat: -54.44, lon: -65.73, name: 'Cabo Peñas' },
+      { lat: -54.48, lon: -65.67 },
+      { lat: -54.52, lon: -65.63 },
+      { lat: -54.55, lon: -65.59 },
+      { lat: -54.58, lon: -65.56 },
+      { lat: -54.61, lon: -65.53 },
+      { lat: -54.64, lon: -65.51 },
+      { lat: -54.67, lon: -65.50 },
+      { lat: -54.70, lon: -65.49 },
+      { lat: -54.73, lon: -65.49 },
+      { lat: -54.76, lon: -65.50 },
+      { lat: -54.79, lon: -65.52 },
+      { lat: -54.82, lon: -65.51, name: 'Bahía Mitre (fin)' },
+    ],
   },
   {
     id: 'tierra-del-fuego-costera',
