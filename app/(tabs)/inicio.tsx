@@ -644,32 +644,53 @@ export default function InicioScreen() {
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
-        {/* ── MAPAS OFFLINE TEASER ── */}
+        {/* ── GPS SIN SEÑAL — hero band ── */}
         <TouchableOpacity
-          style={[styles.mapTeaser, { marginHorizontal: sidePad, backgroundColor: c.surface, borderColor: c.border }]}
-          activeOpacity={0.88}
+          style={[styles.gpsHero, { marginHorizontal: sidePad }]}
+          activeOpacity={0.92}
           onPress={() => router.push('/(tabs)/mapas')}
           {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true, 'data-interactive-card': true } as any) : {})}
         >
-          <View style={styles.mapTeaserLeft}>
-            <View style={styles.mapTeaserIcon}>
-              <Ionicons name="map-outline" size={24} color="#22c55e" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.mapTeaserTitle, { color: c.text }]}>
-                {t('Mapas offline para 39 parques', 'Offline maps for 39 parks')}
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1400&q=85&fit=crop' }}
+            style={styles.gpsHeroBg}
+            resizeMode="cover"
+          >
+            <View style={styles.gpsHeroOverlay} />
+            <View style={styles.gpsHeroContent}>
+              <View style={styles.gpsHeroBadge}>
+                <Ionicons name="navigate" size={13} color="#22c55e" />
+                <Text style={styles.gpsHeroBadgeTxt}>{t('GPS OFFLINE', 'GPS OFFLINE')}</Text>
+              </View>
+              <Text style={styles.gpsHeroTitle}>
+                {t('Sin señal.\nTu posición, igual.', 'No signal.\nYour position, still.')}
               </Text>
-              <Text style={[styles.mapTeaserSub, { color: c.muted }]}>
+              <Text style={styles.gpsHeroSub}>
                 {t(
-                  'Descargá los mapas oficiales de Parques Nacionales en PDF. Sin señal, sin problema.',
-                  'Download official National Parks maps in PDF. No signal, no problem.',
+                  'El chip GPS de tu celular recibe señal de satélites sin necesitar internet. Descargá el mapa en casa y navegás en tiempo real desde cualquier cumbre o valle.',
+                  "Your phone's GPS chip receives satellite signals without internet. Download the map at home and navigate in real time from any summit or valley.",
                 )}
               </Text>
+              <View style={styles.gpsHeroSteps}>
+                {([
+                  { num: '1', es: 'Descargá el mapa del parque con Wi-Fi', en: 'Download the park map on Wi-Fi' },
+                  { num: '2', es: 'Salí a la montaña — sin señal, sin problema', en: 'Head to the mountain — no signal, no problem' },
+                  { num: '3', es: 'Tu punto azul se mueve en tiempo real', en: 'Your blue dot moves in real time' },
+                ] as const).map((step) => (
+                  <View key={step.num} style={styles.gpsHeroStep}>
+                    <View style={styles.gpsHeroStepNum}>
+                      <Text style={styles.gpsHeroStepNumTxt}>{step.num}</Text>
+                    </View>
+                    <Text style={styles.gpsHeroStepTxt}>{t(step.es, step.en)}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={styles.gpsHeroCta}>
+                <Text style={styles.gpsHeroCtaTxt}>{t('Descargar mapas', 'Download maps')}</Text>
+                <Ionicons name="arrow-forward" size={14} color="#0a0f1a" />
+              </View>
             </View>
-          </View>
-          <View style={styles.mapTeaserArrow}>
-            <Ionicons name="chevron-forward" size={20} color="#22c55e" />
-          </View>
+          </ImageBackground>
         </TouchableOpacity>
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
@@ -907,21 +928,34 @@ const styles = StyleSheet.create({
   parkSpotFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
   parkSpotTrails: { fontSize: 11, fontWeight: '600' },
 
-  // Map teaser
-  mapTeaser: {
-    flexDirection: 'row', alignItems: 'center',
-    borderRadius: 20, borderWidth: 1, padding: 18, gap: 14,
+  // GPS offline hero band
+  gpsHero: { borderRadius: 20, overflow: 'hidden', minHeight: 340 },
+  gpsHeroBg: { minHeight: 340 },
+  gpsHeroOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(7,11,20,0.68)' },
+  gpsHeroContent: { padding: 28, gap: 14 },
+  gpsHeroBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start',
+    backgroundColor: 'rgba(34,197,94,0.15)', borderWidth: 1,
+    borderColor: 'rgba(34,197,94,0.3)', borderRadius: 999,
+    paddingHorizontal: 12, paddingVertical: 5,
   },
-  mapTeaserLeft: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 14 },
-  mapTeaserIcon: {
-    width: 48, height: 48, borderRadius: 14,
-    backgroundColor: 'rgba(34,197,94,0.1)',
-    borderWidth: 1, borderColor: 'rgba(34,197,94,0.25)',
+  gpsHeroBadgeTxt: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: '#22c55e' },
+  gpsHeroTitle: { fontSize: 34, fontWeight: '800', color: '#f0f9ff', letterSpacing: -0.8, lineHeight: 40 },
+  gpsHeroSub: { fontSize: 14, color: 'rgba(240,249,255,0.72)', lineHeight: 22, maxWidth: 460 },
+  gpsHeroSteps: { gap: 10, marginTop: 6 },
+  gpsHeroStep: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  gpsHeroStepNum: {
+    width: 26, height: 26, borderRadius: 13, backgroundColor: '#22c55e',
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  mapTeaserTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  mapTeaserSub: { fontSize: 12, lineHeight: 18 },
-  mapTeaserArrow: { flexShrink: 0 },
+  gpsHeroStepNumTxt: { fontSize: 12, fontWeight: '800', color: '#000' },
+  gpsHeroStepTxt: { fontSize: 13, color: 'rgba(240,249,255,0.85)', flex: 1, lineHeight: 19 },
+  gpsHeroCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start',
+    backgroundColor: '#22c55e', paddingHorizontal: 20, paddingVertical: 11,
+    borderRadius: 999, marginTop: 10,
+  },
+  gpsHeroCtaTxt: { fontSize: 13, fontWeight: '700', color: '#0a0f1a' },
 
   // Survival band
   survivalBand: {
