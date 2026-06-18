@@ -48,7 +48,7 @@ export function WebHeader() {
     { labelEs: 'Explorá por región', labelEn: 'Explore by region', href: '/(tabs)/inicio' as const, icon: 'compass-outline' as const, scrollTo: 'region-section' as string | null },
     { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
     { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Asistente IA', labelEn: 'AI Guide', href: '/(tabs)/asistente' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/asistente' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },
     { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const, scrollTo: null as string | null },
   ];
 
