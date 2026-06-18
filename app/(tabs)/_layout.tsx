@@ -118,9 +118,9 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              icon="chatbubble"
-              iconOutline="chatbubble-outline"
-              label={t('IA', 'AI')}
+              icon="help-circle"
+              iconOutline="help-circle-outline"
+              label="FAQ"
               focused={focused}
             />
           ),

@@ -12,7 +12,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { OfflineAICard } from '../../src/components/ui/OfflineAICard';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
@@ -249,7 +248,7 @@ export default function InicioScreen() {
   const HERO_STATS = [
     `${ARGENTINA_TRAILS.length} ${t('rutas', 'trails')}`,
     '39 Parques Nacionales',
-    t('IA integrada', 'AI built-in'),
+    t('GPX gratis', 'Free GPX'),
     t('Sin señal', 'Offline'),
   ];
 
@@ -702,14 +701,6 @@ export default function InicioScreen() {
         </TouchableOpacity>
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
-
-        {/* ── ASISTENTE IA ── */}
-        <View
-          style={[styles.section, { marginHorizontal: sidePad }]}
-          {...(Platform.OS === 'web' ? ({ 'data-reveal-card': true } as any) : {})}
-        >
-          <OfflineAICard />
-        </View>
 
         {/* ── AUTH BANNER ── */}
         {!user && (
