@@ -53,6 +53,7 @@ interface MapLeafletProps {
   zoom?: number;
   height?: number | string;
   layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
+  showPolyline?: boolean;
 }
 
 const TILE_URLS = {
@@ -154,6 +155,7 @@ export function MapLeaflet({
   zoom = 10,
   height = 400,
   layer = 'osm',
+  showPolyline = true,
 }: MapLeafletProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -218,7 +220,7 @@ export function MapLeaflet({
             </Popup>
           </Marker>
         ))}
-        {polylinePositions.length >= 2 && (
+        {showPolyline && polylinePositions.length >= 2 && (
           <Polyline positions={polylinePositions} color="#22c55e" weight={3} opacity={0.85} />
         )}
       </MapContainer>
