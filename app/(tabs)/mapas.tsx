@@ -81,21 +81,17 @@ const NATIONAL_PARKS = [
     unesco: false,
     trailId: 'bahia-mitre',
     gpxPoints: [
-      { lat: -54.093, lon: -66.172, name: 'Cabo San Pablo (inicio)' },
-      { lat: -54.120, lon: -66.093 },
-      { lat: -54.165, lon: -66.018 },
-      { lat: -54.203, lon: -65.940, name: 'Arroyo Irigoyen' },
-      { lat: -54.255, lon: -65.870 },
-      { lat: -54.305, lon: -65.800 },
-      { lat: -54.390, lon: -65.672 },
-      { lat: -54.430, lon: -65.628, name: 'Bahía Valentín' },
-      { lat: -54.485, lon: -65.530 },
-      { lat: -54.510, lon: -65.470, name: 'Cabo Irigoyen' },
-      { lat: -54.572, lon: -65.348 },
-      { lat: -54.638, lon: -65.258 },
-      { lat: -54.665, lon: -65.228, name: 'Cabo San Diego' },
-      { lat: -54.710, lon: -65.112 },
-      { lat: -54.722, lon: -65.053, name: 'Bahía Mitre (fin)' },
+      { lat: -54.283, lon: -66.692, name: 'Cabo San Pablo (inicio)' },
+      { lat: -54.400, lon: -66.440 },
+      { lat: -54.455, lon: -66.290, name: 'Arroyo Irigoyen' },
+      { lat: -54.560, lon: -65.970 },
+      { lat: -54.668, lon: -65.710, name: 'Cabo Irigoyen' },
+      { lat: -54.760, lon: -65.500 },
+      { lat: -54.788, lon: -65.400, name: 'Bahía Buen Suceso' },
+      { lat: -54.800, lon: -65.240 },
+      { lat: -54.798, lon: -65.117, name: 'Cabo San Diego' },
+      { lat: -54.748, lon: -65.048 },
+      { lat: -54.672, lon: -65.010, name: 'Bahía Mitre (fin)' },
     ],
   },
   {
@@ -612,6 +608,7 @@ export default function MapasScreen() {
   const { t } = useLangStore();
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
+  const [mapLayer, setMapLayer] = useState<'argenmap' | 'topo' | 'osm'>('argenmap');
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoaded = useRef(false);
   const pendingFlyTo = useRef<{ lat: number; lng: number; zoom: number } | null>(null);
@@ -643,9 +640,14 @@ export default function MapasScreen() {
     setDownloadOpen(false);
   }
 
-  // ── Native: full-screen map with Download FAB ─────────────────────────────
+  // ── Native: full-screen map with layer switcher + Download FAB ───────────
   if (Platform.OS !== 'web') {
     const { MapLeaflet } = require('../../src/components/map/MapLeaflet');
+    const LAYERS: Array<{ key: 'argenmap' | 'topo' | 'osm'; label: string }> = [
+      { key: 'argenmap', label: 'IGN' },
+      { key: 'topo',     label: t('Topo', 'Topo') },
+      { key: 'osm',      label: 'OSM' },
+    ];
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <MapLeaflet
@@ -653,8 +655,27 @@ export default function MapasScreen() {
           zoom={flyTo ? 10 : 4}
           flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 10 } : null}
           height="100%"
-          layer="argenmap"
+          layer={mapLayer}
         />
+
+        {/* Layer switcher — top-left */}
+        <SafeAreaView edges={['top']} style={nS.layerBar} pointerEvents="box-none">
+          <View style={[nS.layerPill, { backgroundColor: isDark ? 'rgba(15,23,36,0.88)' : 'rgba(248,250,252,0.92)', borderColor: c.border }]}>
+            {LAYERS.map((l) => (
+              <TouchableOpacity
+                key={l.key}
+                style={[nS.layerBtn, mapLayer === l.key && nS.layerBtnActive]}
+                onPress={() => setMapLayer(l.key)}
+                activeOpacity={0.75}
+              >
+                <Text style={[nS.layerTxt, mapLayer === l.key && nS.layerTxtActive, { color: mapLayer === l.key ? '#fff' : c.muted }]}>
+                  {l.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </SafeAreaView>
+
         <SafeAreaView edges={['bottom']} style={{ position: 'absolute', bottom: 0, right: 16 }}>
           <TouchableOpacity
             style={nS.fab}
@@ -761,6 +782,20 @@ const nS = StyleSheet.create({
     shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 4 },
     elevation: 8,
   },
+  layerBar: {
+    position: 'absolute', top: 0, left: 12,
+    zIndex: 10, pointerEvents: 'box-none' as any,
+  },
+  layerPill: {
+    flexDirection: 'row', borderRadius: 999, borderWidth: 1,
+    overflow: 'hidden', marginTop: 8,
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  layerBtn: { paddingHorizontal: 14, paddingVertical: 8 },
+  layerBtnActive: { backgroundColor: '#16a34a' },
+  layerTxt: { fontSize: 12, fontWeight: '700' },
+  layerTxtActive: { color: '#fff' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '88%', paddingHorizontal: 16, paddingTop: 12 },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },
