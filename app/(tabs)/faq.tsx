@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform, Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -8,6 +8,13 @@ import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 
 const MAX_CONTENT = 800;
+
+const PATAGONIA_PHOTOS = [
+  'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop&auto=format',
+];
 
 const FAQ_DATA: Array<{
   category: { es: string; en: string };
@@ -570,9 +577,10 @@ interface FaqItemProps {
   a: string;
   c: any;
   isLast: boolean;
+  photoUrl: string;
 }
 
-function FaqItem({ q, a, c, isLast }: FaqItemProps) {
+function FaqItem({ q, a, c, isLast, photoUrl }: FaqItemProps) {
   const [open, setOpen] = useState(false);
   return (
     <View style={[fS.item, !isLast && { borderBottomWidth: 1, borderBottomColor: c.border }]}>
@@ -591,6 +599,7 @@ function FaqItem({ q, a, c, isLast }: FaqItemProps) {
       </TouchableOpacity>
       {open && (
         <View style={fS.answer}>
+          <Image source={{ uri: photoUrl }} style={fS.photo} resizeMode="cover" />
           <Text style={[fS.answerText, { color: c.muted }]}>{a}</Text>
         </View>
       )}
@@ -635,27 +644,35 @@ export default function FaqScreen() {
 
       {/* FAQ sections */}
       <View style={{ paddingHorizontal: sidePad, paddingTop: 32 }}>
-        {FAQ_DATA.map((section) => (
-          <View key={section.category.es} style={fS.section}>
-            <View style={fS.categoryRow}>
-              <View style={[fS.categoryDot, { backgroundColor: '#22c55e' }]} />
-              <Text style={[fS.category, { color: '#22c55e' }]}>
-                {lang === 'en' ? section.category.en : section.category.es}
-              </Text>
+        {(() => {
+          let globalIdx = 0;
+          return FAQ_DATA.map((section) => (
+            <View key={section.category.es} style={fS.section}>
+              <View style={fS.categoryRow}>
+                <View style={[fS.categoryDot, { backgroundColor: '#22c55e' }]} />
+                <Text style={[fS.category, { color: '#22c55e' }]}>
+                  {lang === 'en' ? section.category.en : section.category.es}
+                </Text>
+              </View>
+              <View style={[fS.card, { backgroundColor: c.surface, borderColor: c.border }]}>
+                {section.items.map((item, idx) => {
+                  const photoUrl = PATAGONIA_PHOTOS[globalIdx % PATAGONIA_PHOTOS.length];
+                  globalIdx++;
+                  return (
+                    <FaqItem
+                      key={item.q.es}
+                      q={lang === 'en' ? item.q.en : item.q.es}
+                      a={lang === 'en' ? item.a.en : item.a.es}
+                      c={c}
+                      isLast={idx === section.items.length - 1}
+                      photoUrl={photoUrl}
+                    />
+                  );
+                })}
+              </View>
             </View>
-            <View style={[fS.card, { backgroundColor: c.surface, borderColor: c.border }]}>
-              {section.items.map((item, idx) => (
-                <FaqItem
-                  key={item.q.es}
-                  q={lang === 'en' ? item.q.en : item.q.es}
-                  a={lang === 'en' ? item.a.en : item.a.es}
-                  c={c}
-                  isLast={idx === section.items.length - 1}
-                />
-              ))}
-            </View>
-          </View>
-        ))}
+          ));
+        })()}
       </View>
 
       {Platform.OS === 'web' && <WebFooter />}
@@ -692,5 +709,6 @@ const fS = StyleSheet.create({
   },
   questionText: { fontSize: 15, fontWeight: '600', flex: 1, lineHeight: 21 },
   answer: { paddingBottom: 16 },
+  photo: { width: '100%', height: 160, borderRadius: 10, marginBottom: 12 },
   answerText: { fontSize: 14, lineHeight: 22 },
 });
