@@ -465,7 +465,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 830,
     duration: { min: 4, max: 6, unit: 'dias' },
     coordinates: { lat: -54.932, lon: -67.613 },
-    photo_uri: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=800&q=80&fit=crop&auto=format',
+    photo_uri: '/sliabh-dientes-de-navarino.jpg',
     tags: ['fin del mundo', 'Cabo de Hornos', 'alta exposición', 'wilderness', 'Chile'],
     permits_required: true,
     best_season: 'Nov – Mar',
