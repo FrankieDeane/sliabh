@@ -912,6 +912,7 @@
       ` : '';
 
       // Populate the info overlay on the 3D map
+      panel.style.display = '';
       panel.innerHTML = `
         <button id="closeSplit" title="Cerrar">×</button>
         ${park.photoUrl ? `<img src="${park.photoUrl}" alt="${park.name}" style="width:100%;height:130px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block">` : ''}
@@ -1542,7 +1543,7 @@ ${trkpts}
     // Close modal on Escape key (used by split close)
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && interactiveMap.classList.contains('split')) {
-        document.getElementById('parkInfoOverlay').querySelector('#closeSplit')?.click();
+        document.getElementById('parkInfoOverlay').style.display = 'none';
       }
     });
 
@@ -1691,14 +1692,11 @@ ${trkpts}
       }
     })();
 
-    // ── Close split view (event delegation — button is injected per renderPanel) ──
+    // ── Close info panel only — 3D map stays open (event delegation) ─────────
     document.getElementById('parkInfoOverlay').addEventListener('click', (e) => {
       if (!e.target.closest('#closeSplit')) return;
-      interactiveMap.classList.remove('split');
-      interactiveMap.style.removeProperty('--left-w');
-      if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
-      if (window._leafletTrailLine) { map.removeLayer(window._leafletTrailLine); window._leafletTrailLine = null; }
-      setTimeout(() => map.invalidateSize(), 340);
+      const panel = document.getElementById('parkInfoOverlay');
+      panel.style.display = 'none';
     });
 
     // ── Drag to resize split handle ───────────────────────────────────────────
