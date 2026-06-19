@@ -45,8 +45,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 6961,
     duration: { min: 18, max: 22, unit: 'dias' },
     coordinates: { lat: -32.6532, lon: -70.0109 },
-    photo_uri:
-      'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80&fit=crop&auto=format',
+    photo_uri: '/sliabh-aconcagua.jpg',
     tags: ['cima', 'nieve', 'alta montaña', 'aclimatación'],
     permits_required: true,
     best_season: 'Dic – Feb',
@@ -336,7 +335,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 1300,
     duration: { min: 6, max: 9, unit: 'horas' },
     coordinates: { lat: -42.1523, lon: -71.6380 },
-    photo_uri: 'https://media-cdn.tripadvisor.com/media/photo-s/0a/69/a1/bb/20160220-131838-largejpg.jpg',
+    photo_uri: '/sliabh-lago-puelo.jpg',
     tags: ['lago glaciar', 'frontera Chile', 'bosque valdiviano', 'microclima'],
     permits_required: false,
     best_season: 'Oct – Abr',
