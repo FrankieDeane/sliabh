@@ -429,6 +429,14 @@ export default function TrailDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  function goBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)/rutas' as any);
+    }
+  }
   const { width, height } = useWindowDimensions();
   const { lang, t } = useLangStore();
   const isDark = useThemeStore((s) => s.theme === 'dark');
@@ -461,7 +469,7 @@ export default function TrailDetailScreen() {
         </Text>
         <TouchableOpacity
           style={[styles.notFoundBtn, { backgroundColor: C.surface, borderColor: C.border }]}
-          onPress={() => router.back()}
+          onPress={() => goBack()}
           activeOpacity={0.75}
         >
           <Ionicons name="chevron-back" size={18} color={C.text} />
@@ -527,7 +535,7 @@ export default function TrailDetailScreen() {
       {/* Floating back button — always visible above scroll */}
       <TouchableOpacity
         style={[styles.backBtn, { top: insets.top + 10 }]}
-        onPress={() => router.back()}
+        onPress={() => goBack()}
         activeOpacity={0.75}
       >
         <Ionicons name="chevron-back" size={22} color={C.text} />
