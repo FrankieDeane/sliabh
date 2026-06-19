@@ -432,7 +432,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 120,
     duration: { min: 2, max: 3, unit: 'horas' },
     coordinates: { lat: -54.8466, lon: -68.4818 },
-    photo_uri: '/tierra-del-fuego.jpg',
+    photo_uri: '/sliabh-bahia-ensenada.jpg',
     tags: ['Canal Beagle', 'costa', 'bosque subantártico', 'ensenada', 'fauna marina'],
     permits_required: false,
     best_season: 'Oct – Mar',
