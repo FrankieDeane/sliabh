@@ -23,6 +23,7 @@ export function WebFooter() {
   const { t } = useLangStore();
   const isDark = theme === 'dark';
   const [legalOpen, setLegalOpen] = useState(false);
+  const [cookieOpen, setCookieOpen] = useState(false);
   const { width } = useWindowDimensions();
 
   const c = isDark
@@ -135,6 +136,29 @@ export function WebFooter() {
               {t(
                 'Sliabh es una plataforma de información para actividades en la naturaleza. Los datos de senderos, mapas, distancias y tiempos estimados son orientativos y pueden no reflejar las condiciones actuales del terreno. Las actividades al aire libre conllevan riesgos inherentes. El usuario es responsable de su propia seguridad, preparación y decisiones en el campo.\n\nLa información proviene de fuentes de terceros (SIB/APN, OpenStreetMap, IGN Argentina) y puede contener errores u omisiones. Sliabh no garantiza la exactitud, completitud ni vigencia de los datos. Los mapas sin conexión son de referencia y no reemplazan el juicio del excursionista ni equipamiento de navegación profesional.\n\nSliabh no es un organismo oficial ni está afiliado a la Administración de Parques Nacionales de Argentina.',
                 'Sliabh is an informational platform for outdoor activities. Trail data, maps, distances and estimated times are indicative and may not reflect current terrain conditions. Outdoor activities carry inherent risks. Users are solely responsible for their own safety, preparation and decisions in the field.\n\nInformation is sourced from third parties (SIB/APN, OpenStreetMap, IGN Argentina) and may contain errors or omissions. Sliabh makes no warranty as to accuracy, completeness or currency of data. Offline maps are for reference only and do not replace hiker judgement or professional navigation equipment.\n\nSliabh is not an official body and is not affiliated with the Administración de Parques Nacionales de Argentina.',
+              )}
+            </Text>
+          </View>
+        )}
+
+        {/* Cookie policy accordion */}
+        <TouchableOpacity
+          style={[styles.legalToggle, { borderTopColor: c.border }]}
+          onPress={() => setCookieOpen((o) => !o)}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.legalToggleTxt, { color: c.muted }]}>
+            {t('Política de Cookies', 'Cookie Policy')}
+          </Text>
+          <Ionicons name={cookieOpen ? 'chevron-up' : 'chevron-down'} size={13} color={c.muted} />
+        </TouchableOpacity>
+
+        {cookieOpen && (
+          <View style={[styles.legalBox, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <Text style={[styles.legalTxt, { color: c.muted }]}>
+              {t(
+                'Sliabh no utiliza cookies de rastreo ni publicidad de terceros.\n\nUsamos almacenamiento local del navegador (localStorage y Cache Storage API) exclusivamente para:\n• Guardar tus preferencias de idioma y tema.\n• Mantener tu sesión iniciada.\n• Almacenar tiles de mapas para uso sin conexión (modo offline).\n\nEste almacenamiento reside únicamente en tu dispositivo y no se comparte con terceros. Podés borrarlo en cualquier momento desde la configuración de tu navegador.\n\nAl continuar usando Sliabh aceptás este uso de almacenamiento local.',
+                'Sliabh does not use tracking cookies or third-party advertising.\n\nWe use browser local storage (localStorage and Cache Storage API) exclusively for:\n• Saving your language and theme preferences.\n• Keeping you signed in.\n• Storing map tiles for offline use.\n\nThis storage lives only on your device and is never shared with third parties. You can clear it at any time from your browser settings.\n\nBy continuing to use Sliabh you accept this use of local storage.',
               )}
             </Text>
           </View>

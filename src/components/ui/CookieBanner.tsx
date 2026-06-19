@@ -1,211 +1,99 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
+import { useLangStore } from '../../store/langStore';
 
-const STORAGE_KEY = 'sliabh_cookie_consent';
-
-function getConsent(): string | null {
-  if (Platform.OS !== 'web' || typeof localStorage === 'undefined') return 'accepted';
-  return localStorage.getItem(STORAGE_KEY);
-}
-
-function setConsent(value: 'accepted' | 'rejected') {
-  if (Platform.OS !== 'web' || typeof localStorage === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, value);
-}
+const CONSENT_KEY = 'sliabh-cookie-consent';
 
 export function CookieBanner() {
-  const isDark = useThemeStore((s) => s.theme === 'dark');
+  const { theme } = useThemeStore();
+  const { t } = useLangStore();
+  const isDark = theme === 'dark';
   const [visible, setVisible] = useState(false);
-  const slideAnim = React.useRef(new Animated.Value(120)).current;
-  const { width } = useWindowDimensions();
-  const isNarrow = width < 520;
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
-    const consent = getConsent();
-    if (!consent) {
-      // Small delay so it doesn't flash on page load
-      const timer = setTimeout(() => {
-        setVisible(true);
-        Animated.spring(slideAnim, {
-          toValue: 0,
-          tension: 60,
-          friction: 12,
-          useNativeDriver: true,
-        }).start();
-      }, 1200);
-      return () => clearTimeout(timer);
+    try {
+      const val = localStorage.getItem(CONSENT_KEY);
+      if (!val) setVisible(true);
+    } catch {
+      // localStorage unavailable
     }
   }, []);
 
-  function dismiss(choice: 'accepted' | 'rejected') {
-    setConsent(choice);
-    Animated.timing(slideAnim, {
-      toValue: 120,
-      duration: 280,
-      useNativeDriver: true,
-    }).start(() => setVisible(false));
+  function accept() {
+    try { localStorage.setItem(CONSENT_KEY, 'accepted'); } catch {}
+    setVisible(false);
+  }
+
+  function dismiss() {
+    try { localStorage.setItem(CONSENT_KEY, 'dismissed'); } catch {}
+    setVisible(false);
   }
 
   if (!visible) return null;
 
   const c = isDark
-    ? { bg: '#0f1724', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
-    : { bg: '#ffffff', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
+    ? { bg: '#0f1724', border: '#1e2d42', text: '#f0f9ff', muted: '#94a3b8' }
+    : { bg: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' };
 
   return (
-    <Animated.View
-      style={[styles.wrapper, { transform: [{ translateY: slideAnim }] }]}
-    >
-      <View style={[styles.banner, { backgroundColor: c.bg, borderColor: c.border }]}>
-
-        {/* ── Top row: icon + title + close ── */}
-        <View style={styles.topRow}>
-          <View style={styles.iconWrap}>
-            <Ionicons name="shield-checkmark-outline" size={20} color="#22c55e" />
-          </View>
-          <Text style={[styles.title, { color: c.text, flex: 1 }]}>
-            Usamos cookies
+    <View style={[styles.bar, { backgroundColor: c.bg, borderTopColor: c.border }]}>
+      <View style={styles.inner}>
+        <View style={styles.textWrap}>
+          <Ionicons name="shield-checkmark-outline" size={16} color="#22c55e" style={{ flexShrink: 0 }} />
+          <Text style={[styles.txt, { color: c.muted }]}>
+            {t(
+              'Usamos almacenamiento local (localStorage, Cache API) para mapas offline, preferencias y sesión. No usamos cookies de rastreo de terceros.',
+              'We use local storage (localStorage, Cache API) for offline maps, preferences and session. We do not use third-party tracking cookies.',
+            )}
           </Text>
-          <TouchableOpacity
-            style={styles.close}
-            onPress={() => dismiss('rejected')}
-            activeOpacity={0.7}
-            hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
-          >
+        </View>
+        <View style={styles.btns}>
+          <TouchableOpacity style={styles.btnAccept} onPress={accept} activeOpacity={0.8}>
+            <Text style={styles.btnAcceptTxt}>{t('Acepto', 'Accept')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btnDismiss} onPress={dismiss} activeOpacity={0.8}>
             <Ionicons name="close" size={16} color={c.muted} />
           </TouchableOpacity>
         </View>
-
-        {/* ── Body text ── */}
-        <Text style={[styles.body, { color: c.muted }]}>
-          Guardamos preferencias de tema e idioma en tu navegador. No rastreamos tu actividad ni compartimos datos con terceros.{' '}
-          <Text style={styles.link}>Política de privacidad</Text>
-        </Text>
-
-        {/* ── Actions: inline on wide screens, full-width on narrow ── */}
-        <View style={[styles.actions, isNarrow && styles.actionsNarrow]}>
-          <TouchableOpacity
-            style={[styles.btnReject, { borderColor: c.border }, isNarrow && styles.btnFluid]}
-            onPress={() => dismiss('rejected')}
-            activeOpacity={0.75}
-          >
-            <Text style={[styles.btnRejectTxt, { color: c.muted }]}>Rechazar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.btnAccept, isNarrow && styles.btnFluid]}
-            onPress={() => dismiss('accepted')}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.btnAcceptTxt}>Aceptar</Text>
-          </TouchableOpacity>
-        </View>
-
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute' as any,
+  bar: {
+    position: 'fixed' as any,
     bottom: 0,
     left: 0,
     right: 0,
+    borderTopWidth: 1,
     zIndex: 9999,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
   },
-  banner: {
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 16,
-    flexDirection: 'column' as any,
-    gap: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 8,
-    maxWidth: 760,
-    alignSelf: 'center' as any,
-    width: '100%' as any,
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
+    maxWidth: 1200,
+    alignSelf: 'center',
+    width: '100%',
+    flexWrap: 'wrap' as any,
   },
-  /* icon + title + close always in one row */
-  topRow: {
-    flexDirection: 'row' as any,
-    alignItems: 'center' as any,
-    gap: 10,
-  },
-  iconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: 'rgba(34,197,94,0.12)',
-    borderWidth: 1,
-    borderColor: 'rgba(34,197,94,0.25)',
-    alignItems: 'center' as any,
-    justifyContent: 'center' as any,
-    flexShrink: 0,
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  body: {
-    fontSize: 12,
-    lineHeight: 18,
-  },
-  link: {
-    color: '#22c55e',
-    fontWeight: '600',
-  },
-  /* buttons: row on wide, row on narrow but full-width */
-  actions: {
-    flexDirection: 'row' as any,
-    gap: 8,
-    alignItems: 'center' as any,
-    justifyContent: 'flex-end' as any,
-  },
-  actionsNarrow: {
-    justifyContent: 'stretch' as any,
-  },
-  btnReject: {
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 999,
-    borderWidth: 1,
-    alignItems: 'center' as any,
-  },
-  /* on narrow screens each button fills half the row */
-  btnFluid: {
-    flex: 1,
-  },
-  btnRejectTxt: {
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center' as any,
-  },
+  textWrap: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1, minWidth: 220 },
+  txt: { fontSize: 12, lineHeight: 18, flex: 1 },
+  btns: { flexDirection: 'row', alignItems: 'center', gap: 8, flexShrink: 0 },
   btnAccept: {
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    borderRadius: 999,
-    backgroundColor: '#16a34a',
-    alignItems: 'center' as any,
+    backgroundColor: '#16a34a', borderRadius: 999,
+    paddingHorizontal: 16, paddingVertical: 8,
   },
-  btnAcceptTxt: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center' as any,
-  },
-  close: {
-    width: 28,
-    height: 28,
-    alignItems: 'center' as any,
-    justifyContent: 'center' as any,
-    flexShrink: 0,
+  btnAcceptTxt: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  btnDismiss: {
+    padding: 6, borderRadius: 999,
+    borderWidth: 1, borderColor: '#334155',
   },
 });
