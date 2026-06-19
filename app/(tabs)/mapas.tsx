@@ -103,7 +103,7 @@ const NATIONAL_PARKS = [
     area_km2: 0,
     highlights: 'Canal Beagle · Ensenada Zaratiegui · Bosque subantártico · Fauna marina',
     size: '18 MB',
-    photo: 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=600&q=75&fit=crop',
+    photo: '/sliabh-bahia-ensenada.jpg',
     coords: { lat: -54.8466, lon: -68.4818 },
     unesco: false,
     trailId: 'senda-costera-zaratiegui',
