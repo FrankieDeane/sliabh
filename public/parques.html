@@ -684,18 +684,21 @@
     });
     new CacheControl().addTo(map);
 
-    const clusterGroup = L.markerClusterGroup({
-      showCoverageOnHover: false,
-      spiderfyOnMaxZoom: true,
-      maxClusterRadius: 46,
-      iconCreateFunction(cluster) {
-        return L.divIcon({
-          html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
-          className: '',
-          iconSize: [44, 44]
-        });
-      }
-    });
+    const clusterGroup = L.markerClusterGroup
+      ? L.markerClusterGroup({
+          showCoverageOnHover: false,
+          spiderfyOnMaxZoom: true,
+          maxClusterRadius: 46,
+          disableClusteringAtZoom: 9,
+          iconCreateFunction(cluster) {
+            return L.divIcon({
+              html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
+              className: '',
+              iconSize: [44, 44]
+            });
+          }
+        })
+      : L.featureGroup();
 
     const sampleTrails = {
       'Parque Nacional Los Glaciares': ['Laguna de los Tres · Difícil · 20 km', 'Mirador del Glaciar · Fácil · 3 km'],
@@ -997,6 +1000,7 @@
     const regions = ['Todas', ...new Set(parks.map(p => p.region))];
     let currentRegion = 'Todas';
     let currentSearch = '';
+    let firstFilter = true;
 
     regions.forEach(region => {
       const btn = document.createElement('button');
@@ -1028,10 +1032,11 @@
       const visibleMarkers = markers.filter(m => filtered.includes(m.parkData));
       visibleMarkers.forEach(m => clusterGroup.addLayer(m));
 
-      if (visibleMarkers.length) {
+      if (visibleMarkers.length && !firstFilter) {
         const bounds = L.featureGroup(visibleMarkers).getBounds();
-        if (bounds.isValid()) map.fitBounds(bounds.pad(0.3));
+        if (bounds.isValid()) map.fitBounds(bounds.pad(0.3), { maxZoom: 10 });
       }
+      firstFilter = false;
 
       filtersWrap.querySelectorAll('.chip').forEach(btn => btn.classList.toggle('active', btn.dataset.region === currentRegion));
       if (filtered.length) renderPanel(filtered[0]);
