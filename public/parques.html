@@ -641,7 +641,7 @@
       );
     }
     const LocateControl = L.Control.extend({
-      options: { position: 'bottomleft' },
+      options: { position: 'topleft' },
       onAdd() {
         const c = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-locate');
         c.innerHTML = '<button title="' + (lang === 'es' ? 'Mi ubicación' : 'My location') + '" aria-label="' + (lang === 'es' ? 'Centrar en mi ubicación' : 'Centre on my location') + '">◉</button>';
@@ -696,7 +696,7 @@
       if (btn) { btn.textContent = '✅'; btn.disabled = false; setTimeout(() => { btn.textContent = '💾'; }, 2500); }
     }
     const CacheControl = L.Control.extend({
-      options: { position: 'bottomleft' },
+      options: { position: 'topleft' },
       onAdd() {
         const c = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-cache');
         c.innerHTML = '<button title="' + (lang === 'es' ? 'Guardar mapa offline' : 'Save map offline') + '" aria-label="' + (lang === 'es' ? 'Guardar tiles del área visible' : 'Save tiles for visible area') + '">💾</button>';
