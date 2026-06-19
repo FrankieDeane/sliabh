@@ -206,6 +206,7 @@ export function MapLeaflet({
       ]}
     >
       <WebView
+        key={layer}
         source={{ html, baseUrl: 'https://unpkg.com' }}
         onMessage={handleMessage}
         style={styles.webview}
