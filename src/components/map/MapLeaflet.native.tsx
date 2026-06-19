@@ -59,7 +59,8 @@ function buildHTML(
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function() {
-  var map = L.map('map', { zoomControl: true }).setView([${center[0]}, ${center[1]}], ${zoom});
+  var map = L.map('map', { zoomControl: false }).setView([${center[0]}, ${center[1]}], ${zoom});
+  L.control.zoom({ position: 'topright' }).addTo(map);
 
   L.tileLayer('${nativeTileUrl}', {
     maxZoom: 18,
@@ -125,6 +126,35 @@ function buildHTML(
       }));
     } catch(err) {}
   });
+
+  // ── Locate me button (bottom-left) ─────────────────────────────────────────
+  var userLocMarker = null;
+  var LocateCtrl = L.Control.extend({
+    options: { position: 'bottomleft' },
+    onAdd: function() {
+      var c = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+      c.innerHTML = '<button style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:#1d4ed8;color:#fff;border:2px solid #3b82f6;border-radius:4px;font-size:20px;cursor:pointer;padding:0;line-height:1;" title="Mi ubicación">◉</button>';
+      var btn = c.querySelector('button');
+      L.DomEvent.on(btn, 'click', function(e) {
+        L.DomEvent.stopPropagation(e);
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          var lat = pos.coords.latitude, lng = pos.coords.longitude;
+          if (userLocMarker) { userLocMarker.remove(); userLocMarker = null; }
+          var icon = L.divIcon({
+            html: '<div style="width:16px;height:16px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 6px rgba(59,130,246,.25);"></div>',
+            className: '', iconSize: [16,16], iconAnchor: [8,8],
+          });
+          userLocMarker = L.marker([lat, lng], { icon: icon, zIndexOffset: 1000 }).addTo(map);
+          userLocMarker.bindPopup('Tu ubicación / Your location').openPopup();
+          map.flyTo([lat, lng], 13, { duration: 1.2 });
+        }, function() {}, { enableHighAccuracy: true, timeout: 15000 });
+      });
+      L.DomEvent.disableClickPropagation(c);
+      return c;
+    }
+  });
+  new LocateCtrl().addTo(map);
 })();
 </script>
 </body>
@@ -181,6 +211,7 @@ export function MapLeaflet({
         style={styles.webview}
         javaScriptEnabled
         domStorageEnabled
+        geolocationEnabled
         originWhitelist={['*']}
         mixedContentMode="always"
         scrollEnabled={false}

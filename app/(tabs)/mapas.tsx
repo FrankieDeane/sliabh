@@ -616,6 +616,8 @@ export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
   const { t } = useLangStore();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 720;
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
   const [mapLayer, setMapLayer] = useState<'argenmap' | 'topo' | 'osm'>('argenmap');
@@ -752,7 +754,7 @@ export default function MapasScreen() {
         </View>
       </View>
 
-      <View style={s.iframeWrapper}>
+      <View style={[s.iframeWrapper, isMobile && { height: Math.round(width * 1.05) } as any]}>
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
@@ -771,13 +773,16 @@ export default function MapasScreen() {
         resizeMode="cover"
       >
         <View style={s.gpsBannerOverlay} />
-        <View style={s.gpsBannerContent}>
-          <View style={{ flex: 1, gap: 12 }}>
+        <View style={[
+          s.gpsBannerContent,
+          isMobile && { flexDirection: 'column', paddingHorizontal: 16, paddingVertical: 28, gap: 20 },
+        ]}>
+          <View style={{ flex: isMobile ? undefined : 1, gap: 12 }}>
             <View style={s.gpsBannerBadge}>
               <Ionicons name="navigate" size={13} color="#22c55e" />
               <Text style={s.gpsBannerBadgeTxt}>{t('GPS SIN SEÑAL', 'OFFLINE GPS')}</Text>
             </View>
-            <Text style={s.gpsBannerTitle}>
+            <Text style={[s.gpsBannerTitle, isMobile && { fontSize: 22, lineHeight: 28 }]}>
               {t('Descargá el mapa.\nNavegá sin internet.', 'Download the map.\nNavigate without internet.')}
             </Text>
             <Text style={s.gpsBannerSub}>
@@ -807,7 +812,7 @@ export default function MapasScreen() {
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>
           <Text style={[s.eyebrow, { color: c.muted }]}>{t('CENTRO DE DESCARGAS', 'DOWNLOAD CENTER')}</Text>
-          <Text style={[s.sectionTitle, { color: c.text }]}>{t('Mapas para llevar sin señal', 'Maps to take offline')}</Text>
+          <Text style={[s.sectionTitle, { color: c.text }, isMobile && { fontSize: 22 }]}>{t('Mapas para llevar sin señal', 'Maps to take offline')}</Text>
           <Text style={[s.sectionSub, { color: c.muted }]}>
             {t(
               'Guardá la cartografía de cada parque. Disponibles sin conexión — tocá "Ver mapa" para ubicarlo.',
