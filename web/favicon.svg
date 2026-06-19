@@ -1,28 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <!-- Outer rough stamp ring -->
-  <circle cx="100" cy="100" r="96" fill="#fff" stroke="#1a1a1a" stroke-width="6"/>
-  <circle cx="100" cy="100" r="88" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-dasharray="4 3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" shape-rendering="geometricPrecision">
+  <!-- Background disc -->
+  <circle cx="100" cy="100" r="100" fill="#060d1b"/>
 
-  <!-- Mountain peaks -->
-  <!-- Left peak -->
-  <polygon points="28,148 62,82 80,108" fill="#1a1a1a"/>
-  <!-- Middle peak (tallest) -->
-  <polygon points="62,148 100,52 138,148" fill="#1a1a1a"/>
-  <!-- Right peak -->
-  <polygon points="120,108 138,82 172,148" fill="#1a1a1a"/>
-  <!-- Snow cap on center peak -->
-  <polygon points="100,52 112,80 88,80" fill="#fff"/>
-  <!-- Base fill connecting peaks -->
-  <rect x="28" y="140" width="144" height="16" fill="#1a1a1a"/>
+  <!-- Green ring -->
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#16a34a" stroke-width="5"/>
 
-  <!-- SLIABH text curved at top -->
-  <path id="topArc" d="M 28,100 A 72,72 0 0 1 172,100" fill="none"/>
-  <text font-family="'Georgia', 'Times New Roman', serif" font-size="22" font-weight="bold" fill="#1a1a1a" letter-spacing="8">
-    <textPath href="#topArc" startOffset="12%">SLIABH</textPath>
-  </text>
+  <!-- Mountain silhouette fill -->
+  <path d="M18 152 L50 86 L74 112 L100 54 L126 112 L150 86 L182 152 Z"
+        fill="#0a1e12"/>
 
-  <!-- Stars / decorative dots -->
-  <circle cx="55" cy="68" r="3" fill="#1a1a1a"/>
-  <circle cx="100" cy="44" r="3" fill="#1a1a1a"/>
-  <circle cx="145" cy="68" r="3" fill="#1a1a1a"/>
+  <!-- Mountain outline -->
+  <path d="M18 152 L50 86 L74 112 L100 54 L126 112 L150 86 L182 152"
+        fill="none" stroke="#22c55e" stroke-width="4.5" stroke-linejoin="round"
+        stroke-linecap="round"/>
+
+  <!-- Snow cap (centre peak only — legible at 16px) -->
+  <path d="M100 54 L116 88 L84 88 Z" fill="rgba(255,255,255,0.7)"/>
 </svg>
