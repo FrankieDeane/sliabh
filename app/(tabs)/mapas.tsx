@@ -460,29 +460,43 @@ const NATIONAL_PARKS = [
 
 // ─── Download card ────────────────────────────────────────────────────────────
 function DownloadCard({
-  park, c, onViewMap, onFlyTo,
+  park, c, onViewMap, onFlyTo, onShowTrack,
 }: {
   park: typeof NATIONAL_PARKS[0];
   c: any;
   onViewMap?: (lat: number, lon: number) => void;
   onFlyTo?: (lat: number, lng: number, zoom: number) => void;
+  onShowTrack?: (points: Array<{lat: number; lon: number; name: string}>) => void;
 }) {
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
+  const [cacheState, setCacheState] = useState<'idle' | 'downloading' | 'done'>('idle');
+  const [cacheProgress, setCacheProgress] = useState(0);
   const router = useRouter();
   const { width } = useWindowDimensions();
   const { t } = useLangStore();
   const isNarrow = width < 400;
 
-  // Pre-cache tiles for true offline use in the background (no UI state needed)
   React.useEffect(() => {
     if (isTileCachingSupported()) {
       isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
-        if (!cached) {
-          downloadAreaTiles(park.coords.lat, park.coords.lon, () => {}).catch(() => {});
-        }
+        if (cached) setCacheState('done');
       });
     }
   }, []);
+
+  async function handleCache() {
+    if (cacheState !== 'idle') return;
+    setCacheState('downloading');
+    setCacheProgress(0);
+    try {
+      await downloadAreaTiles(park.coords.lat, park.coords.lon, (done, total) => {
+        setCacheProgress(Math.round((done / total) * 100));
+      });
+      setCacheState('done');
+    } catch {
+      setCacheState('idle');
+    }
+  }
 
   function handleViewMap() {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -509,6 +523,7 @@ function DownloadCard({
     );
     if (ok) {
       setGpxState('done');
+      onShowTrack?.(points);
       setTimeout(() => setGpxState('idle'), 2500);
     }
   }
@@ -538,7 +553,7 @@ function DownloadCard({
         <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
         <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
 
-        {/* Actions: view map, GPX for GPS apps, More Info */}
+        {/* Actions: view map, GPX for GPS apps, save offline, More Info */}
         <View style={dlS.btnRow}>
           <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
             <Ionicons name="map-outline" size={13} color="#16a34a" />
@@ -553,6 +568,22 @@ function DownloadCard({
               />
               <Text style={[dlS.btnTxt, { color: '#93c5fd' }]}>
                 {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX / OsmAnd'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {isTileCachingSupported() && (
+            <TouchableOpacity
+              style={[dlS.btn, cacheState === 'done' ? dlS.btnCacheDone : dlS.btnCache]}
+              onPress={handleCache}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name={cacheState === 'done' ? 'checkmark-circle-outline' : cacheState === 'downloading' ? 'time-outline' : 'save-outline'}
+                size={13}
+                color="#22c55e"
+              />
+              <Text style={[dlS.btnTxt, { color: '#22c55e' }]}>
+                {cacheState === 'downloading' ? `${cacheProgress}%` : cacheState === 'done' ? t('Guardado', 'Saved') : t('Offline', 'Offline')}
               </Text>
             </TouchableOpacity>
           )}
@@ -607,6 +638,8 @@ const dlS = StyleSheet.create({
   btnInfo: { backgroundColor: '#16a34a' },
   btnView: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#16a34a' },
   btnGpx: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#3b82f6' },
+  btnCache: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#22c55e' },
+  btnCacheDone: { backgroundColor: 'rgba(34,197,94,0.12)', borderWidth: 1, borderColor: '#22c55e' },
   btnTxt: { fontSize: 13, fontWeight: '600' },
   btnTxtWhite: { fontSize: 13, fontWeight: '600', color: '#fff' },
 });
@@ -827,8 +860,14 @@ export default function MapasScreen() {
               park={park}
               c={c}
               onFlyTo={(lat, lng, zoom) => {
-                sendFlyTo(lat, lng, zoom);
-                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => sendFlyTo(lat, lng, zoom), 450);
+              }}
+              onShowTrack={(points) => {
+                if (iframeLoaded.current && iframeRef.current?.contentWindow) {
+                  iframeRef.current.contentWindow.postMessage({ type: 'showTrack', points }, '*');
+                }
+                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
             />
           ))}
