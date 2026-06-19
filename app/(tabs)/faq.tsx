@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform, Image,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -585,34 +585,42 @@ interface FaqItemProps {
   q: string;
   a: string;
   c: any;
-  isLast: boolean;
   photoUrl: string;
 }
 
-function FaqItem({ q, a, c, isLast, photoUrl }: FaqItemProps) {
+function FaqItem({ q, a, c, photoUrl }: FaqItemProps) {
   const [open, setOpen] = useState(false);
   return (
-    <View style={[fS.item, !isLast && { borderBottomWidth: 1, borderBottomColor: c.border }]}>
-      <Image source={{ uri: photoUrl }} style={fS.photo} resizeMode="cover" />
-      <TouchableOpacity
-        style={fS.question}
-        onPress={() => setOpen((v) => !v)}
-        activeOpacity={0.75}
-      >
-        <Text style={[fS.questionText, { color: c.text }]}>{q}</Text>
-        <Ionicons
-          name={open ? 'chevron-up' : 'chevron-down'}
-          size={16}
-          color={c.muted}
-          style={{ flexShrink: 0, marginLeft: 8 }}
-        />
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={[fS.card, { backgroundColor: c.surface, borderColor: open ? '#22c55e55' : c.border }]}
+      activeOpacity={0.88}
+      onPress={() => setOpen((v) => !v)}
+      {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
+    >
+      <View style={fS.cardPhoto}>
+        {Platform.OS === 'web' && (
+          // @ts-ignore
+          <img
+            src={photoUrl}
+            alt=""
+            loading="lazy"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        )}
+        <View style={fS.cardPhotoOverlay} />
+        <View style={fS.cardPhotoText}>
+          <Text style={fS.cardQuestion}>{q}</Text>
+        </View>
+        <View style={fS.cardChevron}>
+          <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color="#fff" />
+        </View>
+      </View>
       {open && (
-        <View style={fS.answer}>
+        <View style={fS.expandedBody}>
           <Text style={[fS.answerText, { color: c.muted }]}>{a}</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -663,8 +671,8 @@ export default function FaqScreen() {
                   {lang === 'en' ? section.category.en : section.category.es}
                 </Text>
               </View>
-              <View style={[fS.card, { backgroundColor: c.surface, borderColor: c.border }]}>
-                {section.items.map((item, idx) => {
+              <View style={fS.itemsGrid}>
+                {section.items.map((item) => {
                   const photoUrl = PATAGONIA_PHOTOS[globalIdx % PATAGONIA_PHOTOS.length];
                   globalIdx++;
                   return (
@@ -673,7 +681,6 @@ export default function FaqScreen() {
                       q={lang === 'en' ? item.q.en : item.q.es}
                       a={lang === 'en' ? item.a.en : item.a.es}
                       c={c}
-                      isLast={idx === section.items.length - 1}
                       photoUrl={photoUrl}
                     />
                   );
@@ -708,16 +715,46 @@ const fS = StyleSheet.create({
   category: {
     fontSize: 10, fontWeight: '700', letterSpacing: 3, textTransform: 'uppercase',
   },
+  itemsGrid: { gap: 12 },
   card: {
-    borderRadius: 16, borderWidth: 1, overflow: 'hidden',
+    borderRadius: 18,
+    borderWidth: 1,
+    overflow: 'hidden',
   },
-  item: { paddingHorizontal: 16 },
-  question: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 16,
+  cardPhoto: {
+    height: 160,
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: '#0f172a',
   },
-  questionText: { fontSize: 15, fontWeight: '600', flex: 1, lineHeight: 21 },
-  answer: { paddingBottom: 16 },
-  photo: { width: '100%', height: 160, borderRadius: 0 },
+  cardPhotoOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(5,10,20,0.55)',
+  },
+  cardPhotoText: {
+    position: 'absolute',
+    bottom: 14,
+    left: 14,
+    right: 48,
+  },
+  cardQuestion: {
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+    color: '#fff',
+    lineHeight: 22,
+  },
+  cardChevron: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  expandedBody: { padding: 16 },
   answerText: { fontSize: 14, lineHeight: 22 },
 });
