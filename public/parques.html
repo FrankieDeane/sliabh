@@ -1688,19 +1688,59 @@ ${trkpts}
       document.addEventListener('touchend', endDrag);
     })();
 
-    // ── Accept postMessage to fly to precise coordinates ───────────────────────
+    // ── Accept postMessage from parent app ────────────────────────────────────
+    var externalTrackLine = null;
+    var externalTrackMarkers = [];
+
     window.addEventListener('message', function (e) {
-      if (!e.data || e.data.type !== 'flyTo') return;
-      const { lat, lng, zoom } = e.data;
-      if (typeof lat === 'number' && typeof lng === 'number') {
-        map.flyTo([lat, lng], zoom || 11, { duration: 1.0 });
-        // Find and render the closest park
-        const closest = parks.reduce((best, p) => {
-          const d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
-          const bd = Math.abs(best.lat - lat) + Math.abs(best.lng - lng);
-          return d < bd ? p : best;
-        }, parks[0]);
-        if (closest) renderPanel(closest);
+      if (!e.data) return;
+
+      if (e.data.type === 'flyTo') {
+        var lat = e.data.lat, lng = e.data.lng, zoom = e.data.zoom;
+        if (typeof lat === 'number' && typeof lng === 'number') {
+          map.invalidateSize();
+          map.flyTo([lat, lng], zoom || 11, { duration: 1.0 });
+          var closest = parks.reduce(function(best, p) {
+            var d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
+            var bd = Math.abs(best.lat - lat) + Math.abs(best.lng - lng);
+            return d < bd ? p : best;
+          }, parks[0]);
+          if (closest) renderPanel(closest);
+        }
+        return;
+      }
+
+      if (e.data.type === 'showTrack') {
+        if (externalTrackLine) { map.removeLayer(externalTrackLine); externalTrackLine = null; }
+        externalTrackMarkers.forEach(function(m) { map.removeLayer(m); });
+        externalTrackMarkers = [];
+
+        var points = e.data.points;
+        if (!Array.isArray(points) || !points.length) return;
+
+        var latlngs = points.map(function(p) { return [p.lat, p.lon]; });
+        externalTrackLine = L.polyline(latlngs, {
+          color: '#3b82f6', weight: 3.5, opacity: 0.9,
+          dashArray: '8,4', lineJoin: 'round', lineCap: 'round'
+        }).addTo(map);
+
+        points.forEach(function(p, i) {
+          var icon = L.divIcon({
+            html: '<div style="background:#1d4ed8;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.4);">' + (i + 1) + '</div>',
+            className: '', iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -11]
+          });
+          var m = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
+          m.bindPopup('<b>' + (i + 1) + '. ' + (p.name || '') + '</b><br/>' + p.lat.toFixed(5) + ', ' + p.lon.toFixed(5));
+          externalTrackMarkers.push(m);
+        });
+
+        map.invalidateSize();
+        if (latlngs.length > 1) {
+          map.fitBounds(externalTrackLine.getBounds().pad(0.25), { duration: 1.0 });
+        } else {
+          map.flyTo(latlngs[0], 11, { duration: 1.0 });
+        }
+        return;
       }
     });
   </script>

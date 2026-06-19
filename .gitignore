@@ -34,3 +34,4 @@ yarn-error.*
 
 # nativewind / css-interop generated types
 nativewind-env.d.ts
+.claude/
