@@ -431,11 +431,7 @@ export default function TrailDetailScreen() {
   const insets = useSafeAreaInsets();
 
   function goBack() {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(tabs)/rutas' as any);
-    }
+    router.replace('/(tabs)/rutas' as any);
   }
   const { width, height } = useWindowDimensions();
   const { lang, t } = useLangStore();
