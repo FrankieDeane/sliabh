@@ -52,6 +52,7 @@ const TRAIL_VIDEOS: Record<string, string> = {
   'cerro-la-ventana':           '3807z2eqStg',
   'quebrada-humahuaca-trek':    '_0k0NG0R6jc',
   'lago-desierto-patagonia':    'Wr0Go7gmQQE',
+  'sierra-valdivieso-circuit':  '0opI29Sgcn4',
 };
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
