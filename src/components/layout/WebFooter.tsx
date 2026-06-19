@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,6 +22,7 @@ export function WebFooter() {
   const { theme } = useThemeStore();
   const { t } = useLangStore();
   const isDark = theme === 'dark';
+  const [legalOpen, setLegalOpen] = useState(false);
   const { width } = useWindowDimensions();
 
   const c = isDark
@@ -102,14 +103,42 @@ export function WebFooter() {
         <View style={[styles.divider, { backgroundColor: c.border }]} />
 
         <View style={[styles.bottom, isWide ? styles.bottomWide : null]}>
-          <Text style={[styles.copy, { color: c.muted }]}>
-            © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic</Text> — Argentina
-          </Text>
+          <View style={{ gap: 4 }}>
+            <Text style={[styles.copy, { color: c.muted }]}>
+              © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic</Text> — Argentina
+              {'  '}·{'  '}
+              <Text style={{ fontStyle: 'italic' }}>{t('Una idea de', 'An idea by')} </Text>
+              <Text style={{ color: c.text, fontWeight: '600' }}>Francisco Deane</Text>
+            </Text>
+          </View>
           <View style={styles.copyRight}>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />
             <Text style={[styles.copySmall, { color: c.muted }]}>{t('Hecho para exploradores de montaña', 'Made for mountain explorers')}</Text>
           </View>
         </View>
+
+        {/* Legal disclosure accordion */}
+        <TouchableOpacity
+          style={[styles.legalToggle, { borderTopColor: c.border }]}
+          onPress={() => setLegalOpen((o) => !o)}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.legalToggleTxt, { color: c.muted }]}>
+            {t('Aviso Legal', 'Legal Disclaimer')}
+          </Text>
+          <Ionicons name={legalOpen ? 'chevron-up' : 'chevron-down'} size={13} color={c.muted} />
+        </TouchableOpacity>
+
+        {legalOpen && (
+          <View style={[styles.legalBox, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <Text style={[styles.legalTxt, { color: c.muted }]}>
+              {t(
+                'Sliabh es una plataforma de información para actividades en la naturaleza. Los datos de senderos, mapas, distancias y tiempos estimados son orientativos y pueden no reflejar las condiciones actuales del terreno. Las actividades al aire libre conllevan riesgos inherentes. El usuario es responsable de su propia seguridad, preparación y decisiones en el campo.\n\nLa información proviene de fuentes de terceros (SIB/APN, OpenStreetMap, IGN Argentina) y puede contener errores u omisiones. Sliabh no garantiza la exactitud, completitud ni vigencia de los datos. Los mapas sin conexión son de referencia y no reemplazan el juicio del excursionista ni equipamiento de navegación profesional.\n\nSliabh no es un organismo oficial ni está afiliado a la Administración de Parques Nacionales de Argentina.',
+                'Sliabh is an informational platform for outdoor activities. Trail data, maps, distances and estimated times are indicative and may not reflect current terrain conditions. Outdoor activities carry inherent risks. Users are solely responsible for their own safety, preparation and decisions in the field.\n\nInformation is sourced from third parties (SIB/APN, OpenStreetMap, IGN Argentina) and may contain errors or omissions. Sliabh makes no warranty as to accuracy, completeness or currency of data. Offline maps are for reference only and do not replace hiker judgement or professional navigation equipment.\n\nSliabh is not an official body and is not affiliated with the Administración de Parques Nacionales de Argentina.',
+              )}
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -148,4 +177,14 @@ const styles = StyleSheet.create({
   copy: { fontSize: 12, lineHeight: 18 },
   copyRight: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   copySmall: { fontSize: 11 },
+  legalToggle: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    borderTopWidth: 1, marginTop: 16, paddingTop: 12, paddingHorizontal: 2,
+  },
+  legalToggleTxt: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
+  legalBox: {
+    marginTop: 10, borderRadius: 10, borderWidth: 1,
+    paddingHorizontal: 14, paddingVertical: 12,
+  },
+  legalTxt: { fontSize: 11, lineHeight: 18 },
 });
