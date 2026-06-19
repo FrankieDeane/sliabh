@@ -82,7 +82,7 @@ export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
     `Mapa: ${mapLink}\n\n` +
     (trail.tags.length > 0 ? `Etiquetas: ${trail.tags.join(', ')}\n\n` : '') +
     `Emergencias — Guardaparques APN: 105  ·  911  ·  Bomberos: 100\n\n` +
-    `Generado por Sliabh — barilochetrekking.com\n` +
+    `Generado por Sliabh\n` +
     `No reemplaza cartografía oficial APN/IGN.`;
 
   await Share.share({

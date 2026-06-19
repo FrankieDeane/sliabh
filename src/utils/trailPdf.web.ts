@@ -185,7 +185,7 @@ export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
   doc.setTextColor(240, 249, 255);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text('Guía de ruta · barilochetrekking.com', margin, 20);
+  doc.text('Guía de ruta · Sliabh', margin, 20);
 
   // Difficulty badge (top-right)
   const badgeLabel = trail.difficulty.toUpperCase();
@@ -374,7 +374,7 @@ export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
   doc.setTextColor(240, 249, 255);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text('Guía de ruta · barilochetrekking.com', margin, 17);
+  doc.text('Guía de ruta · Sliabh', margin, 17);
 
   // Trail name in header right
   doc.setFontSize(8.5);
@@ -512,7 +512,7 @@ export async function generateTrailPDF(trail: TrailPdfInput): Promise<void> {
   doc.setTextColor(148, 163, 184);
   const today = new Date().toLocaleDateString('es-AR');
   doc.text(
-    `Generado por Sliabh el ${today} — barilochetrekking.com · No reemplaza cartografía oficial APN/IGN`,
+    `Generado por Sliabh el ${today} · No reemplaza cartografía oficial APN/IGN`,
     margin,
     pageH - 8,
   );
