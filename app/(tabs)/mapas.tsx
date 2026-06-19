@@ -466,7 +466,7 @@ const NATIONAL_PARKS = [
     highlights: 'Paso de la Oveja · Paso Valdivieso · Valle Andorra · Valle Carbajal · 4-5 días',
     size: '55 MB',
     photo: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=600&q=75&fit=crop',
-    coords: { lat: -54.2793, lon: -68.0272 },
+    coords: { lat: -54.7200, lon: -68.4200 },
     unesco: false,
     trailId: 'sierra-valdivieso-circuit',
   },
