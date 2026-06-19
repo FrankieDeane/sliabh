@@ -507,7 +507,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 1490,
     duration: { min: 4, max: 5, unit: 'dias' },
     coordinates: { lat: -54.7200, lon: -68.4200 },
-    photo_uri: 'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=600&q=75&fit=crop',
+    photo_uri: '/sliabh-circuito-sierra-valdivieso.jpg',
     tags: ['circuito', 'montaña', 'pasos de alta montaña', 'Valle Carbajal', 'Valle Andorra', 'Ushuaia'],
     permits_required: false,
     best_season: 'Nov – Mar',
