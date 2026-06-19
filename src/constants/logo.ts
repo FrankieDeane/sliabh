@@ -1,2 +1,1 @@
-/** Sliabh transparent logo — white background removed, served from /public. */
-export const LOGO_URI = '/logo.svg';
+export const LOGO_URI = '/SLIABH_Logo_Transparent.png';
