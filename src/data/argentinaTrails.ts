@@ -336,7 +336,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 1300,
     duration: { min: 6, max: 9, unit: 'horas' },
     coordinates: { lat: -42.1523, lon: -71.6380 },
-    photo_uri: 'https://media-cdn.tripadvisor.com/media/photo-s/0a/69/a1/bb/20160220-131838-largejpg.jpg',
+    photo_uri: '/sliabh-lago-puelo.jpg',
     tags: ['lago glaciar', 'frontera Chile', 'bosque valdiviano', 'microclima'],
     permits_required: false,
     best_season: 'Oct – Abr',
