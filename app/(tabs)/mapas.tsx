@@ -486,6 +486,17 @@ function DownloadCard({
 
   async function handleCache() {
     if (cacheState !== 'idle') return;
+    if (!isTileCachingSupported()) {
+      if (typeof window !== 'undefined') {
+        window.alert(
+          t(
+            'Tu navegador no soporta almacenamiento offline. Abrí el sitio en HTTPS para activarlo.',
+            'Your browser does not support offline storage. Open the site over HTTPS to enable it.',
+          ),
+        );
+      }
+      return;
+    }
     setCacheState('downloading');
     setCacheProgress(0);
     try {
@@ -571,7 +582,7 @@ function DownloadCard({
               </Text>
             </TouchableOpacity>
           )}
-          {isTileCachingSupported() && (
+          {Platform.OS === 'web' && (
             <TouchableOpacity
               style={[dlS.btn, cacheState === 'done' ? dlS.btnCacheDone : dlS.btnCache]}
               onPress={handleCache}
