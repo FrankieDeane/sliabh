@@ -824,49 +824,53 @@ export default function MapasScreen() {
       </View>
 
       {/* ── GPS OFFLINE BANNER ── */}
-      <ImageBackground
-        source={{ uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1400&q=85&fit=crop' }}
-        style={s.gpsBannerBg}
-        resizeMode="cover"
-      >
-        <View style={s.gpsBannerOverlay} />
-        <View style={[
-          s.gpsBannerContent,
-          isMobile && { flexDirection: 'column', paddingHorizontal: 20, paddingVertical: 20, gap: 14 },
-        ]}>
-          <View style={{ flex: isMobile ? undefined : 1, gap: isMobile ? 8 : 12 }}>
-            <View style={s.gpsBannerBadge}>
-              <Ionicons name="navigate" size={13} color="#22c55e" />
-              <Text style={s.gpsBannerBadgeTxt}>{t('GPS SIN SEÑAL', 'OFFLINE GPS')}</Text>
-            </View>
-            <Text style={[s.gpsBannerTitle, isMobile && { fontSize: 18, lineHeight: 24 }]}>
-              {t('Descargá el mapa.\nNavegá sin internet.', 'Download the map.\nNavigate without internet.')}
-            </Text>
-            {!isMobile && (
+      {isMobile ? (
+        <View style={s.gpsBannerCompact}>
+          <Ionicons name="navigate" size={14} color="#22c55e" />
+          <Text style={s.gpsBannerCompactTxt}>
+            {t('GPS sin señal — descargá el mapa abajo', 'Offline GPS — download the map below')}
+          </Text>
+        </View>
+      ) : (
+        <ImageBackground
+          source={{ uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1400&q=85&fit=crop' }}
+          style={s.gpsBannerBg}
+          resizeMode="cover"
+        >
+          <View style={s.gpsBannerOverlay} />
+          <View style={s.gpsBannerContent}>
+            <View style={{ flex: 1, gap: 12 }}>
+              <View style={s.gpsBannerBadge}>
+                <Ionicons name="navigate" size={13} color="#22c55e" />
+                <Text style={s.gpsBannerBadgeTxt}>{t('GPS SIN SEÑAL', 'OFFLINE GPS')}</Text>
+              </View>
+              <Text style={s.gpsBannerTitle}>
+                {t('Descargá el mapa.\nNavegá sin internet.', 'Download the map.\nNavigate without internet.')}
+              </Text>
               <Text style={s.gpsBannerSub}>
                 {t(
                   'El chip GPS de tu celular recibe señal de satélites sin necesitar datos. Descargá el mapa del parque antes de salir — tu posición aparece en tiempo real aunque no tengas señal.',
                   "Your phone's GPS chip receives satellite signals without data. Download the park map before you leave — your position appears in real time even without signal.",
                 )}
               </Text>
-            )}
-          </View>
-          <View style={[s.gpsBannerSteps, isMobile && { flexDirection: 'row', gap: 12 }]}>
-            {([
-              { num: '1', es: 'Descargá abajo', en: 'Download below' },
-              { num: '2', es: 'Salí sin señal', en: 'Go off-grid' },
-              { num: '3', es: 'GPS en tiempo real', en: 'Real-time GPS' },
-            ] as const).map((step) => (
-              <View key={step.num} style={[s.gpsBannerStep, isMobile && { flex: 1, flexDirection: 'column', alignItems: 'center', gap: 4 }]}>
-                <View style={s.gpsBannerStepNum}>
-                  <Text style={s.gpsBannerStepNumTxt}>{step.num}</Text>
+            </View>
+            <View style={s.gpsBannerSteps}>
+              {([
+                { num: '1', es: 'Descargá abajo', en: 'Download below' },
+                { num: '2', es: 'Salí sin señal', en: 'Go off-grid' },
+                { num: '3', es: 'GPS en tiempo real', en: 'Real-time GPS' },
+              ] as const).map((step) => (
+                <View key={step.num} style={s.gpsBannerStep}>
+                  <View style={s.gpsBannerStepNum}>
+                    <Text style={s.gpsBannerStepNumTxt}>{step.num}</Text>
+                  </View>
+                  <Text style={s.gpsBannerStepTxt}>{t(step.es, step.en)}</Text>
                 </View>
-                <Text style={[s.gpsBannerStepTxt, isMobile && { fontSize: 11, textAlign: 'center' }]}>{t(step.es, step.en)}</Text>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      )}
 
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>
@@ -944,7 +948,14 @@ const s = StyleSheet.create({
   pageTitle: { fontSize: 22, fontWeight: '800', letterSpacing: -0.4 },
   offlineBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
   iframeWrapper: { width: '100%', height: 900 as any },
-  // GPS offline banner
+  // GPS offline banner — compact mobile strip
+  gpsBannerCompact: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: 'rgba(34,197,94,0.1)', borderTopWidth: 1, borderBottomWidth: 1,
+    borderColor: 'rgba(34,197,94,0.25)', paddingHorizontal: 16, paddingVertical: 10,
+  },
+  gpsBannerCompactTxt: { fontSize: 12, fontWeight: '600', color: '#22c55e', flex: 1 },
+  // GPS offline banner — desktop full
   gpsBannerBg: { width: '100%' },
   gpsBannerOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(7,11,20,0.72)' },
   gpsBannerContent: {
