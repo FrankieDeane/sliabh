@@ -386,7 +386,7 @@
           <div class="section-head">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
               <div style="display:flex;align-items:center;gap:10px">
-                <img src="/logo.svg" alt="Sliabh" style="height:30px;width:auto;display:block">
+                <img src="/SLIABH_Logo_Transparent.png" alt="Sliabh" style="height:30px;width:30px;display:block;border-radius:50%;object-fit:cover">
                 <h2 id="i18nTitle" style="margin:0">Explorá las áreas protegidas por región</h2>
               </div>
               <div class="lang-toggle" id="langToggle">
@@ -430,7 +430,7 @@
   </div>
 
   <footer style="text-align:center;padding:24px 18px;color:#4a586e;font-size:12px;line-height:1.7">
-    <img src="/logo.svg" alt="Sliabh" style="height:72px;width:auto;display:block;margin:0 auto 12px">
+    <img src="/SLIABH_Logo_Transparent.png" alt="Sliabh" style="height:72px;width:72px;display:block;margin:0 auto 12px;border-radius:50%;object-fit:cover">
     <div id="footerText">Mapa base OpenStreetMap / IGN Argentina · Datos SIB/APN · Sliabh</div>
   </footer>
 
@@ -590,6 +590,10 @@
       { position: 'topright', collapsed: true }
     ).addTo(map);
 
+    // ── i18n — declared early so Locate/Cache controls can reference lang ────
+    let lang = 'es';
+    const T = (es, en) => (lang === 'es' ? es : en);
+
     // ── Locate me ────────────────────────────────────────────────────────────
     let userMarker = null;
     function locateUser() {
@@ -718,9 +722,6 @@
     const searchInput = document.getElementById('searchInput');
 
     // ── i18n (ES / EN) ─────────────────────────────────────────────────────────
-    let lang = 'es';
-    const T = (es, en) => (lang === 'es' ? es : en);
-
     const I18N_STATIC = {
       i18nTitle:   ['Explorá las áreas protegidas por región', 'Explore protected areas by region'],
       i18nIntro:   ['Usá los filtros por región o el buscador para acotar el mapa. Tocá cualquier marcador para ver categoría, provincia, coordenadas, ecorregiones y senderos sugeridos.',
