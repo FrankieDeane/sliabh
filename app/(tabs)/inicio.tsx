@@ -46,7 +46,7 @@ const FEATURED = [
     distance: '110 km',
     daysEs: '18–22 días',
     daysEn: '18–22 days',
-    uri: 'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=700&q=80&fit=crop&auto=format',
+    uri: '/sliabh-aconcagua.jpg',
     routeId: 'aconcagua-ruta-normal',
   },
   {
