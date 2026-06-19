@@ -165,7 +165,7 @@ const NATIONAL_PARKS = [
     area_km2: 710,
     highlights: '6961 m · Ruta Normal · Valle de los Horcones',
     size: '96 MB',
-    photo: '/sliabh-aconcagua.jpg',
+    photo: '/sliabh-aconcagua-.jpg',
     coords: { lat: -32.65, lon: -70.01 },
     unesco: false,
     trailId: 'aconcagua-ruta-normal',

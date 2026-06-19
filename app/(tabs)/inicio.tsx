@@ -46,7 +46,7 @@ const FEATURED = [
     distance: '110 km',
     daysEs: '18–22 días',
     daysEn: '18–22 days',
-    uri: '/sliabh-aconcagua.jpg',
+    uri: '/sliabh-aconcagua-.jpg',
     routeId: 'aconcagua-ruta-normal',
   },
   {
@@ -98,7 +98,7 @@ const REGIONS = [
     regionEs: 'Mendoza · San Juan · La Rioja',
     regionEn: 'Mendoza · San Juan · La Rioja',
     trailCount: 1,
-    photo: '/sliabh-aconcagua.jpg',
+    photo: '/sliabh-aconcagua-.jpg',
   },
   {
     id: 'norte',

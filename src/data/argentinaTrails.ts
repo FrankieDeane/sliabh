@@ -45,7 +45,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     max_altitude_m: 6961,
     duration: { min: 18, max: 22, unit: 'dias' },
     coordinates: { lat: -32.6532, lon: -70.0109 },
-    photo_uri: '/sliabh-aconcagua.jpg',
+    photo_uri: '/sliabh-aconcagua-.jpg',
     tags: ['cima', 'nieve', 'alta montaña', 'aclimatación'],
     permits_required: true,
     best_season: 'Dic – Feb',
