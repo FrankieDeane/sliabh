@@ -584,6 +584,7 @@ function FaqItem({ q, a, c, isLast, photoUrl }: FaqItemProps) {
   const [open, setOpen] = useState(false);
   return (
     <View style={[fS.item, !isLast && { borderBottomWidth: 1, borderBottomColor: c.border }]}>
+      <Image source={{ uri: photoUrl }} style={fS.photo} resizeMode="cover" />
       <TouchableOpacity
         style={fS.question}
         onPress={() => setOpen((v) => !v)}
@@ -599,7 +600,6 @@ function FaqItem({ q, a, c, isLast, photoUrl }: FaqItemProps) {
       </TouchableOpacity>
       {open && (
         <View style={fS.answer}>
-          <Image source={{ uri: photoUrl }} style={fS.photo} resizeMode="cover" />
           <Text style={[fS.answerText, { color: c.muted }]}>{a}</Text>
         </View>
       )}
@@ -709,6 +709,6 @@ const fS = StyleSheet.create({
   },
   questionText: { fontSize: 15, fontWeight: '600', flex: 1, lineHeight: 21 },
   answer: { paddingBottom: 16 },
-  photo: { width: '100%', height: 160, borderRadius: 10, marginBottom: 12 },
+  photo: { width: '100%', height: 160, borderRadius: 0 },
   answerText: { fontSize: 14, lineHeight: 22 },
 });
