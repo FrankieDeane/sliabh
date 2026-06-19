@@ -10,10 +10,19 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 const MAX_CONTENT = 800;
 
 const PATAGONIA_PHOTOS = [
-  'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
-  'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop&auto=format',
+  '/faq-photos/faq-01.jpg',
+  '/faq-photos/faq-02.jpg',
+  '/faq-photos/faq-03.jpg',
+  '/faq-photos/faq-04.jpg',
+  '/faq-photos/faq-05.jpg',
+  '/faq-photos/faq-06.jpg',
+  '/faq-photos/faq-07.jpg',
+  '/faq-photos/faq-08.jpg',
+  '/faq-photos/faq-09.jpg',
+  '/faq-photos/faq-10.jpg',
+  '/faq-photos/faq-11.jpg',
+  '/faq-photos/faq-12.jpg',
+  '/faq-photos/faq-13.jpg',
 ];
 
 const FAQ_DATA: Array<{
