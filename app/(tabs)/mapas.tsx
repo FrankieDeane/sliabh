@@ -824,7 +824,7 @@ export default function MapasScreen() {
         </View>
       </View>
 
-      <View style={[s.iframeWrapper, isMobile && { height: Math.round(width * 1.05) } as any]}>
+      <View style={[s.iframeWrapper, isMobile && { height: Math.round(width * 1.4) } as any]}>
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
