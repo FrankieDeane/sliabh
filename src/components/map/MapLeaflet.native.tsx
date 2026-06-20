@@ -1,6 +1,11 @@
-import React, { useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
+
+export interface MapLeafletHandle {
+  startHikeTracking: () => void;
+  stopHikeTracking: () => void;
+}
 
 export interface MapMarker {
   id: string;
@@ -21,6 +26,7 @@ interface Props {
   height?: number | string;
   layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
   showPolyline?: boolean;
+  onLocationUpdate?: (lat: number, lon: number) => void;
 }
 
 const TILE_URLS: Record<string, string> = {
@@ -155,13 +161,44 @@ function buildHTML(
     }
   });
   new LocateCtrl().addTo(map);
+
+  // ── Hike tracking (called from React Native via injectJavaScript) ───────────
+  var hikeWatchId = null;
+  var hikeMarker = null;
+  window.startHikeTracking = function() {
+    if (hikeWatchId !== null) return;
+    hikeWatchId = navigator.geolocation.watchPosition(function(pos) {
+      var lat = pos.coords.latitude, lng = pos.coords.longitude;
+      if (!hikeMarker) {
+        var icon = L.divIcon({
+          html: '<div style="position:relative;width:20px;height:20px;"><div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.25);animation:hp 1.8s ease-out infinite;"></div><div style="position:absolute;top:4px;left:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div></div><style>@keyframes hp{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.5);opacity:0}}</style>',
+          className: '', iconSize: [20,20], iconAnchor: [10,10]
+        });
+        hikeMarker = L.marker([lat, lng], { icon: icon, zIndexOffset: 2000 }).addTo(map);
+        hikeMarker.bindPopup('Tu ubicación');
+      } else {
+        hikeMarker.setLatLng([lat, lng]);
+      }
+      map.panTo([lat, lng], { animate: true, duration: 0.5 });
+      try {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'locationUpdate', lat: lat, lon: lng }));
+      } catch(e) {}
+    }, function() {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 });
+  };
+  window.stopHikeTracking = function() {
+    if (hikeWatchId !== null) {
+      navigator.geolocation.clearWatch(hikeWatchId);
+      hikeWatchId = null;
+    }
+    if (hikeMarker) { hikeMarker.remove(); hikeMarker = null; }
+  };
 })();
 </script>
 </body>
 </html>`;
 }
 
-export function MapLeaflet({
+export const MapLeaflet = forwardRef<MapLeafletHandle, Props>(function MapLeaflet({
   onMapPress,
   waypoints = [],
   markers = [],
@@ -172,7 +209,19 @@ export function MapLeaflet({
   height = 400,
   layer = 'osm',
   showPolyline = true,
-}: Props) {
+  onLocationUpdate,
+}, ref) {
+  const webviewRef = useRef<WebView>(null);
+
+  useImperativeHandle(ref, () => ({
+    startHikeTracking() {
+      webviewRef.current?.injectJavaScript('window.startHikeTracking && window.startHikeTracking(); true;');
+    },
+    stopHikeTracking() {
+      webviewRef.current?.injectJavaScript('window.stopHikeTracking && window.stopHikeTracking(); true;');
+    },
+  }));
+
   const tileUrl = TILE_URLS[layer] ?? TILE_URLS.osm;
   const effectiveCenter: [number, number] = flyTo ? [flyTo.lat, flyTo.lon] : center;
   const effectiveZoom = flyTo?.zoom ?? zoom;
@@ -188,11 +237,14 @@ export function MapLeaflet({
         if (data.type === 'markerPress' && onMarkerPress) {
           onMarkerPress(data.id);
         }
+        if (data.type === 'locationUpdate' && onLocationUpdate) {
+          onLocationUpdate(data.lat, data.lon);
+        }
       } catch {
         // ignore malformed messages
       }
     },
-    [onMapPress, onMarkerPress],
+    [onMapPress, onMarkerPress, onLocationUpdate],
   );
 
   return (
@@ -206,6 +258,7 @@ export function MapLeaflet({
       ]}
     >
       <WebView
+        ref={webviewRef}
         key={layer}
         source={{ html, baseUrl: 'https://unpkg.com' }}
         onMessage={handleMessage}
@@ -222,7 +275,7 @@ export function MapLeaflet({
       />
     </View>
   );
-}
+});
 
 export default MapLeaflet;
 
