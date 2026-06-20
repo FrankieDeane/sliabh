@@ -54,6 +54,7 @@ interface MapLeafletProps {
   height?: number | string;
   layer?: 'osm' | 'topo' | 'dark' | 'argenmap';
   showPolyline?: boolean;
+  userPosition?: { lat: number; lon: number } | null;
 }
 
 const TILE_URLS = {
@@ -145,6 +146,34 @@ function ClickHandler({ onMapPress }: { onMapPress?: (lat: number, lon: number) 
   return null;
 }
 
+const userPosIcon = Leaflet
+  ? Leaflet.divIcon({
+      html: `<div style="position:relative;width:20px;height:20px;">
+        <div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.25);animation:hike-pulse 1.8s ease-out infinite;"></div>
+        <div style="position:absolute;top:4px;left:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>
+      </div>
+      <style>@keyframes hike-pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.5);opacity:0}}</style>`,
+      className: '',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    })
+  : null;
+
+function UserPositionMarker({ position }: { position: { lat: number; lon: number } | null | undefined }) {
+  const map = useMap ? useMap() : null;
+  useEffect(() => {
+    if (map && position) {
+      map.panTo([position.lat, position.lon], { animate: true, duration: 0.5 });
+    }
+  }, [map, position?.lat, position?.lon]);
+  if (!position || !Marker || !userPosIcon) return null;
+  return (
+    <Marker position={[position.lat, position.lon]} icon={userPosIcon}>
+      <Popup>Tu ubicación / Your location</Popup>
+    </Marker>
+  );
+}
+
 export function MapLeaflet({
   onMapPress,
   waypoints = [],
@@ -156,6 +185,7 @@ export function MapLeaflet({
   height = 400,
   layer = 'osm',
   showPolyline = true,
+  userPosition,
 }: MapLeafletProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -212,6 +242,7 @@ export function MapLeaflet({
         <ClickHandler onMapPress={onMapPress} />
         <FlyToHandler flyTo={flyTo} />
         <MarkerLayer markers={markers} parkIcon={parkIcon} onMarkerPress={onMarkerPress} />
+        <UserPositionMarker position={userPosition} />
         {waypoints.map((wp, index) => (
           <Marker key={`${wp.lat}-${wp.lon}-${index}`} position={[wp.lat, wp.lon]}>
             <Popup>

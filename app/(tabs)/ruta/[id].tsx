@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   useWindowDimensions,
   Platform,
   Linking,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,6 +29,12 @@ import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentina
 const TrailMap3D = Platform.OS === 'web'
   ? require('../../../src/components/map/TrailMap3D.web').default
   : require('../../../src/components/map/TrailMap3D.native').default;
+
+// Platform-specific flat map for hike mode
+const MapLeaflet = Platform.OS === 'web'
+  ? require('../../../src/components/map/MapLeaflet.web').MapLeaflet
+  : require('../../../src/components/map/MapLeaflet.native').MapLeaflet;
+import type { MapLeafletHandle } from '../../../src/components/map/MapLeaflet.native';
 
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 
@@ -443,6 +451,7 @@ export default function TrailDetailScreen() {
     : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b', accent: '#22c55e' };
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [isHiking, setIsHiking] = useState(false);
 
   const trail = ALL_TRAILS.find((tr) => tr.id === id);
 
@@ -619,7 +628,7 @@ export default function TrailDetailScreen() {
         {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
         <View style={[styles.scrollContent, { paddingHorizontal: sidePad, backgroundColor: C.bg }]}>
           {activeTab === 'overview' && (
-            <OverviewTab trail={trail} lang={lang} t={t} />
+            <OverviewTab trail={trail} lang={lang} t={t} onStartHike={() => setIsHiking(true)} />
           )}
           {activeTab === 'logistics' && (
             <LogisticsTab lines={logisticsLines} t={t} />
@@ -633,6 +642,12 @@ export default function TrailDetailScreen() {
           <View style={{ height: 60 }} />
         </View>
       </ScrollView>
+      <HikeMode
+        visible={isHiking}
+        trail={trail}
+        onClose={() => setIsHiking(false)}
+        t={t}
+      />
     </View>
     </TrailThemeCtx.Provider>
   );
@@ -671,20 +686,23 @@ function ElevationProfile({
   gpxTrack?: Array<{ lat: number; lon: number; ele?: number }>;
 }) {
   const C = useC();
+  const [tooltip, setTooltip] = React.useState<{ x: number; y: number; elev: number; dist: number } | null>(null);
   if (Platform.OS !== 'web') return null;
 
   const W = 400;
-  const H = 90;
-  const pad = 2;
+  const H = 160;
+  const padL = 38; // left pad for y-axis labels
+  const padR = 6;
+  const padT = 10;
+  const padB = 22; // bottom pad for x-axis labels
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
 
-  // Build points from real track when elevation data is available;
-  // fall back to synthetic curve when it isn't.
   const hasRealEle = gpxTrack && gpxTrack.length >= 2 && gpxTrack.some((p) => p.ele != null);
 
   let rawPts: Array<{ x: number; y: number }>;
 
   if (hasRealEle) {
-    // Haversine cumulative distance along the track
     const R = 6371;
     const haversineKm = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) => {
       const dLat = ((b.lat - a.lat) * Math.PI) / 180;
@@ -704,7 +722,7 @@ function ElevationProfile({
   } else {
     const baseAlt = maxAltM - gainM;
     rawPts = [
-      { x: 0,               y: baseAlt },
+      { x: 0,                y: baseAlt },
       { x: distanceKm * 0.10, y: baseAlt + gainM * 0.05 },
       { x: distanceKm * 0.28, y: baseAlt + gainM * 0.30 },
       { x: distanceKm * 0.48, y: baseAlt + gainM * 0.62 },
@@ -721,8 +739,8 @@ function ElevationProfile({
   const rangeY = maxY - minY || 1;
 
   const toSvg = (x: number, y: number): [number, number] => [
-    pad + (x / totalX) * (W - 2 * pad),
-    pad + (1 - (y - minY) / rangeY) * (H - 2 * pad - 10),
+    padL + (x / totalX) * chartW,
+    padT + (1 - (y - minY) / rangeY) * chartH,
   ];
 
   const pts = rawPts.map((p) => toSvg(p.x, p.y));
@@ -734,35 +752,121 @@ function ElevationProfile({
     const cpx = (px + cx) / 2;
     d += ` C ${cpx} ${py} ${cpx} ${cy} ${cx} ${cy}`;
   }
-  const fillD = `${d} L ${pts[pts.length - 1][0]} ${H} L ${pts[0][0]} ${H} Z`;
+  const fillD = `${d} L ${pts[pts.length - 1][0]} ${padT + chartH} L ${padL} ${padT + chartH} Z`;
 
-  // Peak dot: highest elevation point
   const peakIdx = rawPts.reduce((best, p, i) => (p.y > rawPts[best].y ? i : best), 0);
   const peakPt = pts[peakIdx];
+
+  // Y-axis gridlines at 25 / 50 / 75 %
+  const gridFracs = [0.25, 0.5, 0.75];
+
+  // X-axis ticks at 25 / 50 / 75 %
+  const xTicks = [0.25, 0.5, 0.75];
+
+  function handleMouseMove(e: React.MouseEvent<SVGRectElement>) {
+    const rect = (e.currentTarget as SVGRectElement).getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    const frac = Math.max(0, Math.min(1, (relX - padL) / chartW));
+    const distAtCursor = frac * totalX;
+    // find nearest rawPt
+    let nearest = rawPts[0];
+    let minDist = Math.abs(rawPts[0].x - distAtCursor);
+    for (const p of rawPts) {
+      const d2 = Math.abs(p.x - distAtCursor);
+      if (d2 < minDist) { minDist = d2; nearest = p; }
+    }
+    const [sx, sy] = toSvg(nearest.x, nearest.y);
+    setTooltip({ x: sx, y: sy, elev: Math.round(nearest.y), dist: Math.round(nearest.x * 10) / 10 });
+  }
 
   return (
     <View style={{ marginTop: 8 }}>
       {/* @ts-ignore — SVG on web */}
-      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', overflow: 'visible' }}>
+      <svg
+        width="100%"
+        viewBox={`0 0 ${W} ${H}`}
+        style={{ display: 'block', overflow: 'visible' }}
+        onMouseLeave={() => setTooltip(null)}
+      >
         <defs>
           {/* @ts-ignore */}
           <linearGradient id="elevFill" x1="0" y1="0" x2="0" y2="1">
             {/* @ts-ignore */}
-            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.30" />
             {/* @ts-ignore */}
             <stop offset="100%" stopColor="#22c55e" stopOpacity="0.02" />
           </linearGradient>
         </defs>
+
+        {/* Gridlines */}
+        {gridFracs.map((f) => {
+          const elevLabel = Math.round(minY + f * rangeY);
+          const gy = padT + (1 - f) * chartH;
+          return (
+            <React.Fragment key={f}>
+              {/* @ts-ignore */}
+              <line x1={padL} y1={gy} x2={padL + chartW} y2={gy} stroke="rgba(100,116,139,0.2)" strokeWidth="1" strokeDasharray="3 3" />
+              {/* @ts-ignore */}
+              <text x={padL - 4} y={gy + 4} textAnchor="end" fontSize="9" fill="#64748b">{elevLabel}</text>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Fill + line */}
         {/* @ts-ignore */}
         <path d={fillD} fill="url(#elevFill)" />
         {/* @ts-ignore */}
         <path d={d} fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Peak dot */}
         {/* @ts-ignore */}
         <circle cx={peakPt[0]} cy={peakPt[1]} r="4" fill="#22c55e" />
         {/* @ts-ignore */}
         <circle cx={peakPt[0]} cy={peakPt[1]} r="8" fill="#22c55e" fillOpacity="0.2" />
+        {/* @ts-ignore */}
+        <text x={peakPt[0]} y={peakPt[1] - 12} textAnchor="middle" fontSize="9" fontWeight="700" fill="#22c55e">{maxAltM.toLocaleString()} m</text>
+
+        {/* X-axis distance ticks */}
+        {xTicks.map((f) => {
+          const tx = padL + f * chartW;
+          const distLabel = `${Math.round(f * distanceKm * 10) / 10} km`;
+          return (
+            <React.Fragment key={f}>
+              {/* @ts-ignore */}
+              <line x1={tx} y1={padT + chartH} x2={tx} y2={padT + chartH + 4} stroke="#64748b" strokeWidth="1" />
+              {/* @ts-ignore */}
+              <text x={tx} y={padT + chartH + 14} textAnchor="middle" fontSize="9" fill="#64748b">{distLabel}</text>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Hover interaction overlay */}
+        {/* @ts-ignore */}
+        <rect
+          x={padL} y={padT} width={chartW} height={chartH}
+          fill="transparent"
+          style={{ cursor: 'crosshair' }}
+          onMouseMove={handleMouseMove}
+        />
+
+        {/* Tooltip */}
+        {tooltip && (
+          <>
+            {/* @ts-ignore */}
+            <line x1={tooltip.x} y1={padT} x2={tooltip.x} y2={padT + chartH} stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="3 3" />
+            {/* @ts-ignore */}
+            <circle cx={tooltip.x} cy={tooltip.y} r="4" fill="#fff" stroke="#22c55e" strokeWidth="2" />
+            {/* @ts-ignore */}
+            <rect x={tooltip.x + 6} y={tooltip.y - 22} width={72} height={20} rx="4" fill="#0f1724" fillOpacity="0.92" />
+            {/* @ts-ignore */}
+            <text x={tooltip.x + 42} y={tooltip.y - 8} textAnchor="middle" fontSize="9" fill="#f0f9ff">
+              {tooltip.elev.toLocaleString()} m · {tooltip.dist} km
+            </text>
+          </>
+        )}
       </svg>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 }}>
         <Text style={{ color: C.muted, fontSize: 10 }}>0 km</Text>
         <Text style={{ color: C.accent, fontSize: 11, fontWeight: '700' }}>
           ↑ {gainM.toLocaleString()} m · {maxAltM.toLocaleString()} m máx
@@ -972,15 +1076,35 @@ function OverviewTab({
   trail,
   lang,
   t,
+  onStartHike,
 }: {
   trail: (typeof ARGENTINA_TRAILS)[0];
   lang: 'es' | 'en';
   t: (es: string, en: string) => string;
+  onStartHike: () => void;
 }) {
   const C = useC();
   return (
     <View style={styles.tabContent}>
       <DownloadRow trail={trail as any} t={t} />
+
+      {/* Start Hike button */}
+      <TouchableOpacity
+        style={[hikeStartS.btn, { backgroundColor: '#14532d', borderColor: C.accent }]}
+        onPress={onStartHike}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="walk-outline" size={20} color={C.accent} />
+        <View>
+          <Text style={[hikeStartS.label, { color: C.accent }]}>
+            {t('Iniciar Caminata', 'Start Hike')}
+          </Text>
+          <Text style={[hikeStartS.sub, { color: 'rgba(134,239,172,0.7)' }]}>
+            {t('GPS en vivo · tiempo · distancia', 'Live GPS · time · distance')}
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={16} color={C.accent} style={{ marginLeft: 'auto' }} />
+      </TouchableOpacity>
 
       <SectionCard>
         <CardLabel text={t('Perfil de elevación', 'Elevation Profile')} />
@@ -1260,6 +1384,247 @@ function GearTab({ categories }: { categories: { category: string; items: string
     </View>
   );
 }
+
+// ─── Hike Mode ────────────────────────────────────────────────────────────────
+
+function formatElapsed(ms: number): string {
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
+function haversineKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const R = 6371;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLon = ((b.lon - a.lon) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) *
+      Math.cos((b.lat * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+}
+
+interface HikeModeProps {
+  visible: boolean;
+  trail: (typeof ALL_TRAILS)[0];
+  onClose: () => void;
+  t: (es: string, en: string) => string;
+}
+
+function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
+  const C = useC();
+  const [elapsed, setElapsed] = useState(0);
+  const [userPos, setUserPos] = useState<{ lat: number; lon: number } | null>(null);
+  const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number }>>([]);
+  const startRef = useRef<number>(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const watchIdRef = useRef<number | null>(null);
+  const mapRef = useRef<MapLeafletHandle>(null);
+
+  const updatePosition = useCallback((lat: number, lon: number) => {
+    setUserPos({ lat, lon });
+    setPosHistory((prev) => {
+      const next = [...prev, { lat, lon }];
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
+    startRef.current = Date.now();
+    setElapsed(0);
+    setUserPos(null);
+    setPosHistory([]);
+
+    timerRef.current = setInterval(() => {
+      setElapsed(Date.now() - startRef.current);
+    }, 1000);
+
+    if (Platform.OS === 'web') {
+      if (typeof navigator !== 'undefined' && navigator.geolocation) {
+        watchIdRef.current = navigator.geolocation.watchPosition(
+          (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude),
+          () => {},
+          { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
+        );
+      }
+    } else {
+      // Native: start tracking via WebView injectJavaScript
+      setTimeout(() => {
+        (mapRef.current as any)?.startHikeTracking?.();
+      }, 1200); // give WebView time to load
+    }
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (Platform.OS === 'web' && watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      } else {
+        (mapRef.current as any)?.stopHikeTracking?.();
+      }
+    };
+  }, [visible, updatePosition]);
+
+  const distanceCovered = posHistory.length >= 2
+    ? posHistory.reduce((sum, p, i) => i === 0 ? 0 : sum + haversineKm(posHistory[i - 1], p), 0)
+    : 0;
+
+  const mapCenter: [number, number] = [trail.coordinates.lat, trail.coordinates.lon];
+
+  return (
+    <Modal visible={visible} animationType="slide" statusBarTranslucent>
+      <SafeAreaView style={[hikeS.root, { backgroundColor: C.bg }]}>
+        {/* Header */}
+        <View style={[hikeS.header, { borderBottomColor: C.border }]}>
+          <View style={hikeS.headerLeft}>
+            <View style={hikeS.activeDot} />
+            <Text style={[hikeS.headerTitle, { color: C.accent }]}>
+              {t('CAMINATA ACTIVA', 'ACTIVE HIKE')}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={[hikeS.stopBtn, { borderColor: '#ef4444' }]}
+            onPress={onClose}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="stop-circle-outline" size={16} color="#ef4444" />
+            <Text style={hikeS.stopBtnText}>{t('Detener', 'Stop')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Map */}
+        <View style={{ flex: 1 }}>
+          <MapLeaflet
+            ref={mapRef}
+            center={mapCenter}
+            zoom={13}
+            height="100%"
+            layer="topo"
+            showPolyline={false}
+            userPosition={userPos}
+            onLocationUpdate={updatePosition}
+          />
+        </View>
+
+        {/* Stats HUD */}
+        <View style={[hikeS.hud, { backgroundColor: C.surface, borderTopColor: C.border }]}>
+          <HikeStat
+            icon="time-outline"
+            label={t('Tiempo', 'Time')}
+            value={formatElapsed(elapsed)}
+            accent={C.accent}
+            text={C.text}
+            muted={C.muted}
+          />
+          <View style={[hikeS.hudDivider, { backgroundColor: C.border }]} />
+          <HikeStat
+            icon="walk-outline"
+            label={t('Distancia', 'Distance')}
+            value={distanceCovered >= 1
+              ? `${distanceCovered.toFixed(2)} km`
+              : `${Math.round(distanceCovered * 1000)} m`}
+            accent={C.accent}
+            text={C.text}
+            muted={C.muted}
+          />
+          <View style={[hikeS.hudDivider, { backgroundColor: C.border }]} />
+          <HikeStat
+            icon="location-outline"
+            label={t('GPS', 'GPS')}
+            value={userPos ? t('Activo', 'Active') : t('Buscando…', 'Searching…')}
+            accent={userPos ? C.accent : C.muted}
+            text={C.text}
+            muted={C.muted}
+          />
+        </View>
+
+        {/* Trail name footer */}
+        <View style={[hikeS.footer, { backgroundColor: C.bg }]}>
+          <Ionicons name="map-outline" size={13} color={C.muted} />
+          <Text style={[hikeS.footerText, { color: C.muted }]} numberOfLines={1}>
+            {trail.name}
+          </Text>
+        </View>
+      </SafeAreaView>
+    </Modal>
+  );
+}
+
+function HikeStat({
+  icon, label, value, accent, text, muted,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  value: string;
+  accent: string;
+  text: string;
+  muted: string;
+}) {
+  return (
+    <View style={hikeS.statItem}>
+      <Ionicons name={icon} size={18} color={accent} />
+      <Text style={[hikeS.statValue, { color: text }]}>{value}</Text>
+      <Text style={[hikeS.statLabel, { color: muted }]}>{label}</Text>
+    </View>
+  );
+}
+
+const hikeStartS = StyleSheet.create({
+  btn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+  },
+  label: { fontSize: 15, fontWeight: '800', letterSpacing: -0.3 },
+  sub: { fontSize: 12, marginTop: 1 },
+});
+
+const hikeS = StyleSheet.create({
+  root: { flex: 1 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  activeDot: {
+    width: 8, height: 8, borderRadius: 4, backgroundColor: '#22c55e',
+  },
+  headerTitle: { fontSize: 12, fontWeight: '800', letterSpacing: 1.5 },
+  stopBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8,
+    backgroundColor: 'rgba(239,68,68,0.1)',
+  },
+  stopBtnText: { fontSize: 13, fontWeight: '700', color: '#ef4444' },
+  hud: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+  },
+  hudDivider: { width: 1, height: 40, marginHorizontal: 4 },
+  statItem: { flex: 1, alignItems: 'center', gap: 4 },
+  statValue: { fontSize: 17, fontWeight: '800', letterSpacing: -0.5 },
+  statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
+  footer: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    paddingHorizontal: 16, paddingVertical: 8,
+  },
+  footerText: { fontSize: 12, flex: 1 },
+});
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
