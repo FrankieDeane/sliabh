@@ -90,7 +90,7 @@ const NATIONAL_PARKS = [
     highlights: 'Costa atlántica virgen · Travesía extrema · Aislamiento total · Bosque subantártico',
     size: '85 MB',
     photo: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=75&fit=crop',
-    coords: { lat: -54.6200, lon: -65.9500 },
+    coords: { lat: -54.8750, lon: -66.6500 },
     unesco: false,
     trailId: 'bahia-mitre',
     gpxPoints: [
