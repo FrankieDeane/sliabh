@@ -384,40 +384,40 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     trailhead: 'Estancia Harberton / acceso oeste — Tierra del Fuego',
     mapOverlayUrl: 'https://www.openstreetmap.org/#map=10/-54.9000/-67.0000',
     gpxTrack: [
-      // Día 1 — Inicio oeste (Bahía Mitre) → avanzando por costa Beagle hacia el este
-      { lat: -54.9050, lon: -67.6200, ele: 10,  name: 'Bahía Mitre — Inicio / punto de extracción oeste' },
-      { lat: -54.9000, lon: -67.5500, ele: 15,  name: 'Playa Bahía Mitre Este — Costa Beagle' },
-      { lat: -54.8900, lon: -67.4800, ele: 20,  name: 'Punta Mitre — acantilados costeros' },
-      { lat: -54.8850, lon: -67.4100, ele: 25,  name: 'Río Overand — cruce vadera' },
-      // Día 2 — Sierra Beauvoir (única elevación significativa del tramo)
-      { lat: -54.8900, lon: -67.3500, ele: 120, name: 'Subida Sierra Beauvoir' },
-      { lat: -54.8850, lon: -67.3000, ele: 510, name: 'Paso Sierra Beauvoir (510 m) — Punto más alto de la travesía' },
-      { lat: -54.8950, lon: -67.2400, ele: 180, name: 'Descenso al este Sierra Beauvoir' },
-      // Día 3 — Bahía Aguirre
-      { lat: -54.9100, lon: -67.2000, ele: 40,  name: 'Río Lasifashaj — cruce vadera' },
-      { lat: -54.9200, lon: -67.1500, ele: 25,  name: 'Playa Bahía Aguirre Oeste' },
+      // Día 1 — Bahía Mitre → costa Beagle hacia el este
+      { lat: -54.8820, lon: -67.6200, ele: 10,  name: 'Bahía Mitre — Inicio / punto de extracción' },
+      { lat: -54.8780, lon: -67.5500, ele: 12,  name: 'Playa Bahía Mitre Este' },
+      { lat: -54.8750, lon: -67.4800, ele: 15,  name: 'Punta Mitre — acantilados costeros' },
+      { lat: -54.8720, lon: -67.4100, ele: 20,  name: 'Río Overand — cruce vadera' },
+      // Día 2 — Sierra Beauvoir (desvío interior)
+      { lat: -54.8700, lon: -67.3500, ele: 120, name: 'Subida Sierra Beauvoir' },
+      { lat: -54.8650, lon: -67.3000, ele: 510, name: 'Paso Sierra Beauvoir (510 m) — Punto más alto' },
+      { lat: -54.8700, lon: -67.2400, ele: 180, name: 'Descenso este Sierra Beauvoir' },
+      // Día 3 — Bahía Aguirre (ensenada que entra al norte — estos puntos son dentro de la bahía)
+      { lat: -54.8800, lon: -67.2000, ele: 30,  name: 'Río Lasifashaj — cruce vadera' },
+      { lat: -54.8950, lon: -67.1500, ele: 15,  name: 'Playa Bahía Aguirre Oeste' },
       { lat: -54.9124, lon: -67.0497, ele: 10,  name: 'Bahía Aguirre — Campamento costero' },
-      { lat: -54.9050, lon: -67.0000, ele: 15,  name: 'Punta Aguirre Este' },
-      // Día 4 — Costa Beagle tramo central
-      { lat: -54.8950, lon: -66.9300, ele: 20,  name: 'Costa Beagle — playas de canto rodado' },
-      { lat: -54.8900, lon: -66.8600, ele: 25,  name: 'Río San Pablo — cruce' },
-      { lat: -54.8850, lon: -66.7800, ele: 30,  name: 'Acantilados Punta Gruesa' },
+      { lat: -54.8900, lon: -67.0000, ele: 15,  name: 'Punta Aguirre Este — regreso a costa Beagle' },
+      // Día 4 — Costa Beagle central
+      { lat: -54.8750, lon: -66.9300, ele: 20,  name: 'Costa Beagle — playas de canto rodado' },
+      { lat: -54.8700, lon: -66.8600, ele: 20,  name: 'Río San Pablo — cruce' },
+      { lat: -54.8680, lon: -66.7800, ele: 25,  name: 'Acantilados Punta Gruesa' },
       // Día 5 — Continuando al este
-      { lat: -54.8900, lon: -66.7000, ele: 25,  name: 'Ensenada Buen Suceso' },
-      { lat: -54.8950, lon: -66.6200, ele: 20,  name: 'Río Cangrejo — cruce vadera' },
-      { lat: -54.9000, lon: -66.5300, ele: 20,  name: 'Costa rocosa — bosque subantártico' },
-      // Día 6 — Tramo atlántico sur-este
-      { lat: -54.9050, lon: -66.4400, ele: 25,  name: 'Bahía Sloggett' },
-      { lat: -54.9000, lon: -66.3500, ele: 30,  name: 'Río Ewan — cruce vadera' },
-      { lat: -54.8900, lon: -66.2600, ele: 25,  name: 'Punta Arenas Gordas' },
-      // Día 7 — Costa sur hacia el este, turberas
-      { lat: -54.8750, lon: -66.1700, ele: 30,  name: 'Turbera costera — campo traviesa' },
-      { lat: -54.8700, lon: -66.0800, ele: 25,  name: 'Desembocadura Río Grande' },
-      { lat: -54.8650, lon: -65.9800, ele: 20,  name: 'Bahía Thetis Sur' },
-      // Día 8 — Fin de travesía, costa SE
-      { lat: -54.8700, lon: -65.8800, ele: 15,  name: 'Punta noreste — acceso Cabo San Diego' },
-      { lat: -54.8600, lon: -65.7800, ele: 10,  name: 'Bahía San Sebastián Sur' },
-      { lat: -54.8500, lon: -65.6700, ele: 10,  name: 'Cabo San Diego — Fin de travesía / punta más oriental de Argentina' },
+      { lat: -54.8700, lon: -66.7000, ele: 20,  name: 'Ensenada Buen Suceso' },
+      { lat: -54.8720, lon: -66.6200, ele: 18,  name: 'Río Cangrejo — cruce vadera' },
+      { lat: -54.8750, lon: -66.5300, ele: 18,  name: 'Costa rocosa — bosque subantártico' },
+      // Día 6 — Tramo sur-este
+      { lat: -54.8780, lon: -66.4400, ele: 20,  name: 'Bahía Sloggett' },
+      { lat: -54.8750, lon: -66.3500, ele: 25,  name: 'Río Ewan — cruce vadera' },
+      { lat: -54.8700, lon: -66.2600, ele: 20,  name: 'Punta Arenas Gordas' },
+      // Día 7 — Costa sur hacia el este
+      { lat: -54.8650, lon: -66.1700, ele: 25,  name: 'Turbera costera — campo traviesa' },
+      { lat: -54.8620, lon: -66.0800, ele: 20,  name: 'Desembocadura Río Grande' },
+      { lat: -54.8600, lon: -65.9800, ele: 18,  name: 'Bahía Thetis Sur' },
+      // Día 8 — Fin de travesía
+      { lat: -54.8620, lon: -65.8800, ele: 15,  name: 'Punta noreste — acceso Cabo San Diego' },
+      { lat: -54.8550, lon: -65.7800, ele: 12,  name: 'Bahía San Sebastián Sur' },
+      { lat: -54.8450, lon: -65.6700, ele: 10,  name: 'Cabo San Diego — Fin / punta más oriental de Argentina' },
     ],
   },
   {
