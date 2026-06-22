@@ -384,51 +384,48 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     trailhead: 'Cabo San Pablo — R.N. 3 km 2980 (Tierra del Fuego)',
     mapOverlayUrl: 'https://www.openstreetmap.org/#map=10/-54.7000/-66.2000',
     gpxTrack: [
-      // Día 1 — Cabo San Pablo → Cabo Domingo
+      // Día 1 — Cabo San Pablo → costa norte hacia el este
       { lat: -54.0920, lon: -65.4310, ele: 10,  name: 'Cabo San Pablo — Inicio de travesía' },
-      { lat: -54.1350, lon: -65.5200, ele: 20,  name: 'Playa Los Patos' },
-      { lat: -54.1900, lon: -65.6100, ele: 15,  name: 'Desembocadura Río Irigoyen' },
-      { lat: -54.2500, lon: -65.7200, ele: 30,  name: 'Acantilados Punta Arenas Gordas' },
-      { lat: -54.3100, lon: -65.8100, ele: 25,  name: 'Bahía Thetis Norte' },
-      // Día 2 — Cabo Domingo → Río Ewan
-      { lat: -54.3800, lon: -65.8900, ele: 20,  name: 'Cabo Domingo' },
-      { lat: -54.4300, lon: -65.9800, ele: 35,  name: 'Punta Gruesa' },
-      { lat: -54.4900, lon: -66.0700, ele: 40,  name: 'Bahía Sloggett Norte' },
-      { lat: -54.5400, lon: -66.1500, ele: 30,  name: 'Río Ewan — Cruce vadera' },
-      // Día 3 — Río Ewan → Sierra Lucio López
-      { lat: -54.5800, lon: -66.2100, ele: 80,  name: 'Subida Sierra Lucio López' },
-      { lat: -54.6100, lon: -66.2800, ele: 370, name: 'Paso Sierra Lucio López (370 m)' },
-      { lat: -54.6400, lon: -66.3500, ele: 200, name: 'Descenso turbera del sur' },
-      { lat: -54.6700, lon: -66.4300, ele: 60,  name: 'Cañadón Río Turbio' },
-      // Día 4 — Sector de turberas centrales
-      { lat: -54.7000, lon: -66.5000, ele: 50,  name: 'Turbera Grande — Campo traviesa' },
-      { lat: -54.7200, lon: -66.5800, ele: 45,  name: 'Laguna sin nombre 1' },
-      { lat: -54.7400, lon: -66.6700, ele: 55,  name: 'Cruce Río Cangrejo' },
-      { lat: -54.7600, lon: -66.7500, ele: 60,  name: 'Bosque de lenga virgen' },
-      // Día 5 — Sierra Sorondo
-      { lat: -54.7800, lon: -66.8100, ele: 120, name: 'Base Sierra Sorondo' },
-      { lat: -54.8000, lon: -66.8500, ele: 340, name: 'Paso Sierra Sorondo (340 m)' },
-      { lat: -54.8200, lon: -66.8900, ele: 180, name: 'Descenso sur Sierra Sorondo' },
-      { lat: -54.8400, lon: -66.9200, ele: 80,  name: 'Valle del Río San Pablo' },
-      // Día 6 — Río San Pablo → Sector OSM referencia
-      { lat: -54.8600, lon: -66.9600, ele: 60,  name: 'Cruce Río San Pablo' },
-      { lat: -54.8800, lon: -67.0000, ele: 50,  name: 'Costa sur — Acantilados Beagle' },
+      { lat: -54.1100, lon: -65.3500, ele: 15,  name: 'Playa norte — avanzando hacia el este' },
+      { lat: -54.1800, lon: -65.2200, ele: 20,  name: 'Bahía Thetis' },
+      { lat: -54.2900, lon: -65.1700, ele: 25,  name: 'Costa atlántica noreste' },
+      // Día 2 — Doblar al sur hacia Cabo San Diego
+      { lat: -54.4200, lon: -65.1100, ele: 20,  name: 'Punta noreste — acceso a Cabo San Diego' },
+      { lat: -54.5500, lon: -65.0900, ele: 15,  name: 'Costa este — tramo rocoso' },
+      { lat: -54.6500, lon: -65.1200, ele: 10,  name: 'Cabo San Diego — Punta más oriental de Argentina' },
+      // Día 3 — Costa este bajando al sur
+      { lat: -54.7200, lon: -65.1600, ele: 20,  name: 'Bahía San Sebastián Sur' },
+      { lat: -54.7900, lon: -65.2400, ele: 25,  name: 'Costa rocosa — Punta Arenas Chicas' },
+      { lat: -54.8500, lon: -65.3800, ele: 30,  name: 'Bahía Sloggett' },
+      // Día 4 — Costa sur / Beagle Channel — girando al oeste
+      { lat: -54.8800, lon: -65.5500, ele: 25,  name: 'Costa sur — inicio tramo atlántico-Beagle' },
+      { lat: -54.9000, lon: -65.7500, ele: 20,  name: 'Punta Arenas Gordas' },
+      { lat: -54.9100, lon: -65.9200, ele: 20,  name: 'Río Ewan — Cruce vadera' },
+      // Día 5 — Turberas centrales
+      { lat: -54.9000, lon: -66.1000, ele: 40,  name: 'Bahía Buen Suceso' },
+      { lat: -54.9000, lon: -66.2800, ele: 50,  name: 'Turbera Grande — Campo traviesa' },
+      { lat: -54.8900, lon: -66.4500, ele: 60,  name: 'Cruce Río Cangrejo' },
+      { lat: -54.8850, lon: -66.6000, ele: 55,  name: 'Bosque de lenga virgen' },
+      // Día 6 — Sierra Sorondo
+      { lat: -54.8800, lon: -66.7200, ele: 120, name: 'Base Sierra Sorondo' },
+      { lat: -54.8750, lon: -66.8000, ele: 340, name: 'Paso Sierra Sorondo (340 m)' },
+      { lat: -54.8800, lon: -66.8800, ele: 180, name: 'Descenso turbera sur Sierra Sorondo' },
+      { lat: -54.8900, lon: -66.9500, ele: 80,  name: 'Valle del Río San Pablo' },
+      // Día 7 — Bahía Aguirre (punto OSM de referencia)
+      { lat: -54.9000, lon: -67.0000, ele: 50,  name: 'Costa sur — aproximación Bahía Aguirre' },
       { lat: -54.9124, lon: -67.0497, ele: 20,  name: 'Bahía Aguirre — Sector costa' },
-      // Día 7 — Bahía Aguirre interior
-      { lat: -54.9300, lon: -67.1100, ele: 30,  name: 'Punta Aguirre Este' },
-      { lat: -54.9400, lon: -67.1800, ele: 25,  name: 'Playa Bahía Aguirre Centro' },
-      { lat: -54.9350, lon: -67.2500, ele: 40,  name: 'Río Lasifashaj — Cruce' },
+      { lat: -54.9200, lon: -67.1300, ele: 25,  name: 'Playa Bahía Aguirre Centro' },
+      { lat: -54.9100, lon: -67.2200, ele: 40,  name: 'Río Lasifashaj — Cruce' },
       // Día 8 — Sierra Beauvoir
-      { lat: -54.9200, lon: -67.3000, ele: 150, name: 'Subida Sierra Beauvoir' },
-      { lat: -54.9050, lon: -67.3500, ele: 510, name: 'Paso Sierra Beauvoir (510 m) — Punto más alto' },
-      { lat: -54.8900, lon: -67.4000, ele: 280, name: 'Descenso norte — Turbera Beauvoir' },
-      { lat: -54.8700, lon: -67.4600, ele: 120, name: 'Valle Río Overand' },
-      // Día 9 — Aproximación a Bahía Mitre
-      { lat: -54.8600, lon: -67.5000, ele: 80,  name: 'Bosque costero Canal Beagle' },
-      { lat: -54.8750, lon: -67.5500, ele: 40,  name: 'Playa Bahía Mitre Norte' },
-      { lat: -54.8950, lon: -67.5800, ele: 15,  name: 'Bahía Mitre — Campamento principal' },
-      // Día 10 — Bahía Mitre final
-      { lat: -54.9100, lon: -67.6100, ele: 10,  name: 'Bahía Mitre Sur — Punto de extracción' },
+      { lat: -54.9000, lon: -67.3000, ele: 150, name: 'Subida Sierra Beauvoir' },
+      { lat: -54.8900, lon: -67.3800, ele: 510, name: 'Paso Sierra Beauvoir (510 m) — Punto más alto' },
+      { lat: -54.8800, lon: -67.4500, ele: 280, name: 'Descenso noroeste Sierra Beauvoir' },
+      // Día 9 — Costa Beagle hacia Bahía Mitre
+      { lat: -54.8750, lon: -67.5200, ele: 80,  name: 'Valle Río Overand' },
+      { lat: -54.8800, lon: -67.5700, ele: 40,  name: 'Playa Bahía Mitre Este' },
+      { lat: -54.8950, lon: -67.6000, ele: 15,  name: 'Bahía Mitre — Campamento principal' },
+      // Día 10 — Fin de travesía
+      { lat: -54.9100, lon: -67.6300, ele: 10,  name: 'Bahía Mitre Sur — Punto de extracción (barco/kayak)' },
     ],
   },
   {
