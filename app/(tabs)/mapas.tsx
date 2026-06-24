@@ -697,7 +697,7 @@ const dlS = StyleSheet.create({
 export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
-  const { t } = useLangStore();
+  const { lang, t } = useLangStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 720;
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -719,11 +719,21 @@ export default function MapasScreen() {
 
   function handleIframeLoad() {
     iframeLoaded.current = true;
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'setLang', lang }, '*');
+    }
     if (pendingFlyTo.current && iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(pendingFlyTo.current, '*');
       pendingFlyTo.current = null;
     }
   }
+
+  // Keep the iframe language in sync with the React app language
+  React.useEffect(() => {
+    if (iframeLoaded.current && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({ type: 'setLang', lang }, '*');
+    }
+  }, [lang]);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
