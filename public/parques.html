@@ -959,27 +959,93 @@
         setTimeout(() => { map.fitBounds(window._leafletTrailLine.getBounds().pad(0.2)); }, 400);
       }
 
-      // ── 3D terrain mini-map for every park (desktop only) ───
+      // ── Satellite 3D cinematic map for every park (desktop only) ───────────
       if (window._parkGlMap) { window._parkGlMap.remove(); window._parkGlMap = null; }
+      if (window._parkGlRotateCleanup) { window._parkGlRotateCleanup(); window._parkGlRotateCleanup = null; }
+      if (window._parkGlFlyTimer) { clearTimeout(window._parkGlFlyTimer); window._parkGlFlyTimer = null; }
+      // Remove old GIRAR button if present
+      const oldGirar = document.getElementById('girarBtn');
+      if (oldGirar) oldGirar.remove();
+
       if (window.innerWidth <= 900) return;
       setTimeout(() => {
         const el = document.getElementById('park3dMap');
         if (!el) return;
         el.style.width = '100%';
         el.style.height = '100%';
-        const initCenter = park.trailCenter || [park.lng, park.lat];
-        const initZoom   = park.trailZoom   || 9.5;
+
+        const coords  = park.trailCoords || null;
+        const tc      = park.trailColor || '#22c55e';
+        const center  = park.trailCenter || [park.lng, park.lat];
+        const zoom    = park.trailZoom   || 9.5;
+
+        // ── Satellite base style (Esri World Imagery, free, no key) ──────────
+        const satStyle = {
+          version: 8,
+          glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+          sources: {
+            satellite: {
+              type: 'raster',
+              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+              tileSize: 256, maxzoom: 18, attribution: '© Esri',
+            },
+          },
+          layers: [{ id: 'sat', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.9 } }],
+        };
+
+        // ── Bearing helper ───────────────────────────────────────────────────
+        function bearingBetween(a, b) {
+          const dL = (b[0] - a[0]) * Math.PI / 180;
+          const lat1 = a[1] * Math.PI / 180, lat2 = b[1] * Math.PI / 180;
+          const y = Math.sin(dL) * Math.cos(lat2);
+          const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dL);
+          return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+        }
+
+        // ── Build cinematic keyframes from coords ────────────────────────────
+        function buildKeyframes(pts) {
+          if (!pts || pts.length < 2) return null;
+          const n = Math.min(5, pts.length);
+          const step = (pts.length - 1) / (n - 1);
+          const frames = [];
+          // Wide overview first
+          const lons = pts.map(p => p[0]), lats = pts.map(p => p[1]);
+          frames.push({
+            center: [(Math.min(...lons)+Math.max(...lons))/2, (Math.min(...lats)+Math.max(...lats))/2],
+            zoom: zoom - 1.5, pitch: 50,
+            bearing: bearingBetween(pts[0], pts[pts.length-1]),
+            duration: 4000,
+          });
+          for (let i = 0; i < n; i++) {
+            const idx = Math.round(i * step);
+            const next = pts[Math.min(idx + 1, pts.length - 1)];
+            const isLast = i === n - 1;
+            frames.push({
+              center: pts[idx],
+              zoom: isLast ? zoom + 2 : zoom + 0.5 + i * 0.2,
+              pitch: isLast ? 72 : 56 + i * 2,
+              bearing: bearingBetween(pts[idx], next),
+              duration: isLast ? 5500 : 5500,
+            });
+          }
+          return frames;
+        }
+
         const gm = new maplibregl.Map({
           container: 'park3dMap',
-          style: 'https://tiles.openfreemap.org/styles/liberty',
-          center: initCenter, zoom: initZoom, pitch: 50, bearing: 30,
+          style: satStyle,
+          center, zoom: zoom - 2, pitch: 30,
+          bearing: coords ? bearingBetween(coords[0], coords[coords.length - 1]) : 20,
           antialias: true, attributionControl: false,
+          dragRotate: true, touchZoomRotate: true, touchPitch: true,
         });
         window._parkGlMap = gm;
         gm.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-        gm.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+
         gm.on('load', () => {
           gm.resize();
+
+          // Terrain
           gm.addSource('dem', {
             type: 'raster-dem',
             tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
@@ -987,8 +1053,34 @@
           });
           gm.setTerrain({ source: 'dem', exaggeration: 2.8 });
 
-          // Park centre marker (hidden when a trail is shown)
-          if (!park.trailCoords) {
+          // Trail line
+          if (coords) {
+            gm.addSource('trail', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: coords }}});
+            gm.addLayer({ id: 'trail-glow', type: 'line', source: 'trail',
+              layout: {'line-join':'round','line-cap':'round'},
+              paint: {'line-color': tc,'line-width':12,'line-opacity':.2,'line-blur':6}
+            });
+            gm.addLayer({ id: 'trail-line', type: 'line', source: 'trail',
+              layout: {'line-join':'round','line-cap':'round'},
+              paint: {'line-color': tc,'line-width':3.5,'line-opacity':.95}
+            });
+          }
+
+          // Waypoint markers
+          if (park.trailWaypoints) {
+            park.trailWaypoints.forEach(wp => {
+              const color = wp.start ? tc : wp.end ? '#f97316' : '#f0f9ff';
+              const size  = (wp.start || wp.end) ? 14 : 9;
+              const d = document.createElement('div');
+              d.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.6);cursor:pointer`;
+              new maplibregl.Marker({element:d}).setLngLat(wp.c)
+                .setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML(`<strong>${wp.label}</strong>`))
+                .addTo(gm);
+            });
+          }
+
+          // Park centre dot (no trail)
+          if (!coords) {
             const dot = document.createElement('div');
             dot.style.cssText = `width:11px;height:11px;border-radius:50%;background:${park.color};border:2px solid #fff;box-shadow:0 0 0 4px ${park.color}55`;
             new maplibregl.Marker({ element: dot }).setLngLat([park.lng, park.lat])
@@ -996,61 +1088,150 @@
               .addTo(gm);
           }
 
-          // Generic trail overlay (any park with trailCoords)
-          if (park.trailCoords) {
-            const tc = park.trailColor || '#22c55e';
-            gm.addSource('trail', {
-              type: 'geojson',
-              data: { type: 'Feature', geometry: { type: 'LineString', coordinates: park.trailCoords }}
-            });
-            gm.addLayer({ id: 'trail-glow', type: 'line', source: 'trail',
-              layout: {'line-join':'round','line-cap':'round'},
-              paint: {'line-color':tc,'line-width':10,'line-opacity':.18,'line-blur':7}
-            });
-            gm.addLayer({ id: 'trail-line', type: 'line', source: 'trail',
-              layout: {'line-join':'round','line-cap':'round'},
-              paint: {'line-color':tc,'line-width':3.5,'line-opacity':.95}
-            });
-            if (park.trailWaypoints) {
-              park.trailWaypoints.forEach(wp => {
-                const color = wp.start ? tc : wp.end ? '#3b82f6' : '#f0f9ff';
-                const size  = (wp.start || wp.end) ? 13 : 9;
-                const d = document.createElement('div');
-                d.style.cssText = `width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}55;cursor:pointer`;
-                new maplibregl.Marker({element:d}).setLngLat(wp.c)
-                  .setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML(`<strong>${wp.label}</strong>`))
-                  .addTo(gm);
-              });
+          // Mitre route
+          if (park.mitre && !coords) {
+            const mitreCoords = [[-66.731,-54.972],[-66.484,-55.058],[-65.728,-54.935],[-65.387,-54.862],[-65.105,-54.797]];
+            gm.addSource('route', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: mitreCoords }}});
+            gm.addLayer({ id: 'route-glow', type: 'line', source: 'route', layout: {'line-join':'round','line-cap':'round'}, paint: {'line-color':'#22c55e','line-width':9,'line-opacity':.15,'line-blur':6}});
+            gm.addLayer({ id: 'route', type: 'line', source: 'route', layout: {'line-join':'round','line-cap':'round'}, paint: {'line-color':'#22c55e','line-width':3,'line-opacity':.9}});
+          }
+
+          // ── Compass + Nav control (shows after intro) ────────────────────
+          const navCtrl = new maplibregl.NavigationControl({ showCompass: true, showZoom: true, visualizePitch: true });
+
+          // ── SAT badge ────────────────────────────────────────────────────
+          const satBadge = document.createElement('div');
+          satBadge.style.cssText = 'position:absolute;top:12px;left:12px;background:rgba(7,11,20,.75);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:4px 9px;font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.55);pointer-events:none;z-index:10';
+          satBadge.textContent = 'SAT · 3D';
+          el.appendChild(satBadge);
+
+          // ── Cinematic fly-through ─────────────────────────────────────────
+          const keyframes = buildKeyframes(coords);
+          let flying = !!keyframes;
+
+          // Skip overlay
+          let skipOverlay = null;
+          if (keyframes) {
+            skipOverlay = document.createElement('div');
+            skipOverlay.style.cssText = 'position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none';
+            skipOverlay.innerHTML = `
+              <div style="background:rgba(7,11,20,.75);border:1px solid rgba(34,197,94,.28);border-radius:12px;padding:10px 20px;text-align:center">
+                <div style="color:#f0f9ff;font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:8px">${park.name}</div>
+                <button id="skipIntroBtn" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.45);border-radius:8px;padding:5px 16px;color:#22c55e;font-size:11px;font-weight:700;letter-spacing:.8px;cursor:pointer;pointer-events:all;font-family:inherit">SALTAR INTRO</button>
+              </div>`;
+            el.appendChild(skipOverlay);
+          }
+
+          function finishFlythrough() {
+            flying = false;
+            if (skipOverlay) { skipOverlay.remove(); skipOverlay = null; }
+            gm.addControl(navCtrl, 'top-right');
+            addGirarButton();
+            if (coords) {
+              const lons = coords.map(c => c[0]), lats = coords.map(c => c[1]);
+              gm.fitBounds([[Math.min(...lons)-0.02,Math.min(...lats)-0.02],[Math.max(...lons)+0.02,Math.max(...lats)+0.02]],
+                { padding: 40, pitch: 58, duration: 2000 });
             }
           }
 
-          // Mitre expedition route overlay (only when no dedicated trailCoords set)
-          if (park.mitre && !park.trailCoords) {
-            gm.easeTo({ center: [-65.95, -54.93], zoom: 8.0, bearing: 65, pitch: 52, duration: 800 });
-            gm.addSource('route', {
-              type: 'geojson',
-              data: { type: 'Feature', geometry: { type: 'LineString',
-                coordinates: [[-66.731,-54.972],[-66.484,-55.058],[-65.728,-54.935],[-65.387,-54.862],[-65.105,-54.797]]
-              }}
-            });
-            gm.addLayer({ id: 'route-glow', type: 'line', source: 'route',
-              layout: {'line-join':'round','line-cap':'round'},
-              paint: {'line-color':'#22c55e','line-width':9,'line-opacity':.15,'line-blur':6}
-            });
-            gm.addLayer({ id: 'route', type: 'line', source: 'route',
-              layout: {'line-join':'round','line-cap':'round'},
-              paint: {'line-color':'#22c55e','line-width':3,'line-opacity':.9}
-            });
-            [[-66.731,-54.972,'Estancia Moat','#22c55e'],[-66.484,-55.058,'Cabo San Pío','#34d399'],
-             [-65.728,-54.935,'Bahía Sloggett','#3b82f6'],[-65.387,-54.862,'Playa Dorada','#3b82f6'],
-             [-65.105,-54.797,'Puerto Español','#60a5fa']].forEach(([lng,lat,label,color]) => {
-              const d = document.createElement('div');
-              d.style.cssText = `width:9px;height:9px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 0 3px ${color}44;cursor:pointer`;
-              new maplibregl.Marker({element:d}).setLngLat([lng,lat])
-                .setPopup(new maplibregl.Popup({offset:14,closeButton:false}).setHTML(`<strong>${label}</strong>`))
-                .addTo(gm);
-            });
+          function runFlythrough(frames, idx) {
+            if (!flying || idx >= frames.length) { finishFlythrough(); return; }
+            const f = frames[idx];
+            gm.flyTo({ center: f.center, zoom: f.zoom, pitch: f.pitch, bearing: f.bearing, duration: f.duration, essential: true,
+              easing: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t });
+            window._parkGlFlyTimer = setTimeout(() => runFlythrough(frames, idx + 1), f.duration + 200);
           }
+
+          if (keyframes) {
+            window._parkGlFlyTimer = setTimeout(() => runFlythrough(keyframes, 0), 600);
+          } else {
+            finishFlythrough();
+          }
+
+          if (skipOverlay) {
+            el.addEventListener('click', function onSkip() {
+              if (!flying) return;
+              if (window._parkGlFlyTimer) { clearTimeout(window._parkGlFlyTimer); window._parkGlFlyTimer = null; }
+              flying = false;
+              finishFlythrough();
+            }, { once: true });
+            setTimeout(() => {
+              const btn = document.getElementById('skipIntroBtn');
+              if (btn) btn.addEventListener('click', e => {
+                e.stopPropagation();
+                if (window._parkGlFlyTimer) { clearTimeout(window._parkGlFlyTimer); window._parkGlFlyTimer = null; }
+                flying = false;
+                finishFlythrough();
+              });
+            }, 100);
+          }
+
+          // ── GIRAR (rotate) mode ──────────────────────────────────────────
+          let rotateMode = false;
+          let dragStartX = null, dragStartBearing = 0;
+
+          function addGirarButton() {
+            const btn = document.createElement('button');
+            btn.id = 'girarBtn';
+            btn.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:20;background:rgba(15,23,36,.88);border:1px solid rgba(34,197,94,.4);border-radius:8px;padding:6px 14px;color:#22c55e;font-size:11px;font-weight:700;letter-spacing:.7px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:.18s';
+            btn.innerHTML = '<span style="font-size:14px">↻</span> GIRAR';
+            btn.addEventListener('click', () => {
+              rotateMode = !rotateMode;
+              if (rotateMode) {
+                gm.dragPan.disable();
+                btn.style.background = 'rgba(34,197,94,.22)';
+                btn.style.borderColor = '#22c55e';
+                btn.innerHTML = '<span style="font-size:14px">↻</span> GIRANDO';
+              } else {
+                gm.dragPan.enable();
+                dragStartX = null;
+                btn.style.background = 'rgba(15,23,36,.88)';
+                btn.style.borderColor = 'rgba(34,197,94,.4)';
+                btn.innerHTML = '<span style="font-size:14px">↻</span> GIRAR';
+              }
+            });
+            el.appendChild(btn);
+          }
+
+          const canvas = gm.getCanvas();
+          function onMouseDown(e) {
+            if (e.button !== 0 || !rotateMode) return;
+            e.preventDefault();
+            dragStartX = e.clientX;
+            dragStartBearing = gm.getBearing();
+          }
+          function onMouseMove(e) {
+            if (!rotateMode || dragStartX === null) return;
+            gm.setBearing(dragStartBearing - (e.clientX - dragStartX) * 0.4);
+          }
+          function onMouseUp() { if (rotateMode) dragStartX = null; }
+          function onTouchStart(e) {
+            if (!rotateMode || e.touches.length !== 1) return;
+            dragStartX = e.touches[0].clientX;
+            dragStartBearing = gm.getBearing();
+          }
+          function onTouchMove(e) {
+            if (!rotateMode || dragStartX === null || e.touches.length !== 1) return;
+            e.preventDefault();
+            gm.setBearing(dragStartBearing - (e.touches[0].clientX - dragStartX) * 0.4);
+          }
+          function onTouchEnd() { dragStartX = null; }
+
+          canvas.addEventListener('mousedown', onMouseDown);
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+          canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+          canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+          canvas.addEventListener('touchend', onTouchEnd);
+
+          window._parkGlRotateCleanup = () => {
+            canvas.removeEventListener('mousedown', onMouseDown);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            canvas.removeEventListener('touchstart', onTouchStart);
+            canvas.removeEventListener('touchmove', onTouchMove);
+            canvas.removeEventListener('touchend', onTouchEnd);
+          };
         });
       }, 200);
     }
