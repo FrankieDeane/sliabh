@@ -139,7 +139,6 @@ export default function TrailMap3DCinematic({
         // ── Satellite base style ──────────────────────────────────────────
         const satelliteStyle: any = {
           version: 8,
-          glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
           sources: {
             satellite: {
               type: 'raster',
