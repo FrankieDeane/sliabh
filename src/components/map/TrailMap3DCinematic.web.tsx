@@ -160,9 +160,16 @@ export default function TrailMap3DCinematic({
           bearing: overviewFrame.bearing,
           antialias: true,
           maxTileCacheSize: 50,
+          dragRotate: true,
+          touchZoomRotate: true,
+          touchPitch: true,
         });
 
         mapRef.current = map;
+
+        // Compass + zoom controls — appears after intro
+        const navControl = new ml.NavigationControl({ showCompass: true, showZoom: true, visualizePitch: true });
+        (map as any).__navControl = navControl;
 
         map.on('load', () => {
           // ── Terrain ─────────────────────────────────────────────────────
@@ -288,6 +295,11 @@ export default function TrailMap3DCinematic({
   function finishFlythrough(map: any) {
     setPhase('interactive');
     onReady?.();
+    // Add compass + zoom control so user can rotate 360°
+    if (map.__navControl && !map.__navAdded) {
+      map.addControl(map.__navControl, 'top-right');
+      map.__navAdded = true;
+    }
     // Settle into a nice final view of the whole trail
     const lons = track.map((p) => p.lon);
     const lats = track.map((p) => p.lat);
@@ -346,10 +358,10 @@ export default function TrailMap3DCinematic({
         </View>
       )}
 
-      {/* 2D / 3D toggle — only in interactive mode */}
+      {/* 2D / 3D toggle — bottom-right to avoid overlapping the nav compass */}
       {phase === 'interactive' && (
         <TouchableOpacity onPress={toggle3D} activeOpacity={0.8}
-          style={{ position: 'absolute', top: 12, right: 12, backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
+          style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
           <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
         </TouchableOpacity>
       )}
