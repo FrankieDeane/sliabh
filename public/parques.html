@@ -1771,6 +1771,22 @@ ${trkpts}
         return;
       }
 
+      if (e.data.type === 'setLang') {
+        var newLang = e.data.lang;
+        if (newLang !== 'es' && newLang !== 'en') return;
+        lang = newLang;
+        document.querySelectorAll('#langToggle button').forEach(function(x) {
+          x.classList.toggle('active', x.dataset.lang === lang);
+        });
+        applyStaticLang();
+        relabelFilters();
+        updateTrailToggleLabel();
+        var savedPark = currentPark;
+        applyFilters();
+        renderPanel(savedPark || currentPark);
+        return;
+      }
+
       if (e.data.type === 'showTrack') {
         if (externalTrackLine) { map.removeLayer(externalTrackLine); externalTrackLine = null; }
         externalTrackMarkers.forEach(function(m) { map.removeLayer(m); });
