@@ -30,6 +30,14 @@ const TrailMap3D = Platform.OS === 'web'
   ? require('../../../src/components/map/TrailMap3D.web').default
   : require('../../../src/components/map/TrailMap3D.native').default;
 
+// Cinematic satellite fly-through (web only, opt-in per trail)
+const TrailMap3DCinematic = Platform.OS === 'web'
+  ? require('../../../src/components/map/TrailMap3DCinematic.web').default
+  : null;
+
+/** Trails that get the cinematic satellite fly-through treatment */
+const CINEMATIC_TRAILS = new Set(['laguna-del-caminante']);
+
 // Platform-specific flat map for hike mode
 const MapLeaflet = Platform.OS === 'web'
   ? require('../../../src/components/map/MapLeaflet.web').MapLeaflet
@@ -1118,12 +1126,23 @@ function OverviewTab({
 
       {(trail as any).gpxTrack?.length >= 2 && (
         <SectionCard>
-          <CardLabel text={t('Mapa 3D del terreno', '3D Terrain Map')} />
-          <TrailMap3D
-            track={(trail as any).gpxTrack}
-            trailName={trail.name}
-            height={320}
-          />
+          <CardLabel text={t(
+            CINEMATIC_TRAILS.has(trail.id) ? 'Vista satelital 3D' : 'Mapa 3D del terreno',
+            CINEMATIC_TRAILS.has(trail.id) ? '3D Satellite View' : '3D Terrain Map',
+          )} />
+          {CINEMATIC_TRAILS.has(trail.id) && TrailMap3DCinematic ? (
+            <TrailMap3DCinematic
+              track={(trail as any).gpxTrack}
+              trailName={trail.name}
+              height={420}
+            />
+          ) : (
+            <TrailMap3D
+              track={(trail as any).gpxTrack}
+              trailName={trail.name}
+              height={320}
+            />
+          )}
         </SectionCard>
       )}
 
