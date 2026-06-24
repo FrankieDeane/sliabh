@@ -57,8 +57,13 @@ export default function TrailMap3DCinematic({
   const animRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [phase, setPhase] = useState<'loading' | 'flying' | 'interactive'>('loading');
+  const phaseRef = useRef<'loading' | 'flying' | 'interactive'>('loading');
   const [is3D, setIs3D] = useState(true);
+  const [rotateMode, setRotateMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const rotateModeRef = useRef(false);
+  const dragStartXRef = useRef<number | null>(null);
+  const dragStartBearingRef = useRef<number>(0);
 
   if (Platform.OS !== 'web') return null;
   if (track.length < 2) return null;
@@ -160,9 +165,16 @@ export default function TrailMap3DCinematic({
           bearing: overviewFrame.bearing,
           antialias: true,
           maxTileCacheSize: 50,
+          dragRotate: true,
+          touchZoomRotate: true,
+          touchPitch: true,
         });
 
         mapRef.current = map;
+
+        // Compass + zoom controls — appears after intro
+        const navControl = new ml.NavigationControl({ showCompass: true, showZoom: true, visualizePitch: true });
+        (map as any).__navControl = navControl;
 
         map.on('load', () => {
           // ── Terrain ─────────────────────────────────────────────────────
@@ -242,14 +254,76 @@ export default function TrailMap3DCinematic({
           setError('No se pudo cargar el mapa 3D.');
         });
 
-        // Stop flythrough if user interacts manually
-        map.on('mousedown', () => { if (phase === 'flying') skipToInteractive(map); });
-        map.on('touchstart', () => { if (phase === 'flying') skipToInteractive(map); });
+        // ── Rotate-mode drag handlers ────────────────────────────────────
+        const canvas = map.getCanvas();
+
+        function onMouseDown(e: MouseEvent) {
+          if (e.button !== 0) return; // left button only
+          if (!rotateModeRef.current) {
+            // Skip intro on any left-click during flythrough
+            // (phase check via ref isn't available here; skipToInteractive handles no-op safely)
+            return;
+          }
+          e.preventDefault();
+          dragStartXRef.current = e.clientX;
+          dragStartBearingRef.current = map.getBearing();
+          map.dragPan.disable();
+        }
+
+        function onMouseMove(e: MouseEvent) {
+          if (!rotateModeRef.current || dragStartXRef.current === null) return;
+          const delta = e.clientX - dragStartXRef.current;
+          map.setBearing(dragStartBearingRef.current - delta * 0.4);
+        }
+
+        function onMouseUp() {
+          if (!rotateModeRef.current) return;
+          dragStartXRef.current = null;
+        }
+
+        function onTouchStart(e: TouchEvent) {
+          if (!rotateModeRef.current || e.touches.length !== 1) return;
+          dragStartXRef.current = e.touches[0].clientX;
+          dragStartBearingRef.current = map.getBearing();
+          map.dragPan.disable();
+        }
+
+        function onTouchMove(e: TouchEvent) {
+          if (!rotateModeRef.current || dragStartXRef.current === null || e.touches.length !== 1) return;
+          e.preventDefault();
+          const delta = e.touches[0].clientX - dragStartXRef.current;
+          map.setBearing(dragStartBearingRef.current - delta * 0.4);
+        }
+
+        function onTouchEnd() {
+          dragStartXRef.current = null;
+        }
+
+        canvas.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+        canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+        canvas.addEventListener('touchend', onTouchEnd);
+
+        (map as any).__cleanupRotate = () => {
+          canvas.removeEventListener('mousedown', onMouseDown);
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          canvas.removeEventListener('touchstart', onTouchStart);
+          canvas.removeEventListener('touchmove', onTouchMove);
+          canvas.removeEventListener('touchend', onTouchEnd);
+        };
+
+        // Skip intro on any interaction during flythrough
+        map.on('mousedown', () => { if (phaseRef.current === 'flying') skipToInteractive(map); });
+        map.on('touchstart', () => { if (phaseRef.current === 'flying') skipToInteractive(map); });
       })
       .catch((e) => setError(e.message));
 
     return () => {
       if (animRef.current) clearTimeout(animRef.current);
+      mapRef.current?.__cleanupRotate?.();
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -286,8 +360,14 @@ export default function TrailMap3DCinematic({
   }
 
   function finishFlythrough(map: any) {
+    phaseRef.current = 'interactive';
     setPhase('interactive');
     onReady?.();
+    // Add compass + zoom control so user can rotate 360°
+    if (map.__navControl && !map.__navAdded) {
+      map.addControl(map.__navControl, 'top-right');
+      map.__navAdded = true;
+    }
     // Settle into a nice final view of the whole trail
     const lons = track.map((p) => p.lon);
     const lats = track.map((p) => p.lat);
@@ -301,6 +381,20 @@ export default function TrailMap3DCinematic({
     if (animRef.current) { clearTimeout(animRef.current); animRef.current = null; }
     const m = map ?? mapRef.current;
     if (m) finishFlythrough(m);
+  }
+
+  function toggleRotate() {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !rotateMode;
+    rotateModeRef.current = next;
+    setRotateMode(next);
+    if (next) {
+      map.dragPan.disable();
+    } else {
+      map.dragPan.enable();
+      dragStartXRef.current = null;
+    }
   }
 
   function toggle3D() {
@@ -346,12 +440,28 @@ export default function TrailMap3DCinematic({
         </View>
       )}
 
-      {/* 2D / 3D toggle — only in interactive mode */}
+      {/* Interactive controls row — bottom-right */}
       {phase === 'interactive' && (
-        <TouchableOpacity onPress={toggle3D} activeOpacity={0.8}
-          style={{ position: 'absolute', top: 12, right: 12, backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
-          <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
-        </TouchableOpacity>
+        <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', gap: 8 } as any}>
+          {/* Rotate 360° toggle */}
+          <TouchableOpacity onPress={toggleRotate} activeOpacity={0.8}
+            style={{
+              backgroundColor: rotateMode ? 'rgba(34,197,94,0.25)' : 'rgba(15,23,36,0.85)',
+              borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6,
+              borderWidth: 1, borderColor: rotateMode ? '#22c55e' : 'rgba(34,197,94,0.4)',
+              flexDirection: 'row', alignItems: 'center', gap: 5,
+            }}>
+            <Text style={{ color: '#22c55e', fontSize: 13 }}>↻</Text>
+            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.6 }}>
+              {rotateMode ? 'GIRANDO' : 'GIRAR'}
+            </Text>
+          </TouchableOpacity>
+          {/* 2D / 3D toggle */}
+          <TouchableOpacity onPress={toggle3D} activeOpacity={0.8}
+            style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
+            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* SAT badge */}
