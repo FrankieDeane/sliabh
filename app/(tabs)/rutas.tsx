@@ -91,8 +91,9 @@ export default function RutasScreen() {
 
   const isWide = width >= 768;
 
-  // Map waypoints from filtered trails
-  const mapWaypoints = filtered.map((trail) => ({
+  // Map markers from filtered trails (includes id for click-to-highlight)
+  const mapMarkers = filtered.map((trail) => ({
+    id: trail.id,
     lat: trail.coordinates.lat,
     lon: trail.coordinates.lon,
     name: trail.name,
@@ -284,12 +285,13 @@ export default function RutasScreen() {
         {/* Right panel: map */}
         <View style={{ flex: 1 }}>
           <MapLeaflet
-            waypoints={mapWaypoints}
+            markers={mapMarkers}
             center={activeCenter}
             zoom={activeTrailId ? 10 : 5}
             height="100%"
             layer="dark"
             showPolyline={false}
+            onMarkerPress={setActiveTrailId}
           />
         </View>
       </View>
@@ -343,12 +345,13 @@ export default function RutasScreen() {
       {showMap && Platform.OS === 'web' ? (
         <View style={{ flex: 1 }}>
           <MapLeaflet
-            waypoints={mapWaypoints}
+            markers={mapMarkers}
             center={activeCenter}
             zoom={5}
             height="100%"
             layer="dark"
             showPolyline={false}
+            onMarkerPress={setActiveTrailId}
           />
         </View>
       ) : (
