@@ -36,9 +36,9 @@ const TrailMap3DCinematic = Platform.OS === 'web'
   : null;
 
 
-// Platform-specific flat map for hike mode
+// Platform-specific flat map for hike mode — both platforms use MapLibreEsri
 const HikeMap = Platform.OS === 'web'
-  ? require('../../../src/components/map/MapLeaflet.web').MapLeaflet
+  ? require('../../../src/components/map/MapLibreEsri.web').MapLibreEsri
   : require('../../../src/components/map/MapLibreEsri.native').MapLibreEsri;
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 
@@ -1518,7 +1518,7 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
             center={mapCenter}
             zoom={13}
             height="100%"
-            layer={Platform.OS === 'web' ? 'topo' : 'esri-topo'}
+            layer="esri-topo"
             showPolyline={false}
             showHikingRoute={false}
             userPosition={userPos}

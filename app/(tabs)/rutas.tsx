@@ -24,7 +24,7 @@ import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
-import { MapLeaflet } from '../../src/components/map/MapLeaflet';
+import { MapLibreEsri } from '../../src/components/map/MapLibreEsri';
 
 const MAX_CONTENT = 900;
 const SPLIT_BREAKPOINT = 900;
@@ -297,12 +297,12 @@ export default function RutasScreen() {
 
         {/* Right panel: map */}
         <View style={{ flex: 1 }}>
-          <MapLeaflet
+          <MapLibreEsri
             markers={mapMarkers}
             center={activeCenter}
             zoom={activeTrailId ? 10 : 5}
             height="100%"
-            layer="dark"
+            layer="esri-topo"
             showPolyline={false}
             onMarkerPress={handleMarkerPress}
           />
@@ -357,12 +357,12 @@ export default function RutasScreen() {
       {/* Map view (mobile toggle) */}
       {showMap && Platform.OS === 'web' ? (
         <View style={{ flex: 1 }}>
-          <MapLeaflet
+          <MapLibreEsri
             markers={mapMarkers}
             center={activeCenter}
             zoom={5}
             height="100%"
-            layer="dark"
+            layer="esri-topo"
             showPolyline={false}
             onMarkerPress={handleMarkerPress}
           />
