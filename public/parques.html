@@ -942,11 +942,9 @@
         ${mitreSection ? `<p style="font-size:11px;color:var(--primary);margin:6px 0 0;font-weight:700">${T('Expedición', 'Expedition')} · Península Mitre</p>` : ''}
       `;
 
-      // Activate split view on desktop only — mobile uses the bottom-sheet panel
-      if (window.innerWidth > 900) {
-        interactiveMap.classList.add('split');
-        setTimeout(() => map.invalidateSize(), 340);
-      }
+      // Activate split view on all screen sizes
+      interactiveMap.classList.add('split');
+      setTimeout(() => map.invalidateSize(), 340);
 
       // Draw trail polyline on LEFT Leaflet map
       if (window._leafletTrailLine) { map.removeLayer(window._leafletTrailLine); window._leafletTrailLine = null; }
@@ -967,7 +965,6 @@
       const oldGirar = document.getElementById('girarBtn');
       if (oldGirar) oldGirar.remove();
 
-      if (window.innerWidth <= 900) return;
       setTimeout(() => {
         const el = document.getElementById('park3dMap');
         if (!el) return;
