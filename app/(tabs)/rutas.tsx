@@ -61,6 +61,18 @@ export default function RutasScreen() {
     return () => clearTimeout(timer);
   }, []);
 
+  // When a map marker is pressed: switch to list view and scroll to the card
+  function handleMarkerPress(id: string) {
+    setActiveTrailId(id);
+    if (Platform.OS === 'web') {
+      setShowMap(false);
+      setTimeout(() => {
+        const el = (document as any).getElementById(`trail-card-${id}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
+    }
+  }
+
   function goToTrail(id: string) {
     router.push({ pathname: '/(tabs)/ruta/[id]', params: { id } } as any);
   }
@@ -193,7 +205,7 @@ export default function RutasScreen() {
               // Two-column grid on tablet/desktop (non-split layout)
               <View style={styles.grid}>
                 {(isSplit ? filtered : rest).map((trail) => (
-                  <View key={trail.id} style={styles.gridCell}>
+                  <View key={trail.id} style={styles.gridCell} {...(Platform.OS === 'web' ? ({ id: `trail-card-${trail.id}` } as any) : {})}>
                     <TrailListCard
                       trail={trail}
                       onPress={() => goToTrail(trail.id)}
@@ -209,6 +221,7 @@ export default function RutasScreen() {
                   onPress={() => goToTrail(trail.id)}
                   {...(Platform.OS === 'web'
                     ? ({
+                        id: `trail-card-${trail.id}`,
                         onMouseEnter: () => setActiveTrailId(trail.id),
                         onMouseLeave: () => setActiveTrailId(null),
                       } as any)
@@ -291,7 +304,7 @@ export default function RutasScreen() {
             height="100%"
             layer="dark"
             showPolyline={false}
-            onMarkerPress={setActiveTrailId}
+            onMarkerPress={handleMarkerPress}
           />
         </View>
       </View>
@@ -351,7 +364,7 @@ export default function RutasScreen() {
             height="100%"
             layer="dark"
             showPolyline={false}
-            onMarkerPress={setActiveTrailId}
+            onMarkerPress={handleMarkerPress}
           />
         </View>
       ) : (
