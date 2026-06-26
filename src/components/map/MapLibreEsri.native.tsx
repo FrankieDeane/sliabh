@@ -1,6 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
+
+export interface MapLibreEsriHandle {
+  startHikeTracking: () => void;
+  stopHikeTracking: () => void;
+}
 
 export interface MapMarker {
   id: string;
@@ -20,6 +25,7 @@ const ESRI_TILES: Record<EsriLayer, string> = {
 
 interface Props {
   onMarkerPress?: (id: string) => void;
+  onLocationUpdate?: (lat: number, lon: number) => void;
   markers?: MapMarker[];
   flyTo?: { lat: number; lon: number; zoom?: number } | null;
   center?: [number, number];
@@ -27,6 +33,8 @@ interface Props {
   height?: number | string;
   showHikingRoute?: boolean;
   layer?: EsriLayer;
+  userPosition?: { lat: number; lon: number } | null;
+  showPolyline?: boolean;
 }
 
 // Ruta al Pico San Miguel — route coordinates [lon, lat]
@@ -308,6 +316,32 @@ ${showHikingRoute ? `
       });
     }
 
+    // ── Hike tracking ────────────────────────────────────────────────────────
+    var hikeWatchId=null;
+    var hikeMarker=null;
+    window.startHikeTracking=function(){
+      if(hikeWatchId!==null) return;
+      hikeWatchId=navigator.geolocation.watchPosition(function(pos){
+        var lat=pos.coords.latitude,lng=pos.coords.longitude;
+        if(!hikeMarker){
+          var el=document.createElement('div');
+          el.style.cssText='position:relative;width:20px;height:20px;';
+          el.innerHTML='<div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.25);animation:hp 1.8s ease-out infinite;"></div>'
+            +'<div style="position:absolute;top:4px;left:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>'
+            +'<style>@keyframes hp{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.5);opacity:0}}</style>';
+          hikeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng,lat]).addTo(map);
+        } else {
+          hikeMarker.setLngLat([lng,lat]);
+        }
+        map.panTo([lng,lat],{animate:true,duration:500});
+        try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationUpdate',lat:lat,lon:lng}));}catch(e){}
+      },function(){},{enableHighAccuracy:true,maximumAge:3000,timeout:20000});
+    };
+    window.stopHikeTracking=function(){
+      if(hikeWatchId!==null){navigator.geolocation.clearWatch(hikeWatchId);hikeWatchId=null;}
+      if(hikeMarker){hikeMarker.remove();hikeMarker=null;}
+    };
+
     // Listen for messages from React Native
     document.addEventListener('message',handleMsg);
     window.addEventListener('message',handleMsg);
@@ -328,8 +362,9 @@ ${showHikingRoute ? `
 </html>`;
 }
 
-export function MapLibreEsri({
+export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLibreEsri({
   onMarkerPress,
+  onLocationUpdate,
   markers = [],
   flyTo,
   center = [-31.970, -64.910],
@@ -337,9 +372,18 @@ export function MapLibreEsri({
   height = 400,
   showHikingRoute = true,
   layer = 'esri-topo',
-}: Props) {
+}: Props, ref) {
   const webviewRef = useRef<WebView>(null);
   const loaded = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    startHikeTracking() {
+      webviewRef.current?.injectJavaScript('window.startHikeTracking && window.startHikeTracking(); true;');
+    },
+    stopHikeTracking() {
+      webviewRef.current?.injectJavaScript('window.stopHikeTracking && window.stopHikeTracking(); true;');
+    },
+  }));
   const pendingMarkers = useRef<MapMarker[] | null>(null);
   const pendingFly = useRef<{ lat: number; lon: number; zoom?: number } | null>(null);
 
@@ -404,11 +448,14 @@ export function MapLibreEsri({
         if (data.type === 'markerPress' && onMarkerPress) {
           onMarkerPress(data.id);
         }
+        if (data.type === 'locationUpdate' && onLocationUpdate) {
+          onLocationUpdate(data.lat, data.lon);
+        }
       } catch {
         // ignore
       }
     },
-    [onMarkerPress],
+    [onMarkerPress, onLocationUpdate],
   );
 
   const containerStyle = [
@@ -440,7 +487,7 @@ export function MapLibreEsri({
       />
     </View>
   );
-}
+});
 
 export default MapLibreEsri;
 

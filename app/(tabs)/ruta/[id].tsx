@@ -37,10 +37,10 @@ const TrailMap3DCinematic = Platform.OS === 'web'
 
 
 // Platform-specific flat map for hike mode
-const MapLeaflet = Platform.OS === 'web'
+const HikeMap = Platform.OS === 'web'
   ? require('../../../src/components/map/MapLeaflet.web').MapLeaflet
-  : require('../../../src/components/map/MapLeaflet.native').MapLeaflet;
-import type { MapLeafletHandle } from '../../../src/components/map/MapLeaflet.native';
+  : require('../../../src/components/map/MapLibreEsri.native').MapLibreEsri;
+import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 
@@ -1437,7 +1437,7 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
-  const mapRef = useRef<MapLeafletHandle>(null);
+  const mapRef = useRef<MapLibreEsriHandle>(null);
 
   const updatePosition = useCallback((lat: number, lon: number) => {
     setUserPos({ lat, lon });
@@ -1513,13 +1513,14 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
 
         {/* Map */}
         <View style={{ flex: 1 }}>
-          <MapLeaflet
+          <HikeMap
             ref={mapRef}
             center={mapCenter}
             zoom={13}
             height="100%"
-            layer="topo"
+            layer={Platform.OS === 'web' ? 'topo' : 'esri-topo'}
             showPolyline={false}
+            showHikingRoute={false}
             userPosition={userPos}
             onLocationUpdate={updatePosition}
           />
