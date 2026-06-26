@@ -980,7 +980,7 @@ export default function MapasScreen() {
   const isMobile = width < 720;
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
-  const [mapLayer, setMapLayer] = useState<'argenmap' | 'topo' | 'osm'>('argenmap');
+  const [esriLayer, setEsriLayer] = useState<'esri-topo' | 'esri-satellite' | 'esri-streets'>('esri-topo');
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoaded = useRef(false);
   const pendingFlyTo = useRef<{ lat: number; lng: number; zoom: number } | null>(null);
@@ -1022,13 +1022,13 @@ export default function MapasScreen() {
     setDownloadOpen(false);
   }
 
-  // ── Native: full-screen map with layer switcher + Download FAB ───────────
+  // ── Native: ESRI MapLibre full-screen map + layer switcher + Download FAB ──
   if (Platform.OS !== 'web') {
-    const { MapLeaflet } = require('../../src/components/map/MapLeaflet');
-    const LAYERS: Array<{ key: 'argenmap' | 'topo' | 'osm'; label: string }> = [
-      { key: 'argenmap', label: 'IGN' },
-      { key: 'topo',     label: t('Topo', 'Topo') },
-      { key: 'osm',      label: 'OSM' },
+    const { MapLibreEsri } = require('../../src/components/map/MapLibreEsri');
+    const ESRI_LAYERS: Array<{ key: 'esri-topo' | 'esri-satellite' | 'esri-streets'; label: string }> = [
+      { key: 'esri-topo',      label: t('Topo', 'Topo') },
+      { key: 'esri-satellite', label: t('Satélite', 'Satellite') },
+      { key: 'esri-streets',   label: t('Calles', 'Streets') },
     ];
     const parkMarkers = NATIONAL_PARKS.filter(p => p.coords).map(p => ({
       id: p.id,
@@ -1039,30 +1039,31 @@ export default function MapasScreen() {
     }));
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <MapLeaflet
-          center={flyTo ? [flyTo.lat, flyTo.lon] : [-40.5, -68.0]}
-          zoom={flyTo ? 10 : 4}
-          flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 10 } : null}
+        <MapLibreEsri
+          center={flyTo ? [flyTo.lat, flyTo.lon] : [-31.970, -64.910]}
+          zoom={flyTo ? 11 : 12}
+          flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 11 } : null}
           height="100%"
-          layer={mapLayer}
+          layer={esriLayer}
           markers={parkMarkers}
+          showHikingRoute
           onMarkerPress={(id: string) => {
             const park = NATIONAL_PARKS.find(p => p.id === id);
             if (park) setFlyTo({ lat: park.coords.lat, lon: park.coords.lon });
           }}
         />
 
-        {/* Layer switcher — top-left */}
+        {/* ESRI layer switcher — top-left */}
         <SafeAreaView edges={['top']} style={nS.layerBar} pointerEvents="box-none">
           <View style={[nS.layerPill, { backgroundColor: isDark ? 'rgba(15,23,36,0.88)' : 'rgba(248,250,252,0.92)', borderColor: c.border }]}>
-            {LAYERS.map((l) => (
+            {ESRI_LAYERS.map((l) => (
               <TouchableOpacity
                 key={l.key}
-                style={[nS.layerBtn, mapLayer === l.key && nS.layerBtnActive]}
-                onPress={() => setMapLayer(l.key)}
+                style={[nS.layerBtn, esriLayer === l.key && nS.layerBtnActive]}
+                onPress={() => setEsriLayer(l.key)}
                 activeOpacity={0.75}
               >
-                <Text style={[nS.layerTxt, mapLayer === l.key && nS.layerTxtActive, { color: mapLayer === l.key ? '#fff' : c.muted }]}>
+                <Text style={[nS.layerTxt, esriLayer === l.key && nS.layerTxtActive, { color: esriLayer === l.key ? '#fff' : c.muted }]}>
                   {l.label}
                 </Text>
               </TouchableOpacity>
