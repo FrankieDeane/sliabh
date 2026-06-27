@@ -6,9 +6,6 @@
   <title>Parques Nacionales de Argentina</title>
   <link rel="icon" type="image/png" href="/logo.svg" />
   <link rel="preconnect" href="https://unpkg.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <style>
     :root {
       --bg: #070b14;
@@ -310,8 +307,6 @@
       box-shadow: 0 16px 28px rgba(0,0,0,.4);
       background: rgba(22,163,74,.92);
     }
-    .leaflet-popup-content-wrapper { background: var(--surface); color: var(--text); border-radius: 12px; }
-    .leaflet-popup-tip { background: var(--surface); }
     @media (max-width: 900px) {
       #interactiveMap { flex-direction: column; height: auto; }
       #leftPane { flex: 0 0 auto !important; overflow: visible; }
@@ -352,17 +347,6 @@
   .maplibregl-popup-content{background:rgba(255,255,255,.96)!important;border:1px solid #cbd5e1!important;
     color:#0f172a!important;border-radius:9px!important;padding:8px 12px!important;font-size:12px!important;font-family:inherit!important;font-weight:600!important}
   .maplibregl-popup-tip{border-top-color:rgba(255,255,255,.96)!important}
-  /* ── Locate + cache Leaflet controls ──────────────────────── */
-  .leaflet-control-locate button,
-  .leaflet-control-cache button {
-    display:flex;align-items:center;justify-content:center;
-    width:34px;height:34px;cursor:pointer;padding:0;border-radius:4px;
-    font-family:inherit;line-height:1;font-size:18px;
-  }
-  .leaflet-control-locate button { background:#1d4ed8;color:#fff;border:2px solid #3b82f6; }
-  .leaflet-control-locate button:hover { background:#1e40af; }
-  .leaflet-control-cache button { background:#14532d;color:#86efac;border:2px solid #22c55e;font-size:13px;font-weight:700; }
-  .leaflet-control-cache button:hover { background:#166534; }
   /* Blue pulsing dot for user location */
   .user-dot {
     width:16px;height:16px;border-radius:50%;
@@ -380,7 +364,7 @@
   <div class="wrap">
     <section id="interactiveMap">
 
-      <!-- LEFT PANE: Leaflet Argentina map -->
+      <!-- LEFT PANE: MapLibre Argentina map (ESRI Topo) -->
       <div id="leftPane">
         <div class="card map-card">
           <div class="section-head">
@@ -430,13 +414,11 @@
 
   <footer style="text-align:center;padding:24px 18px;color:#4a586e;font-size:12px;line-height:1.7">
     <img src="/SLIABH_Logo_Transparent.png" alt="Sliabh" style="height:72px;width:72px;display:block;margin:0 auto 12px;border-radius:50%;object-fit:cover">
-    <div id="footerText">Mapa base OpenStreetMap / IGN Argentina · Datos SIB/APN · Sliabh</div>
+    <div id="footerText">Mapa base Esri World Topo Map · Datos SIB/APN · Sliabh</div>
   </footer>
 
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
     const parks = [
@@ -584,117 +566,85 @@
        articleUrl:'https://docs.google.com/document/d/e/2PACX-1vSzB6wVlUb90mYYlVdbOlxuFgOAGd-Mf4TGNxZrycMUC6OaJe149mRD6u6IvyOahLq4FOCCzlKAM31a/pub'}
     ];
 
-    const map = L.map('map', {
-      zoomControl: true,
-      scrollWheelZoom: true,
-      dragging: true,
-      touchZoom: true,
-      tap: true,
-      tapTolerance: 15,
-    }).setView([-39.8, -65.4], 4);
-    window.addEventListener('resize', () => map.invalidateSize());
-    requestAnimationFrame(function() { map.invalidateSize(); });
-    setTimeout(function() { map.invalidateSize(); }, 200);
-    setTimeout(function() { map.invalidateSize(); }, 600);
-    setTimeout(function() { map.invalidateSize(); }, 1500);
-    window.addEventListener('load', function() { map.invalidateSize(); });
-
-    // OpenStreetMap — primary, always available
-    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: ['a','b','c'],
-      maxZoom: 19,
-      crossOrigin: 'anonymous',
-      detectRetina: true,
-    });
-
-    // OpenTopoMap — topographic
-    const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
-      subdomains: ['a','b','c'],
-      maxZoom: 17,
-      crossOrigin: 'anonymous',
-      detectRetina: true,
-    });
-
-    // IGN ArgenMap — Argentina official (may be unavailable)
-    const ignLayer = L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
-      attribution: 'IGN Argentina',
-      maxZoom: 18,
-      crossOrigin: 'anonymous',
-      detectRetina: true,
-    });
-
-    // Load OSM first; if IGN responds within 4 s swap to it, otherwise stay on OSM
-    osmLayer.addTo(map);
-    const ignTest = new Image();
-    ignTest.crossOrigin = 'anonymous';
-    const ignTestTimeout = setTimeout(() => { ignTest.src = ''; }, 4000);
-    ignTest.onload = () => {
-      clearTimeout(ignTestTimeout);
-      map.removeLayer(osmLayer);
-      ignLayer.addTo(map);
-    };
-    ignTest.onerror = () => clearTimeout(ignTestTimeout);
-    ignTest.src = 'https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/4/4/6.png';
-
-    // Layer switcher control
-    L.control.layers(
-      { 'OpenStreetMap': osmLayer, 'OpenTopoMap': topoLayer, 'IGN ArgenMap': ignLayer },
-      {},
-      { position: 'topright', collapsed: true }
-    ).addTo(map);
-
-    // ── i18n — declared early so Locate/Cache controls can reference lang ────
+    // ── i18n — declared early so controls can reference lang ─────────────────
     let lang = 'es';
     const T = (es, en) => (lang === 'es' ? es : en);
 
-    // ── Locate me ────────────────────────────────────────────────────────────
+    // ── MapLibre map (ESRI Topo) ──────────────────────────────────────────────
+    const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
+    let mapLoaded = false;
+
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          esri: {
+            type: 'raster',
+            tiles: [ESRI_TOPO],
+            tileSize: 256,
+            attribution: '&copy; Esri, HERE, Garmin, FAO, NOAA, USGS',
+          },
+        },
+        layers: [{ id: 'esri-layer', type: 'raster', source: 'esri' }],
+      },
+      center: [-65.4, -39.8],
+      zoom: 4,
+      maxZoom: 18,
+      attributionControl: true,
+    });
+    window.addEventListener('resize', () => map.resize());
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+    // ── User location ─────────────────────────────────────────────────────────
     let userMarker = null;
     function locateUser() {
       if (!navigator.geolocation) {
-        alert('Geolocalización no disponible / Geolocation not available');
+        alert(T('Geolocalización no disponible', 'Geolocation not available'));
         return;
       }
       navigator.geolocation.getCurrentPosition(
         function(pos) {
           const { latitude: lat, longitude: lng } = pos.coords;
           if (userMarker) { userMarker.remove(); userMarker = null; }
-          userMarker = L.marker([lat, lng], {
-            icon: L.divIcon({ html: '<div class="user-dot"></div>', className: '', iconSize: [16,16], iconAnchor: [8,8] }),
-            zIndexOffset: 1000,
-          }).addTo(map);
-          userMarker.bindPopup(lang === 'es' ? 'Tu ubicación' : 'Your location').openPopup();
-          map.flyTo([lat, lng], 13, { duration: 1.2 });
+          const el = document.createElement('div');
+          el.className = 'user-dot';
+          const popup = new maplibregl.Popup({ offset: 14, closeButton: false })
+            .setHTML(T('Tu ubicación', 'Your location'));
+          userMarker = new maplibregl.Marker({ element: el, anchor: 'center' })
+            .setLngLat([lng, lat])
+            .setPopup(popup)
+            .addTo(map);
+          popup.addTo(map);
+          map.flyTo({ center: [lng, lat], zoom: 13, duration: 1200 });
         },
         function(err) {
-          const msgs = ['', lang === 'es' ? 'Permiso de ubicación denegado.' : 'Location permission denied.',
-            lang === 'es' ? 'No se pudo obtener la posición.' : 'Position unavailable.',
-            lang === 'es' ? 'Tiempo agotado.' : 'Timed out.'];
+          const msgs = ['', T('Permiso de ubicación denegado.', 'Location permission denied.'),
+            T('No se pudo obtener la posición.', 'Position unavailable.'),
+            T('Tiempo agotado.', 'Timed out.')];
           alert(msgs[err.code] || err.message);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
       );
     }
-    const LocateControl = L.Control.extend({
-      options: { position: 'topleft' },
+    map.addControl({
       onAdd() {
-        const c = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-locate');
-        c.innerHTML = '<button title="' + (lang === 'es' ? 'Mi ubicación' : 'My location') + '" aria-label="' + (lang === 'es' ? 'Centrar en mi ubicación' : 'Centre on my location') + '">◉</button>';
-        L.DomEvent.on(c.querySelector('button'), 'click', function(e) { L.DomEvent.stopPropagation(e); locateUser(); });
-        L.DomEvent.disableClickPropagation(c);
+        const c = document.createElement('div');
+        c.className = 'maplibregl-ctrl maplibregl-ctrl-group';
+        c.innerHTML = '<button style="background:#1d4ed8;color:#fff;border:2px solid #3b82f6;border-radius:4px;width:34px;height:34px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;box-sizing:border-box;" title="' + T('Mi ubicación', 'My location') + '">◉</button>';
+        c.querySelector('button').addEventListener('click', function(e) { e.stopPropagation(); locateUser(); });
         return c;
       },
-    });
-    new LocateControl().addTo(map);
+      onRemove() {}
+    }, 'top-left');
 
     // ── Cache visible tiles ───────────────────────────────────────────────────
     async function cacheVisibleTiles() {
       if (!('caches' in window)) {
-        alert(lang === 'es' ? 'Tu navegador no soporta almacenamiento offline' : 'Your browser does not support offline storage');
+        alert(T('Tu navegador no soporta almacenamiento offline', 'Your browser does not support offline storage'));
         return;
       }
-      const btn = document.querySelector('.leaflet-control-cache button');
+      const btn = document.querySelector('.maplibre-ctrl-cache button');
       if (btn) btn.disabled = true;
       const bounds = map.getBounds();
       const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
@@ -711,7 +661,7 @@
         const y0 = latToY(ne.lat, zl), y1 = latToY(sw.lat, zl);
         for (let x = x0; x <= x1; x++)
           for (let y = y0; y <= y1; y++)
-            jobs.push('https://a.tile.openstreetmap.org/' + zl + '/' + x + '/' + y + '.png');
+            jobs.push(ESRI_TOPO.replace('{z}', zl).replace('{y}', y).replace('{x}', x));
       }
       if (!jobs.length) { if (btn) btn.disabled = false; return; }
       const cache = await caches.open('sliabh-tiles-v1');
@@ -731,33 +681,166 @@
       await Promise.all([worker(), worker(), worker(), worker()]);
       if (btn) { btn.textContent = '✅'; btn.disabled = false; setTimeout(() => { btn.textContent = '💾'; }, 2500); }
     }
-    const CacheControl = L.Control.extend({
-      options: { position: 'topleft' },
+    map.addControl({
       onAdd() {
-        const c = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-cache');
-        c.innerHTML = '<button title="' + (lang === 'es' ? 'Guardar mapa offline' : 'Save map offline') + '" aria-label="' + (lang === 'es' ? 'Guardar tiles del área visible' : 'Save tiles for visible area') + '">💾</button>';
-        L.DomEvent.on(c.querySelector('button'), 'click', function(e) { L.DomEvent.stopPropagation(e); cacheVisibleTiles(); });
-        L.DomEvent.disableClickPropagation(c);
+        const c = document.createElement('div');
+        c.className = 'maplibregl-ctrl maplibregl-ctrl-group maplibre-ctrl-cache';
+        c.innerHTML = '<button style="background:#14532d;color:#86efac;border:2px solid #22c55e;border-radius:4px;width:34px;height:34px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;box-sizing:border-box;" title="' + T('Guardar mapa offline', 'Save map offline') + '">💾</button>';
+        c.querySelector('button').addEventListener('click', function(e) { e.stopPropagation(); cacheVisibleTiles(); });
         return c;
       },
-    });
-    new CacheControl().addTo(map);
+      onRemove() {}
+    }, 'top-left');
 
-    const clusterGroup = L.markerClusterGroup
-      ? L.markerClusterGroup({
-          showCoverageOnHover: false,
-          spiderfyOnMaxZoom: true,
-          maxClusterRadius: 46,
-          disableClusteringAtZoom: 9,
-          iconCreateFunction(cluster) {
-            return L.divIcon({
-              html: `<div class="cluster-icon">${cluster.getChildCount()}</div>`,
-              className: '',
-              iconSize: [44, 44]
-            });
-          }
-        })
-      : L.featureGroup();
+    // ── Park GeoJSON helper ───────────────────────────────────────────────────
+    function makeParksGeoJSON(subset) {
+      return {
+        type: 'FeatureCollection',
+        features: subset.map(park => ({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [park.lng, park.lat] },
+          properties: { index: parks.indexOf(park), color: park.color, name: park.name }
+        }))
+      };
+    }
+
+    // ── All map layers set up after style loads ───────────────────────────────
+    map.on('load', function () {
+      mapLoaded = true;
+
+      // Park markers with clustering
+      map.addSource('parks', {
+        type: 'geojson', data: makeParksGeoJSON(parks),
+        cluster: true, clusterMaxZoom: 8, clusterRadius: 46,
+      });
+      map.addLayer({ id: 'parks-clusters', type: 'circle', source: 'parks',
+        filter: ['has', 'point_count'],
+        paint: { 'circle-color': 'rgba(22,163,74,0.92)', 'circle-radius': 22,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(255,255,255,0.96)' }
+      });
+      map.addLayer({ id: 'parks-cluster-count', type: 'symbol', source: 'parks',
+        filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 14,
+                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'] },
+        paint: { 'text-color': '#fff' }
+      });
+      map.addLayer({ id: 'parks-unclustered', type: 'circle', source: 'parks',
+        filter: ['!', ['has', 'point_count']],
+        paint: { 'circle-color': ['get', 'color'], 'circle-radius': 9,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(255,255,255,0.96)' }
+      });
+      map.on('click', 'parks-unclustered', function (e) {
+        const idx = e.features[0].properties.index;
+        const park = parks[idx];
+        if (!park) return;
+        renderPanel(park);
+        if (!park.trailCoords) {
+          map.flyTo({ center: [park.lng, park.lat], zoom: Math.max(map.getZoom(), 6), duration: 700 });
+        }
+      });
+      map.on('click', 'parks-clusters', function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['parks-clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('parks').getClusterExpansionZoom(clusterId).then(function (zoom) {
+          map.flyTo({ center: features[0].geometry.coordinates, zoom });
+        });
+      });
+      map.on('mouseenter', 'parks-unclustered', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'parks-unclustered', () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', 'parks-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'parks-clusters', () => { map.getCanvas().style.cursor = ''; });
+
+      // Active trail line (updated by renderPanel)
+      map.addSource('active-trail', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } });
+      map.addLayer({ id: 'active-trail-glow', type: 'line', source: 'active-trail',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': '#22c55e', 'line-width': 10, 'line-opacity': 0.15, 'line-blur': 6 }
+      });
+      map.addLayer({ id: 'active-trail-line', type: 'line', source: 'active-trail',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': '#22c55e', 'line-width': 3.5, 'line-opacity': 0.95 }
+      });
+
+      // Bariloche polylines
+      map.addSource('bariloche-lines', { type: 'geojson', data: {
+        type: 'FeatureCollection',
+        features: barilocheTrails.map(t => ({
+          type: 'Feature', properties: { id: t.id },
+          geometry: { type: 'LineString', coordinates: t.gpxTrack.map(p => [p.lon, p.lat]) }
+        }))
+      }});
+      map.addLayer({ id: 'bariloche-trails-line', type: 'line', source: 'bariloche-lines',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': '#3b82f6', 'line-width': 3, 'line-opacity': 0.8, 'line-dasharray': [2, 1.3] }
+      });
+
+      // Bariloche markers (clustered)
+      map.addSource('bariloche-markers', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: barilocheTrails.map((t, i) => ({
+          type: 'Feature', properties: { index: i, name: t.name },
+          geometry: { type: 'Point', coordinates: [t.lng, t.lat] }
+        }))},
+        cluster: true, clusterMaxZoom: 9, clusterRadius: 50,
+      });
+      map.addLayer({ id: 'bariloche-clusters', type: 'circle', source: 'bariloche-markers',
+        filter: ['has', 'point_count'],
+        layout: { 'visibility': 'none' },
+        paint: { 'circle-color': 'rgba(59,130,246,0.92)', 'circle-radius': 22,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(147,197,253,0.96)' }
+      });
+      map.addLayer({ id: 'bariloche-cluster-count', type: 'symbol', source: 'bariloche-markers',
+        filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 14,
+                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'], 'visibility': 'none' },
+        paint: { 'text-color': '#fff' }
+      });
+      map.addLayer({ id: 'bariloche-unclustered', type: 'circle', source: 'bariloche-markers',
+        filter: ['!', ['has', 'point_count']],
+        layout: { 'visibility': 'none' },
+        paint: { 'circle-color': '#3b82f6', 'circle-radius': 8,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(147,197,253,0.96)' }
+      });
+      map.on('click', 'bariloche-unclustered', function (e) {
+        const idx = e.features[0].properties.index;
+        const trail = barilocheTrails[idx];
+        if (!trail) return;
+        new maplibregl.Popup({ maxWidth: '300px' })
+          .setLngLat(e.lngLat)
+          .setHTML('<div class="trail-popup">'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + trail.duration + '</span></div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
+            + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + trail.description + '</p>'
+            + '<div><button class="btn-gpx" onclick="downloadGpx(barilocheTrails[' + idx + '])">⬇ GPX offline</button>'
+            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '</div>')
+          .addTo(map);
+      });
+      map.on('click', 'bariloche-clusters', function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['bariloche-clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('bariloche-markers').getClusterExpansionZoom(clusterId).then(function (zoom) {
+          map.flyTo({ center: features[0].geometry.coordinates, zoom });
+        });
+      });
+      map.on('mouseenter', 'bariloche-unclustered', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'bariloche-unclustered', () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', 'bariloche-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'bariloche-clusters', () => { map.getCanvas().style.cursor = ''; });
+
+      // External track (postMessage showTrack)
+      map.addSource('external-track', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } });
+      map.addLayer({ id: 'external-track-line', type: 'line', source: 'external-track',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': '#3b82f6', 'line-width': 3.5, 'line-opacity': 0.9, 'line-dasharray': [2, 1.3] }
+      });
+
+      applyFilters();
+      setTimeout(() => showTrailLayer(), 800);
+    });
 
     const sampleTrails = {
       'Parque Nacional Los Glaciares': ['Laguna de los Tres · Difícil · 20 km', 'Mirador del Glaciar · Fácil · 3 km'],
@@ -837,29 +920,6 @@
       document.documentElement.lang = lang;
     }
 
-    function markerIcon(color) {
-      return L.divIcon({
-        className: '',
-        html: `<div class="custom-marker" style="background:${color}"></div>`,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
-      });
-    }
-
-    const markers = parks.map(park => {
-      const marker = L.marker([park.lat, park.lng], { icon: markerIcon(park.color), title: park.name });
-      marker.parkData = park;
-      marker.on('click', (e) => {
-        L.DomEvent.stopPropagation(e);
-        map.closePopup();
-        renderPanel(park);
-        // skip flyTo when trailCoords exist — renderPanel fitBounds handles navigation
-        if (!park.trailCoords) {
-          map.flyTo([park.lat, park.lng], Math.max(map.getZoom(), 6), { duration: 0.7 });
-        }
-      });
-      return marker;
-    });
 
     let currentPark = null;
     function renderPanel(park) {
@@ -944,17 +1004,26 @@
 
       // Activate split view on all screen sizes
       interactiveMap.classList.add('split');
-      setTimeout(() => map.invalidateSize(), 340);
+      setTimeout(() => map.resize(), 340);
 
-      // Draw trail polyline on LEFT Leaflet map
-      if (window._leafletTrailLine) { map.removeLayer(window._leafletTrailLine); window._leafletTrailLine = null; }
-      if (park.trailCoords && park.trailCoords.length > 1) {
-        const tc = park.trailColor || '#22c55e';
-        const latlngs = park.trailCoords.map(c => [c[1], c[0]]); // [lng,lat] → [lat,lng]
-        window._leafletTrailLine = L.polyline(latlngs, {
-          color: tc, weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round',
-        }).addTo(map);
-        setTimeout(() => { map.fitBounds(window._leafletTrailLine.getBounds().pad(0.2)); }, 400);
+      // Draw trail line on left MapLibre map
+      if (mapLoaded) {
+        if (park.trailCoords && park.trailCoords.length > 1) {
+          const tc = park.trailColor || '#22c55e';
+          map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: park.trailCoords } });
+          map.setPaintProperty('active-trail-line', 'line-color', tc);
+          map.setPaintProperty('active-trail-glow', 'line-color', tc);
+          map.setLayoutProperty('active-trail-glow', 'visibility', 'visible');
+          map.setLayoutProperty('active-trail-line', 'visibility', 'visible');
+          setTimeout(() => {
+            const lons = park.trailCoords.map(c => c[0]), lats = park.trailCoords.map(c => c[1]);
+            map.fitBounds([[Math.min(...lons) - 0.02, Math.min(...lats) - 0.02], [Math.max(...lons) + 0.02, Math.max(...lats) + 0.02]], { padding: 40, duration: 1000 });
+          }, 400);
+        } else {
+          map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: [] } });
+          map.setLayoutProperty('active-trail-glow', 'visibility', 'none');
+          map.setLayoutProperty('active-trail-line', 'visibility', 'none');
+        }
       }
 
       // ── Satellite 3D cinematic map for every park (desktop only) ───────────
@@ -1263,13 +1332,15 @@
         return matchRegion && matchSearch;
       });
 
-      clusterGroup.clearLayers();
-      const visibleMarkers = markers.filter(m => filtered.includes(m.parkData));
-      visibleMarkers.forEach(m => clusterGroup.addLayer(m));
-
-      if (visibleMarkers.length && !firstFilter) {
-        const bounds = L.featureGroup(visibleMarkers).getBounds();
-        if (bounds.isValid()) map.fitBounds(bounds.pad(0.3), { maxZoom: 10 });
+      if (mapLoaded) {
+        map.getSource('parks').setData(makeParksGeoJSON(filtered));
+        if (filtered.length && !firstFilter) {
+          const lons = filtered.map(p => p.lng), lats = filtered.map(p => p.lat);
+          map.fitBounds(
+            [[Math.min(...lons) - 0.5, Math.min(...lats) - 0.5], [Math.max(...lons) + 0.5, Math.max(...lats) + 0.5]],
+            { maxZoom: 10, padding: 40 }
+          );
+        }
       }
       firstFilter = false;
 
@@ -1277,9 +1348,7 @@
       if (filtered.length) renderPanel(filtered[0]);
     }
 
-    map.addLayer(clusterGroup);
     applyStaticLang();
-    applyFilters();
 
     // ── Language toggle wiring ─────────────────────────────────────────────────
     document.getElementById('langToggle').addEventListener('click', e => {
@@ -1635,68 +1704,9 @@ ${trkpts}
       return 'diff-extremo';
     }
 
-    function trailMarkerIcon() {
-      return L.divIcon({
-        className: '',
-        html: `<div class="custom-marker" style="background:#3b82f6;border-color:#93c5fd;width:16px;height:16px;"></div>`,
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
-      });
-    }
-
-    const trailPolylines = [];
-    const trailCluster = L.markerClusterGroup({
-      showCoverageOnHover: false,
-      spiderfyOnMaxZoom: true,
-      maxClusterRadius: 50,
-      iconCreateFunction(cluster) {
-        return L.divIcon({
-          html: `<div class="cluster-icon" style="background:rgba(59,130,246,.92);border-color:#93c5fd;">${cluster.getChildCount()}</div>`,
-          className: '',
-          iconSize: [44, 44]
-        });
-      }
-    });
-
-    barilocheTrails.forEach(trail => {
-      // Polyline for the track
-      const latlngs = trail.gpxTrack.map(p => [p.lat, p.lon]);
-      const poly = L.polyline(latlngs, {
-        color: '#3b82f6',
-        weight: 3,
-        opacity: 0.8,
-        dashArray: '6, 4'
-      });
-      trailPolylines.push(poly);
-
-      // Marker at destination
-      const marker = L.marker([trail.lat, trail.lng], { icon: trailMarkerIcon(), title: trail.name });
-      marker.bindPopup(() => {
-        const div = document.createElement('div');
-        div.className = 'trail-popup';
-        div.innerHTML = `
-          <h4>${trail.name}<span class="diff-badge ${diffClass(trail.difficulty)}">${trail.difficulty}</span></h4>
-          <div class="stats">
-            <span>↔ ${trail.distance_km} km</span>
-            <span>↑ ${trail.elevation_gain_m} m</span>
-            <span>⛰ ${trail.max_altitude_m} m</span>
-            <span>⏱ ${trail.duration}</span>
-          </div>
-          <div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ${trail.trailhead}</div>
-          <div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ${trail.best_season}</div>
-          <p style="margin:0 0 8px;font-size:13px;color:#cbd5e1;line-height:1.5;">${trail.description}</p>
-          <div>
-            <button class="btn-gpx" onclick="downloadGpx(barilocheTrails.find(t=>t.id==='${trail.id}'))">⬇ GPX offline</button>
-            <a class="btn-pdf" href="https://sliabh.app/ruta/${trail.id}" target="_blank">${T('Ver guía', 'View guide')}</a>
-          </div>
-        `;
-        return div;
-      }, { maxWidth: 280 });
-      trailCluster.addLayer(marker);
-    });
-
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
+    const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
 
     function updateTrailToggleLabel() {
       if (trailLayerVisible) {
@@ -1709,25 +1719,20 @@ ${trkpts}
     function showTrailLayer() {
       trailLayerVisible = true;
       toggleBtn.classList.add('active');
-      map.addLayer(trailCluster);
-      trailPolylines.forEach(p => map.addLayer(p));
+      if (mapLoaded) BARILOCHE_LAYERS.forEach(id => map.setLayoutProperty(id, 'visibility', 'visible'));
       updateTrailToggleLabel();
     }
 
     function hideTrailLayer() {
       trailLayerVisible = false;
       toggleBtn.classList.remove('active');
-      map.removeLayer(trailCluster);
-      trailPolylines.forEach(p => map.removeLayer(p));
+      if (mapLoaded) BARILOCHE_LAYERS.forEach(id => map.setLayoutProperty(id, 'visibility', 'none'));
       updateTrailToggleLabel();
     }
 
     toggleBtn.addEventListener('click', () => {
       if (trailLayerVisible) hideTrailLayer(); else showTrailLayer();
     });
-
-    // Show Bariloche trails by default on load
-    setTimeout(() => showTrailLayer(), 800);
 
     // Close modal on Escape key (used by split close)
     document.addEventListener('keydown', function(e) {
@@ -1870,7 +1875,7 @@ ${trkpts}
       const lng = parseFloat(params.get('lng') || '');
       const zoom = parseInt(params.get('zoom') || '10', 10);
       if (!isNaN(lat) && !isNaN(lng)) {
-        setTimeout(() => map.flyTo([lat, lng], zoom, { duration: 1.0 }), 600);
+        setTimeout(() => map.flyTo({ center: [lng, lat], zoom, duration: 1000 }), 600);
         // Highlight the closest park in the panel
         const closest = parks.reduce((best, p) => {
           const d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
@@ -1913,7 +1918,7 @@ ${trkpts}
         handle.classList.remove('dragging');
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
-        map.invalidateSize();
+        map.resize();
         if (window._parkGlMap) window._parkGlMap.resize();
       }
 
@@ -1927,7 +1932,7 @@ ${trkpts}
     })();
 
     // ── Accept postMessage from parent app ────────────────────────────────────
-    var externalTrackLine = null;
+    var externalTrackLine = false;
     var externalTrackMarkers = [];
 
     window.addEventListener('message', function (e) {
@@ -1936,8 +1941,8 @@ ${trkpts}
       if (e.data.type === 'flyTo') {
         var lat = e.data.lat, lng = e.data.lng, zoom = e.data.zoom;
         if (typeof lat === 'number' && typeof lng === 'number') {
-          map.invalidateSize();
-          map.flyTo([lat, lng], zoom || 11, { duration: 1.0 });
+          map.resize();
+          map.flyTo({ center: [lng, lat], zoom: zoom || 11, duration: 1000 });
           var closest = parks.reduce(function(best, p) {
             var d = Math.abs(p.lat - lat) + Math.abs(p.lng - lng);
             var bd = Math.abs(best.lat - lat) + Math.abs(best.lng - lng);
@@ -1965,34 +1970,42 @@ ${trkpts}
       }
 
       if (e.data.type === 'showTrack') {
-        if (externalTrackLine) { map.removeLayer(externalTrackLine); externalTrackLine = null; }
-        externalTrackMarkers.forEach(function(m) { map.removeLayer(m); });
+        if (externalTrackLine && mapLoaded) {
+          map.getSource('external-track').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: [] } });
+          map.setLayoutProperty('external-track-line', 'visibility', 'none');
+          externalTrackLine = false;
+        }
+        externalTrackMarkers.forEach(function(m) { m.remove(); });
         externalTrackMarkers = [];
 
         var points = e.data.points;
         if (!Array.isArray(points) || !points.length) return;
 
-        var latlngs = points.map(function(p) { return [p.lat, p.lon]; });
-        externalTrackLine = L.polyline(latlngs, {
-          color: '#3b82f6', weight: 3.5, opacity: 0.9,
-          dashArray: '8,4', lineJoin: 'round', lineCap: 'round'
-        }).addTo(map);
+        var coords = points.map(function(p) { return [p.lon, p.lat]; });
 
-        points.forEach(function(p, i) {
-          var icon = L.divIcon({
-            html: '<div style="background:#1d4ed8;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.4);">' + (i + 1) + '</div>',
-            className: '', iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -11]
+        if (mapLoaded) {
+          map.getSource('external-track').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: coords } });
+          map.setLayoutProperty('external-track-line', 'visibility', 'visible');
+          externalTrackLine = true;
+
+          points.forEach(function(p, i) {
+            var el = document.createElement('div');
+            el.style.cssText = 'background:#1d4ed8;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.4);';
+            el.textContent = String(i + 1);
+            var m = new maplibregl.Marker({ element: el, anchor: 'center' })
+              .setLngLat([p.lon, p.lat])
+              .setPopup(new maplibregl.Popup({ offset: 14 }).setHTML('<b>' + (i + 1) + '. ' + (p.name || '') + '</b><br/>' + p.lat.toFixed(5) + ', ' + p.lon.toFixed(5)))
+              .addTo(map);
+            externalTrackMarkers.push(m);
           });
-          var m = L.marker([p.lat, p.lon], { icon: icon }).addTo(map);
-          m.bindPopup('<b>' + (i + 1) + '. ' + (p.name || '') + '</b><br/>' + p.lat.toFixed(5) + ', ' + p.lon.toFixed(5));
-          externalTrackMarkers.push(m);
-        });
 
-        map.invalidateSize();
-        if (latlngs.length > 1) {
-          map.fitBounds(externalTrackLine.getBounds().pad(0.25), { duration: 1.0 });
-        } else {
-          map.flyTo(latlngs[0], 11, { duration: 1.0 });
+          map.resize();
+          if (coords.length > 1) {
+            var lons = coords.map(function(c) { return c[0]; }), lats = coords.map(function(c) { return c[1]; });
+            map.fitBounds([[Math.min.apply(null, lons) - 0.01, Math.min.apply(null, lats) - 0.01], [Math.max.apply(null, lons) + 0.01, Math.max.apply(null, lats) + 0.01]], { padding: 40, duration: 1000 });
+          } else {
+            map.flyTo({ center: coords[0], zoom: 11, duration: 1000 });
+          }
         }
         return;
       }
