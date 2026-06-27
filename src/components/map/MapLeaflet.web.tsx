@@ -74,11 +74,11 @@ const TILE_ATTRIBUTIONS = {
 function makeMarkerIcon(color: string) {
   if (!Leaflet) return null;
   return Leaflet.divIcon({
-    html: `<div style="width:14px;height:14px;border-radius:50%;background:${color};border:2.5px solid rgba(255,255,255,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+    html: `<div style="width:20px;height:20px;border-radius:50%;background:${color};border:3px solid rgba(255,255,255,0.95);box-shadow:0 2px 10px rgba(0,0,0,0.5);"></div>`,
     className: '',
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-    popupAnchor: [0, -10],
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+    popupAnchor: [0, -12],
   });
 }
 
