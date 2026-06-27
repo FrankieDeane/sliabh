@@ -414,7 +414,7 @@
 
   <footer style="text-align:center;padding:24px 18px;color:#4a586e;font-size:12px;line-height:1.7">
     <img src="/SLIABH_Logo_Transparent.png" alt="Sliabh" style="height:72px;width:72px;display:block;margin:0 auto 12px;border-radius:50%;object-fit:cover">
-    <div id="footerText">Mapa base Esri World Topo Map · Datos SIB/APN · Sliabh</div>
+    <div id="footerText">Mapa base Esri World Imagery · Datos SIB/APN · Sliabh</div>
   </footer>
 
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
@@ -570,26 +570,28 @@
     let lang = 'es';
     const T = (es, en) => (lang === 'es' ? es : en);
 
-    // ── MapLibre map (ESRI Topo) ──────────────────────────────────────────────
-    const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
+    // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
+    const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     let mapLoaded = false;
 
     const map = new maplibregl.Map({
       container: 'map',
       style: {
         version: 8,
+        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         sources: {
           esri: {
             type: 'raster',
-            tiles: [ESRI_TOPO],
+            tiles: [ESRI_SAT],
             tileSize: 256,
-            attribution: '&copy; Esri, HERE, Garmin, FAO, NOAA, USGS',
+            attribution: '&copy; Esri, Maxar, Earthstar Geographics',
           },
         },
         layers: [{ id: 'esri-layer', type: 'raster', source: 'esri' }],
       },
       center: [-65.4, -39.8],
       zoom: 4,
+      pitch: 30,
       maxZoom: 18,
       attributionControl: true,
     });
@@ -661,7 +663,7 @@
         const y0 = latToY(ne.lat, zl), y1 = latToY(sw.lat, zl);
         for (let x = x0; x <= x1; x++)
           for (let y = y0; y <= y1; y++)
-            jobs.push(ESRI_TOPO.replace('{z}', zl).replace('{y}', y).replace('{x}', x));
+            jobs.push(ESRI_SAT.replace('{z}', zl).replace('{y}', y).replace('{x}', x));
       }
       if (!jobs.length) { if (btn) btn.disabled = false; return; }
       const cache = await caches.open('sliabh-tiles-v1');
@@ -707,6 +709,14 @@
     // ── All map layers set up after style loads ───────────────────────────────
     map.on('load', function () {
       mapLoaded = true;
+
+      // 3D terrain
+      map.addSource('dem', {
+        type: 'raster-dem',
+        tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+        encoding: 'terrarium', tileSize: 256, maxzoom: 14,
+      });
+      map.setTerrain({ source: 'dem', exaggeration: 1.8 });
 
       // Park markers with clustering
       map.addSource('parks', {
