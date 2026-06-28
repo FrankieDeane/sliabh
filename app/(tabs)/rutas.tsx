@@ -57,6 +57,12 @@ export default function RutasScreen() {
   const [iframeReady, setIframeReady] = useState(false);
   const iframeRef = React.useRef<any>(null);
 
+  // Filtered trails + active trail — declared before effects that reference them
+  const filtered = useMemo(() => filterByRegion(ALL_TRAILS, region), [region]);
+  const activeTrail = activeTrailId
+    ? filtered.find((trail) => trail.id === activeTrailId)
+    : null;
+
   useEffect(() => {
     const timer = setTimeout(() => animateScrollReveal(), 400);
     return () => clearTimeout(timer);
@@ -124,7 +130,6 @@ export default function RutasScreen() {
         muted: '#64748b',
       };
 
-  const filtered = useMemo(() => filterByRegion(ALL_TRAILS, region), [region]);
   const [featured, ...rest] = filtered;
 
   const contentW = Math.min(width, MAX_CONTENT);
@@ -141,9 +146,6 @@ export default function RutasScreen() {
   }));
 
   // Map center: active trail or default center of Argentina
-  const activeTrail = activeTrailId
-    ? filtered.find((trail) => trail.id === activeTrailId)
-    : null;
   const activeCenter: [number, number] = activeTrail
     ? [activeTrail.coordinates.lat, activeTrail.coordinates.lon]
     : [-45.0, -69.0];
