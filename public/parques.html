@@ -1010,7 +1010,9 @@
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
 
       applyFilters();
-      setTimeout(() => showTrailLayer(), 800);
+      // Show every park's circuits by default (Bariloche + El Chaltén; the
+      // unified app-trails layer auto-shows when its data arrives).
+      setTimeout(() => { showTrailLayer(); showChaltenLayer(false); }, 800);
       // Tell the parent the map is ready so it can (re)push trail data
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ type: 'mapReady' }, '*');
@@ -2051,12 +2053,12 @@ ${trkpts}
       }
     }
 
-    function showChaltenLayer() {
+    function showChaltenLayer(fly) {
       chaltenLayerVisible = true;
       chaltenToggleBtn.classList.add('active');
       if (mapLoaded) CHALTEN_LAYERS.forEach(id => map.setLayoutProperty(id, 'visibility', 'visible'));
       updateChaltenToggleLabel();
-      if (mapLoaded) map.flyTo({ center: [-72.9856, -49.3333], zoom: 11, duration: 1200 });
+      if (fly !== false && mapLoaded) map.flyTo({ center: [-72.9856, -49.3333], zoom: 11, duration: 1200 });
     }
 
     function hideChaltenLayer() {
@@ -2114,7 +2116,8 @@ ${trkpts}
         }))
       });
       if (appTrailToggleBtn) appTrailToggleBtn.style.display = appTrails.length ? '' : 'none';
-      updateAppTrailToggleLabel();
+      // Circuits are shown by default so every park's trails are visible on load.
+      if (appTrails.length) showAppTrailLayer(); else updateAppTrailToggleLabel();
     }
 
     function updateAppTrailToggleLabel() {
