@@ -24,11 +24,10 @@ import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
 
-// Single 3D terrain map of the selected trail — .web / .native resolved by bundler
-const TrailMap3D = Platform.OS === 'web'
-  ? require('../../src/components/map/TrailMap3D.web').default
-  : require('../../src/components/map/TrailMap3D.native').default;
+// All trails with a GPX track, pushed to the 3D map iframe for rendering
+const MAP_TRAIL_PAYLOAD = buildMapTrailPayload(ALL_TRAILS as any);
 
 const MAX_CONTENT = 900;
 const SPLIT_BREAKPOINT = 900;
@@ -59,30 +58,65 @@ export default function RutasScreen() {
   const isSplit = Platform.OS === 'web' && width >= SPLIT_BREAKPOINT;
   const [showMap, setShowMap] = useState(false); // mobile map toggle
   const [activeTrailId, setActiveTrailId] = useState<string | null>(null);
+  const [iframeReady, setIframeReady] = useState(false);
+  const iframeRef = React.useRef<any>(null);
 
   // Filtered trails — declared before effects that reference them
   const filtered = useMemo(() => filterByRegion(ALL_TRAILS, region), [region]);
 
-  // Debounce the trail that drives the 3D panel so sweeping the mouse across the
-  // list doesn't remount the MapLibre map on every card; it loads when you pause.
-  const [panelTrailId, setPanelTrailId] = useState<string | null>(null);
-  useEffect(() => {
-    const id = setTimeout(() => setPanelTrailId(activeTrailId), 220);
-    return () => clearTimeout(id);
-  }, [activeTrailId]);
-
-  // The trail whose 3D terrain is shown in the map panel: the hovered/selected
-  // trail if it has a GPX track, otherwise the first trail in view that has one.
-  const hasTrack = (tr: any) => Array.isArray(tr?.gpxTrack) && tr.gpxTrack.length >= 2;
-  const panelTrail = panelTrailId ? filtered.find((tr) => tr.id === panelTrailId) : null;
-  const trackTrail =
-    (panelTrail && hasTrack(panelTrail) && panelTrail) ||
-    filtered.find((tr) => hasTrack(tr)) ||
-    null;
-
   useEffect(() => {
     const timer = setTimeout(() => animateScrollReveal(), 400);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Push the full trail dataset to the 3D map iframe so every route is drawn.
+  function pushTrailsToMap() {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: 'setTrails', trails: MAP_TRAIL_PAYLOAD },
+      '*',
+    );
+  }
+  useEffect(() => {
+    if (iframeReady) pushTrailsToMap();
+  }, [iframeReady]);
+
+  // Listen for clicks coming back from the map iframe → highlight the card.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    function scrollToCard(id: string) {
+      const el = (document as any).getElementById(`trail-card-${id}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function onMessage(e: MessageEvent) {
+      if (!e.data) return;
+      if (e.data.type === 'mapReady') { pushTrailsToMap(); return; }
+      // A trail was selected on the map → highlight + scroll to its card
+      if (e.data.type === 'trailClick' && e.data.id) {
+        const id = e.data.id as string;
+        setActiveTrailId(id);
+        setShowMap(false);
+        setTimeout(() => scrollToCard(id), 120);
+        return;
+      }
+      // A national-park marker was clicked → jump to its nearest trail card
+      if (e.data.type === 'parkClick' && typeof e.data.lat === 'number') {
+        const { lat, lng } = e.data as { lat: number; lng: number };
+        let nearest: typeof ALL_TRAILS[number] | null = null;
+        let best = Infinity;
+        for (const trail of ALL_TRAILS) {
+          const d = Math.abs(trail.coordinates.lat - lat) + Math.abs(trail.coordinates.lon - lng);
+          if (d < best) { best = d; nearest = trail; }
+        }
+        if (nearest && best < 1.2) {
+          setActiveTrailId(nearest.id);
+          setShowMap(false);
+          setTimeout(() => scrollToCard(nearest!.id), 120);
+        }
+        return;
+      }
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
   }, []);
 
   function goToTrail(id: string) {
@@ -114,23 +148,19 @@ export default function RutasScreen() {
 
   const isWide = width >= 768;
 
-  // ── Single 3D map panel (shared by desktop split + mobile toggle) ──
-  // Re-keyed by trail id so the terrain re-renders when the selection changes.
-  const map3dPanel = trackTrail ? (
-    <TrailMap3D
-      key={trackTrail.id}
-      track={(trackTrail as any).gpxTrack}
-      trailName={trackTrail.name}
-      height="100%"
+  // ── Single 3D map (shared by desktop split + mobile toggle) ──
+  // Shows ALL routes; clicking one on the map highlights its card on the left.
+  const map3dPanel = Platform.OS === 'web' ? (
+    // @ts-ignore — iframe on web
+    <iframe
+      ref={iframeRef}
+      src="/parques.html?v=20260628c"
+      style={{ width: '100%', height: '100%', border: 'none' }}
+      title="Mapa 3D de senderos de Argentina"
+      loading="eager"
+      onLoad={() => setIframeReady(true)}
     />
-  ) : (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#070b14', padding: 24 }}>
-      <Ionicons name="map-outline" size={40} color="#64748b" />
-      <Text style={{ color: '#64748b', fontSize: 14, fontWeight: '600', textAlign: 'center', marginTop: 12 }}>
-        {t('Seleccioná un sendero para ver su recorrido en 3D', 'Select a trail to see its route in 3D')}
-      </Text>
-    </View>
-  );
+  ) : null;
 
   // ── Filter chips ──
   // On desktop split layout: wrap into a grid. On mobile: horizontal scroll.
