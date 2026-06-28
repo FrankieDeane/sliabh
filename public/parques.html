@@ -1183,8 +1183,10 @@
       interactiveMap.classList.add('split');
       setTimeout(() => map.resize(), 340);
 
-      // Draw trail line on left MapLibre map
+      // Left map: ALWAYS 3D — tilt the camera so terrain relief shows, and
+      // frame the WHOLE park (wide view). The right map handles trail detail.
       if (mapLoaded) {
+        const parkZoom = park.trailZoom ? park.trailZoom - 2 : 8.5;
         if (park.trailCoords && park.trailCoords.length > 1) {
           const tc = park.trailColor || '#22c55e';
           map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: park.trailCoords } });
@@ -1193,13 +1195,15 @@
           map.setLayoutProperty('active-trail-glow', 'visibility', 'visible');
           map.setLayoutProperty('active-trail-line', 'visibility', 'visible');
           setTimeout(() => {
-            const lons = park.trailCoords.map(c => c[0]), lats = park.trailCoords.map(c => c[1]);
-            map.fitBounds([[Math.min(...lons) - 0.02, Math.min(...lats) - 0.02], [Math.max(...lons) + 0.02, Math.max(...lats) + 0.02]], { padding: 40, duration: 1000 });
+            map.flyTo({ center: park.trailCenter || [park.lng, park.lat], zoom: parkZoom, pitch: 62, bearing: 15, duration: 1100 });
           }, 400);
         } else {
           map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: [] } });
           map.setLayoutProperty('active-trail-glow', 'visibility', 'none');
           map.setLayoutProperty('active-trail-line', 'visibility', 'none');
+          setTimeout(() => {
+            map.flyTo({ center: [park.lng, park.lat], zoom: parkZoom, pitch: 62, bearing: 15, duration: 1000 });
+          }, 400);
         }
       }
 
