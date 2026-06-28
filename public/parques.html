@@ -405,6 +405,10 @@
             <span class="toggle-dot"></span>
             <span id="chaltenToggleLabel">Senderos El Chaltén (15 senderos)</span>
           </button>
+          <button class="layer-toggle chalten" id="appTrailLayerToggle" style="display:none">
+            <span class="toggle-dot"></span>
+            <span id="appTrailToggleLabel">Más senderos de Argentina</span>
+          </button>
         </div>
       </div>
 
@@ -752,6 +756,9 @@
         const park = parks[idx];
         if (!park) return;
         renderPanel(park);
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'parkClick', name: park.name, lat: park.lat, lng: park.lng }, '*');
+        }
         if (!park.trailCoords) {
           map.flyTo({ center: [park.lng, park.lat], zoom: Math.max(map.getZoom(), 6), duration: 700 });
         }
@@ -936,8 +943,78 @@
         paint: { 'line-color': '#3b82f6', 'line-width': 3.5, 'line-opacity': 0.9, 'line-dasharray': [2, 1.3] }
       });
 
+      // ── Unified app-trails layer (data pushed from parent via setTrails) ──────
+      map.addSource('app-trails-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      map.addLayer({ id: 'app-trails-glow', type: 'line', source: 'app-trails-lines',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 7, 'line-opacity': 0.18, 'line-blur': 4 }
+      });
+      map.addLayer({ id: 'app-trails-line', type: 'line', source: 'app-trails-lines',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 3, 'line-opacity': 0.9 }
+      });
+      map.addSource('app-trails-markers', {
+        type: 'geojson', data: { type: 'FeatureCollection', features: [] },
+        cluster: true, clusterMaxZoom: 9, clusterRadius: 50,
+      });
+      map.addLayer({ id: 'app-trails-clusters', type: 'circle', source: 'app-trails-markers',
+        filter: ['has', 'point_count'], layout: { 'visibility': 'none' },
+        paint: { 'circle-color': 'rgba(34,197,94,0.92)', 'circle-radius': 20,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(255,255,255,0.92)' }
+      });
+      map.addLayer({ id: 'app-trails-cluster-count', type: 'symbol', source: 'app-trails-markers',
+        filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13,
+                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'], 'visibility': 'none' },
+        paint: { 'text-color': '#fff' }
+      });
+      map.addLayer({ id: 'app-trails-unclustered', type: 'circle', source: 'app-trails-markers',
+        filter: ['!', ['has', 'point_count']], layout: { 'visibility': 'none' },
+        paint: { 'circle-color': ['get', 'color'], 'circle-radius': 7,
+                 'circle-stroke-width': 2.5, 'circle-stroke-color': 'rgba(255,255,255,0.92)' }
+      });
+      map.on('click', 'app-trails-unclustered', function (e) {
+        const idx = e.features[0].properties.index;
+        const trail = appTrails[idx];
+        if (!trail) return;
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
+        }
+        new maplibregl.Popup({ maxWidth: '300px' })
+          .setLngLat(e.lngLat)
+          .setHTML('<div class="trail-popup">'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + (trail.duration || '') + '</span></div>'
+            + (trail.trailhead ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>' : '')
+            + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>' : '')
+            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + (trail.description || '') + '</p>'
+            + '<div><button class="btn-gpx" onclick="downloadGpx(appTrails[' + idx + '])">⬇ GPX offline</button>'
+            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '</div>')
+          .addTo(map);
+      });
+      map.on('click', 'app-trails-clusters', function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['app-trails-clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('app-trails-markers').getClusterExpansionZoom(clusterId).then(function (zoom) {
+          map.flyTo({ center: features[0].geometry.coordinates, zoom });
+        });
+      });
+      map.on('mouseenter', 'app-trails-unclustered', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'app-trails-unclustered', () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', 'app-trails-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'app-trails-clusters', () => { map.getCanvas().style.cursor = ''; });
+
+      // Apply any trails buffered before the map finished loading
+      if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
+
       applyFilters();
       setTimeout(() => showTrailLayer(), 800);
+      // Tell the parent the map is ready so it can (re)push trail data
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'mapReady' }, '*');
+      }
     });
 
     const sampleTrails = {
@@ -1456,6 +1533,7 @@
       applyStaticLang();
       relabelFilters();
       updateTrailToggleLabel();
+      if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
       applyFilters();                // re-renders list + metaCount in new lang; sets currentPark=filtered[0]
       renderPanel(savedPark || currentPark); // re-render user's park (or first) in new lang
@@ -1993,6 +2071,84 @@ ${trkpts}
     });
     updateChaltenToggleLabel();
 
+    // ── Unified "all other trails" layer (pushed from parent via setTrails) ────
+    let appTrails = [];
+    let pendingAppTrails = null;
+    let appTrailsVisible = false;
+    const appTrailToggleBtn = document.getElementById('appTrailLayerToggle');
+    const APP_TRAIL_LAYERS = ['app-trails-glow', 'app-trails-line', 'app-trails-clusters', 'app-trails-cluster-count', 'app-trails-unclustered'];
+
+    function diffColor(d) {
+      if (d === 'facil') return '#22c55e';
+      if (d === 'moderado') return '#eab308';
+      if (d === 'dificil') return '#f97316';
+      return '#ef4444';
+    }
+
+    // Render the pushed trail dataset, skipping ids already shown by the
+    // dedicated Bariloche / El Chaltén layers so nothing is drawn twice.
+    function applyAppTrails(list) {
+      if (!Array.isArray(list)) return;
+      const taken = new Set([].concat(
+        barilocheTrails.map(t => t.id),
+        chaltenTrails.map(t => t.id)
+      ));
+      appTrails = list
+        .filter(t => t && t.id && !taken.has(t.id) && Array.isArray(t.gpxTrack) && t.gpxTrack.length >= 2)
+        .map(t => ({ ...t, color: t.color || diffColor(t.difficulty) }));
+
+      if (!mapLoaded || !map.getSource('app-trails-lines')) { pendingAppTrails = list; return; }
+
+      map.getSource('app-trails-lines').setData({
+        type: 'FeatureCollection',
+        features: appTrails.map(t => ({
+          type: 'Feature', properties: { id: t.id, color: t.color },
+          geometry: { type: 'LineString', coordinates: t.gpxTrack.map(p => [p.lon, p.lat]) }
+        }))
+      });
+      map.getSource('app-trails-markers').setData({
+        type: 'FeatureCollection',
+        features: appTrails.map((t, i) => ({
+          type: 'Feature', properties: { index: i, color: t.color },
+          geometry: { type: 'Point', coordinates: [t.lng != null ? t.lng : t.gpxTrack[0].lon, t.lat != null ? t.lat : t.gpxTrack[0].lat] }
+        }))
+      });
+      if (appTrailToggleBtn) appTrailToggleBtn.style.display = appTrails.length ? '' : 'none';
+      updateAppTrailToggleLabel();
+    }
+
+    function updateAppTrailToggleLabel() {
+      if (!appTrailToggleBtn) return;
+      const n = appTrails.length;
+      if (appTrailsVisible) {
+        appTrailToggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Más senderos de Argentina — VISIBLES (${n})`, `More Argentina trails — VISIBLE (${n})`)}`;
+      } else {
+        appTrailToggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Más senderos de Argentina (${n})`, `More Argentina trails (${n})`)}`;
+      }
+    }
+
+    function showAppTrailLayer() {
+      appTrailsVisible = true;
+      if (appTrailToggleBtn) appTrailToggleBtn.classList.add('active');
+      if (mapLoaded) APP_TRAIL_LAYERS.forEach(id => map.getLayer(id) && map.setLayoutProperty(id, 'visibility', 'visible'));
+      updateAppTrailToggleLabel();
+    }
+
+    function hideAppTrailLayer() {
+      appTrailsVisible = false;
+      if (appTrailToggleBtn) appTrailToggleBtn.classList.remove('active');
+      if (mapLoaded) APP_TRAIL_LAYERS.forEach(id => map.getLayer(id) && map.setLayoutProperty(id, 'visibility', 'none'));
+      updateAppTrailToggleLabel();
+    }
+
+    if (appTrailToggleBtn) {
+      appTrailToggleBtn.addEventListener('click', () => {
+        if (appTrailsVisible) hideAppTrailLayer(); else showAppTrailLayer();
+      });
+      appTrailToggleBtn.style.display = 'none';
+      updateAppTrailToggleLabel();
+    }
+
     // Close modal on Escape key (used by split close)
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && interactiveMap.classList.contains('split')) {
@@ -2196,6 +2352,11 @@ ${trkpts}
 
     window.addEventListener('message', function (e) {
       if (!e.data) return;
+
+      if (e.data.type === 'setTrails') {
+        applyAppTrails(e.data.trails);
+        return;
+      }
 
       if (e.data.type === 'flyTo') {
         var lat = e.data.lat, lng = e.data.lng, zoom = e.data.zoom;

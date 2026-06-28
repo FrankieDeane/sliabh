@@ -24,6 +24,10 @@ import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
+
+// All trails with a GPX track, pushed to the map iframe for rendering
+const MAP_TRAIL_PAYLOAD = buildMapTrailPayload(ALL_TRAILS as any);
 
 const MAX_CONTENT = 900;
 const SPLIT_BREAKPOINT = 900;
@@ -68,6 +72,17 @@ export default function RutasScreen() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Push the full trail dataset to the map iframe once it's ready
+  function pushTrailsToMap() {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: 'setTrails', trails: MAP_TRAIL_PAYLOAD },
+      '*',
+    );
+  }
+  useEffect(() => {
+    if (iframeReady) pushTrailsToMap();
+  }, [iframeReady]);
+
   // Fly to the active trail on the map whenever hover/selection changes
   useEffect(() => {
     if (!iframeReady || !activeTrail) return;
@@ -79,18 +94,46 @@ export default function RutasScreen() {
     }, '*');
   }, [activeTrail, iframeReady]);
 
-  // Listen for trail-click events coming back from the parques.html iframe
+  // Listen for events coming back from the parques.html iframe
   useEffect(() => {
     if (Platform.OS !== 'web') return;
+    function scrollToCard(id: string) {
+      const el = (document as any).getElementById(`trail-card-${id}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     function onMessage(e: MessageEvent) {
-      if (!e.data || e.data.type !== 'trailClick' || !e.data.id) return;
-      const id = e.data.id as string;
-      setActiveTrailId(id);
-      setShowMap(false);
-      setTimeout(() => {
-        const el = (document as any).getElementById(`trail-card-${id}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 120);
+      if (!e.data) return;
+      // Map finished (re)loading — (re)push trail data so nothing is lost
+      if (e.data.type === 'mapReady') {
+        pushTrailsToMap();
+        return;
+      }
+      // A trail marker was clicked on the map → highlight + scroll to its card
+      if (e.data.type === 'trailClick' && e.data.id) {
+        const id = e.data.id as string;
+        setActiveTrailId(id);
+        setShowMap(false);
+        setTimeout(() => scrollToCard(id), 120);
+        return;
+      }
+      // A national park marker was clicked → jump to its nearest trail card
+      if (e.data.type === 'parkClick' && typeof e.data.lat === 'number') {
+        const { lat, lng } = e.data as { lat: number; lng: number };
+        let nearest: typeof ALL_TRAILS[number] | null = null;
+        let best = Infinity;
+        for (const trail of ALL_TRAILS) {
+          const d =
+            Math.abs(trail.coordinates.lat - lat) +
+            Math.abs(trail.coordinates.lon - lng);
+          if (d < best) { best = d; nearest = trail; }
+        }
+        if (nearest && best < 1.2) {
+          setActiveTrailId(nearest.id);
+          setShowMap(false);
+          setTimeout(() => scrollToCard(nearest!.id), 120);
+        }
+        return;
+      }
     }
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
@@ -331,7 +374,7 @@ export default function RutasScreen() {
           {/* @ts-ignore */}
           <iframe
             ref={iframeRef}
-            src="/parques.html?v=20260622"
+            src="/parques.html?v=20260628"
             style={{ width: '100%', height: '100%', border: 'none' }}
             title="Mapa de Parques Nacionales de Argentina"
             loading="eager"
@@ -391,7 +434,7 @@ export default function RutasScreen() {
           {/* @ts-ignore */}
           <iframe
             ref={iframeRef}
-            src="/parques.html?v=20260622"
+            src="/parques.html?v=20260628"
             style={{ width: '100%', height: '100%', border: 'none' }}
             title="Mapa de Parques Nacionales de Argentina"
             loading="eager"
