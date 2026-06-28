@@ -118,7 +118,9 @@
       margin-top: 8px;
     }
     .layer-toggle.active { background: #1c3a6e; border-color: #3b82f6; color: #93c5fd; }
+    .layer-toggle.active.chalten { background: #1a2e1a; border-color: #22c55e; color: #86efac; }
     .layer-toggle .toggle-dot { width: 9px; height: 9px; border-radius: 50%; background: #3b82f6; flex-shrink: 0; }
+    .layer-toggle.chalten .toggle-dot { background: #22c55e; }
     .diff-badge {
       display: inline-block;
       padding: 3px 8px;
@@ -392,10 +394,16 @@
             <span><i class="dot" style="background:#7a4f7f"></i> <span data-i18n="legNea">Noreste (NEA)</span></span>
             <span><i class="dot" style="background:#315f86"></i> <span data-i18n="legMar">Áreas marinas</span></span>
             <span><i class="dot" style="background:#3b82f6"></i> <span data-i18n="legBar">Senderos Bariloche</span></span>
+            <span><i class="dot" style="background:#22c55e"></i> <span data-i18n="legCha">Senderos El Chaltén</span></span>
+
           </div>
           <button class="layer-toggle" id="trailLayerToggle">
             <span class="toggle-dot"></span>
             <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
+          </button>
+          <button class="layer-toggle chalten" id="chaltenLayerToggle">
+            <span class="toggle-dot"></span>
+            <span id="chaltenToggleLabel">Senderos El Chaltén (15 senderos)</span>
           </button>
         </div>
       </div>
@@ -841,6 +849,80 @@
       map.on('mouseenter', 'bariloche-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'bariloche-clusters', () => { map.getCanvas().style.cursor = ''; });
 
+      // El Chaltén polylines
+      map.addSource('chalten-lines', { type: 'geojson', data: {
+        type: 'FeatureCollection',
+        features: chaltenTrails.map(t => ({
+          type: 'Feature', properties: { id: t.id, color: t.color },
+          geometry: { type: 'LineString', coordinates: t.gpxTrack.map(p => [p.lon, p.lat]) }
+        }))
+      }});
+      map.addLayer({ id: 'chalten-trails-glow', type: 'line', source: 'chalten-lines',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 7, 'line-opacity': 0.18, 'line-blur': 4 }
+      });
+      map.addLayer({ id: 'chalten-trails-line', type: 'line', source: 'chalten-lines',
+        layout: { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+        paint: { 'line-color': ['get', 'color'], 'line-width': 3, 'line-opacity': 0.92 }
+      });
+
+      // El Chaltén markers (clustered)
+      map.addSource('chalten-markers', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: chaltenTrails.map((t, i) => ({
+          type: 'Feature', properties: { index: i, name: t.name },
+          geometry: { type: 'Point', coordinates: [t.lng, t.lat] }
+        }))},
+        cluster: true, clusterMaxZoom: 9, clusterRadius: 50,
+      });
+      map.addLayer({ id: 'chalten-clusters', type: 'circle', source: 'chalten-markers',
+        filter: ['has', 'point_count'],
+        layout: { 'visibility': 'none' },
+        paint: { 'circle-color': 'rgba(34,197,94,0.92)', 'circle-radius': 22,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(134,239,172,0.96)' }
+      });
+      map.addLayer({ id: 'chalten-cluster-count', type: 'symbol', source: 'chalten-markers',
+        filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 14,
+                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'], 'visibility': 'none' },
+        paint: { 'text-color': '#fff' }
+      });
+      map.addLayer({ id: 'chalten-unclustered', type: 'circle', source: 'chalten-markers',
+        filter: ['!', ['has', 'point_count']],
+        layout: { 'visibility': 'none' },
+        paint: { 'circle-color': '#22c55e', 'circle-radius': 8,
+                 'circle-stroke-width': 3, 'circle-stroke-color': 'rgba(134,239,172,0.96)' }
+      });
+      map.on('click', 'chalten-unclustered', function (e) {
+        const idx = e.features[0].properties.index;
+        const trail = chaltenTrails[idx];
+        if (!trail) return;
+        new maplibregl.Popup({ maxWidth: '300px' })
+          .setLngLat(e.lngLat)
+          .setHTML('<div class="trail-popup">'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + trail.duration + '</span></div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
+            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + trail.description + '</p>'
+            + '<div><button class="btn-gpx" onclick="downloadGpx(chaltenTrails[' + idx + '])">⬇ GPX offline</button>'
+            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '</div>')
+          .addTo(map);
+      });
+      map.on('click', 'chalten-clusters', function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['chalten-clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('chalten-markers').getClusterExpansionZoom(clusterId).then(function (zoom) {
+          map.flyTo({ center: features[0].geometry.coordinates, zoom });
+        });
+      });
+      map.on('mouseenter', 'chalten-unclustered', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'chalten-unclustered', () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', 'chalten-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'chalten-clusters', () => { map.getCanvas().style.cursor = ''; });
+
       // External track (postMessage showTrack)
       map.addSource('external-track', { type: 'geojson', data: { type: 'Feature', geometry: { type: 'LineString', coordinates: [] } } });
       map.addLayer({ id: 'external-track-line', type: 'line', source: 'external-track',
@@ -876,7 +958,7 @@
                     'Use the region filters or the search box to narrow the map. Tap any marker to see category, province, coordinates, ecoregions and suggested trails.'],
       legPat: ['Patagonia', 'Patagonia'], legCen: ['Centro', 'Centre'],
       legNoa: ['Noroeste (NOA)', 'Northwest (NOA)'], legNea: ['Noreste (NEA)', 'Northeast (NEA)'],
-      legMar: ['Áreas marinas', 'Marine areas'], legBar: ['Senderos Bariloche', 'Bariloche trails'],
+      legMar: ['Áreas marinas', 'Marine areas'], legBar: ['Senderos Bariloche', 'Bariloche trails'], legCha: ['Senderos El Chaltén', 'El Chaltén trails'],
       pKicker: ['Dataset cargado', 'Dataset loaded'],
       pTitle:  ['Áreas protegidas de Argentina', 'Protected areas of Argentina'],
       pReady:  ['Mapa listo', 'Map ready'],
@@ -1373,6 +1455,134 @@
       renderPanel(savedPark || currentPark); // re-render user's park (or first) in new lang
     });
 
+    // ── El Chaltén trekking layer ─────────────────────────────────────────────
+    const chaltenTrails = [
+      {
+        id: 'fitz-roy-laguna-tres',
+        name: 'Fitz Roy — Laguna de los Tres',
+        difficulty: 'dificil', color: '#ef4444',
+        distance_km: 20.7, elevation_gain_m: 977, max_altitude_m: 1177,
+        duration: '7–9 h (ida y vuelta)',
+        lat: -49.3369, lng: -72.8956,
+        trailhead: 'Final Av. San Martín, El Chaltén',
+        best_season: 'Nov – Mar',
+        description: 'El sendero más famoso de la Patagonia. Sube hasta la Laguna de los Tres (1.177 m) con vista directa al Fitz Roy (3.405 m). Tramo final +400 m en 1 km.',
+        gpxTrack: [
+          {lat:-49.3369,lon:-72.8956,ele:421},{lat:-49.3283,lon:-72.8982,ele:560},
+          {lat:-49.3195,lon:-72.9048,ele:575},{lat:-49.3108,lon:-72.9148,ele:583},
+          {lat:-49.3058,lon:-72.9228,ele:590},{lat:-49.2978,lon:-72.9348,ele:620},
+          {lat:-49.2920,lon:-72.9430,ele:650},{lat:-49.2912,lon:-72.9488,ele:680},
+          {lat:-49.2880,lon:-72.9522,ele:720},{lat:-49.2855,lon:-72.9548,ele:760},
+          {lat:-49.2810,lon:-72.9585,ele:820},{lat:-49.2762,lon:-72.9640,ele:960},
+          {lat:-49.2730,lon:-72.9690,ele:1080},{lat:-49.2718,lon:-72.9706,ele:1177}
+        ]
+      },
+      {
+        id: 'cerro-torre-base',
+        name: 'Cerro Torre — Laguna Torre',
+        difficulty: 'moderado', color: '#3b82f6',
+        distance_km: 17.6, elevation_gain_m: 343, max_altitude_m: 650,
+        duration: '5–7 h (ida y vuelta)',
+        lat: -49.3333, lng: -72.8947,
+        trailhead: 'Av. Llao Llao s/n, El Chaltén',
+        best_season: 'Nov – Mar',
+        description: 'Clásico trekking al oeste hasta la Laguna Torre con vista frontal al Cerro Torre (3.128 m) y sus icebergs. Terreno parejo, suave ganancia de altura.',
+        gpxTrack: [
+          {lat:-49.3333,lon:-72.8947,ele:421},{lat:-49.3303,lon:-72.9145,ele:450},
+          {lat:-49.3268,lon:-72.9368,ele:480},{lat:-49.3240,lon:-72.9520,ele:492},
+          {lat:-49.3205,lon:-72.9678,ele:508},{lat:-49.3175,lon:-72.9828,ele:530},
+          {lat:-49.3130,lon:-72.9960,ele:558},{lat:-49.3108,lon:-73.0010,ele:600},
+          {lat:-49.3092,lon:-73.0050,ele:630},{lat:-49.3073,lon:-73.0100,ele:636}
+        ]
+      },
+      {
+        id: 'pliegue-tumbado-chalten',
+        name: 'Loma del Pliegue Tumbado',
+        difficulty: 'moderado', color: '#f97316',
+        distance_km: 20.5, elevation_gain_m: 1103, max_altitude_m: 1528,
+        duration: '7–8 h (ida y vuelta)',
+        lat: -49.3430, lng: -72.8850,
+        trailhead: 'Administración PN Los Glaciares / RP23',
+        best_season: 'Nov – Mar',
+        description: 'Sube al sur de El Chaltén hasta la Cima (1.528 m) con vista 360°: Fitz Roy, Cerro Torre y Lago Viedma.',
+        gpxTrack: [
+          {lat:-49.3430,lon:-72.8850,ele:350},{lat:-49.3520,lon:-72.8718,ele:420},
+          {lat:-49.3592,lon:-72.8588,ele:520},{lat:-49.3678,lon:-72.8440,ele:660},
+          {lat:-49.3768,lon:-72.8280,ele:900},{lat:-49.3850,lon:-72.8115,ele:1100},
+          {lat:-49.3938,lon:-72.7962,ele:1350},{lat:-49.4018,lon:-72.7800,ele:1528}
+        ]
+      },
+      {
+        id: 'laguna-capri-chalten',
+        name: 'Laguna Capri',
+        difficulty: 'facil', color: '#eab308',
+        distance_km: 12.3, elevation_gain_m: 419, max_altitude_m: 840,
+        duration: '3–5 h (ida y vuelta)',
+        lat: -49.2990, lng: -72.9040,
+        trailhead: 'Final Av. San Martín (mismo inicio que Fitz Roy)',
+        best_season: 'Oct – Mar',
+        description: 'Ideal como primer sendero. Comparte inicio con Fitz Roy; al km 3,5 se sube a la Laguna Capri (840 m) que refleja el macizo en días sin viento.',
+        gpxTrack: [
+          {lat:-49.3369,lon:-72.8956,ele:421},{lat:-49.3283,lon:-72.8982,ele:560},
+          {lat:-49.3195,lon:-72.9048,ele:575},{lat:-49.3108,lon:-72.9148,ele:583},
+          {lat:-49.3058,lon:-72.9228,ele:590},{lat:-49.3038,lon:-72.9172,ele:680},
+          {lat:-49.3020,lon:-72.9115,ele:780},{lat:-49.3003,lon:-72.9068,ele:840},
+          {lat:-49.2990,lon:-72.9040,ele:840}
+        ]
+      },
+      {
+        id: 'madre-e-hija-chalten',
+        name: 'Sendero Madre e Hija (conector)',
+        difficulty: 'facil', color: '#22c55e',
+        distance_km: 6.5, elevation_gain_m: 82, max_altitude_m: 743,
+        duration: '1–2 h (solo ida)',
+        lat: -49.2960, lng: -72.9510,
+        trailhead: 'Km 7 Sendero Laguna Torre',
+        best_season: 'Oct – Mar',
+        description: 'Conector entre el sendero Torre (km 7) y el sendero Fitz Roy (km 7), pasando por Laguna Madre y Laguna Hija. Permite el Gran Circuito (~25 km).',
+        gpxTrack: [
+          {lat:-49.3130,lon:-72.9960,ele:558},{lat:-49.3095,lon:-72.9878,ele:568},
+          {lat:-49.3058,lon:-72.9795,ele:598},{lat:-49.3018,lon:-72.9718,ele:648},
+          {lat:-49.2980,lon:-72.9638,ele:700},{lat:-49.2968,lon:-72.9568,ele:730},
+          {lat:-49.2958,lon:-72.9510,ele:743},{lat:-49.2940,lon:-72.9468,ele:710},
+          {lat:-49.2912,lon:-72.9488,ele:680}
+        ]
+      },
+      {
+        id: 'miradores-condores-aguilas',
+        name: 'Miradores Cóndores y Águilas',
+        difficulty: 'facil', color: '#a855f7',
+        distance_km: 5.3, elevation_gain_m: 170, max_altitude_m: 520,
+        duration: '1–2 h (circular)',
+        lat: -49.3570, lng: -72.9038,
+        trailhead: 'Portal Los Cóndores, sur de El Chaltén',
+        best_season: 'Oct – Mar',
+        description: 'Circuito corto con vistas aéreas sobre El Chaltén, el Río de las Vueltas y los valles. Ideal al llegar o al atardecer.',
+        gpxTrack: [
+          {lat:-49.3420,lon:-72.8880,ele:350},{lat:-49.3468,lon:-72.8938,ele:395},
+          {lat:-49.3510,lon:-72.8985,ele:455},{lat:-49.3545,lon:-72.9018,ele:498},
+          {lat:-49.3570,lon:-72.9038,ele:520},{lat:-49.3548,lon:-72.9008,ele:510},
+          {lat:-49.3520,lon:-72.8968,ele:468},{lat:-49.3480,lon:-72.8928,ele:418},
+          {lat:-49.3440,lon:-72.8893,ele:368},{lat:-49.3420,lon:-72.8880,ele:350}
+        ]
+      },
+      {
+        id: 'chorrillo-del-salto',
+        name: 'Chorrillo del Salto',
+        difficulty: 'facil', color: '#67e8f9',
+        distance_km: 1.1, elevation_gain_m: 28, max_altitude_m: 478,
+        duration: '1 h (ida y vuelta)',
+        lat: -49.3048, lng: -72.8942,
+        trailhead: 'RP23, 2,5 km al norte de El Chaltén',
+        best_season: 'Oct – Mar',
+        description: 'Corto sendero a la cascada Chorrillo del Salto de 20 m. Punto clásico de primer día en El Chaltén.',
+        gpxTrack: [
+          {lat:-49.3100,lon:-72.8870,ele:450},{lat:-49.3082,lon:-72.8895,ele:460},
+          {lat:-49.3065,lon:-72.8920,ele:470},{lat:-49.3048,lon:-72.8942,ele:478}
+        ]
+      },
+    ];
+
     // ── Bariloche trekking layer (source: barilochetrekking.com) ─────────────
     const barilocheTrails = [
       {
@@ -1743,6 +1953,39 @@ ${trkpts}
     toggleBtn.addEventListener('click', () => {
       if (trailLayerVisible) hideTrailLayer(); else showTrailLayer();
     });
+
+    // ── El Chaltén layer toggle ───────────────────────────────────────────────
+    let chaltenLayerVisible = false;
+    const chaltenToggleBtn = document.getElementById('chaltenLayerToggle');
+    const CHALTEN_LAYERS = ['chalten-trails-glow', 'chalten-trails-line', 'chalten-clusters', 'chalten-cluster-count', 'chalten-unclustered'];
+
+    function updateChaltenToggleLabel() {
+      if (chaltenLayerVisible) {
+        chaltenToggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Senderos El Chaltén — VISIBLES (${chaltenTrails.length} senderos)`, `El Chaltén trails — VISIBLE (${chaltenTrails.length} trails)`)}`;
+      } else {
+        chaltenToggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Senderos El Chaltén (${chaltenTrails.length} senderos)`, `El Chaltén trails (${chaltenTrails.length} trails)`)}`;
+      }
+    }
+
+    function showChaltenLayer() {
+      chaltenLayerVisible = true;
+      chaltenToggleBtn.classList.add('active');
+      if (mapLoaded) CHALTEN_LAYERS.forEach(id => map.setLayoutProperty(id, 'visibility', 'visible'));
+      updateChaltenToggleLabel();
+      if (mapLoaded) map.flyTo({ center: [-72.9856, -49.3333], zoom: 11, duration: 1200 });
+    }
+
+    function hideChaltenLayer() {
+      chaltenLayerVisible = false;
+      chaltenToggleBtn.classList.remove('active');
+      if (mapLoaded) CHALTEN_LAYERS.forEach(id => map.setLayoutProperty(id, 'visibility', 'none'));
+      updateChaltenToggleLabel();
+    }
+
+    chaltenToggleBtn.addEventListener('click', () => {
+      if (chaltenLayerVisible) hideChaltenLayer(); else showChaltenLayer();
+    });
+    updateChaltenToggleLabel();
 
     // Close modal on Escape key (used by split close)
     document.addEventListener('keydown', function(e) {
