@@ -41,7 +41,6 @@ const NATIONAL_PARKS = [
     coords: { lat: -49.3, lon: -73.05 },
     unesco: true,
     trailId: 'fitz-roy-laguna-tres',
-    infografiaUrl: '/el-chalten.html',
   },
   {
     id: 'nahuel',
@@ -925,16 +924,6 @@ function DownloadCard({
               <Text style={dlS.btnTxtWhite}>{t('Más info', 'More info')}</Text>
             </TouchableOpacity>
           )}
-          {Platform.OS === 'web' && (park as any).infografiaUrl && (
-            <TouchableOpacity
-              style={[dlS.btn, dlS.btnInfografia]}
-              onPress={() => { (window as any).open((park as any).infografiaUrl, '_blank'); }}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="map-outline" size={13} color="#a78bfa" />
-              <Text style={[dlS.btnTxt, { color: '#a78bfa' }]}>{t('Infografía', 'Trail Map')}</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </View>
     </View>
@@ -978,7 +967,7 @@ const dlS = StyleSheet.create({
   btnGpx: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#3b82f6' },
   btnCache: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#22c55e' },
   btnCacheDone: { backgroundColor: 'rgba(34,197,94,0.12)', borderWidth: 1, borderColor: '#22c55e' },
-  btnInfografia: { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#a78bfa' },
+
   btnTxt: { fontSize: 13, fontWeight: '600' },
   btnTxtWhite: { fontSize: 13, fontWeight: '600', color: '#fff' },
 });
