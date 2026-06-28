@@ -24,7 +24,14 @@ import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
-import { MapLibreEsri } from '../../src/components/map/MapLibreEsri';
+
+const TrailMap3D = Platform.OS === 'web'
+  ? require('../../src/components/map/TrailMap3D.web').default
+  : require('../../src/components/map/TrailMap3D.native').default;
+
+const TrailMap3DCinematic = Platform.OS === 'web'
+  ? require('../../src/components/map/TrailMap3DCinematic.web').default
+  : null;
 
 const MAX_CONTENT = 900;
 const SPLIT_BREAKPOINT = 900;
@@ -295,17 +302,31 @@ export default function RutasScreen() {
           </ScrollView>
         </View>
 
-        {/* Right panel: map */}
+        {/* Right panel: 3D map */}
         <View style={{ flex: 1 }}>
-          <MapLibreEsri
-            markers={mapMarkers}
-            center={activeCenter}
-            zoom={activeTrailId ? 10 : 5}
-            height="100%"
-            layer="esri-topo"
-            showPolyline={false}
-            onMarkerPress={handleMarkerPress}
-          />
+          {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
+            TrailMap3DCinematic ? (
+              <TrailMap3DCinematic
+                track={(activeTrail as any).gpxTrack}
+                trailName={activeTrail.name}
+                height="100%"
+              />
+            ) : (
+              <TrailMap3D
+                track={(activeTrail as any).gpxTrack}
+                trailName={activeTrail.name}
+                height="100%"
+              />
+            )
+          ) : (
+            // @ts-ignore
+            <iframe
+              src="/parques.html?v=20260622"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              title="Mapa de Parques Nacionales de Argentina"
+              loading="eager"
+            />
+          )}
         </View>
       </View>
     );
@@ -357,15 +378,29 @@ export default function RutasScreen() {
       {/* Map view (mobile toggle) */}
       {showMap && Platform.OS === 'web' ? (
         <View style={{ flex: 1 }}>
-          <MapLibreEsri
-            markers={mapMarkers}
-            center={activeCenter}
-            zoom={5}
-            height="100%"
-            layer="esri-topo"
-            showPolyline={false}
-            onMarkerPress={handleMarkerPress}
-          />
+          {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
+            TrailMap3DCinematic ? (
+              <TrailMap3DCinematic
+                track={(activeTrail as any).gpxTrack}
+                trailName={activeTrail.name}
+                height="100%"
+              />
+            ) : (
+              <TrailMap3D
+                track={(activeTrail as any).gpxTrack}
+                trailName={activeTrail.name}
+                height="100%"
+              />
+            )
+          ) : (
+            // @ts-ignore
+            <iframe
+              src="/parques.html?v=20260622"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+              title="Mapa de Parques Nacionales de Argentina"
+              loading="eager"
+            />
+          )}
         </View>
       ) : (
         <ScrollView
