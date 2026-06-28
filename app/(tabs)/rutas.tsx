@@ -303,7 +303,7 @@ export default function RutasScreen() {
         </View>
 
         {/* Right panel: 3D map */}
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#070b14', alignItems: 'center', justifyContent: 'center' }}>
           {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
             TrailMap3DCinematic ? (
               <TrailMap3DCinematic
@@ -319,13 +319,12 @@ export default function RutasScreen() {
               />
             )
           ) : (
-            // @ts-ignore
-            <iframe
-              src="/parques.html?v=20260622"
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="Mapa de Parques Nacionales de Argentina"
-              loading="eager"
-            />
+            <View style={{ alignItems: 'center', gap: 12 }}>
+              <Text style={{ fontSize: 40 }}>🏔️</Text>
+              <Text style={{ color: '#64748b', fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
+                {t('Pasá el cursor sobre una ruta para ver el terreno 3D', 'Hover a trail to see 3D terrain')}
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -377,7 +376,7 @@ export default function RutasScreen() {
 
       {/* Map view (mobile toggle) */}
       {showMap && Platform.OS === 'web' ? (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#070b14', alignItems: 'center', justifyContent: 'center' }}>
           {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
             TrailMap3DCinematic ? (
               <TrailMap3DCinematic
@@ -393,13 +392,12 @@ export default function RutasScreen() {
               />
             )
           ) : (
-            // @ts-ignore
-            <iframe
-              src="/parques.html?v=20260622"
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="Mapa de Parques Nacionales de Argentina"
-              loading="eager"
-            />
+            <View style={{ alignItems: 'center', gap: 12 }}>
+              <Text style={{ fontSize: 40 }}>🏔️</Text>
+              <Text style={{ color: '#64748b', fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
+                {t('Volvé a la lista y seleccioná una ruta para ver el terreno 3D', 'Go back to the list and select a trail to see 3D terrain')}
+              </Text>
+            </View>
           )}
         </View>
       ) : (
