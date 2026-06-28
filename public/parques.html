@@ -823,6 +823,9 @@
         const idx = e.features[0].properties.index;
         const trail = barilocheTrails[idx];
         if (!trail) return;
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
+        }
         new maplibregl.Popup({ maxWidth: '300px' })
           .setLngLat(e.lngLat)
           .setHTML('<div class="trail-popup">'
@@ -897,6 +900,9 @@
         const idx = e.features[0].properties.index;
         const trail = chaltenTrails[idx];
         if (!trail) return;
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
+        }
         new maplibregl.Popup({ maxWidth: '300px' })
           .setLngLat(e.lngLat)
           .setHTML('<div class="trail-popup">'

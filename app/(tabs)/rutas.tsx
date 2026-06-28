@@ -25,14 +25,6 @@ const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTIN
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 
-const TrailMap3D = Platform.OS === 'web'
-  ? require('../../src/components/map/TrailMap3D.web').default
-  : require('../../src/components/map/TrailMap3D.native').default;
-
-const TrailMap3DCinematic = Platform.OS === 'web'
-  ? require('../../src/components/map/TrailMap3DCinematic.web').default
-  : null;
-
 const MAX_CONTENT = 900;
 const SPLIT_BREAKPOINT = 900;
 
@@ -62,10 +54,40 @@ export default function RutasScreen() {
   const isSplit = Platform.OS === 'web' && width >= SPLIT_BREAKPOINT;
   const [showMap, setShowMap] = useState(false); // mobile map toggle
   const [activeTrailId, setActiveTrailId] = useState<string | null>(null);
+  const [iframeReady, setIframeReady] = useState(false);
+  const iframeRef = React.useRef<any>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => animateScrollReveal(), 400);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Fly to the active trail on the map whenever hover/selection changes
+  useEffect(() => {
+    if (!iframeReady || !activeTrail) return;
+    iframeRef.current?.contentWindow?.postMessage({
+      type: 'flyTo',
+      lat: activeTrail.coordinates.lat,
+      lng: activeTrail.coordinates.lon,
+      zoom: 12,
+    }, '*');
+  }, [activeTrail, iframeReady]);
+
+  // Listen for trail-click events coming back from the parques.html iframe
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    function onMessage(e: MessageEvent) {
+      if (!e.data || e.data.type !== 'trailClick' || !e.data.id) return;
+      const id = e.data.id as string;
+      setActiveTrailId(id);
+      setShowMap(false);
+      setTimeout(() => {
+        const el = (document as any).getElementById(`trail-card-${id}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
   }, []);
 
   // When a map marker is pressed: switch to list view and scroll to the card
@@ -302,30 +324,17 @@ export default function RutasScreen() {
           </ScrollView>
         </View>
 
-        {/* Right panel: 3D map */}
-        <View style={{ flex: 1, backgroundColor: '#070b14', alignItems: 'center', justifyContent: 'center' }}>
-          {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
-            TrailMap3DCinematic ? (
-              <TrailMap3DCinematic
-                track={(activeTrail as any).gpxTrack}
-                trailName={activeTrail.name}
-                height="100%"
-              />
-            ) : (
-              <TrailMap3D
-                track={(activeTrail as any).gpxTrack}
-                trailName={activeTrail.name}
-                height="100%"
-              />
-            )
-          ) : (
-            <View style={{ alignItems: 'center', gap: 12 }}>
-              <Text style={{ fontSize: 40 }}>🏔️</Text>
-              <Text style={{ color: '#64748b', fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
-                {t('Pasá el cursor sobre una ruta para ver el terreno 3D', 'Hover a trail to see 3D terrain')}
-              </Text>
-            </View>
-          )}
+        {/* Right panel: 3D map — same as Mapas section */}
+        <View style={{ flex: 1 }}>
+          {/* @ts-ignore */}
+          <iframe
+            ref={iframeRef}
+            src="/parques.html?v=20260622"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title="Mapa de Parques Nacionales de Argentina"
+            loading="eager"
+            onLoad={() => setIframeReady(true)}
+          />
         </View>
       </View>
     );
@@ -376,29 +385,16 @@ export default function RutasScreen() {
 
       {/* Map view (mobile toggle) */}
       {showMap && Platform.OS === 'web' ? (
-        <View style={{ flex: 1, backgroundColor: '#070b14', alignItems: 'center', justifyContent: 'center' }}>
-          {activeTrail && (activeTrail as any).gpxTrack?.length >= 2 ? (
-            TrailMap3DCinematic ? (
-              <TrailMap3DCinematic
-                track={(activeTrail as any).gpxTrack}
-                trailName={activeTrail.name}
-                height="100%"
-              />
-            ) : (
-              <TrailMap3D
-                track={(activeTrail as any).gpxTrack}
-                trailName={activeTrail.name}
-                height="100%"
-              />
-            )
-          ) : (
-            <View style={{ alignItems: 'center', gap: 12 }}>
-              <Text style={{ fontSize: 40 }}>🏔️</Text>
-              <Text style={{ color: '#64748b', fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
-                {t('Volvé a la lista y seleccioná una ruta para ver el terreno 3D', 'Go back to the list and select a trail to see 3D terrain')}
-              </Text>
-            </View>
-          )}
+        <View style={{ flex: 1 }}>
+          {/* @ts-ignore */}
+          <iframe
+            ref={iframeRef}
+            src="/parques.html?v=20260622"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title="Mapa de Parques Nacionales de Argentina"
+            loading="eager"
+            onLoad={() => setIframeReady(true)}
+          />
         </View>
       ) : (
         <ScrollView
