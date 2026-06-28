@@ -86,20 +86,32 @@ export default function TrailMap3D({
         if (!containerRef.current || mapRef.current) return;
         const ml = (window as any).maplibregl;
 
-        // Use MapTiler if key provided, else OpenFreeMap (no key required).
-        const styleUrl = mapTilerKey
-          ? `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${mapTilerKey}`
-          : 'https://tiles.openfreemap.org/styles/liberty';
+        // Satellite imagery + terrain — same look as the Mapas 3D section.
+        // Esri World Imagery is free and needs no API key.
+        const style = mapTilerKey
+          ? `https://api.maptiler.com/maps/hybrid/style.json?key=${mapTilerKey}`
+          : {
+              version: 8,
+              sources: {
+                satellite: {
+                  type: 'raster',
+                  tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+                  tileSize: 256,
+                  attribution: 'Esri, Maxar, Earthstar Geographics',
+                },
+              },
+              layers: [{ id: 'satellite', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.95 } }],
+            };
 
         const map = new ml.Map({
           container: containerRef.current,
-          style: styleUrl,
+          style: style as any,
           center,
-          zoom: 9,
-          pitch: 55,
-          bearing: 0,
+          zoom: 11,
+          pitch: 60,
+          bearing: 18,
           antialias: true,
-          maxTileCacheSize: 30,
+          maxTileCacheSize: 40,
         });
 
         mapRef.current = map;
@@ -178,12 +190,16 @@ export default function TrailMap3D({
           const lats = track.map((p) => p.lat);
           map.fitBounds(
             [
-              [Math.min(...lons) - 0.05, Math.min(...lats) - 0.05],
-              [Math.max(...lons) + 0.05, Math.max(...lats) + 0.05],
+              [Math.min(...lons) - 0.03, Math.min(...lats) - 0.03],
+              [Math.max(...lons) + 0.03, Math.max(...lats) + 0.03],
             ],
-            { padding: 40, pitch: 55, duration: 1200 },
+            { padding: 50, pitch: 60, bearing: 18, duration: 1200 },
           );
 
+          // Keep the camera tilted in 3D after the fit settles
+          map.once('moveend', () => { if (map.getPitch() < 30) map.easeTo({ pitch: 60, duration: 600 }); });
+
+          map.resize();
           setLoaded(true);
         });
 
@@ -213,15 +229,17 @@ export default function TrailMap3D({
     }
   }
 
-  const containerH = typeof height === 'number' ? height : 340;
+  // Support both fixed pixel heights and '100%' (fills the parent panel).
+  const isFill = typeof height === 'string';
+  const containerH: number | string = height ?? 340;
 
   return (
-    <View style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+    <View style={[{ borderRadius: 16, overflow: 'hidden', position: 'relative' }, isFill ? { flex: 1 } : null]}>
       {/* Map container */}
       {/* @ts-ignore — div on web */}
       <div
         ref={containerRef}
-        style={{ width: '100%', height: containerH, display: 'block' }}
+        style={{ width: '100%', height: isFill ? '100%' : containerH, minHeight: isFill ? '100%' : undefined, display: 'block' }}
       />
 
       {/* Loading overlay */}
