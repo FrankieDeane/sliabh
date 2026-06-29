@@ -1312,6 +1312,38 @@
             });
           }
 
+          // ── Trekking trails of this park (drawn on the right detail map) ──
+          var parkTrails = trailsNearPark(park);
+          parkTrails.forEach(function (pt, i) {
+            var sid = 'ptrail-' + i;
+            gm.addSource(sid, { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: pt.coords } } });
+            gm.addLayer({ id: sid + '-glow', type: 'line', source: sid,
+              layout: { 'line-join': 'round', 'line-cap': 'round' },
+              paint: { 'line-color': pt.color, 'line-width': 9, 'line-opacity': 0.18, 'line-blur': 5 } });
+            gm.addLayer({ id: sid + '-line', type: 'line', source: sid,
+              layout: { 'line-join': 'round', 'line-cap': 'round' },
+              paint: { 'line-color': pt.color, 'line-width': 3, 'line-opacity': 0.95 } });
+            // Start dot + label for each trail
+            var sd = document.createElement('div');
+            sd.style.cssText = 'width:11px;height:11px;border-radius:50%;background:' + pt.color + ';border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.6);cursor:pointer';
+            new maplibregl.Marker({ element: sd }).setLngLat(pt.coords[0])
+              .setPopup(new maplibregl.Popup({ offset: 12, closeButton: false }).setHTML('<strong>' + pt.name + '</strong>'))
+              .addTo(gm);
+          });
+          // Frame the detail map to this park's trails (trekking detail view).
+          // Skip when a curated trail exists — its cinematic flythrough frames it.
+          if (parkTrails.length && !coords) {
+            var alon = [], alat = [];
+            parkTrails.forEach(function (pt) { pt.coords.forEach(function (c) { alon.push(c[0]); alat.push(c[1]); }); });
+            try {
+              gm.fitBounds(
+                [[Math.min.apply(null, alon) - 0.02, Math.min.apply(null, alat) - 0.02],
+                 [Math.max.apply(null, alon) + 0.02, Math.max.apply(null, alat) + 0.02]],
+                { padding: 60, pitch: 62, duration: 1200, maxZoom: 13 }
+              );
+            } catch (e) {}
+          }
+
           // Waypoint markers
           if (park.trailWaypoints) {
             park.trailWaypoints.forEach(wp => {
@@ -2012,6 +2044,29 @@ ${trkpts}
       if (d === 'moderado') return 'diff-moderado';
       if (d === 'dificil') return 'diff-dificil';
       return 'diff-extremo';
+    }
+
+    // All trekking trails (Bariloche + El Chaltén + pushed dataset) whose start
+    // point is near a park — used to draw that park's trails on the right 3D map.
+    function trailsNearPark(park, maxDeg) {
+      const md = maxDeg || 0.7;
+      const all = [].concat(
+        (typeof barilocheTrails !== 'undefined' ? barilocheTrails : []),
+        (typeof chaltenTrails !== 'undefined' ? chaltenTrails : []),
+        (typeof appTrails !== 'undefined' ? appTrails : [])
+      );
+      const out = [];
+      all.forEach(t => {
+        if (!t || !Array.isArray(t.gpxTrack) || t.gpxTrack.length < 2) return;
+        const p0 = t.gpxTrack[0];
+        const d = Math.abs(p0.lat - park.lat) + Math.abs(p0.lon - park.lng);
+        if (d <= md) out.push({
+          id: t.id, name: t.name,
+          color: t.color || diffColor(t.difficulty),
+          coords: t.gpxTrack.map(p => [p.lon, p.lat])
+        });
+      });
+      return out;
     }
 
     let trailLayerVisible = false;
