@@ -849,7 +849,7 @@
             + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
             + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + trail.description + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(barilocheTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
           .addTo(map);
       });
@@ -926,7 +926,7 @@
             + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
             + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + trail.description + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(chaltenTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
           .addTo(map);
       });
@@ -996,7 +996,7 @@
             + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>' : '')
             + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + (trail.description || '') + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(appTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="https://sliabh.app/ruta/' + trail.id + '" target="_blank">' + T('Ver guía', 'View guide') + '</a></div>'
+            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
           .addTo(map);
       });
@@ -1024,6 +1024,16 @@
         id: 'osm-trails-line', type: 'line', source: 'osm-trails',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: { 'line-color': '#FF6B35', 'line-width': 2.5, 'line-opacity': 0.85 },
+      });
+      // Trail-name labels drawn along each OSM trail line
+      map.addLayer({
+        id: 'osm-trails-label', type: 'symbol', source: 'osm-trails',
+        layout: {
+          'symbol-placement': 'line', 'text-field': ['get', 'name'],
+          'text-size': 11, 'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-max-angle': 40, 'symbol-spacing': 280,
+        },
+        paint: { 'text-color': '#ffd9c7', 'text-halo-color': '#1a0f08', 'text-halo-width': 1.6 },
       });
       map.on('click', 'osm-trails-line', function (e) {
         var f = e.features && e.features[0]; if (!f) return;
@@ -1379,6 +1389,9 @@
               );
             } catch (e) {}
           }
+
+          // Live OSM trails for this park, drawn on the right detail map too
+          addOsmTrailsToDetail(gm, park);
 
           // Waypoint markers
           if (park.trailWaypoints) {
@@ -2176,6 +2189,49 @@ ${trkpts}
       }
       map.on('moveend', schedule);
       schedule();
+    }
+
+    // Fetch OSM hiking trails around a park and draw them on the right detail
+    // map (gm): orange lines + green start dots labelled with the trail name.
+    function addOsmTrailsToDetail(gm, park) {
+      var r = 0.28;
+      var bbox = (park.lat - r).toFixed(4) + ',' + (park.lng - r).toFixed(4) + ',' +
+                 (park.lat + r).toFixed(4) + ',' + (park.lng + r).toFixed(4);
+      var body = '[out:json][timeout:25];(relation["route"="hiking"](' + bbox + ');way["highway"~"path|footway"](' + bbox + '););out geom;';
+      fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: body })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (!window._parkGlMap || window._parkGlMap !== gm) return; // park changed
+          var gj = overpassToGeoJSON(data);
+          if (!gj.features.length) return;
+          if (gm.getSource('osm-detail')) { gm.getSource('osm-detail').setData(gj); }
+          else {
+            gm.addSource('osm-detail', { type: 'geojson', data: gj });
+            gm.addLayer({ id: 'osm-detail-glow', type: 'line', source: 'osm-detail',
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: { 'line-color': '#FF6B35', 'line-width': 7, 'line-opacity': 0.18, 'line-blur': 4 } });
+            gm.addLayer({ id: 'osm-detail-line', type: 'line', source: 'osm-detail',
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: { 'line-color': '#FF6B35', 'line-width': 3, 'line-opacity': 0.92 } });
+            gm.addLayer({ id: 'osm-detail-label', type: 'symbol', source: 'osm-detail',
+              layout: { 'symbol-placement': 'line', 'text-field': ['get', 'name'], 'text-size': 11,
+                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'], 'text-max-angle': 40, 'symbol-spacing': 260 },
+              paint: { 'text-color': '#ffd9c7', 'text-halo-color': '#1a0f08', 'text-halo-width': 1.6 } });
+          }
+          // Green start dot + trail name for each named trail
+          var seen = {};
+          gj.features.forEach(function (f) {
+            var nm = f.properties && f.properties.name;
+            if (!nm || seen[nm]) return; seen[nm] = 1;
+            var c0 = f.geometry.coordinates[0];
+            var d = document.createElement('div');
+            d.style.cssText = 'width:11px;height:11px;border-radius:50%;background:#22c55e;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.6);cursor:pointer';
+            new maplibregl.Marker({ element: d }).setLngLat(c0)
+              .setPopup(new maplibregl.Popup({ offset: 12, closeButton: false }).setHTML('<strong>' + nm + '</strong>'))
+              .addTo(gm);
+          });
+        })
+        .catch(function () {});
     }
 
     let trailLayerVisible = false;
