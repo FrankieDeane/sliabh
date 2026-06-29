@@ -102,6 +102,8 @@
     }
     .legend span { display: inline-flex; align-items: center; gap: 6px; }
     .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    @keyframes osmspin { to { transform: rotate(360deg); } }
+    #osmLoading { display: none; }
     .layer-toggle {
       display: flex;
       align-items: center;
@@ -387,6 +389,10 @@
             </div>
           </div>
           <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
+          <div id="osmLoading" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(7,11,20,.82);border:1px solid rgba(255,107,53,.5);border-radius:999px;padding:5px 12px;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#ffb599;pointer-events:none">
+            <span style="width:9px;height:9px;border:2px solid #FF6B35;border-top-color:transparent;border-radius:50%;display:inline-block;animation:osmspin .8s linear infinite"></span>
+            <span data-i18n="osmLoad">Cargando senderos…</span>
+          </div>
           <div class="legend">
             <span><i class="dot" style="background:#0f5f60"></i> <span data-i18n="legPat">Patagonia</span></span>
             <span><i class="dot" style="background:#8a6d3b"></i> <span data-i18n="legCen">Centro</span></span>
@@ -1006,6 +1012,35 @@
       map.on('mouseenter', 'app-trails-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'app-trails-clusters', () => { map.getCanvas().style.cursor = ''; });
 
+      // ── Live OSM hiking trails overlay (OpenStreetMap via Overpass API) ──────
+      // Drawn ON TOP of the existing Esri 3D map; the base/terrain are untouched.
+      // Line layers drape over the terrain automatically in MapLibre.
+      map.addSource('osm-trails', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+        attribution: '© OpenStreetMap contributors',
+      });
+      map.addLayer({
+        id: 'osm-trails-line', type: 'line', source: 'osm-trails',
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: { 'line-color': '#FF6B35', 'line-width': 2.5, 'line-opacity': 0.85 },
+      });
+      map.on('click', 'osm-trails-line', function (e) {
+        var f = e.features && e.features[0]; if (!f) return;
+        var p = f.properties || {};
+        var name = p.name || p.ref || (lang === 'es' ? 'Sendero sin nombre' : 'Unnamed trail');
+        var dist = p.distance ? ('<div style="color:#94a3b8;font-size:12px;margin:2px 0">↔ ' + p.distance + '</div>') : '';
+        new maplibregl.Popup({ maxWidth: '260px' })
+          .setLngLat(e.lngLat)
+          .setHTML('<div class="trail-popup"><h4>' + name + '</h4>' + dist
+            + '<div style="color:#64748b;font-size:10px;margin-top:6px">' + T('Datos © colaboradores de OpenStreetMap', 'Data © OpenStreetMap contributors') + '</div></div>')
+          .addTo(map);
+      });
+      map.on('mouseenter', 'osm-trails-line', function () { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'osm-trails-line', function () { map.getCanvas().style.cursor = ''; });
+
+      osmTrailsInit(map);
+
       // Apply any trails buffered before the map finished loading
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
 
@@ -1044,6 +1079,7 @@
       legPat: ['Patagonia', 'Patagonia'], legCen: ['Centro', 'Centre'],
       legNoa: ['Noroeste (NOA)', 'Northwest (NOA)'], legNea: ['Noreste (NEA)', 'Northeast (NEA)'],
       legMar: ['Áreas marinas', 'Marine areas'], legBar: ['Senderos Bariloche', 'Bariloche trails'], legCha: ['Senderos El Chaltén', 'El Chaltén trails'],
+      osmLoad: ['Cargando senderos…', 'Loading trails…'],
       pKicker: ['Dataset cargado', 'Dataset loaded'],
       pTitle:  ['Áreas protegidas de Argentina', 'Protected areas of Argentina'],
       pReady:  ['Mapa listo', 'Map ready'],
@@ -2067,6 +2103,79 @@ ${trkpts}
         });
       });
       return out;
+    }
+
+    // ── Live OSM hiking trails (Overpass API) ─────────────────────────────────
+    var _osmDebounce = null;
+    var _osmController = null;
+
+    // Convert an Overpass JSON response (out geom) into GeoJSON LineStrings.
+    function overpassToGeoJSON(data) {
+      var features = [];
+      (data.elements || []).forEach(function (el) {
+        var tags = el.tags || {};
+        var name = tags.name || tags.ref || '';
+        var distance = tags.distance || tags['ref:distance'] || '';
+        if (el.type === 'way' && el.geometry && el.geometry.length > 1) {
+          features.push({ type: 'Feature', properties: { name: name, distance: distance },
+            geometry: { type: 'LineString', coordinates: el.geometry.map(function (g) { return [g.lon, g.lat]; }) } });
+        } else if (el.type === 'relation' && el.members) {
+          el.members.forEach(function (m) {
+            if (m.type === 'way' && m.geometry && m.geometry.length > 1) {
+              features.push({ type: 'Feature', properties: { name: name, distance: distance },
+                geometry: { type: 'LineString', coordinates: m.geometry.map(function (g) { return [g.lon, g.lat]; }) } });
+            }
+          });
+        }
+      });
+      return { type: 'FeatureCollection', features: features };
+    }
+
+    function setOsmLoading(on) {
+      var el = document.getElementById('osmLoading');
+      if (el) el.style.display = on ? 'flex' : 'none';
+    }
+
+    // Fetch hiking trails for the current map bounds and update the layer.
+    function fetchOsmTrails(map) {
+      if (!map.getSource('osm-trails')) return;
+      var z = map.getZoom();
+      if (z < 9) {
+        map.getSource('osm-trails').setData({ type: 'FeatureCollection', features: [] });
+        setOsmLoading(false);
+        return;
+      }
+      var b = map.getBounds();
+      var bbox = b.getSouth().toFixed(4) + ',' + b.getWest().toFixed(4) + ',' +
+                 b.getNorth().toFixed(4) + ',' + b.getEast().toFixed(4);
+      // Hiking route relations always; standalone paths/tracks only when zoomed in.
+      var body = z >= 12
+        ? '[out:json][timeout:25];(relation["route"="hiking"](' + bbox + ');way["highway"~"path|footway|track"](' + bbox + '););out geom;'
+        : '[out:json][timeout:25];(relation["route"="hiking"](' + bbox + '););out geom;';
+      if (_osmController) { try { _osmController.abort(); } catch (e) {} }
+      _osmController = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      setOsmLoading(true);
+      fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST', body: body,
+        signal: _osmController ? _osmController.signal : undefined,
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!map.getSource('osm-trails')) return;
+          map.getSource('osm-trails').setData(overpassToGeoJSON(data));
+          setOsmLoading(false);
+        })
+        .catch(function (err) { if (err && err.name !== 'AbortError') setOsmLoading(false); });
+    }
+
+    // Wire dynamic, debounced loading on map movement.
+    function osmTrailsInit(map) {
+      function schedule() {
+        if (_osmDebounce) clearTimeout(_osmDebounce);
+        _osmDebounce = setTimeout(function () { fetchOsmTrails(map); }, 400);
+      }
+      map.on('moveend', schedule);
+      schedule();
     }
 
     let trailLayerVisible = false;
