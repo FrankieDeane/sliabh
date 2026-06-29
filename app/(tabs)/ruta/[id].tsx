@@ -1144,7 +1144,60 @@ function OverviewTab({
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
         <Text style={[styles.bodyText, { color: C.text }]}>{trail.description}</Text>
+        {!!trail.long_description &&
+          trail.long_description.split('\n\n').map((para, i) => (
+            <Text key={i} style={[styles.bodyText, { color: C.text, marginTop: 12 }]}>
+              {para.trim()}
+            </Text>
+          ))}
       </SectionCard>
+
+      {!!trail.namedWaypoints?.length && (
+        <SectionCard>
+          <CardLabel text={t('Puntos de referencia', 'Key waypoints')} />
+          {trail.namedWaypoints!.map((wp, i) => (
+            <View key={i} style={{ marginBottom: 10 }}>
+              <View style={styles.infoRow}>
+                <Ionicons name="location-outline" size={16} color={C.accent} />
+                <Text style={[styles.bodyText, { color: C.text, fontWeight: '700' }]}>{wp.name}</Text>
+              </View>
+              {!!wp.description && (
+                <Text style={[styles.bodyText, { color: C.muted, marginLeft: 24 }]}>{wp.description}</Text>
+              )}
+            </View>
+          ))}
+        </SectionCard>
+      )}
+
+      {(!!trail.access_notes || !!trail.parking || !!trail.water_sources || !!trail.refugio) && (
+        <SectionCard>
+          <CardLabel text={t('Logística', 'Logistics')} />
+          {!!trail.access_notes && (
+            <View style={[styles.infoRow, { marginBottom: 8 }]}>
+              <Ionicons name="navigate-outline" size={16} color={C.accent} />
+              <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.access_notes}</Text>
+            </View>
+          )}
+          {!!trail.parking && (
+            <View style={[styles.infoRow, { marginBottom: 8 }]}>
+              <Ionicons name="car-outline" size={16} color={C.accent} />
+              <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.parking}</Text>
+            </View>
+          )}
+          {!!trail.water_sources && (
+            <View style={[styles.infoRow, { marginBottom: 8 }]}>
+              <Ionicons name="water-outline" size={16} color={C.accent} />
+              <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.water_sources}</Text>
+            </View>
+          )}
+          {!!trail.refugio && (
+            <View style={styles.infoRow}>
+              <Ionicons name="home-outline" size={16} color={C.accent} />
+              <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.refugio}</Text>
+            </View>
+          )}
+        </SectionCard>
+      )}
 
       <SectionCard>
         <CardLabel text={t('Mejor época', 'Best Season')} />

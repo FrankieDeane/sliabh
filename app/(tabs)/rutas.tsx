@@ -154,7 +154,7 @@ export default function RutasScreen() {
     // @ts-ignore — iframe on web
     <iframe
       ref={iframeRef}
-      src="/parques.html?v=20260628d"
+      src="/parques.html?v=20260628f"
       style={{ width: '100%', height: '100%', border: 'none' }}
       title="Mapa 3D de senderos de Argentina"
       loading="eager"
