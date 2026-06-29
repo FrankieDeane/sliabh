@@ -1,8 +1,23 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
 import { DIFFICULTY_LABEL, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
+import { fetchWikiImage } from '../../utils/wikiImage';
+
+// Resolve a real Wikimedia photo for the trail's place; falls back to its photo.
+function useWikiPhoto(trail: ArgentinaTrail): string {
+  const [url, setUrl] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    let alive = true;
+    const place = (trail.name || '').split('—')[0].trim();
+    const query = `${place} ${(trail as any).area || ''}`.trim();
+    fetchWikiImage(query).then((u) => { if (alive && u) setUrl(u); });
+    return () => { alive = false; };
+  }, [trail.name]);
+  return url || trail.photo_uri;
+}
 
 // ── Featured card — full-bleed hero, AllTrails-style ────────────────────────
 
@@ -13,11 +28,12 @@ interface FeaturedProps {
 
 export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
+  const photo = useWikiPhoto(trail);
 
   return (
     <TouchableOpacity style={styles.featured} onPress={onPress} activeOpacity={0.9}>
       <ImageBackground
-        source={{ uri: trail.photo_uri }}
+        source={{ uri: photo }}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       />
@@ -68,6 +84,7 @@ interface ListProps {
 
 export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
+  const photo = useWikiPhoto(trail);
 
   return (
     <TouchableOpacity
@@ -78,7 +95,7 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
       {/* Photo */}
       <View style={styles.photoWrap}>
         <ImageBackground
-          source={{ uri: trail.photo_uri }}
+          source={{ uri: photo }}
           style={StyleSheet.absoluteFillObject}
           resizeMode="cover"
         />

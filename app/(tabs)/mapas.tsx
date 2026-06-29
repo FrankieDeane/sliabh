@@ -15,6 +15,7 @@ import { downloadGpx } from '../../src/utils/gpx';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
+import { fetchWikiImage } from '../../src/utils/wikiImage';
 
 // All trails with a GPX track, pushed to the map iframe for rendering
 const MAP_TRAIL_PAYLOAD = buildMapTrailPayload([
@@ -801,6 +802,16 @@ function DownloadCard({
   const { t } = useLangStore();
   const isNarrow = width < 400;
 
+  // Resolve a real Wikimedia photo for this place (overrides random stock).
+  const [wikiPhoto, setWikiPhoto] = useState<string | null>(null);
+  React.useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    let alive = true;
+    const query = (park as any).wikiQuery || park.name;
+    fetchWikiImage(query).then((url) => { if (alive && url) setWikiPhoto(url); });
+    return () => { alive = false; };
+  }, [park.name]);
+
   React.useEffect(() => {
     if (isTileCachingSupported()) {
       isAreaCached(park.coords.lat, park.coords.lon).then((cached) => {
@@ -870,7 +881,7 @@ function DownloadCard({
       <View style={[dlS.photo, { backgroundColor: c.surface }]}>
         {Platform.OS === 'web' ? (
           // @ts-ignore
-          <img src={park.photo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={park.name} loading="lazy" />
+          <img src={wikiPhoto || park.photo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={park.name} loading="lazy" />
         ) : null}
         <View style={dlS.photoOverlay} />
         <View style={dlS.sizeBadge}>
