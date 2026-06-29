@@ -12,6 +12,15 @@ import { useNetwork } from '../../src/hooks/useNetwork';
 import { useLangStore } from '../../src/utils/../store/langStore';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
 import { downloadGpx } from '../../src/utils/gpx';
+import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
+import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
+import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
+
+// All trails with a GPX track, pushed to the map iframe for rendering
+const MAP_TRAIL_PAYLOAD = buildMapTrailPayload([
+  ...ARGENTINA_TRAILS,
+  ...(BARILOCHE_TRAILS as any),
+] as any);
 
 type DlState = 'idle' | 'downloading' | 'done';
 
@@ -1000,6 +1009,7 @@ export default function MapasScreen() {
     iframeLoaded.current = true;
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage({ type: 'setLang', lang }, '*');
+      iframeRef.current.contentWindow.postMessage({ type: 'setTrails', trails: MAP_TRAIL_PAYLOAD }, '*');
     }
     if (pendingFlyTo.current && iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(pendingFlyTo.current, '*');
@@ -1013,6 +1023,18 @@ export default function MapasScreen() {
       iframeRef.current.contentWindow.postMessage({ type: 'setLang', lang }, '*');
     }
   }, [lang]);
+
+  // (Re)push trail data whenever the iframe map signals it's ready
+  React.useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    function onMessage(e: MessageEvent) {
+      if (e.data?.type === 'mapReady' && iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({ type: 'setTrails', trails: MAP_TRAIL_PAYLOAD }, '*');
+      }
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -1130,7 +1152,7 @@ export default function MapasScreen() {
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
-          src="/parques.html?v=20260622"
+          src="/parques.html?v=20260628d"
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Mapa de Parques Nacionales de Argentina"
           loading="eager"
