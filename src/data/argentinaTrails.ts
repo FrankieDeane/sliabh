@@ -1156,6 +1156,75 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
       { lat: -54.7850, lon: -68.3200, ele: 200,  name: 'Regreso — Ushuaia' },
     ],
   },
+
+  // ── Parque Nacional El Rey (Salta, Yungas) ──
+  // Senderos reales documentados por la Administración de Parques Nacionales
+  // (APN) y por registros GPS de la comunidad. Distancia y desnivel según esas
+  // fuentes; la altitud máxima es aproximada (cota del Centro Operativo ~900 m
+  // más el desnivel registrado).
+  {
+    id: 'el-rey-pozo-verde',
+    name: 'El Rey — Sendero Pozo Verde',
+    province: 'Salta',
+    area: 'Parque Nacional El Rey',
+    region: 'norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 11.4,
+    elevation_gain_m: 442,
+    max_altitude_m: 1340,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -24.7005, lon: -64.6273 },
+    photo_uri: '/calilegua.jpg',
+    tags: ['yungas', 'laguna', 'bosque de laureles', 'aves'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Sendero de baja a media dificultad que cruza arroyos y atraviesa un bosque de laureles hasta la laguna de Pozo Verde. Los primeros 3 km son accesibles en vehículo y los 9 km restantes se recorren a pie. Recorrido de día completo dentro de la selva de Yungas.',
+    trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
+  },
+  {
+    id: 'el-rey-chorro-de-los-loros',
+    name: 'El Rey — Sendero Chorro de los Loros',
+    province: 'Salta',
+    area: 'Parque Nacional El Rey',
+    region: 'norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 13.7,
+    elevation_gain_m: 379,
+    max_altitude_m: 1280,
+    duration: { min: 4, max: 5, unit: 'horas' },
+    coordinates: { lat: -24.7005, lon: -64.6273 },
+    photo_uri: '/calilegua.jpg',
+    tags: ['yungas', 'selva de montaña', 'loros', 'sendero largo'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Uno de los senderos pedestres más extensos del parque, de dificultad media-alta. Asciende por la selva de montaña de las Yungas hasta el Chorro de los Loros. Requiere buen estado físico y registrarse en el Centro Operativo antes de salir.',
+    trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
+  },
+  {
+    id: 'el-rey-laguna-los-patitos',
+    name: 'El Rey — Laguna de los Patitos',
+    province: 'Salta',
+    area: 'Parque Nacional El Rey',
+    region: 'norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 1.5,
+    elevation_gain_m: 20,
+    max_altitude_m: 920,
+    duration: { min: 1, max: 2, unit: 'horas' },
+    coordinates: { lat: -24.7005, lon: -64.6273 },
+    photo_uri: '/calilegua.jpg',
+    tags: ['yungas', 'laguna', 'observación de aves', 'apto familias'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Sendero corto y de baja dificultad que llega a la laguna de los Patitos, junto al Centro Operativo. Ideal para la observación de aves —especialmente acuáticas— y apto para familias.',
+    trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
+  },
 ];
 
 export const TRAIL_REGIONS = [
