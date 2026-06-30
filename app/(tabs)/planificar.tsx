@@ -4,7 +4,6 @@ import {
   Platform, StyleSheet, KeyboardAvoidingView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useResponsive } from '../../src/hooks/useResponsive';
@@ -207,7 +206,6 @@ type ThemeColors = { bg: string; surface: string; elevated: string; border: stri
 export default function PlanificarScreen() {
   const { isDark } = useTheme();
   const { isWide } = useResponsive();
-  const router = useRouter();
 
   const c: ThemeColors = isDark
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
@@ -406,14 +404,6 @@ export default function PlanificarScreen() {
                 <Text style={[s.infoRowTxt, { color: c.muted }]}>{selectedTrail.tags.join(' · ')}</Text>
               </View>
               <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-                <TouchableOpacity
-                  style={s.aiBtn}
-                  onPress={() => router.push('/(tabs)/faq')}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name="sparkles-outline" size={16} color="#22c55e" />
-                  <Text style={s.aiBtnTxt}>Consultar con Asistente IA</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={s.aiBtn} onPress={exportGpx} activeOpacity={0.8}>
                   <Ionicons name={gpxDone ? 'checkmark-circle-outline' : 'download-outline'} size={16} color="#22c55e" />
                   <Text style={s.aiBtnTxt}>{gpxDone ? 'GPX descargado' : 'Exportar GPX'}</Text>
