@@ -17,3 +17,20 @@
 
 /_expo/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Images & media — content rarely changes, so cache for 30 days at browser +
+# CDN. This is the biggest production-bandwidth win for repeat visitors (the
+# hero video and the park photos are the heavy assets). If you replace an image
+# in place, rename it (or append ?v=) to bust the cache.
+/*.jpg
+  Cache-Control: public, max-age=2592000
+/*.jpeg
+  Cache-Control: public, max-age=2592000
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.webp
+  Cache-Control: public, max-age=2592000
+/*.svg
+  Cache-Control: public, max-age=2592000
+/*.mp4
+  Cache-Control: public, max-age=2592000

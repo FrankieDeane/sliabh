@@ -3,12 +3,26 @@
 [build]
   command = "npx expo export -p web"
   publish = "dist"
+  # Decide whether a build is worth running BEFORE spending build minutes.
+  # exit 0 => skip build, exit 1 => run build. See netlify/ignore-build.sh:
+  #  - deploy previews / branch deploys are skipped unless the PR has the
+  #    "deploy-preview" label (opt-in), saving most preview build minutes;
+  #  - production only rebuilds when build-relevant files actually changed.
+  ignore = "bash netlify/ignore-build.sh"
 
 [build.environment]
   NODE_VERSION = "20"
 
 [functions]
   directory = "netlify/functions"
+
+# Gate every request on non-production deploys (deploy previews + branch
+# deploys) behind a 401 to stop bots from burning bandwidth. Runs before the
+# SPA redirect below, so the real content is never served on those contexts.
+# Production is unaffected. See netlify/edge-functions/block-previews.ts.
+[[edge_functions]]
+  path = "/*"
+  function = "block-previews"
 
 # expo-router with output:"single" emits a single-page app, so every route
 # must fall back to index.html for client-side routing to work.
