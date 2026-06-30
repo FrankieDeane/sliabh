@@ -104,9 +104,6 @@ export default function RegistroScreen() {
               onPress={() => router.replace('/(auth)/login')}
               fullWidth
             />
-            <TouchableOpacity onPress={() => router.replace('/(tabs)/inicio')} className="mt-3">
-              <Text className={`text-sm ${textMuted}`}>Continuar sin verificar ahora</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
