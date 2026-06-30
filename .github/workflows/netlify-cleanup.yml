@@ -1,0 +1,40 @@
+name: Cleanup Netlify previews
+
+# Manually triggered from the GitHub "Actions" tab. Deletes old Netlify
+# deploy-preview / branch-deploy deploys (the throwaway URLs bots crawl) to
+# free bandwidth. Runs entirely on GitHub's runners, which can reach the
+# Netlify API. Requires a repo secret named NETLIFY_AUTH_TOKEN.
+on:
+  workflow_dispatch:
+    inputs:
+      execute:
+        description: 'Type "true" to actually delete. Leave as "false" for a safe dry-run (just counts).'
+        required: true
+        default: 'false'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run cleanup (${{ inputs.execute == 'true' && 'EXECUTE' || 'dry-run' }})
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ddcccb8b-2ffc-41be-b609-1a2cafda8b67
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ]; then
+            echo "::error::Missing repo secret NETLIFY_AUTH_TOKEN. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          if [ "${{ inputs.execute }}" = "true" ]; then
+            node scripts/netlify-cleanup-previews.mjs --execute
+          else
+            node scripts/netlify-cleanup-previews.mjs
+          fi
