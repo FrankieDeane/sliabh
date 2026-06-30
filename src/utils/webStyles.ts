@@ -436,7 +436,13 @@ export function injectWebStyles() {
     ───────────────────────────────────────────── */
     [data-hero-section] {
       height: 100vh !important;
+      height: 100dvh !important; /* mobile: exclude the browser chrome / address bar */
       min-height: 620px;
+    }
+    /* Home hero wrapper + content fill the dynamic viewport so CTAs stay above
+       the fold on mobile browsers, where 100vh sits behind the URL bar. */
+    [data-hero], [data-hero-content] {
+      min-height: 100dvh !important;
     }
     [data-hero-title-display] {
       font-size: clamp(42px, 6vw, 72px) !important;
@@ -491,6 +497,7 @@ export function injectWebStyles() {
       display: flex;
       flex-direction: row;
       height: calc(100vh - 58px);
+      height: calc(100dvh - 58px);
       overflow: hidden;
     }
     [data-rutas-list-panel] {
@@ -504,6 +511,7 @@ export function injectWebStyles() {
       position: sticky;
       top: 0;
       height: calc(100vh - 58px);
+      height: calc(100dvh - 58px);
     }
 
     /* ─────────────────────────────────────────────
@@ -511,6 +519,7 @@ export function injectWebStyles() {
     ───────────────────────────────────────────── */
     [data-trail-hero] {
       height: 100vh !important;
+      height: 100dvh !important; /* mobile: exclude the browser chrome / address bar */
       min-height: 560px;
     }
     [data-trail-hero-gradient-top] {

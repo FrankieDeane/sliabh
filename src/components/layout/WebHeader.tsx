@@ -333,8 +333,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   langBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
     transition: 'background-color 0.18s ease' as any,
   },
   langBtnActive: {
@@ -345,9 +345,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   iconBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

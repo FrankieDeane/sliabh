@@ -368,7 +368,7 @@ export default function PlanificarScreen() {
           {/* Tab nav */}
           <View style={[s.tabRow, { backgroundColor: c.surface, borderColor: c.border }]}>
             {(['info', 'etapas', 'checklist'] as const).map((tab) => {
-              const labels = { info: 'Información', etapas: 'Etapas', checklist: `Equipamiento (${checkedCount}/${checklist.length})` };
+              const labels = { info: 'Información', etapas: 'Etapas', checklist: `Equipo (${checkedCount}/${checklist.length})` };
               const active = activeTab === tab;
               return (
                 <TouchableOpacity
@@ -377,7 +377,10 @@ export default function PlanificarScreen() {
                   onPress={() => setActiveTab(tab)}
                   activeOpacity={0.7}
                 >
-                  <Text style={[s.tabLabel, { color: active ? c.text : c.muted, fontWeight: active ? '700' : '500' }]}>
+                  <Text
+                    numberOfLines={1}
+                    style={[s.tabLabel, { color: active ? c.text : c.muted, fontWeight: active ? '700' : '500' }]}
+                  >
                     {labels[tab]}
                   </Text>
                 </TouchableOpacity>
