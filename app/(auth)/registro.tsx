@@ -73,6 +73,17 @@ export default function RegistroScreen() {
         Alert.alert('Error al crear cuenta', translateError(error.message));
         return;
       }
+      // Supabase hides "email already registered" for security: when an account
+      // with this email already exists, it returns a user with an empty
+      // `identities` array (and no error) instead of creating one. Detect that
+      // and tell the user to sign in rather than faking a success screen.
+      if (data.user && (data.user.identities?.length ?? 0) === 0) {
+        Alert.alert(
+          'Cuenta existente',
+          'Ya existe una cuenta con ese correo. Iniciá sesión con tu contraseña o recuperala si la olvidaste.',
+        );
+        return;
+      }
       if (data.user) {
         await upsertProfile(data.user.id, { display_name: displayName.trim() });
       }
