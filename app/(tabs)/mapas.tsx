@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SenderoCorrection } from '../../src/components/contribute/SenderoCorrection';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useLangStore } from '../../src/utils/../store/langStore';
@@ -1250,6 +1251,11 @@ export default function MapasScreen() {
             />
           ))}
         </View>
+      </View>
+
+      {/* Community: report the correct location of a mis-drawn trail */}
+      <View style={{ maxWidth: 1200, alignSelf: 'center', width: '100%', paddingHorizontal: 24, paddingBottom: 40 }}>
+        <SenderoCorrection colors={c} />
       </View>
 
       <WebFooter />

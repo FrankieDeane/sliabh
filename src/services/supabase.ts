@@ -67,6 +67,34 @@ export async function submitContribution(c: {
   return supabase.from('trail_contributions').insert({ ...c, user_id: user.id });
 }
 
+/**
+ * Community "sendero correction": a user marks where a trail actually is
+ * (their GPS point) so the team can fix a mis-drawn route. Stored as a
+ * moderated `edicion_ruta` contribution; the trail reference lives in metadata.
+ */
+export async function submitSenderoCorrection(opts: {
+  trailId?: string;
+  trailName?: string;
+  lat: number;
+  lon: number;
+  note?: string;
+}) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No autenticado');
+  const title = opts.trailName
+    ? `Corrección de sendero: ${opts.trailName}`
+    : 'Corrección de sendero (ubicación reportada)';
+  return supabase.from('trail_contributions').insert({
+    type: 'edicion_ruta',
+    title,
+    description: opts.note ?? '',
+    lat: opts.lat,
+    lon: opts.lon,
+    metadata: { kind: 'sendero_correction', trail_id: opts.trailId ?? null },
+    user_id: user.id,
+  });
+}
+
 // ── Trail condition reports (live, perishable) ──────────────────────
 
 export type TrailCondition = 'ok' | 'nieve' | 'rio_crecido' | 'cerrado' | 'huella_perdida' | 'barro' | 'otro';

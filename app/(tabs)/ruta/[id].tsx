@@ -42,6 +42,7 @@ const HikeMap = Platform.OS === 'web'
   : require('../../../src/components/map/MapLibreEsri.native').MapLibreEsri;
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
+import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 
@@ -1155,6 +1156,8 @@ function OverviewTab({
 
       {/* Live community condition reports (shown once Supabase is configured) */}
       <TrailReports trailId={trail.id} colors={C} />
+
+      <SenderoCorrection trailId={trail.id} trailName={trail.name} colors={C} />
 
       {!!trail.namedWaypoints?.length && (
         <SectionCard>
