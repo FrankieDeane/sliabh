@@ -1053,23 +1053,17 @@
       map.on('mouseenter', 'osm-trails-line', function () { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'osm-trails-line', function () { map.getCanvas().style.cursor = ''; });
 
-      // Live OSM trails on this map only in the Rutas context. In Mapas the
-      // trails belong on the right detail map, so the left stays clean.
+      // The dense live-OSM overlay stays off the main map (it lives on the
+      // right detail map). The curated routes are shown on the main map in
+      // both sections so every route is visible here too.
       if (MAP_CTX !== 'mapas') osmTrailsInit(map);
 
       // Apply any trails buffered before the map finished loading
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
 
       applyFilters();
-      // Show every park's circuits by default (Rutas context only).
-      if (MAP_CTX !== 'mapas') {
-        setTimeout(() => { showTrailLayer(); showChaltenLayer(false); }, 800);
-      } else {
-        // Hide the trail toggles in Mapas — trails live on the right map.
-        ['trailLayerToggle', 'chaltenLayerToggle', 'appTrailLayerToggle'].forEach(function (id) {
-          var b = document.getElementById(id); if (b) b.style.display = 'none';
-        });
-      }
+      // Show every curated route on the main map by default (both sections).
+      setTimeout(() => { showTrailLayer(); showChaltenLayer(false); }, 800);
       // Tell the parent the map is ready so it can (re)push trail data
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({ type: 'mapReady' }, '*');
@@ -2351,9 +2345,9 @@ ${trkpts}
           geometry: { type: 'Point', coordinates: [t.lng != null ? t.lng : t.gpxTrack[0].lon, t.lat != null ? t.lat : t.gpxTrack[0].lat] }
         }))
       });
-      if (appTrailToggleBtn) appTrailToggleBtn.style.display = (appTrails.length && MAP_CTX !== 'mapas') ? '' : 'none';
-      // Circuits show by default only in the Rutas context (left map).
-      if (appTrails.length && MAP_CTX !== 'mapas') showAppTrailLayer(); else updateAppTrailToggleLabel();
+      if (appTrailToggleBtn) appTrailToggleBtn.style.display = appTrails.length ? '' : 'none';
+      // Curated routes show by default on the main map in both sections.
+      if (appTrails.length) showAppTrailLayer(); else updateAppTrailToggleLabel();
     }
 
     function updateAppTrailToggleLabel() {
