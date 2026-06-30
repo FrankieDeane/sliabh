@@ -4,6 +4,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { Button } from '../ui/Button';
 import { useContribStore, ContribType } from '../../store/contributionStore';
 import { useNetwork } from '../../hooks/useNetwork';
+import { submitContribution, isSupabaseConfigured } from '../../services/supabase';
 
 const TIPOS: Array<{ id: ContribType; icon: string; label: string }> = [
   { id: 'nueva_ruta', icon: '🗺️', label: 'Nueva ruta' },
@@ -30,7 +31,16 @@ export function ContributeForm({ onClose, onSubmit }: { onClose?: () => void; on
   const handleSubmit = async () => {
     if (!type || !title.trim()) return;
     setLoading(true);
+    // Offline-first: always keep a local copy.
     add({ type, title: title.trim(), description: description.trim() });
+    // Also send to the backend when Supabase is configured + the user is signed in.
+    if (isSupabaseConfigured()) {
+      try {
+        await submitContribution({ type, title: title.trim(), description: description.trim() });
+      } catch {
+        // not authenticated / offline — stays local and can sync later
+      }
+    }
     setLoading(false);
     setStep(3);
   };

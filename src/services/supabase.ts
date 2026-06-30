@@ -4,6 +4,14 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-anon-key';
 
+/** True once real Supabase credentials are set (not the placeholders). */
+export function isSupabaseConfigured(): boolean {
+  return (
+    !!SUPABASE_URL && !SUPABASE_URL.includes('placeholder') &&
+    !!SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes('placeholder')
+  );
+}
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     autoRefreshToken: true,
@@ -57,4 +65,37 @@ export async function submitContribution(c: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('No autenticado');
   return supabase.from('trail_contributions').insert({ ...c, user_id: user.id });
+}
+
+// ── Trail condition reports (live, perishable) ──────────────────────
+
+export type TrailCondition = 'ok' | 'nieve' | 'rio_crecido' | 'cerrado' | 'huella_perdida' | 'barro' | 'otro';
+
+export interface TrailReport {
+  id: string;
+  trail_id: string;
+  condition: TrailCondition;
+  note: string;
+  created_at: string;
+  profiles?: { display_name: string | null } | null;
+}
+
+/** Recent (non-expired) condition reports for a trail, newest first. */
+export async function fetchTrailReports(trailId: string, limit = 10): Promise<TrailReport[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await supabase
+    .from('trail_reports')
+    .select('id, trail_id, condition, note, created_at, profiles(display_name)')
+    .eq('trail_id', trailId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) return [];
+  return (data as any) ?? [];
+}
+
+/** Submit a condition report for a trail (requires an authenticated user). */
+export async function submitTrailReport(trailId: string, condition: TrailCondition, note = '') {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No autenticado');
+  return supabase.from('trail_reports').insert({ trail_id: trailId, condition, note, user_id: user.id });
 }
