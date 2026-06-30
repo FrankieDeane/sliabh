@@ -141,16 +141,27 @@ export function SenderoCorrection({
   return (
     <View style={cardStyle}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View style={{ flex: 1, paddingRight: 10 }}>
-          <Text style={{ color: colors.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>
-            {t('CORREGIR SENDERO', 'FIX THE TRAIL')}
-          </Text>
-          <Text style={{ color: colors.muted, fontSize: 12, marginTop: 3, lineHeight: 17 }}>
-            {t(
-              '¿El sendero está mal marcado? Marcá con tu GPS dónde está realmente.',
-              'Trail drawn in the wrong place? Use your GPS to mark where it really is.',
-            )}
-          </Text>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 10, paddingRight: 10 }}>
+          <View
+            style={{
+              width: 34, height: 34, borderRadius: 17,
+              backgroundColor: accent + '1A',
+              alignItems: 'center', justifyContent: 'center', marginTop: 1,
+            }}
+          >
+            <Ionicons name="trail-sign-outline" size={18} color={accent} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: colors.muted, fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>
+              {t('CORREGIR SENDERO', 'FIX THE TRAIL')}
+            </Text>
+            <Text style={{ color: colors.muted, fontSize: 12, marginTop: 3, lineHeight: 17 }}>
+              {t(
+                '¿El sendero está mal marcado? Marcá con tu GPS dónde está realmente.',
+                'Trail drawn in the wrong place? Use your GPS to mark where it really is.',
+              )}
+            </Text>
+          </View>
         </View>
         <TouchableOpacity
           onPress={toggle}
