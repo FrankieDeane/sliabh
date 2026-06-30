@@ -9,6 +9,7 @@ import {
   ImageBackground,
   useWindowDimensions,
   Platform,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -304,6 +305,71 @@ export default function ContribuirScreen() {
           </View>
         </View>
 
+        {/* ── OPEN STREET MAP ── */}
+        <View style={[styles.section, { paddingHorizontal: sidePad }]}>
+          <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('MEJORÁ EL MAPA ABIERTO', 'IMPROVE THE OPEN MAP')}</Text>
+          <View style={[styles.osmCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <View style={styles.osmHead}>
+              <View style={[styles.typeIconWrap, { backgroundColor: 'rgba(255,107,53,0.14)' }]}>
+                <Ionicons name="git-network-outline" size={22} color="#FF6B35" />
+              </View>
+              <Text style={[styles.osmTitle, { color: c.text }]}>OpenStreetMap</Text>
+            </View>
+            <Text style={[styles.osmText, { color: c.muted }]}>
+              {t(
+                'Nuestros senderos vienen de OpenStreetMap, el mapa libre del mundo. Si encontrás un sendero mal trazado o faltante, corregilo ahí: tu aporte mejora el mapa para todos y vuelve a Sliabh automáticamente.',
+                'Our trails come from OpenStreetMap, the world’s free map. If you find a wrong or missing trail, fix it there: your edit improves the map for everyone and flows back into Sliabh automatically.',
+              )}
+            </Text>
+            <View style={styles.osmBtns}>
+              <TouchableOpacity
+                style={[styles.osmBtn, { backgroundColor: '#FF6B35' }]}
+                activeOpacity={0.85}
+                onPress={() => Linking.openURL('https://www.openstreetmap.org/note/new')}
+              >
+                <Ionicons name="flag-outline" size={15} color="#fff" />
+                <Text style={styles.osmBtnTxt}>{t('Reportar en OSM', 'Report on OSM')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.osmBtn, { backgroundColor: c.elevated, borderWidth: 1, borderColor: c.border }]}
+                activeOpacity={0.85}
+                onPress={() => Linking.openURL('https://www.openstreetmap.org/edit')}
+              >
+                <Ionicons name="create-outline" size={15} color={c.text} />
+                <Text style={[styles.osmBtnTxt, { color: c.text }]}>{t('Editar el mapa', 'Edit the map')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* ── CREDITS / ATTRIBUTIONS ── */}
+        <View style={[styles.section, { paddingHorizontal: sidePad }]}>
+          <Text style={[styles.sectionTitle, { color: c.muted }]}>{t('CRÉDITOS Y FUENTES', 'CREDITS & SOURCES')}</Text>
+          <View style={[styles.stepsCard, { backgroundColor: c.surface, borderColor: c.border }]}>
+            {[
+              { name: 'OpenStreetMap', lic: 'ODbL', desc: t('Geometría de senderos', 'Trail geometry'), url: 'https://www.openstreetmap.org/copyright' },
+              { name: 'Wikimedia Commons', lic: 'CC', desc: t('Fotos de lugares', 'Place photos'), url: 'https://commons.wikimedia.org/' },
+              { name: 'Esri World Imagery', lic: '©', desc: t('Imágenes satelitales 3D', '3D satellite imagery'), url: 'https://www.esri.com/' },
+            ].map((src, i, arr) => (
+              <TouchableOpacity
+                key={src.name}
+                onPress={() => Linking.openURL(src.url)}
+                activeOpacity={0.8}
+                style={[styles.stepRow, i < arr.length - 1 && styles.stepRowBorder, i < arr.length - 1 && { borderBottomColor: c.border }]}
+              >
+                <View style={[styles.stepIcon, { backgroundColor: c.elevated }]}>
+                  <Ionicons name="library-outline" size={18} color="#22c55e" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.stepTitle, { color: c.text }]}>{src.name} <Text style={{ color: c.muted, fontWeight: '500', fontSize: 12 }}>· {src.lic}</Text></Text>
+                  <Text style={[styles.stepDesc, { color: c.muted }]}>{src.desc}</Text>
+                </View>
+                <Ionicons name="open-outline" size={15} color={c.muted} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         {/* ── OFFLINE NOTE ── */}
         <View style={[styles.offlineNote, { marginHorizontal: sidePad }]}>
           <Ionicons name="flash-outline" size={16} color="#fbbf24" />
@@ -389,6 +455,14 @@ const styles = StyleSheet.create({
   stepIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   stepTitle: { fontSize: 15, fontWeight: '700' },
   stepDesc: { fontSize: 13, marginTop: 2 },
+
+  osmCard: { borderRadius: 20, borderWidth: 1, padding: 18 },
+  osmHead: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  osmTitle: { fontSize: 17, fontWeight: '800' },
+  osmText: { fontSize: 13, lineHeight: 20, marginBottom: 16 },
+  osmBtns: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
+  osmBtn: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 16, paddingVertical: 11, borderRadius: 12 },
+  osmBtnTxt: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
   offlineNote: {
     flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 24,

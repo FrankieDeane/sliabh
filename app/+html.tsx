@@ -26,17 +26,68 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="Sliabh" />
 
         {/* SEO */}
-        <title>Sliabh — Explora la montaña</title>
+        <title>Sliabh — Senderismo y trekking en Argentina | Rutas, mapas 3D y GPS offline</title>
         <meta
           name="description"
-          content="La plataforma de senderismo para explorar Argentina. Rutas, mapas offline, planificación y guías de supervivencia."
+          content="Sliabh: la plataforma de senderismo para explorar los Parques Nacionales de Argentina. Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia. El Chaltén, Bariloche, Tierra del Fuego y más."
         />
-        <meta property="og:title" content="Sliabh — Explora la montaña" />
-        <meta property="og:description" content="Rutas, mapas offline y planificación para Argentina." />
+        <meta
+          name="keywords"
+          content="senderismo Argentina, trekking Argentina, rutas de montaña, parques nacionales, mapas offline, GPS senderos, El Chaltén, Bariloche, Tierra del Fuego, Patagonia, Fitz Roy, Cerro Torre, hiking Argentina"
+        />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <meta name="author" content="Sliabh" />
+        <link rel="canonical" href="https://sliabh.netlify.app/" />
+
+        {/* Open Graph */}
+        <meta property="og:site_name" content="Sliabh" />
+        <meta property="og:locale" content="es_AR" />
+        <meta property="og:locale:alternate" content="en_US" />
         <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Sliabh" />
-        <meta name="twitter:description" content="La plataforma de senderismo para explorar Argentina." />
+        <meta property="og:url" content="https://sliabh.netlify.app/" />
+        <meta property="og:title" content="Sliabh — Senderismo y trekking en Argentina" />
+        <meta property="og:description" content="Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia para los Parques Nacionales de Argentina." />
+        <meta property="og:image" content="https://sliabh.netlify.app/sliabh-explore-explorar.jpg" />
+        <meta property="og:image:alt" content="Senderismo en la Patagonia argentina" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sliabh — Senderismo y trekking en Argentina" />
+        <meta name="twitter:description" content="Rutas, mapas 3D, GPS offline y planificación para los Parques Nacionales de Argentina." />
+        <meta name="twitter:image" content="https://sliabh.netlify.app/sliabh-explore-explorar.jpg" />
+
+        {/* Structured data (schema.org) for rich results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://sliabh.netlify.app/#website',
+                  url: 'https://sliabh.netlify.app/',
+                  name: 'Sliabh',
+                  description: 'Plataforma de senderismo y trekking para los Parques Nacionales de Argentina.',
+                  inLanguage: 'es-AR',
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: 'https://sliabh.netlify.app/rutas?q={search_term_string}',
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+                {
+                  '@type': 'Organization',
+                  '@id': 'https://sliabh.netlify.app/#organization',
+                  name: 'Sliabh',
+                  url: 'https://sliabh.netlify.app/',
+                  logo: 'https://sliabh.netlify.app/SLIABH_Logo_Transparent.png',
+                  description: 'Rutas, mapas 3D, GPS offline y planificación para explorar la montaña en Argentina.',
+                },
+              ],
+            }),
+          }}
+        />
 
         <ScrollViewStyleReset />
 
