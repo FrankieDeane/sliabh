@@ -1163,7 +1163,7 @@ export default function MapasScreen() {
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
-          src="/parques.html?v=20260630b&ctx=mapas"
+          src="/parques.html?v=20260630c&ctx=mapas"
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Mapa de Parques Nacionales de Argentina"
           loading="eager"
