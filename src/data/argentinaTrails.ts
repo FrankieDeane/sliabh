@@ -52,6 +52,19 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     description:
       'La cima más alta del hemisferio occidental (6961 m). La Ruta Normal sube por el noroeste desde Plaza de Mulas. Requiere aclimatación progresiva y permiso del parque.',
     trailhead: 'Horcones (Uspallata, Mendoza)',
+    gpxTrack: [
+      { lat: -32.8319, lon: -69.9911, ele: 2950, name: 'Entrada Parque Provincial Aconcagua — Horcones' },
+      { lat: -32.8262, lon: -69.9881, ele: 2950, name: 'Laguna de Horcones' },
+      { lat: -32.8090, lon: -69.9803, ele: 3050, name: 'Puente Colgante (Río Horcones)' },
+      { lat: -32.7995, lon: -69.9748, ele: 3368, name: 'Campamento Confluencia' },
+      { lat: -32.7250, lon: -69.9800, ele: 3900 },
+      { lat: -32.6800, lon: -69.9810, ele: 4150 },
+      { lat: -32.6531, lon: -69.9822, ele: 4370, name: 'Plaza de Mulas — Campamento Base' },
+      { lat: -32.6520, lon: -69.9861, ele: 5050, name: 'Campamento Canadá' },
+      { lat: -32.6489, lon: -69.9917, ele: 5570, name: 'Nido de Cóndores' },
+      { lat: -32.6498, lon: -69.9975, ele: 5930, name: 'Campamento Berlín' },
+      { lat: -32.6532, lon: -70.0109, ele: 6961, name: 'Cumbre Cerro Aconcagua' },
+    ],
   },
   {
     id: 'fitz-roy-laguna-tres',
