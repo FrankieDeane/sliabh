@@ -45,8 +45,8 @@ export function CookieBanner() {
           <Ionicons name="shield-checkmark-outline" size={16} color="#22c55e" style={{ flexShrink: 0 }} />
           <Text style={[styles.txt, { color: c.muted }]}>
             {t(
-              'Usamos almacenamiento local (localStorage, Cache API) para mapas offline, preferencias y sesión. No usamos cookies de rastreo de terceros.',
-              'We use local storage (localStorage, Cache API) for offline maps, preferences and session. We do not use third-party tracking cookies.',
+              'Usamos almacenamiento local (localStorage, Cache API) para mapas offline, preferencias y sesión, además de cookies de terceros (Google Analytics, Meta Pixel) para mejorar tu experiencia de usuario.',
+              'We use local storage (localStorage, Cache API) for offline maps, preferences and session, plus third-party cookies (Google Analytics, Meta Pixel) to improve your user experience.',
             )}
           </Text>
         </View>
