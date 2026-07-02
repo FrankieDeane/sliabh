@@ -9,22 +9,6 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 
 const MAX_CONTENT = 800;
 
-const PATAGONIA_PHOTOS = [
-  '/faq-photos/faq-01.jpg',
-  '/faq-photos/faq-02.jpg',
-  '/faq-photos/faq-03.jpg',
-  '/faq-photos/faq-04.jpg',
-  '/faq-photos/faq-05.jpg',
-  '/faq-photos/faq-06.jpg',
-  '/faq-photos/faq-07.jpg',
-  '/faq-photos/faq-08.jpg',
-  '/faq-photos/faq-09.jpg',
-  '/faq-photos/faq-10.jpg',
-  '/faq-photos/faq-11.jpg',
-  '/faq-photos/faq-12.jpg',
-  '/faq-photos/faq-13.jpg',
-];
-
 const FAQ_DATA: Array<{
   category: { es: string; en: string };
   items: Array<{ q: { es: string; en: string }; a: { es: string; en: string } }>;
@@ -585,41 +569,26 @@ interface FaqItemProps {
   q: string;
   a: string;
   c: any;
-  photoUrl: string;
 }
 
-function FaqItem({ q, a, c, photoUrl }: FaqItemProps) {
+function FaqItem({ q, a, c }: FaqItemProps) {
   const [open, setOpen] = useState(false);
   return (
     <TouchableOpacity
       style={[fS.card, { backgroundColor: c.surface, borderColor: open ? '#22c55e55' : c.border }]}
-      activeOpacity={0.88}
+      activeOpacity={0.7}
       onPress={() => setOpen((v) => !v)}
-      {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true } as any) : {})}
     >
-      <View style={fS.cardPhoto}>
-        {Platform.OS === 'web' && (
-          // @ts-ignore
-          <img
-            src={photoUrl}
-            alt=""
-            loading="lazy"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        )}
-        <View style={fS.cardPhotoOverlay} />
-        <View style={fS.cardPhotoText}>
-          <Text style={fS.cardQuestion}>{q}</Text>
-        </View>
-        <View style={fS.cardChevron}>
-          <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color="#fff" />
-        </View>
+      <View style={fS.cardRow}>
+        <Text style={[fS.question, { color: c.text }]}>{q}</Text>
+        <Ionicons
+          name={open ? 'chevron-up' : 'chevron-down'}
+          size={18}
+          color={open ? '#22c55e' : c.muted}
+          style={{ marginTop: 1 }}
+        />
       </View>
-      {open && (
-        <View style={fS.expandedBody}>
-          <Text style={[fS.answerText, { color: c.muted }]}>{a}</Text>
-        </View>
-      )}
+      {open && <Text style={[fS.answerText, { color: c.muted }]}>{a}</Text>}
     </TouchableOpacity>
   );
 }
@@ -661,34 +630,26 @@ export default function FaqScreen() {
 
       {/* FAQ sections */}
       <View style={{ paddingHorizontal: sidePad, paddingTop: 32 }}>
-        {(() => {
-          let globalIdx = 0;
-          return FAQ_DATA.map((section) => (
-            <View key={section.category.es} style={fS.section}>
-              <View style={fS.categoryRow}>
-                <View style={[fS.categoryDot, { backgroundColor: '#22c55e' }]} />
-                <Text style={[fS.category, { color: '#22c55e' }]}>
-                  {lang === 'en' ? section.category.en : section.category.es}
-                </Text>
-              </View>
-              <View style={fS.itemsGrid}>
-                {section.items.map((item) => {
-                  const photoUrl = PATAGONIA_PHOTOS[globalIdx % PATAGONIA_PHOTOS.length];
-                  globalIdx++;
-                  return (
-                    <FaqItem
-                      key={item.q.es}
-                      q={lang === 'en' ? item.q.en : item.q.es}
-                      a={lang === 'en' ? item.a.en : item.a.es}
-                      c={c}
-                      photoUrl={photoUrl}
-                    />
-                  );
-                })}
-              </View>
+        {FAQ_DATA.map((section) => (
+          <View key={section.category.es} style={fS.section}>
+            <View style={fS.categoryRow}>
+              <View style={[fS.categoryDot, { backgroundColor: '#22c55e' }]} />
+              <Text style={[fS.category, { color: '#22c55e' }]}>
+                {lang === 'en' ? section.category.en : section.category.es}
+              </Text>
             </View>
-          ));
-        })()}
+            <View style={fS.itemsGrid}>
+              {section.items.map((item) => (
+                <FaqItem
+                  key={item.q.es}
+                  q={lang === 'en' ? item.q.en : item.q.es}
+                  a={lang === 'en' ? item.a.en : item.a.es}
+                  c={c}
+                />
+              ))}
+            </View>
+          </View>
+        ))}
       </View>
 
       {Platform.OS === 'web' && <WebFooter />}
@@ -715,46 +676,24 @@ const fS = StyleSheet.create({
   category: {
     fontSize: 10, fontWeight: '700', letterSpacing: 3, textTransform: 'uppercase',
   },
-  itemsGrid: { gap: 12 },
+  itemsGrid: { gap: 10 },
   card: {
-    borderRadius: 18,
+    borderRadius: 14,
     borderWidth: 1,
-    overflow: 'hidden',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
-  cardPhoto: {
-    height: 160,
-    position: 'relative',
-    overflow: 'hidden',
-    backgroundColor: '#0f172a',
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
   },
-  cardPhotoOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(5,10,20,0.55)',
+  question: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    lineHeight: 21,
   },
-  cardPhotoText: {
-    position: 'absolute',
-    bottom: 14,
-    left: 14,
-    right: 48,
-  },
-  cardQuestion: {
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: -0.3,
-    color: '#fff',
-    lineHeight: 22,
-  },
-  cardChevron: {
-    position: 'absolute',
-    top: 14,
-    right: 14,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  expandedBody: { padding: 16 },
-  answerText: { fontSize: 14, lineHeight: 22 },
+  answerText: { fontSize: 14, lineHeight: 22, marginTop: 10 },
 });
