@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -28,6 +29,10 @@ const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
 const HERO_VIDEO_URL = '/hero-patagonia.mp4';
+
+// Small, low-weight thumbnail for the cafecito CTA band
+const CAFECITO_IMG_URI =
+  'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=112&q=60&fit=crop&auto=format';
 
 // Featured routes — all Argentine
 const FEATURED = [
@@ -727,9 +732,11 @@ export default function InicioScreen() {
 
         {/* ── CAFECITO / CROWDFUNDING ── */}
         <View style={[styles.cafecitoBand, { marginHorizontal: sidePad, backgroundColor: c.surface, borderColor: c.border }]}>
-          <View style={styles.cafecitoIcon}>
-            <Ionicons name="cafe-outline" size={22} color="#fbbf24" />
-          </View>
+          <Image
+            source={{ uri: CAFECITO_IMG_URI }}
+            style={styles.cafecitoImg}
+            resizeMode="cover"
+          />
           <View style={{ flex: 1 }}>
             <Text style={[styles.cafecitoTitle, { color: c.text }]}>
               {t('¿Te sirvió Sliabh?', 'Did Sliabh help you?')}
@@ -1035,11 +1042,8 @@ const styles = StyleSheet.create({
     borderRadius: 20, borderWidth: 1, padding: 18,
     marginTop: 16, flexWrap: 'wrap',
   },
-  cafecitoIcon: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: 'rgba(251,191,36,0.12)',
-    borderWidth: 1, borderColor: 'rgba(251,191,36,0.3)',
-    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  cafecitoImg: {
+    width: 52, height: 52, borderRadius: 16, flexShrink: 0,
   },
   cafecitoTitle: { fontSize: 15, fontWeight: '800', marginBottom: 3, letterSpacing: -0.3 },
   cafecitoSub: { fontSize: 12, lineHeight: 17 },
