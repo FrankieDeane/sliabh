@@ -330,7 +330,7 @@ export default function InicioScreen() {
                 ]}
                 {...(Platform.OS === 'web' ? ({ 'data-hero-title': true, 'data-display-xl': true } as any) : {})}
               >
-                {t('La montaña\nte espera.', 'The mountain\nawaits.')}
+                {t('La montaña\nte espera', 'The mountain\nawaits')}
               </Text>
 
               <Text
