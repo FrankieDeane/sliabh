@@ -53,7 +53,7 @@ const FEATURED = [
     distance: '110 km',
     daysEs: '18–22 días',
     daysEn: '18–22 days',
-    uri: '/sliabh-aconcagua-.jpg',
+    uri: '/sliabh-aconcagua-.webp',
     routeId: 'aconcagua-ruta-normal',
   },
   {
@@ -63,7 +63,7 @@ const FEATURED = [
     distance: '18 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: '/sliabh-los-alerces.jpg',
+    uri: '/sliabh-los-alerces.webp',
     routeId: 'alerces-cascada-arrayanes',
   },
   {
@@ -73,7 +73,7 @@ const FEATURED = [
     distance: '20 km',
     daysEs: '1 día',
     daysEn: '1 day',
-    uri: Platform.OS === 'web' ? '/tierra-del-fuego.jpg' : 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
+    uri: Platform.OS === 'web' ? '/tierra-del-fuego.webp' : 'https://images.unsplash.com/photo-1457131760772-7017c6180f05?w=700&q=80&fit=crop&auto=format',
     routeId: 'tierra-del-fuego-costera',
   },
 ];
@@ -87,7 +87,7 @@ const REGIONS = [
     regionEs: 'Santa Cruz · Tierra del Fuego',
     regionEn: 'Santa Cruz · Tierra del Fuego',
     trailCount: 5,
-    photo: '/tierra-del-fuego.jpg',
+    photo: '/tierra-del-fuego.webp',
   },
   {
     id: 'patagonia-norte',
@@ -96,7 +96,7 @@ const REGIONS = [
     regionEs: 'Río Negro · Neuquén · Chubut',
     regionEn: 'Río Negro · Neuquén · Chubut',
     trailCount: 6,
-    photo: '/sliabh-explore-explorar.jpg',
+    photo: '/sliabh-explore-explorar.webp',
   },
   {
     id: 'cuyo',
@@ -105,7 +105,7 @@ const REGIONS = [
     regionEs: 'Mendoza · San Juan · La Rioja',
     regionEn: 'Mendoza · San Juan · La Rioja',
     trailCount: 1,
-    photo: '/sliabh-aconcagua-.jpg',
+    photo: '/sliabh-aconcagua-.webp',
   },
   {
     id: 'norte',
@@ -114,7 +114,7 @@ const REGIONS = [
     regionEs: 'Jujuy · Salta · Tucumán',
     regionEn: 'Jujuy · Salta · Tucumán',
     trailCount: 1,
-    photo: '/sliabh-humahuaca.jpg',
+    photo: '/sliabh-humahuaca.webp',
   },
   {
     id: 'sierras-centrales',
@@ -123,7 +123,7 @@ const REGIONS = [
     regionEs: 'Córdoba · San Luis',
     regionEn: 'Córdoba · San Luis',
     trailCount: 2,
-    photo: '/sliabh-sierras-de-cordoba.jpg',
+    photo: '/sliabh-sierras-de-cordoba.webp',
   },
   {
     id: 'litoral',
@@ -132,7 +132,7 @@ const REGIONS = [
     regionEs: 'Misiones · Corrientes · Entre Ríos',
     regionEn: 'Misiones · Corrientes · Entre Ríos',
     trailCount: 2,
-    photo: '/sliabh-ibera.jpg',
+    photo: '/sliabh-ibera.webp',
   },
 ];
 
@@ -146,7 +146,7 @@ const PARK_SPOTS = [
     tagEn: 'UNESCO · World Heritage',
     descEs: 'Bosques de alerces milenarios de hasta 2600 años, lagos turquesa y ecosistemas únicos en la Patagonia andina de Chubut.',
     descEn: 'Ancient alerce forests up to 2600 years old, turquoise lakes and unique ecosystems in the Andean Patagonia of Chubut.',
-    photo: '/sliabh-los-alerces.jpg',
+    photo: '/sliabh-los-alerces.webp',
     trailId: 'alerces-cascada-arrayanes',
     province: 'Chubut',
     trails: 3,
@@ -159,7 +159,7 @@ const PARK_SPOTS = [
     tagEn: 'Unique microclimate · El Bolsón',
     descEs: 'El único lago de la Patagonia con salida al océano Pacífico. Vegetación valdiviana, arrayanes y las temperaturas más cálidas de la región.',
     descEn: 'The only lake in Patagonia that flows to the Pacific Ocean. Valdivian vegetation, arrayán trees and the warmest temperatures in the region.',
-    photo: '/sliabh-lago-puelo.jpg',
+    photo: '/sliabh-lago-puelo.webp',
     trailId: 'lago-puelo-los-hitos',
     province: 'Chubut',
     trails: 2,
@@ -172,7 +172,7 @@ const PARK_SPOTS = [
     tagEn: 'Steppe · Condors · Santa Cruz',
     descEs: 'El parque más nuevo de Argentina protege estepa patagónica virgen, guanacos y cóndores. Vistas al lago Cochrane y vientos épicos de la Patagonia.',
     descEn: "Argentina's newest park protects pristine Patagonian steppe, guanacos and condors. Views to Cochrane lake and the epic Patagonian winds.",
-    photo: '/tierra-del-fuego.jpg',
+    photo: '/tierra-del-fuego.webp',
     trailId: 'pn-patagonia-ascension',
     province: 'Santa Cruz',
     trails: 2,
@@ -182,7 +182,7 @@ const PARK_SPOTS = [
 // Quick-action feature cards
 const FEATURE_CARDS = [
   {
-    photo: '/sliabh-lanin.jpg',
+    photo: '/sliabh-lanin.webp',
     icon: 'compass-outline' as const,
     titleEs: 'Explorar',
     titleEn: 'Explore',
@@ -191,7 +191,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/rutas' as const,
   },
   {
-    photo: '/sliabh-explore-explorar.jpg',
+    photo: '/sliabh-explore-explorar.webp',
     icon: 'map-outline' as const,
     titleEs: 'Mapas offline',
     titleEn: 'Offline maps',
@@ -200,7 +200,7 @@ const FEATURE_CARDS = [
     route: '/(tabs)/mapas' as const,
   },
   {
-    photo: '/sliabh-talampaya.jpg',
+    photo: '/sliabh-talampaya.webp',
     icon: 'shield-checkmark-outline' as const,
     titleEs: 'Supervivencia',
     titleEn: 'Survival',
@@ -495,7 +495,7 @@ export default function InicioScreen() {
                   activeOpacity={0.88}
                   {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-reveal-card': true } as any) : {})}
                 >
-                  <ImageBackground source={{ uri: r.uri }} style={StyleSheet.absoluteFillObject} resizeMode="cover">
+                  <ImageBackground source={{ uri: r.uri }} style={StyleSheet.absoluteFillObject} resizeMode="cover" {...(Platform.OS === 'web' ? ({ loading: 'lazy' } as any) : {})}>
                     <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
                     <View style={styles.featuredContent}>
                       <View style={styles.featuredBadge}>
@@ -528,7 +528,7 @@ export default function InicioScreen() {
                   }
                   activeOpacity={0.88}
                 >
-                  <ImageBackground source={{ uri: r.uri }} style={StyleSheet.absoluteFillObject} resizeMode="cover">
+                  <ImageBackground source={{ uri: r.uri }} style={StyleSheet.absoluteFillObject} resizeMode="cover" {...(Platform.OS === 'web' ? ({ loading: 'lazy' } as any) : {})}>
                     <View style={[StyleSheet.absoluteFillObject, styles.featuredOverlay]} />
                     <View style={styles.featuredContent}>
                       <View style={styles.featuredBadge}>
@@ -593,6 +593,7 @@ export default function InicioScreen() {
                   source={{ uri: region.photo }}
                   style={StyleSheet.absoluteFillObject}
                   resizeMode="cover"
+                  {...(Platform.OS === 'web' ? ({ loading: 'lazy' } as any) : {})}
                 />
                 <View style={styles.regionGradient} />
                 <View style={styles.regionContent}>
@@ -633,6 +634,7 @@ export default function InicioScreen() {
                   source={{ uri: park.photo }}
                   style={styles.parkSpotPhoto}
                   resizeMode="cover"
+                  {...(Platform.OS === 'web' ? ({ loading: 'lazy' } as any) : {})}
                 >
                   <View style={styles.parkSpotPhotoOverlay} />
                   <View style={[styles.parkSpotPhotoTag]}>
