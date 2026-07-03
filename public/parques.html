@@ -326,9 +326,13 @@
       /* Hide legend + layer-toggle to reclaim vertical space */
       .legend { display: none; }
       .layer-toggle { display: none; }
-      /* Split: no handle, right pane full-width below */
+      /* Split: no handle. On mobile show ONLY the right pane (cinematic
+         satellite 3D map) full-height instead of stacking both maps —
+         the left pane's static overview map is redundant here and just
+         pushes the better map below the fold. */
       #interactiveMap.split #splitHandle { display: none; }
-      #interactiveMap.split #rightPane { display: block; height: clamp(300px, 70vw, 440px); overflow: hidden; }
+      #interactiveMap.split #leftPane { display: none; }
+      #interactiveMap.split #rightPane { display: block; height: calc(100vh - 56px); overflow: hidden; }
       /* Park info: bottom-sheet on mobile instead of top-left overlay */
       #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 52%; padding: 14px 16px 16px; }
       #parkInfoOverlay h3 { font-size: 1.05rem; }
