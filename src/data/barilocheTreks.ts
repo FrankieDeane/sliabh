@@ -1148,7 +1148,7 @@ Desde la cima del Cerro San Martín (1621 m) la vista es realmente amplia: al no
       { lat: -41.0430, lon: -71.5022, ele: 1545 },
       { lat: -41.0410, lon: -71.5003, ele: 1590 },
       { lat: -41.0390, lon: -71.5000, ele: 1610 },
-      { lat: -40.9717, lon: -71.5000, ele: 1621 },
+      { lat: -41.0717, lon: -71.5000, ele: 1621 },
     ],
     namedWaypoints: [
       {
@@ -1176,7 +1176,7 @@ Desde la cima del Cerro San Martín (1621 m) la vista es realmente amplia: al no
         description: 'La ruta se afina sobre una cresta con exposición a ambos lados. Viento frecuente; precaución.',
       },
       {
-        lat: -40.9717,
+        lat: -41.0717,
         lon: -71.5000,
         name: 'Cima Cerro San Martín (1621 m)',
         description: 'Cumbre silenciosa con panorámica completa. Lagos Nahuel Huapi, Moreno y Escondido visibles. Sin multitudes.',
