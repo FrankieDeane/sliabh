@@ -8,6 +8,7 @@ import {
   ImageBackground,
   useWindowDimensions,
   Platform,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -16,6 +17,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
@@ -723,6 +725,32 @@ export default function InicioScreen() {
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
+        {/* ── CAFECITO / CROWDFUNDING ── */}
+        <View style={[styles.cafecitoBand, { marginHorizontal: sidePad, backgroundColor: c.surface, borderColor: c.border }]}>
+          <View style={styles.cafecitoIcon}>
+            <Ionicons name="cafe-outline" size={22} color="#fbbf24" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.cafecitoTitle, { color: c.text }]}>
+              {t('¿Te sirvió Sliabh?', 'Did Sliabh help you?')}
+            </Text>
+            <Text style={[styles.cafecitoSub, { color: c.muted }]}>
+              {t(
+                'Sliabh es un proyecto independiente y gratuito. Si querés apoyarlo, invitanos un cafecito.',
+                'Sliabh is an independent, free project. If you want to support it, invite us for a coffee.',
+              )}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.cafecitoBtn}
+            activeOpacity={0.85}
+            onPress={() => Linking.openURL(MERCADOPAGO_URL)}
+          >
+            <Ionicons name="cafe" size={15} color="#0f172a" />
+            <Text style={styles.cafecitoBtnTxt}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* ── AUTH BANNER ── */}
         {!user && (
           <TouchableOpacity
@@ -1000,4 +1028,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 9, flexShrink: 0,
   },
   authBannerCtaTxt: { fontSize: 13, fontWeight: '700', color: '#fff' },
+
+  // Cafecito / crowdfunding band
+  cafecitoBand: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    borderRadius: 20, borderWidth: 1, padding: 18,
+    marginTop: 16, flexWrap: 'wrap',
+  },
+  cafecitoIcon: {
+    width: 44, height: 44, borderRadius: 22,
+    backgroundColor: 'rgba(251,191,36,0.12)',
+    borderWidth: 1, borderColor: 'rgba(251,191,36,0.3)',
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  },
+  cafecitoTitle: { fontSize: 15, fontWeight: '800', marginBottom: 3, letterSpacing: -0.3 },
+  cafecitoSub: { fontSize: 12, lineHeight: 17 },
+  cafecitoBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 7,
+    backgroundColor: '#fbbf24', borderRadius: 999,
+    paddingHorizontal: 16, paddingVertical: 10, flexShrink: 0,
+  },
+  cafecitoBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
 });
