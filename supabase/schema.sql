@@ -49,7 +49,9 @@ create policy "Approved contributions are public"
 drop policy if exists "Users insert their own contributions" on public.trail_contributions;
 create policy "Users insert their own contributions"
   on public.trail_contributions for insert
-  with check (auth.uid() = user_id);
+  -- status must start at 'pending': clients cannot self-approve by sending
+  -- status='approved' in the insert payload.
+  with check (auth.uid() = user_id and status = 'pending');
 
 create index if not exists trail_contributions_user_idx on public.trail_contributions (user_id);
 create index if not exists trail_contributions_status_idx on public.trail_contributions (status);
