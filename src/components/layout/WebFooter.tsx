@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
+import { MERCADOPAGO_URL } from '../../constants/links';
 
 const MAX_CONTENT = 1200;
 
@@ -113,6 +114,14 @@ export function WebFooter() {
             </Text>
           </View>
           <View style={styles.copyRight}>
+            <TouchableOpacity
+              style={[styles.cafecitoLink, { borderColor: c.border }]}
+              onPress={() => Linking.openURL(MERCADOPAGO_URL)}
+              activeOpacity={0.75}
+            >
+              <Ionicons name="cafe-outline" size={12} color="#fbbf24" />
+              <Text style={[styles.copySmall, { color: c.muted }]}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
+            </TouchableOpacity>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />
             <Text style={[styles.copySmall, { color: c.muted }]}>{t('Hecho para exploradores de montaña', 'Made for mountain explorers')}</Text>
           </View>
@@ -199,7 +208,12 @@ const styles = StyleSheet.create({
   bottom: { gap: 8 },
   bottomWide: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   copy: { fontSize: 12, lineHeight: 18 },
-  copyRight: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  copyRight: { flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap' as any },
+  cafecitoLink: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4,
+    marginRight: 10,
+  },
   copySmall: { fontSize: 11 },
   legalToggle: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
