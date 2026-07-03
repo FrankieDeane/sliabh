@@ -412,8 +412,10 @@ export default function InicioScreen() {
                 >
                   <View style={styles.featureCardOverlay} />
                   <View style={styles.featureCardContent}>
-                    <View style={styles.featureCardIconWrap}>
-                      <Ionicons name={card.icon} size={20} color="#fff" />
+                    <View style={styles.featureCardTop}>
+                      <View style={styles.featureCardIconWrap}>
+                        <Ionicons name={card.icon} size={20} color="#fff" />
+                      </View>
                     </View>
                     <View style={{ flex: 1 }} />
                     <Text style={styles.featureCardTitle}>{t(card.titleEs, card.titleEn)}</Text>
@@ -874,13 +876,13 @@ const styles = StyleSheet.create({
   featureSection: { paddingTop: 48, paddingBottom: 4 },
   featureRow: { flexDirection: 'column', gap: 14, marginTop: 14 },
   featureRowWide: { flexDirection: 'row' },
-  featureCard: { borderRadius: 20, overflow: 'hidden', height: 220, flex: 1 },
-  featureCardWide: { flex: 1 },
+  featureCard: { borderRadius: 20, overflow: 'hidden', minHeight: 180, flex: 1 },
+  featureCardWide: { flex: 1, minHeight: 220 },
   featureCardPhoto: { flex: 1 },
   featureCardOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(7,11,20,0.48)' },
   featureCardContent: { flex: 1, padding: 18, justifyContent: 'flex-end' },
+  featureCardTop: { flexDirection: 'row' },
   featureCardIconWrap: {
-    position: 'absolute', top: 16, left: 16,
     width: 38, height: 38, borderRadius: 19,
     backgroundColor: 'rgba(22,163,74,0.85)', alignItems: 'center', justifyContent: 'center',
   },

@@ -47,14 +47,16 @@ export default function Root({ children }: PropsWithChildren) {
         <meta property="og:url" content="https://sliabh.netlify.app/" />
         <meta property="og:title" content="Sliabh — Senderismo y trekking en Argentina" />
         <meta property="og:description" content="Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia para los Parques Nacionales de Argentina." />
-        <meta property="og:image" content="https://sliabh.netlify.app/sliabh-explore-explorar.jpg" />
+        <meta property="og:image" content="https://sliabh.netlify.app/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Senderismo en la Patagonia argentina" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Sliabh — Senderismo y trekking en Argentina" />
         <meta name="twitter:description" content="Rutas, mapas 3D, GPS offline y planificación para los Parques Nacionales de Argentina." />
-        <meta name="twitter:image" content="https://sliabh.netlify.app/sliabh-explore-explorar.jpg" />
+        <meta name="twitter:image" content="https://sliabh.netlify.app/og-image.jpg" />
 
         {/* Structured data (schema.org) for rich results */}
         <script
