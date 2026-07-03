@@ -610,6 +610,11 @@
       const el = document.getElementById('mapFallback');
       if (!el) return;
       el.style.display = 'flex';
+      // Surface the reason on-screen too: on mobile there's no console to
+      // check, and "blank map" reports are undiagnosable without this.
+      const sub = document.getElementById('mapFallbackSub');
+      const msg = (reason && reason.message) ? reason.message : String(reason);
+      if (sub && msg) sub.textContent = sub.textContent + ' [' + msg + ']';
       console.error('[parques.html] map failed to load:', reason);
     }
 
@@ -654,6 +659,13 @@
         map.on('error', (e) => console.error('[parques.html] maplibre error:', e && e.error));
         window.addEventListener('resize', () => map.resize());
         map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+        // Watchdog: if the style/tiles never finish loading (hung network,
+        // blocked tile host, zero-size canvas bug), surface the fallback
+        // instead of leaving a silent blank rectangle forever.
+        setTimeout(() => {
+          if (!mapLoaded) showMapFallback('map did not finish loading within 20s (tiles unreachable or render stalled)');
+        }, 20000);
       } catch (e) {
         showMapFallback(e);
       }
@@ -1201,6 +1213,7 @@
 
     let currentPark = null;
     function renderPanel(park) {
+      if (!park) return;
       currentPark = park;
       const trails = sampleTrails[park.name];
 
@@ -1633,7 +1646,13 @@
       firstFilter = false;
 
       filtersWrap.querySelectorAll('.chip').forEach(btn => btn.classList.toggle('active', btn.dataset.region === currentRegion));
-      if (filtered.length) renderPanel(filtered[0]);
+      // Only refresh the detail panel if the user already has a park open.
+      // Auto-opening filtered[0] here forced split view on page load, which
+      // on mobile (where split hides the overview map entirely) made the
+      // whole map screen look blank/broken before any interaction.
+      if (currentPark && filtered.length) {
+        renderPanel(filtered.some(p => p.name === currentPark.name) ? currentPark : filtered[0]);
+      }
     }
 
     applyStaticLang();
@@ -1648,8 +1667,8 @@
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
-      applyFilters();                // re-renders list + metaCount in new lang; sets currentPark=filtered[0]
-      renderPanel(savedPark || currentPark); // re-render user's park (or first) in new lang
+      applyFilters();                // re-renders list + metaCount in new lang
+      if (savedPark) renderPanel(savedPark); // re-render user's park in new lang (never auto-open)
     });
 
     // ── El Chaltén trekking layer ─────────────────────────────────────────────
@@ -2568,11 +2587,20 @@ ${trkpts}
       }
     })();
 
-    // ── Close info panel only — 3D map stays open (event delegation) ─────────
+    // ── Close info panel (event delegation) ──────────────────────────────────
+    // Desktop: hide the info card only, the 3D map pane stays open alongside
+    // the overview. Mobile: split view REPLACES the overview map entirely, so
+    // closing must also exit split or the user is stuck on the 3D map with no
+    // way back to the general map.
     document.getElementById('parkInfoOverlay').addEventListener('click', (e) => {
       if (!e.target.closest('#closeSplit')) return;
       const panel = document.getElementById('parkInfoOverlay');
       panel.style.display = 'none';
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        interactiveMap.classList.remove('split');
+        currentPark = null;
+        setTimeout(() => map.resize(), 60);
+      }
     });
 
     // ── Drag to resize split handle ───────────────────────────────────────────
@@ -2652,7 +2680,10 @@ ${trkpts}
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();
-        renderPanel(savedPark || currentPark);
+        // Never auto-open a park the user didn't pick: the app posts setLang
+        // on every iframe load, and auto-opening here forced split view (and
+        // a blank screen on mobile) before any user interaction.
+        if (savedPark) renderPanel(savedPark);
         return;
       }
 
