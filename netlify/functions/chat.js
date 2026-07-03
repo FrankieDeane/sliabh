@@ -7,11 +7,20 @@
  * Response: { text: string }
  */
 
+// Restrict cross-origin calls to this site's own deploy URL so the API key
+// budget can't be drained by other sites embedding this endpoint. Falls back
+// to '*' only when Netlify hasn't set a site URL (local `netlify dev`).
+const ALLOWED_ORIGIN = process.env.URL || process.env.DEPLOY_PRIME_URL || '*';
+
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
   'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type': 'application/json',
+  Vary: 'Origin',
 };
+
+const MAX_MESSAGES = 40;
+const MAX_MESSAGE_CHARS = 4000;
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -39,13 +48,24 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
 
-  // Separate system prompt from conversation
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'messages must be a non-empty array' }) };
+  }
+  if (messages.length > MAX_MESSAGES) {
+    return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Too many messages' }) };
+  }
+  if (messages.some((m) => typeof m.content !== 'string' || m.content.length > MAX_MESSAGE_CHARS)) {
+    return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Message too long' }) };
+  }
+
+  // Separate system prompt (the app sends its own trail-context system
+  // message — see src/ai/promptBuilder.ts) from the conversation.
   const systemMsg = messages.find((m) => m.role === 'system');
   const system = systemMsg?.content ?? 'Eres Sliabh, un asistente de montaña para senderistas en Patagonia y Argentina.';
 
   // Anthropic requires strictly alternating user/assistant messages starting with user
   const chatMessages = messages
-    .filter((m) => m.role !== 'system')
+    .filter((m) => m.role === 'user' || m.role === 'assistant')
     .reduce((acc, msg) => {
       const last = acc[acc.length - 1];
       // Merge consecutive messages with the same role (Anthropic doesn't allow duplicates)
