@@ -53,7 +53,7 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .map-card { padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .map-card { padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; position: relative; }
     .section-head { padding: 6px 4px 14px; }
     .section-head h2 { margin: 0 0 6px; font-size: 1.5rem; }
     .section-head p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; font-size: .95rem; }
@@ -393,6 +393,12 @@
             </div>
           </div>
           <div id="map" aria-label="Mapa interactivo de áreas protegidas de Argentina"></div>
+          <div id="mapFallback" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--surface-2);border-radius:16px;">
+            <div>
+              <p style="margin:0 0 6px;font-weight:700;color:var(--text)" id="mapFallbackTitle">No pudimos cargar el mapa</p>
+              <p style="margin:0;font-size:13px;color:var(--muted)" id="mapFallbackSub">Tu navegador podría no ser compatible, o falló la conexión. Probá recargar la página.</p>
+            </div>
+          </div>
           <div id="osmLoading" style="display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(7,11,20,.82);border:1px solid rgba(255,107,53,.5);border-radius:999px;padding:5px 12px;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#ffb599;pointer-events:none">
             <span style="width:9px;height:9px;border:2px solid #FF6B35;border-top-color:transparent;border-radius:50%;display:inline-block;animation:osmspin .8s linear infinite"></span>
             <span data-i18n="osmLoad">Cargando senderos…</span>
@@ -600,29 +606,68 @@
     // shows trails on the right detail map; 'rutas' shows trails on this map.
     const MAP_CTX = new URLSearchParams(location.search).get('ctx') || 'rutas';
 
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: {
-        version: 8,
-        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
-        sources: {
-          esri: {
-            type: 'raster',
-            tiles: [ESRI_SAT],
-            tileSize: 256,
-            attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+    function showMapFallback(reason) {
+      const el = document.getElementById('mapFallback');
+      if (!el) return;
+      el.style.display = 'flex';
+      console.error('[parques.html] map failed to load:', reason);
+    }
+
+    function hasWebGL() {
+      try {
+        const canvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext &&
+          (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    }
+
+    let map;
+    if (typeof maplibregl === 'undefined') {
+      showMapFallback('maplibre-gl failed to load (CDN unreachable?)');
+    } else if (!hasWebGL()) {
+      showMapFallback('WebGL not supported in this browser');
+    } else {
+      try {
+        map = new maplibregl.Map({
+          container: 'map',
+          style: {
+            version: 8,
+            glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+            sources: {
+              esri: {
+                type: 'raster',
+                tiles: [ESRI_SAT],
+                tileSize: 256,
+                attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+              },
+            },
+            layers: [{ id: 'esri-layer', type: 'raster', source: 'esri' }],
           },
-        },
-        layers: [{ id: 'esri-layer', type: 'raster', source: 'esri' }],
-      },
-      center: [-65.4, -39.8],
-      zoom: 4,
-      pitch: 30,
-      maxZoom: 18,
-      attributionControl: true,
-    });
-    window.addEventListener('resize', () => map.resize());
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+          center: [-65.4, -39.8],
+          zoom: 4,
+          pitch: 30,
+          maxZoom: 18,
+          attributionControl: true,
+        });
+        map.on('error', (e) => console.error('[parques.html] maplibre error:', e && e.error));
+        window.addEventListener('resize', () => map.resize());
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+      } catch (e) {
+        showMapFallback(e);
+      }
+    }
+
+    // Everything below assumes `map` exists — bail out early if init failed
+    // above so we don't throw a second, more confusing error on top of the
+    // fallback message already shown.
+    if (!map) {
+      // Minimal no-op stand-in so later `map.method(...)` calls in this
+      // script don't throw ReferenceErrors and break unrelated UI (park
+      // list, filters, etc.) that doesn't depend on the map itself.
+      map = new Proxy({}, { get: () => () => map });
+    }
 
     // ── User location ─────────────────────────────────────────────────────────
     let userMarker = null;
@@ -2017,7 +2062,7 @@
         difficulty: 'moderado',
         distance_km: 16, elevation_gain_m: 820, max_altitude_m: 1621,
         duration: '6–7 h (ida y vuelta)',
-        lat: -40.9717, lng: -71.5000,
+        lat: -41.0717, lng: -71.5000,
         trailhead: 'Villa Llao Llao, km 25 Circuito Chico',
         best_season: 'Nov – Abr',
         description: 'Alternativa menos transitada al Campanario. Panorama completo sobre el Lago Nahuel Huapi, la Isla Victoria y la cordillera chilena. Largo pero muy recompensante.',
