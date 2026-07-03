@@ -278,14 +278,18 @@ export default function InicioScreen() {
             resizeMode="cover"
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
-            {Platform.OS === 'web' && (
+            {/* Video only on wide viewports — skip the download entirely on
+                mobile, where it costs the most bandwidth for the least
+                benefit. Mobile just gets the static poster image (hotlinked,
+                so it doesn't cost us anything). */}
+            {Platform.OS === 'web' && isWide && (
               // @ts-ignore — raw DOM <video> via react-native-web (react-dom)
               <video
                 data-hero-video=""
                 autoPlay
                 loop
                 playsInline
-                preload="auto"
+                preload="metadata"
                 poster={HERO_URI}
                 ref={(el: any) => {
                   if (!el) return;
