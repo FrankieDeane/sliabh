@@ -68,6 +68,13 @@ export default function TrailMap3DCinematic({
   if (Platform.OS !== 'web') return null;
   if (track.length < 2) return null;
 
+  // Phone GPUs die (WebGL context loss => permanent black canvas) on
+  // 3x-density buffers + antialiasing + strong terrain. Detect small
+  // screens and dial everything down there; desktop keeps full quality.
+  const smallScreen =
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches;
+  const effExaggeration = smallScreen ? Math.min(exaggeration, 1.8) : exaggeration;
+
   // ── Derive keyframes from the track ────────────────────────────────────────
   // We pick 5 sample points + the last point as finale
   const keyframeIndices = sampleIndices(track.length, 5);
@@ -162,7 +169,8 @@ export default function TrailMap3DCinematic({
           zoom: 8,
           pitch: 30,
           bearing: overviewFrame.bearing,
-          antialias: true,
+          antialias: !smallScreen,
+          pixelRatio: smallScreen ? Math.min(window.devicePixelRatio || 1, 1.5) : undefined,
           maxTileCacheSize: 50,
           dragRotate: true,
           touchZoomRotate: true,
@@ -170,6 +178,24 @@ export default function TrailMap3DCinematic({
         });
 
         mapRef.current = map;
+
+        // Surface GPU context loss instead of leaving a silent black canvas.
+        map.getCanvas().addEventListener(
+          'webglcontextlost',
+          (ev: Event) => {
+            ev.preventDefault();
+            setError('El mapa 3D superó los recursos gráficos del dispositivo. / 3D map exceeded device graphics resources.');
+          },
+          false,
+        );
+        map.getCanvas().addEventListener(
+          'webglcontextrestored',
+          () => {
+            setError(null);
+            map.resize();
+          },
+          false,
+        );
 
         // Compass + zoom controls — appears after intro
         const navControl = new ml.NavigationControl({ showCompass: true, showZoom: true, visualizePitch: true });
@@ -182,7 +208,7 @@ export default function TrailMap3DCinematic({
             : { type: 'raster-dem', tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize: 256, encoding: 'terrarium', maxzoom: 15 };
 
           map.addSource('terrain-dem', terrainSrc as any);
-          map.setTerrain({ source: 'terrain-dem', exaggeration });
+          map.setTerrain({ source: 'terrain-dem', exaggeration: effExaggeration });
 
           // ── Trail layers ─────────────────────────────────────────────────
           const geoJSON = gpxTrackToGeoJSON(track);
@@ -402,7 +428,7 @@ export default function TrailMap3DCinematic({
     const next = !is3D;
     setIs3D(next);
     map.easeTo({ pitch: next ? 58 : 0, bearing: 0, duration: 600 });
-    map.setTerrain(next ? { source: 'terrain-dem', exaggeration } : null);
+    map.setTerrain(next ? { source: 'terrain-dem', exaggeration: effExaggeration } : null);
   }
 
   const containerH = typeof height === 'number' ? height : 420;
