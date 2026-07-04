@@ -660,10 +660,27 @@
           pitch: window.matchMedia('(max-width: 900px)').matches ? 58 : 30,
           maxZoom: 18,
           attributionControl: true,
+          // Phone GPUs choke on 3x-density render targets with 3D terrain
+          // (WebGL context loss -> permanent black canvas). Cap the buffer.
+          pixelRatio: window.matchMedia('(max-width: 900px)').matches
+            ? Math.min(window.devicePixelRatio || 1, 1.5)
+            : undefined,
         });
         map.on('error', (e) => console.error('[parques.html] maplibre error:', e && e.error));
         window.addEventListener('resize', () => map.resize());
         map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+        // A lost WebGL context is the classic silent black canvas on weak
+        // GPUs: no error event, no exception. Surface it and try to recover.
+        map.getCanvas().addEventListener('webglcontextlost', function (ev) {
+          ev.preventDefault();
+          showMapFallback('WebGL context lost (device GPU ran out of resources)');
+        }, false);
+        map.getCanvas().addEventListener('webglcontextrestored', function () {
+          var fb = document.getElementById('mapFallback');
+          if (fb) fb.style.display = 'none';
+          map.resize();
+        }, false);
 
         // Watchdog: if the style/tiles never finish loading (hung network,
         // blocked tile host, zero-size canvas bug), surface the fallback
@@ -1327,6 +1344,11 @@
       // frame the WHOLE park (wide view). The right map handles trail detail.
       if (mapLoaded) {
         const parkZoom = park.trailZoom ? park.trailZoom - 2 : 8.5;
+        // Mobile: gentler camera. Pitch 62 + close zoom over the Andes is
+        // exactly the shot that kills weak phone GPUs / dives the camera
+        // into terrain (black canvas). Desktop keeps the cinematic values.
+        const flyPitch = mobileView ? 45 : 62;
+        const flyZoom = mobileView ? Math.min(parkZoom, 10) : parkZoom;
         if (park.trailCoords && park.trailCoords.length > 1) {
           const tc = park.trailColor || '#22c55e';
           map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: park.trailCoords } });
@@ -1335,14 +1357,14 @@
           map.setLayoutProperty('active-trail-glow', 'visibility', 'visible');
           map.setLayoutProperty('active-trail-line', 'visibility', 'visible');
           setTimeout(() => {
-            map.flyTo({ center: park.trailCenter || [park.lng, park.lat], zoom: parkZoom, pitch: 62, bearing: 15, duration: 1100 });
+            map.flyTo({ center: park.trailCenter || [park.lng, park.lat], zoom: flyZoom, pitch: flyPitch, bearing: 15, duration: 1100 });
           }, 400);
         } else {
           map.getSource('active-trail').setData({ type: 'Feature', geometry: { type: 'LineString', coordinates: [] } });
           map.setLayoutProperty('active-trail-glow', 'visibility', 'none');
           map.setLayoutProperty('active-trail-line', 'visibility', 'none');
           setTimeout(() => {
-            map.flyTo({ center: [park.lng, park.lat], zoom: parkZoom, pitch: 62, bearing: 15, duration: 1000 });
+            map.flyTo({ center: [park.lng, park.lat], zoom: flyZoom, pitch: flyPitch, bearing: 15, duration: 1000 });
           }, 400);
         }
       }
