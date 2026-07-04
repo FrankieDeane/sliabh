@@ -1,6 +1,7 @@
-/* Sliabh — Service Worker v25 (cache bump: many assets were renamed
-   .jpg -> .webp and deleted; purge every stale entry from older versions) */
-const CACHE = 'sliabh-v25';
+/* Sliabh — Service Worker v26 (cache bump: purge partial (206) video
+   responses that v25 could cache under the full URL and then serve for
+   every Range request, stalling hero-video playback on repeat visits) */
+const CACHE = 'sliabh-v26';
 const TILE_CACHE = 'sliabh-tiles-v1';
 
 self.addEventListener('install', (e) => {
@@ -22,6 +23,12 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET') return;
+
+  // Media / Range requests — let the browser talk to the network directly.
+  // The Cache API matches by URL and ignores the Range header, so caching a
+  // 206 here would replay one arbitrary byte-slice for every future request
+  // and break <video> seeking/playback.
+  if (e.request.headers.has('range') || url.pathname.endsWith('.mp4')) return;
 
   // Map tiles — cache-first (populated by in-app download buttons)
   if (url.hostname.includes('tile') || url.hostname.includes('openstreetmap')) {
@@ -53,7 +60,7 @@ self.addEventListener('fetch', (e) => {
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
       return fetch(e.request).then((res) => {
-        if (res.ok && url.origin === self.location.origin) {
+        if (res.status === 200 && url.origin === self.location.origin) {
           caches.open(CACHE).then((c) => c.put(e.request, res.clone()));
         }
         return res;
