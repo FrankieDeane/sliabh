@@ -28,7 +28,8 @@ const MAX_CONTENT = 900;
 const HERO_URI =
   'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
-const HERO_VIDEO_URL = '/hero-patagonia.mp4';
+// ?v=2 — file was re-muxed in place (faststart); busts the 30-day media cache
+const HERO_VIDEO_URL = '/hero-patagonia.mp4?v=2';
 
 // Small, low-weight thumbnail for the cafecito CTA band
 const CAFECITO_IMG_URI =
@@ -293,6 +294,10 @@ export default function InicioScreen() {
                 poster={HERO_URI}
                 ref={(el: any) => {
                   if (!el) return;
+                  if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+                    el.removeAttribute('autoplay');
+                    return; // leave the static poster for reduced-motion users
+                  }
                   el.muted = true; // set as property — React doesn't apply the `muted` attribute reliably
                   const p = el.play();
                   if (p && typeof p.catch === 'function') p.catch(() => {});
