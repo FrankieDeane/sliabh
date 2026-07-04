@@ -1,5 +1,6 @@
-/* Sliabh — Service Worker v24 */
-const CACHE = 'sliabh-v24';
+/* Sliabh — Service Worker v25 (cache bump: many assets were renamed
+   .jpg -> .webp and deleted; purge every stale entry from older versions) */
+const CACHE = 'sliabh-v25';
 const TILE_CACHE = 'sliabh-tiles-v1';
 
 self.addEventListener('install', (e) => {

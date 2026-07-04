@@ -119,6 +119,50 @@ export default function Root({ children }: PropsWithChildren) {
             `,
           }}
         />
+
+        {/* Boot watchdog: if the JS bundle never boots (failed fetch on bad
+            signal, stale service-worker cache, crashed script), the page is
+            otherwise a permanent silent black screen. First stall: silently
+            drop SW + caches once and reload fresh. Second stall: show a
+            visible retry screen instead of black. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                setTimeout(function () {
+                  var root = document.getElementById('root');
+                  if (root && root.childElementCount > 0) return;
+                  try {
+                    if (!sessionStorage.getItem('sliabh-boot-retry')) {
+                      sessionStorage.setItem('sliabh-boot-retry', '1');
+                      var reload = function () { location.reload(); };
+                      var jobs = [];
+                      if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+                        jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) {
+                          return Promise.all(rs.map(function (r) { return r.unregister(); }));
+                        }));
+                      }
+                      if (window.caches && caches.keys) {
+                        jobs.push(caches.keys().then(function (ks) {
+                          return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+                        }));
+                      }
+                      Promise.all(jobs).then(reload, reload);
+                      return;
+                    }
+                  } catch (e) {}
+                  var el = document.createElement('div');
+                  el.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#060d1b;color:#f0f9ff;font-family:sans-serif;padding:24px;text-align:center;z-index:99999';
+                  el.innerHTML = '<div style="font-size:34px">\\u26F0</div>' +
+                    '<div style="font-weight:700">Sliabh no pudo cargar</div>' +
+                    '<div style="color:#94a3b8;font-size:13px;max-width:280px">Revis\\u00E1 tu conexi\\u00F3n e intent\\u00E1 de nuevo. / Check your connection and try again.</div>' +
+                    '<button onclick="location.reload()" style="margin-top:6px;background:#16a34a;color:#fff;border:none;border-radius:999px;padding:10px 22px;font-weight:700;font-size:14px;cursor:pointer">Reintentar / Retry</button>';
+                  document.body.appendChild(el);
+                }, 20000);
+              })();
+            `,
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>
