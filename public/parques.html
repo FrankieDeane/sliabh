@@ -804,9 +804,13 @@
         tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
         encoding: 'terrarium', tileSize: 256, maxzoom: 14,
       });
-      // Match the park-detail pane's stronger relief on mobile (same DEM
-      // tiles either way, so no extra bandwidth — just camera/terrain math).
-      map.setTerrain({ source: 'dem', exaggeration: window.matchMedia('(max-width: 900px)').matches ? 2.8 : 1.8 });
+      // Keep exaggeration at 1.8 on ALL screen sizes. 2.8 was tried on
+      // mobile to match the detail pane, but combined with the pitch-62
+      // park fly-in (single-map mobile flow) the camera ends up below the
+      // inflated Andes around Bariloche and the whole canvas renders black.
+      // 1.8 is the value the desktop map has always used with this exact
+      // fly-in, proven safe; the cinematic look comes from the pitch.
+      map.setTerrain({ source: 'dem', exaggeration: 1.8 });
 
       // Park markers with clustering
       map.addSource('parks', {
