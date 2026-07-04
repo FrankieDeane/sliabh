@@ -333,8 +333,11 @@
       #interactiveMap.split #splitHandle { display: none; }
       #interactiveMap.split #leftPane { display: none; }
       #interactiveMap.split #rightPane { display: block; height: calc(100vh - 56px); overflow: hidden; }
-      /* Park info: bottom-sheet on mobile instead of top-left overlay */
-      #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 52%; padding: 14px 16px 16px; }
+      /* Park info: bottom-sheet on mobile instead of top-left overlay.
+         The sheet is re-parented into .map-card (the right pane is unused on
+         mobile), so the card must be the positioning context. */
+      .map-card { position: relative; }
+      #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 52%; padding: 14px 16px 16px; z-index: 30; }
       #parkInfoOverlay h3 { font-size: 1.05rem; }
       footer { padding: 16px 14px; font-size: 11px; }
       footer img { height: 26px !important; }
@@ -1297,9 +1300,24 @@
         ${mitreSection ? `<p style="font-size:11px;color:var(--primary);margin:6px 0 0;font-weight:700">${T('Expedición', 'Expedition')} · Península Mitre</p>` : ''}
       `;
 
-      // Activate split view on all screen sizes
-      interactiveMap.classList.add('split');
-      setTimeout(() => map.resize(), 340);
+      // Split view (side-by-side detail pane) is desktop-only. On mobile a
+      // second heavyweight WebGL map routinely stalls or fails (two GL
+      // contexts + 3D terrain on a phone GPU), which reads as "the map
+      // disappeared" — so there we keep the ONE main map (which already has
+      // the same satellite-3D look), fly it to the park, and show the info
+      // panel as a bottom sheet on top of it.
+      const mobileView = window.matchMedia('(max-width: 900px)').matches;
+      if (!mobileView) {
+        interactiveMap.classList.add('split');
+        setTimeout(() => map.resize(), 340);
+      } else {
+        interactiveMap.classList.remove('split');
+        // Re-anchor the info sheet over the main map card (its default home
+        // is inside the hidden right pane). The click listener travels with
+        // the element, so the × button keeps working.
+        const mapCard = document.querySelector('.map-card');
+        if (mapCard && panel.parentElement !== mapCard) mapCard.appendChild(panel);
+      }
 
       // Left map: ALWAYS 3D — tilt the camera so terrain relief shows, and
       // frame the WHOLE park (wide view). The right map handles trail detail.
@@ -1334,6 +1352,9 @@
       if (oldGirar) oldGirar.remove();
 
       setTimeout(() => {
+        // Mobile: never build the second WebGL map — the main map is the
+        // detail view there (see mobileView branch above).
+        if (mobileView) return;
         const el = document.getElementById('park3dMap');
         if (!el) return;
         el.style.width = '100%';
