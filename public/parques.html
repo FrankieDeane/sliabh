@@ -316,7 +316,7 @@
       #leftPane { flex: 0 0 auto !important; overflow: visible; }
       .map-card { flex: none; overflow: visible; padding: 10px; }
       /* Taller map; no overflow:hidden+border-radius combo (iOS Safari compositing fix) */
-      #map { height: clamp(280px, 68vw, 420px); flex: none; overflow: visible; border-radius: 10px; }
+      #map { height: clamp(340px, 92vw, 480px); flex: none; overflow: visible; border-radius: 10px; }
       /* Compact section-head */
       .section-head p { display: none; }
       .section-head h2 { font-size: 1.15rem; }
@@ -335,10 +335,18 @@
       #interactiveMap.split #rightPane { display: block; height: calc(100vh - 56px); overflow: hidden; }
       /* Park info: bottom-sheet on mobile instead of top-left overlay.
          The sheet is re-parented into .map-card (the right pane is unused on
-         mobile), so the card must be the positioning context. */
+         mobile), so the card must be the positioning context. Keep it a
+         compact "peek": the MAP is the star — content scrolls inside the
+         sheet if it doesn't fit. */
       .map-card { position: relative; }
-      #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 52%; padding: 14px 16px 16px; z-index: 30; }
-      #parkInfoOverlay h3 { font-size: 1.05rem; }
+      #parkInfoOverlay { top: auto; bottom: 0; left: 0; right: 0; max-width: 100%; border-radius: 14px 14px 0 0; max-height: 118px; padding: 10px 14px 12px; z-index: 30; }
+      #parkInfoOverlay h3 { font-size: 1rem; margin-bottom: 6px; }
+      /* The 130px photo alone would eat the whole compact sheet.
+         !important: the template sets display:block inline on the img. */
+      #parkInfoOverlay img { display: none !important; }
+      #parkInfoOverlay .kicker { margin-bottom: 3px; font-size: 10px; }
+      #parkInfoOverlay .meta { gap: 4px; margin-bottom: 6px; }
+      #parkInfoOverlay .meta span { padding: 3px 8px; font-size: 10.5px; }
       footer { padding: 16px 14px; font-size: 11px; }
       footer img { height: 26px !important; }
     }
