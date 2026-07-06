@@ -6,6 +6,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 import { MERCADOPAGO_URL } from '../../constants/links';
+import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
 
 const MAX_CONTENT = 1200;
 
@@ -121,6 +122,21 @@ export function WebFooter() {
             >
               <Ionicons name="cafe-outline" size={12} color="#fbbf24" />
               <Text style={[styles.copySmall, { color: c.muted }]}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.cafecitoLink, { borderColor: c.border }]}
+              onPress={() =>
+                shareOnWhatsApp(
+                  `${t(
+                    'Descubrí Sliabh 🏔️ Rutas de senderismo, mapas offline y GPS para explorar los Parques Nacionales de Argentina.',
+                    'Discover Sliabh 🏔️ Hiking trails, offline maps and GPS to explore the National Parks of Argentina.',
+                  )}\n${currentPageUrl()}`,
+                )
+              }
+              activeOpacity={0.75}
+            >
+              <Ionicons name="logo-whatsapp" size={12} color="#25D366" />
+              <Text style={[styles.copySmall, { color: c.muted }]}>{t('Compartir', 'Share')}</Text>
             </TouchableOpacity>
             <Ionicons name="leaf-outline" size={12} color="#22c55e" />
             <Text style={[styles.copySmall, { color: c.muted }]}>{t('Hecho para exploradores de montaña', 'Made for mountain explorers')}</Text>
