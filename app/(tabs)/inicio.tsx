@@ -279,11 +279,10 @@ export default function InicioScreen() {
             resizeMode="cover"
             {...(Platform.OS === 'web' ? ({ 'data-hero-bg': true } as any) : {})}
           >
-            {/* Video only on wide viewports — skip the download entirely on
-                mobile, where it costs the most bandwidth for the least
-                benefit. Mobile just gets the static poster image (hotlinked,
-                so it doesn't cost us anything). */}
-            {Platform.OS === 'web' && isWide && (
+            {/* Hero video on every web viewport, mobile included — the
+                faststart remux keeps it ~3 MB, light enough for phones.
+                Reduced-motion users still get the static poster (see ref). */}
+            {Platform.OS === 'web' && (
               // @ts-ignore — raw DOM <video> via react-native-web (react-dom)
               <video
                 data-hero-video=""
