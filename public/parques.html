@@ -855,6 +855,27 @@
       // fly-in, proven safe; the cinematic look comes from the pitch.
       map.setTerrain({ source: 'dem', exaggeration: 1.8 });
 
+      // Province boundaries — Natural Earth 10m admin-1, filtered to
+      // Argentina and simplified (~110 m precision). Drawn under the park
+      // markers: a dark casing for contrast over satellite imagery plus a
+      // light line on top.
+      map.addSource('provincias', { type: 'geojson', data: '/provincias-argentina.geojson' });
+      map.addLayer({ id: 'provincias-casing', type: 'line', source: 'provincias',
+        layout: { 'line-join': 'round' },
+        paint: {
+          'line-color': 'rgba(7,11,20,0.55)',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 3, 2.2, 8, 4.5],
+        }
+      });
+      map.addLayer({ id: 'provincias-line', type: 'line', source: 'provincias',
+        layout: { 'line-join': 'round' },
+        paint: {
+          'line-color': 'rgba(255,255,255,0.78)',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.9, 8, 2],
+          'line-dasharray': [2.5, 1.6],
+        }
+      });
+
       // Park markers with clustering
       map.addSource('parks', {
         type: 'geojson', data: makeParksGeoJSON(parks),
