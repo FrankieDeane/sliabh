@@ -20,7 +20,7 @@ import {
   DIFFICULTY_LABEL,
   DIFFICULTY_COLOR,
 } from '../../../src/data/argentinaTrails';
-import { BARILOCHE_TRAILS } from '../../../src/data/barilocheTreks';
+import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
@@ -1203,6 +1203,24 @@ function OverviewTab({
               <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>{trail.refugio}</Text>
             </View>
           )}
+        </SectionCard>
+      )}
+
+      {ALL_BARILOCHE_IDS.has(trail.id) && (
+        <SectionCard>
+          <CardLabel text={t('Registro y emergencias', 'Registration & emergencies')} />
+          <View style={[styles.infoRow, { marginBottom: 8 }]}>
+            <Ionicons name="clipboard-outline" size={16} color={C.accent} />
+            <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>
+              {t(BARILOCHE_REGISTRO.es, BARILOCHE_REGISTRO.en)}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Ionicons name="call-outline" size={16} color="#ef4444" />
+            <Text style={[styles.bodyText, { color: C.text, flex: 1 }]}>
+              {t(BARILOCHE_EMERGENCIAS.es, BARILOCHE_EMERGENCIAS.en)}
+            </Text>
+          </View>
         </SectionCard>
       )}
 

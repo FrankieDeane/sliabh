@@ -1,6 +1,13 @@
 /**
- * Bariloche extended trail data — sourced from barilochetrekking.com style content.
- * All trails located in Parque Nacional Nahuel Huapi, Río Negro, Argentina.
+ * Bariloche extended trail data.
+ * All trails located in Parque Nacional Nahuel Huapi / Parque Municipal Llao
+ * Llao, Río Negro, Argentina.
+ *
+ * Factual data (distances, elevation, times, difficulty, refugios) verified
+ * against official sources: barilochetrekking.com (Municipalidad de
+ * Bariloche / Emprotur / Club Andino Bariloche / PN Nahuel Huapi),
+ * clubandino.org, nahuelhuapi.gov.ar and barilocheturismo.gob.ar.
+ * Descriptions are Sliabh's own text.
  *
  * Extends the base ArgentinaTrail interface with rich detail fields:
  * GPX tracks, named waypoints, access notes, water sources, and refugio info.
@@ -36,11 +43,27 @@ export interface ExtendedTrail extends ArgentinaTrail {
 }
 
 // ---------------------------------------------------------------------------
+// Registro y emergencias — aplica a todos los senderos del PN Nahuel Huapi
+// ---------------------------------------------------------------------------
+
+/** Mandatory free trekking registration for PN Nahuel Huapi */
+export const BARILOCHE_REGISTRO = {
+  es: 'Registro de trekking obligatorio y gratuito antes de salir. Se completa online en nahuelhuapi.gov.ar o barilochetrekking.com.',
+  en: 'Mandatory free trekking registration before you set out. Complete it online at nahuelhuapi.gov.ar or barilochetrekking.com.',
+};
+
+/** Mountain emergency contacts for the Bariloche area */
+export const BARILOCHE_EMERGENCIAS = {
+  es: 'Emergencias — Protección Civil Bariloche: 103 o (0294) 442-8276. Mensajería satelital: comisiondeauxiliocab@gmail.com',
+  en: 'Emergencies — Bariloche Civil Protection: 103 or +54 294 442-8276. Satellite messaging: comisiondeauxiliocab@gmail.com',
+};
+
+// ---------------------------------------------------------------------------
 // Helper type for duration (re-used from ArgentinaTrail structure)
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// 15 detailed Bariloche trails
+// 18 detailed Bariloche trails
 // ---------------------------------------------------------------------------
 
 export const BARILOCHE_TRAILS: ExtendedTrail[] = [
@@ -57,9 +80,9 @@ export const BARILOCHE_TRAILS: ExtendedTrail[] = [
     activity: 'trekking',
     difficulty: 'moderado',
     distance_km: 20,
-    elevation_gain_m: 1000,
+    elevation_gain_m: 700,
     max_altitude_m: 1700,
-    duration: { min: 6, max: 8, unit: 'horas' },
+    duration: { min: 7, max: 9, unit: 'horas' },
     coordinates: { lat: -41.1855, lon: -71.4499 },
     photo_uri:
       'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
@@ -67,16 +90,16 @@ export const BARILOCHE_TRAILS: ExtendedTrail[] = [
     permits_required: false,
     best_season: 'Nov – Abr',
     description:
-      'Trekking desde la base de Cerro Catedral hasta el Refugio Frey a orillas de la Laguna Schmoll. Uno de los destinos más icónicos de Bariloche, frecuentado por escaladores de todo el mundo.',
+      'Trekking desde la base de Cerro Catedral hasta el Refugio Frey (1700 m) a orillas de la Laguna Toncek. Uno de los destinos más icónicos de Bariloche, frecuentado por escaladores de todo el mundo. Unos 10 km y 4 horas por tramo.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El sendero al Refugio Frey es sin duda el trek más emblemático del entorno de Bariloche. La ruta parte del estacionamiento de la base de Cerro Catedral (1050 m) y penetra de inmediato en un denso bosque de coihues y ñires que ofrece sombra y humedad en los primeros kilómetros. El camino asciende de manera constante cruzando algunos arroyos tributarios y atravesando claros con vistas ocasionales a los cerros circundantes, hasta llegar al sector conocido como la Cancha de Fútbol, una pampa alta de suelo arenoso donde los escaladores sueltan sus mochilas para organizar sus cordadas.
 
 A partir de la Cancha de Fútbol el terreno se vuelve más técnico. El sendero trepa entre bloques de granito, superando pasos que requieren el uso de las manos en uno o dos puntos claves. Las agujas de granito gris del Grupo Frey van apareciendo en el horizonte como dedos de piedra que perforan el cielo patagónico, y la sensación de encontrarse en un anfiteatro natural de escala monumental crece con cada metro de altitud ganado. La variedad de tonos en la roca —gris plata, óxido y blanco— cambia según el ángulo de la luz solar.
 
-La llegada a la Laguna Schmoll (1700 m) resulta siempre impactante: las aguas de un azul profundo e inmóvil reflejan las torres de granito que la rodean, y el Refugio Frey, gestionado por el Club Andino Bariloche, aparece discretamente a la orilla sur. El refugio ofrece comidas calientes, alojamiento en literas y una terraza desde la que los atardeceres sobre el agua son memorables. En temporada de escalada la laguna se puebla de coloridas carpas y el murmullo de cuerdas y mosquetones llena el aire de madrugada.
+La llegada a la Laguna Toncek (1700 m) resulta siempre impactante: las aguas verdes y frías reflejan las torres de granito que la rodean, y el Refugio Frey, gestionado por el Club Andino Bariloche, aparece discretamente en su orilla. El refugio ofrece comidas calientes, alojamiento en literas y una terraza desde la que los atardeceres sobre el agua son memorables. En temporada de escalada la laguna se puebla de coloridas carpas y el murmullo de cuerdas y mosquetones llena el aire de madrugada.
 
-El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y detenerse a explorar las piletas de agua cristalina entre los bloques graníticos. Para los más curiosos, el desvío hacia la Laguna Cerro Catedral o hacia el pie de las vías de escalada añade una hora extra y perspectivas únicas de las paredes que han hecho famoso a Frey en toda Sudamérica.`,
+El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y detenerse a explorar las piletas de agua cristalina entre los bloques graníticos. Para los más curiosos, la subida de 20-30 minutos a la Laguna Schmoll —el escalón superior del circo, por encima de Toncek— añade una hora extra y perspectivas únicas de las paredes que han hecho famoso a Frey en toda Sudamérica.`,
     gpxTrack: [
       { lat: -41.1855, lon: -71.4499, ele: 1050 },
       { lat: -41.1872, lon: -71.4523, ele: 1100 },
@@ -106,8 +129,8 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
       {
         lat: -41.1918,
         lon: -71.4610,
-        name: 'Cruce del arroyo Rucaco',
-        description: 'Primer arroyo de importancia; buena fuente de agua. El sendero cruza sobre troncos o piedras según el caudal.',
+        name: 'Arroyo Van Titter',
+        description: 'El sendero remonta el valle del arroyo Van Titter; buena fuente de agua. Cruces sobre troncos o piedras según el caudal.',
       },
       {
         lat: -41.1950,
@@ -124,13 +147,13 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
       {
         lat: -41.1997,
         lon: -71.4741,
-        name: 'Refugio Frey / Laguna Schmoll',
-        description: 'Refugio del CAB a 1700 m con alojamiento, comidas y terraza sobre la laguna. Centro neurálgico de la escalada patagónica.',
+        name: 'Refugio Frey / Laguna Toncek',
+        description: 'Refugio del CAB a 1700 m con alojamiento, comidas y terraza sobre la Laguna Toncek. Centro neurálgico de la escalada patagónica. La Laguna Schmoll queda 20-30 min más arriba.',
       },
     ],
     parking: 'Estacionamiento pago en la base de Cerro Catedral (Villa Catedral), con capacidad amplia y vigilancia en temporada alta.',
     access_notes: 'Desde Bariloche tomar la Ruta 82 (Av. de los Pioneros) hacia el oeste por 18 km hasta Villa Catedral. En temporada de verano circulan micros urbanos de línea 55 desde el centro. En auto: 25 min desde el centro.',
-    water_sources: 'Arroyo Rucaco al inicio (km 3), varios hilos de agua al cruzar los bloques graníticos (km 7–8), y agua limpia en la Laguna Schmoll. El refugio también vende agua filtrada.',
+    water_sources: 'Arroyo Van Titter a lo largo del valle, varios hilos de agua al cruzar los bloques graníticos (km 7–8), y agua limpia en la Laguna Toncek. El refugio también vende agua filtrada.',
     camping_allowed: true,
     refugio: 'Refugio Frey (CAB)',
     round_trip: true,
@@ -148,10 +171,10 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'dificil',
-    distance_km: 22,
-    elevation_gain_m: 1300,
-    max_altitude_m: 2076,
-    duration: { min: 8, max: 10, unit: 'horas' },
+    distance_km: 12,
+    elevation_gain_m: 1250,
+    max_altitude_m: 2088,
+    duration: { min: 7, max: 9, unit: 'horas' },
     coordinates: { lat: -41.0817, lon: -71.5133 },
     photo_uri:
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
@@ -159,14 +182,14 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
-      'Ascenso al Cerro López (2076 m) pasando por el Refugio López. Vistas 360° del lago Nahuel Huapi, el Tronador y la estepa patagónica. Tramo final técnico con algo de scramble.',
-    trailhead: 'Ruta 79 km 20 (Bariloche)',
+      'Ascenso por la Picada Vieja al Refugio López (1620 m) y de allí al Pico Turista (2088 m), el punto más alto del macizo. Vistas 360° del lago Nahuel Huapi, el Tronador y la estepa patagónica. Tramo final con algo de scramble.',
+    trailhead: 'Arroyo López, Ruta 79 — Circuito Chico (Bariloche)',
     source: 'barilochetrekking.com',
-    long_description: `El Cerro López es la cumbre de mayor altitud en acceso directo desde Bariloche y recompensa al senderista con una de las panorámicas más completas de la región de los lagos. El sendero parte desde la Ruta 79 en su kilómetro 20, adentrándose en un coihuar maduro donde la humedad ambiental y los líquenes colgantes crean un ambiente de bosque templado austral casi onírico. Durante la primera hora el camino es cómodo y bien marcado, con algunos sectores de raíces expuestas que conviene pisar con cuidado.
+    long_description: `El macizo del Cerro López ofrece una de las panorámicas más completas de la región de los lagos, con acceso directo desde el Circuito Chico. El sendero clásico —la Picada Vieja— parte junto al arroyo López sobre la Ruta 79 y se adentra en un coihuar maduro donde la humedad ambiental y los líquenes colgantes crean un ambiente de bosque templado austral casi onírico. Durante la primera hora el camino es cómodo y bien marcado, con algunos sectores de raíces expuestas que conviene pisar con cuidado. La picada cruza en dos ocasiones el camino vehicular que también sube al refugio.
 
-Pasados los primeros 600 metros de desnivel el bosque cede ante arbustos de altura y pasturas alpinas. El Refugio López aparece en la ladera sur a 1626 metros de altitud, un refugio de madera administrado por el CAB que ofrece almuerzo, infusiones calientes y vistas soberbias al lago Nahuel Huapi en toda su extensión. En días claros el volcán Tronador (3491 m) domina el horizonte al sudoeste, sus glaciares brillando bajo el sol patagónico, y la silueta del Cerro Tronador parece irreal en su escala.
+Pasados los primeros 600 metros de desnivel el bosque cede ante arbustos de altura y pasturas alpinas. El Refugio López aparece en la ladera a 1620 metros de altitud, un refugio de piedra y madera administrado por el CAB que ofrece almuerzo, infusiones calientes y vistas soberbias al lago Nahuel Huapi en toda su extensión. En días claros el monte Tronador (3491 m) domina el horizonte al sudoeste, sus glaciares brillando bajo el sol patagónico.
 
-Desde el refugio, el sendero a la cumbre se vuelve netamente más desafiante. El tramo final de 450 metros de desnivel adicional transcurre sobre roca viva, con pasajes de scramble de grado I–II donde las manos se apoyan en la roca para ganar estabilidad. La cresta final expuesta al viento requiere precaución: en condiciones de viento sur fuerte conviene evaluar la conveniencia de continuar. La cima (2076 m) es una pequeña plataforma rocosa desde la cual se ven simultáneamente el lago Nahuel Huapi, el lago Gutiérrez, el lago Moreno, el lago Mascardi y, en días muy despejados, los volcanes chilenos al norte y al sur.
+Desde el refugio, el sendero al Pico Turista se vuelve netamente más desafiante. El tramo final de unos 450 metros de desnivel adicional transcurre sobre roca viva, con pasajes de scramble donde las manos se apoyan en la roca para ganar estabilidad. La cresta final expuesta al viento requiere precaución: en condiciones de viento sur fuerte conviene evaluar la conveniencia de continuar. El Pico Turista (2088 m), punto más alto del área, es una plataforma rocosa desde la cual se ven simultáneamente el lago Nahuel Huapi, el lago Gutiérrez, el lago Moreno, el lago Mascardi y, en días muy despejados, los volcanes chilenos al norte y al sur.
 
 El descenso por la misma ruta requiere especial atención en el tramo de scramble y en las raíces del bosque inferior, que pueden volverse resbaladizas con rocío vespertino. Salir antes de las 8:00 h es recomendable para alcanzar la cumbre antes de que las nubes de convección de la tarde cierren las vistas.`,
     gpxTrack: [
@@ -180,20 +203,20 @@ El descenso por la misma ruta requiere especial atención en el tramo de scrambl
       { lat: -41.0912, lon: -71.5242, ele: 1370 },
       { lat: -41.0918, lon: -71.5255, ele: 1440 },
       { lat: -41.0922, lon: -71.5265, ele: 1530 },
-      { lat: -41.0928, lon: -71.5275, ele: 1626 },
+      { lat: -41.0928, lon: -71.5275, ele: 1620 },
       { lat: -41.0933, lon: -71.5283, ele: 1700 },
       { lat: -41.0938, lon: -71.5290, ele: 1780 },
       { lat: -41.0942, lon: -71.5295, ele: 1850 },
       { lat: -41.0946, lon: -71.5299, ele: 1930 },
       { lat: -41.0949, lon: -71.5299, ele: 2010 },
-      { lat: -41.0950, lon: -71.5300, ele: 2076 },
+      { lat: -41.0950, lon: -71.5300, ele: 2088 },
     ],
     namedWaypoints: [
       {
         lat: -41.0817,
         lon: -71.5133,
-        name: 'Trailhead Ruta 79',
-        description: 'Inicio del sendero sobre la ruta 79. Hay una pequeña área de estacionamiento informal y un cartel del parque.',
+        name: 'Arroyo López (Picada Vieja)',
+        description: 'Inicio del sendero junto al arroyo López sobre la Ruta 79. Hay una pequeña área de estacionamiento y un cartel del parque.',
       },
       {
         lat: -41.0882,
@@ -204,8 +227,8 @@ El descenso por la misma ruta requiere especial atención en el tramo de scrambl
       {
         lat: -41.0928,
         lon: -71.5275,
-        name: 'Refugio López (1626 m)',
-        description: 'Refugio del CAB con vistas al lago Nahuel Huapi. Ofrece almuerzo y bebidas calientes. Punto de control y descanso obligado.',
+        name: 'Refugio López (1620 m)',
+        description: 'Refugio del CAB con vistas al lago Nahuel Huapi. Ofrece almuerzo y bebidas calientes. Punto de control y descanso obligado. Subida de 2 a 4 horas desde el arroyo.',
       },
       {
         lat: -41.0942,
@@ -216,12 +239,12 @@ El descenso por la misma ruta requiere especial atención en el tramo de scrambl
       {
         lat: -41.0950,
         lon: -71.5300,
-        name: 'Cima Cerro López (2076 m)',
-        description: 'Cumbre con panorama 360°: 5 lagos y el Tronador visibles en días claros. Vientos pueden ser intensos.',
+        name: 'Pico Turista (2088 m)',
+        description: 'Punto más alto del macizo, con panorama 360°: 5 lagos y el Tronador visibles en días claros. Vientos pueden ser intensos.',
       },
     ],
-    parking: 'Área informal de estacionamiento en el margen de la Ruta 79 km 20. Caben aproximadamente 15 vehículos. No hay guardacoches.',
-    access_notes: 'Desde el centro de Bariloche tomar la Ruta 237 dirección oeste y luego la Ruta 79 bordeando el lago Moreno. La distancia desde el centro es de aproximadamente 20 km (30 min en auto). No hay transporte público directo al trailhead; se puede tomar el bus a Llao Llao y caminar 2 km.',
+    parking: 'Área de estacionamiento en el margen de la Ruta 79 junto al arroyo López. Caben aproximadamente 15 vehículos. No hay guardacoches.',
+    access_notes: 'Desde el centro de Bariloche por Av. Bustillo y el Circuito Chico hasta el arroyo López, sobre la Ruta 79 (25 km, 35 min en auto). En bus: línea 10 hacia Colonia Suiza, parada arroyo López.',
     water_sources: 'Un arroyo a los 30 min del inicio y otra pequeña vertiente antes del refugio. El refugio López vende agua embotellada y tiene una canilla de agua potable.',
     camping_allowed: false,
     refugio: 'Refugio López (CAB)',
@@ -233,89 +256,79 @@ El descenso por la misma ruta requiere especial atención en el tramo de scrambl
   // -------------------------------------------------------------------------
   {
     id: 'tronador-glaciar-negro',
-    name: 'Cerro Tronador — Glaciar Negro',
+    name: 'Tronador — Ventisquero Negro y Garganta del Diablo',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
     subarea: 'Pampa Linda',
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'moderado',
-    distance_km: 26,
-    elevation_gain_m: 750,
-    max_altitude_m: 1800,
-    duration: { min: 7, max: 9, unit: 'horas' },
-    coordinates: { lat: -41.3298, lon: -71.8879 },
+    distance_km: 19,
+    elevation_gain_m: 400,
+    max_altitude_m: 1250,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
     photo_uri:
       'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80&fit=crop&auto=format',
-    tags: ['glaciar', 'Tronador', 'cascada', 'aluviones', 'Garganta del Diablo', 'bosque nativo'],
+    tags: ['glaciar', 'Tronador', 'cascada', 'Ventisquero Negro', 'Garganta del Diablo', 'bosque nativo'],
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
-      'Sendero hasta los aluviones del Glaciar Negro al pie del Cerro Tronador (3491 m). Se pasa por la imponente Garganta del Diablo, cascada de deshielo que ruge durante el día.',
-    trailhead: 'Pampa Linda (90 km al sur-oeste de Bariloche)',
+      'Del corazón de Pampa Linda al Ventisquero Negro —el glaciar cubierto de sedimento oscuro del Tronador— y al mirador de la Garganta del Diablo, un circo de cascadas que caen desde los glaciares colgantes. Se puede caminar desde Pampa Linda o llegar en vehículo al final del camino y hacer solo la senda corta.',
+    trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
-    long_description: `El Glaciar Negro es uno de los glaciares de valle más accesibles de la Patagonia andina y el Cerro Tronador su formidable telón de fondo. La ruta comienza en Pampa Linda, un puesto de guardaparques y refugio en el corazón del parque, donde una pradera abierta y el rugido lejano de los derrumbes de hielo ya anticipan la naturaleza descomunal del lugar. El sendero inicial atraviesa un bosque mixto de coihues y arrayanes que humidifica el aire y amortigua los sonidos del exterior; la sensación de adentrarse en un mundo distinto se instala desde los primeros pasos.
+    long_description: `El Ventisquero Negro es uno de los glaciares más singulares de la Patagonia andina: el hielo que desciende del Tronador incorpora tanto sedimento y detrito rocoso que su frente es de un color oscuro casi total, y desprende bloques sobre una laguna proglaciar de tono lechoso. La ruta parte de Pampa Linda, el puesto de guardaparques y hostería en el corazón del parque, donde la pradera abierta y el rugido lejano de los derrumbes de hielo —el "trueno" que da nombre al Tronador— anticipan la escala del lugar.
 
-Alrededor de los 5 km aparece la Garganta del Diablo, una cascada de fusión glaciar que precipita desde más de 100 metros de altura sobre paredes de roca oscura. El estruendo es tal que la comunicación verbal se vuelve difícil; el spray frío que genera crea un microclima propio y reviste las piedras cercanas de musgos y helechos imposiblemente verdes. La parada en este punto es obligada: conviene alejarse del sendero y sentarse sobre los bloques erráticos para absorber el espectáculo sin prisa.
+Desde Pampa Linda hasta el mirador del Ventisquero Negro hay unos 6,5 km (1:30 a 2 h) siguiendo el valle del río Manso superior, entre bosque de coihues y lengas. Quienes disponen de vehículo pueden hacer este tramo por el camino y comenzar a caminar más arriba: el mirador del glaciar está junto al camino y es la postal clásica de la excursión. La laguna con témpanos oscuros al pie del frente del hielo cambia de forma año a año con los desprendimientos.
 
-El camino continúa ascendiendo por la morrena lateral del glaciar, un terreno inestable de bloques de granito y sedimento glaciar oscuro —el "negro" que da nombre al glaciar proviene de la capa de detritos rocosos que cubre el hielo— hasta alcanzar el mirador superior desde donde se aprecia el frente activo del glaciar. Grietas de color azul eléctrico son visibles en el interior del hielo expuesto. Desde aquí los tres picos del Tronador (Internacional, Argentino y Chileno) se elevan sobre el glaciar con una majestuosidad que pocas cumbres patagónicas igualan.
+Del mirador del Ventisquero Negro el camino continúa unos 2 km más hasta el estacionamiento final, donde arranca la senda peatonal a la Garganta del Diablo: un tramo corto (1,4 km ida y vuelta, 30-40 min) que remonta el valle hasta un anfiteatro de paredes de roca por donde caen numerosas cascadas de deshielo desde los glaciares colgantes del Tronador. El estruendo del agua y de los desprendimientos de hielo es constante en los días cálidos de verano; conviene respetar la senda marcada y no acercarse al cauce.
 
-El regreso por la misma ruta permite completar la jornada antes del cierre del portón de acceso a Pampa Linda, que se cierra a las 18:00 h en temporada alta. Se recomienda llevar ropa de abrigo incluso en verano, ya que el microclima del glaciar puede bajar la temperatura 10 °C respecto al valle.`,
+El regreso es por la misma ruta. Importante: el camino de acceso a Pampa Linda y al Tronador es angosto y funciona con horarios de mano única (subida por la mañana, bajada por la tarde); consultá los horarios vigentes en la Intendencia del parque antes de ir. Llevá abrigo incluso en verano: el microclima del glaciar puede bajar la temperatura 10 °C respecto del valle.`,
     gpxTrack: [
-      { lat: -41.3298, lon: -71.8879, ele: 1050 },
-      { lat: -41.3312, lon: -71.8900, ele: 1075 },
-      { lat: -41.3325, lon: -71.8920, ele: 1100 },
-      { lat: -41.3338, lon: -71.8940, ele: 1125 },
-      { lat: -41.3352, lon: -71.8958, ele: 1150 },
-      { lat: -41.3365, lon: -71.8970, ele: 1175 },
-      { lat: -41.3378, lon: -71.8980, ele: 1200 },
-      { lat: -41.3390, lon: -71.8985, ele: 1240 },
-      { lat: -41.3405, lon: -71.8988, ele: 1280 },
-      { lat: -41.3418, lon: -71.8992, ele: 1330 },
-      { lat: -41.3430, lon: -71.8997, ele: 1380 },
-      { lat: -41.3442, lon: -71.9010, ele: 1430 },
-      { lat: -41.3455, lon: -71.9030, ele: 1480 },
-      { lat: -41.3468, lon: -71.9055, ele: 1520 },
-      { lat: -41.3480, lon: -71.9075, ele: 1560 },
-      { lat: -41.3492, lon: -71.9090, ele: 1620 },
-      { lat: -41.3500, lon: -71.9100, ele: 1800 },
+      { lat: -41.2535, lon: -71.7755, ele: 890 },
+      { lat: -41.2490, lon: -71.7850, ele: 910 },
+      { lat: -41.2440, lon: -71.7950, ele: 930 },
+      { lat: -41.2390, lon: -71.8050, ele: 950 },
+      { lat: -41.2330, lon: -71.8150, ele: 975 },
+      { lat: -41.2270, lon: -71.8240, ele: 995 },
+      { lat: -41.2220, lon: -71.8300, ele: 1010 },
+      { lat: -41.2175, lon: -71.8330, ele: 1020 },
+      { lat: -41.2120, lon: -71.8400, ele: 1060 },
+      { lat: -41.2080, lon: -71.8450, ele: 1100 },
+      { lat: -41.2050, lon: -71.8480, ele: 1130 },
+      { lat: -41.2010, lon: -71.8520, ele: 1190 },
+      { lat: -41.1960, lon: -71.8560, ele: 1250 },
     ],
     namedWaypoints: [
       {
-        lat: -41.3298,
-        lon: -71.8879,
-        name: 'Pampa Linda',
-        description: 'Punto de partida con guardaparques, refugio Tronador y estacionamiento. Portón de acceso cierra a las 18:00 h.',
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda (890 m)',
+        description: 'Punto de partida con guardaparques, hostería y estacionamiento. Registro de trekking y consulta de horarios del camino.',
       },
       {
-        lat: -41.3365,
-        lon: -71.8970,
-        name: 'Bosque de coihues y arrayanes',
-        description: 'Tramo de bosque húmedo con arrayanes de corteza naranja. El sendero es ancho y bien marcado.',
+        lat: -41.2175,
+        lon: -71.8330,
+        name: 'Mirador Ventisquero Negro',
+        description: 'Frente del glaciar cubierto de sedimento oscuro y laguna proglaciar con témpanos. Junto al camino vehicular.',
       },
       {
-        lat: -41.3400,
-        lon: -71.8983,
-        name: 'Garganta del Diablo',
-        description: 'Cascada de fusión glaciar de más de 100 m de caída. Punto icónico y de descanso obligado.',
+        lat: -41.2050,
+        lon: -71.8480,
+        name: 'Estacionamiento final del camino',
+        description: 'Fin del camino vehicular y comienzo de la senda peatonal a la Garganta del Diablo (1,4 km ida y vuelta).',
       },
       {
-        lat: -41.3455,
-        lon: -71.9030,
-        name: 'Morrena lateral del glaciar',
-        description: 'Terreno inestable de detritos oscuros sobre el hielo. Se aprecia el contraste entre el glaciar y la vegetación lateral.',
-      },
-      {
-        lat: -41.3500,
-        lon: -71.9100,
-        name: 'Mirador Glaciar Negro',
-        description: 'Mirador superior con vistas al frente activo del glaciar y las tres cumbres del Tronador. Grietas azules visibles en el hielo.',
+        lat: -41.1960,
+        lon: -71.8560,
+        name: 'Mirador Garganta del Diablo (1250 m)',
+        description: 'Anfiteatro de cascadas de deshielo que caen de los glaciares colgantes del Tronador. Estruendo constante en días cálidos.',
       },
     ],
-    parking: 'Estacionamiento en Pampa Linda (pago en temporada). Acceso vehicular sujeto a horario: portón abre a las 9:00 h y cierra a las 18:00 h. El portón de ingreso a Pampa Linda está en la bifurcación km 64 desde Bariloche.',
-    access_notes: 'Desde Bariloche tomar la Ruta 258 sur hasta Villa Mascardi (35 km) y luego el camino de ripio hacia Pampa Linda (otros 55 km). El trayecto completo son aproximadamente 90 km y 1:30 h de conducción. En temporada alta (enero–febrero) hay micros directos desde la Terminal de Bariloche.',
-    water_sources: 'Abundante agua en arroyos a lo largo del sendero y especialmente al pie de la Garganta del Diablo. No recomendable tomar agua aguas abajo del glaciar sin purificar por sedimento en suspensión.',
-    camping_allowed: false,
+    parking: 'Estacionamiento en Pampa Linda y en el estacionamiento final del camino al Tronador (antes de la senda a la Garganta). El camino funciona con horarios de mano única.',
+    access_notes: 'Desde Bariloche tomar la Ruta 40 sur hasta el desvío de Villa Mascardi (35 km) y luego el camino de ripio hacia Pampa Linda (otros 45 km, mano única por horarios). El trayecto completo es de aproximadamente 90 km y 2 h de conducción. En temporada alta hay excursiones y traslados desde Bariloche.',
+    water_sources: 'Arroyos a lo largo del valle del río Manso superior. No tomar agua de la laguna proglaciar ni aguas abajo del glaciar sin purificar, por el sedimento en suspensión.',
+    camping_allowed: true,
     round_trip: true,
   },
 
@@ -324,78 +337,86 @@ El regreso por la misma ruta permite completar la jornada antes del cierre del p
   // -------------------------------------------------------------------------
   {
     id: 'laguna-negra-catedral',
-    name: 'Laguna Negra desde Cerro Catedral',
+    name: 'Laguna Negra — Refugio Italia (Manfredo Segre)',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
-    subarea: 'Bariloche',
+    subarea: 'Colonia Suiza',
     region: 'patagonia-norte',
     activity: 'trekking',
-    difficulty: 'moderado',
-    distance_km: 15,
-    elevation_gain_m: 850,
-    max_altitude_m: 1580,
-    duration: { min: 5, max: 7, unit: 'horas' },
-    coordinates: { lat: -41.1900, lon: -71.4800 },
+    difficulty: 'dificil',
+    distance_km: 24,
+    elevation_gain_m: 900,
+    max_altitude_m: 1650,
+    duration: { min: 10, max: 12, unit: 'horas' },
+    coordinates: { lat: -41.0567, lon: -71.6000 },
     photo_uri:
       'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80&fit=crop&auto=format',
-    tags: ['laguna alpina', 'sobre la línea arbórea', 'granito', 'soledad', 'Catedral'],
+    tags: ['laguna alpina', 'refugio', 'arroyo Goye', 'caracoles', 'Cerro Negro', 'Colonia Suiza'],
     permits_required: false,
-    best_season: 'Dic – Mar',
+    best_season: 'Dic – Abr',
     description:
-      'Ruta hacia la Laguna Negra, un lago de alta montaña sobre la línea arbórea al oeste del macizo de Catedral. Terreno técnico en bloques de granito y vistas espectaculares.',
-    trailhead: 'Refugio Piedritas, base oeste de Cerro Catedral',
+      'Clásico ascenso por el valle del arroyo Goye desde Colonia Suiza hasta la Laguna Negra y el Refugio Italia — Manfredo Segre (1650 m), al pie del Cerro Negro. Exigente por su longitud; muchos lo hacen con noche en el refugio.',
+    trailhead: 'Colonia Suiza — puente del arroyo Goye',
     source: 'barilochetrekking.com',
-    long_description: `La Laguna Negra es uno de los secretos mejor guardados del macizo del Cerro Catedral. A diferencia de la concurrida ruta al Refugio Frey, este sendero atrae a un número mucho menor de excursionistas, lo que garantiza una experiencia de montaña más íntima y silenciosa. El punto de partida es el Refugio Piedritas, al oeste de la base de Catedral, desde donde el sendero se interna en coihuar abierto ascendiendo de modo progresivo durante la primera hora.
+    long_description: `La Laguna Negra es uno de los grandes clásicos del trekking barilochense y su refugio —el Italia, bautizado Manfredo Segre— uno de los más queridos del Club Andino Bariloche. La ruta parte de Colonia Suiza, cruza el arroyo Goye junto a la tranquera de ingreso señalizada y remonta el valle del Goye hacia el sur, primero por una vieja huella vehicular entre pinares y luego por sendero de bosque nativo de coihues que se va cerrando a medida que el valle se estrecha.
 
-A medida que se gana altura el paisaje muda drásticamente: los árboles se achaparran primero, luego desaparecen por completo, y el caminante se encuentra en una zona de arbustos bajos, pasturas de puna baja y enormes bloques de granito depositados por el glaciar cuaternario que ocupó este circo. La luz patagónica, sin filtros arbóreos, transforma cada nube en un espectáculo dinámico de sombras sobre el paisaje desnudo.
+En la parte media del valle el sendero cruza mallines y vegetación alta junto al arroyo, pasando por el sector conocido como Rancho Manolo. El rumor del agua acompaña casi toda la caminata; los cruces de afluentes se hacen sobre piedras o pasarelas simples y en primavera pueden llevar buen caudal. El bosque en este tramo es húmedo y umbrío, con líquenes colgantes y un sotobosque exuberante de caña colihue.
 
-El sector más técnico del sendero se encuentra en el km 5, donde se atraviesa una zona de bloques donde el camino se pierde entre las rocas y hay que leer el terreno o seguir los hitos de piedras apiladas (cairns). Un par de pasos cortos requieren el uso de las manos para trepar aunque sin exposición seria. La recompensa llega al superar el último escalón de granito: la Laguna Negra aparece de improviso, oscura y especular, rodeada por paredes grises que se elevan varios centenares de metros. El nombre le viene del color oscuro que toman sus aguas al reflejar el cielo y las rocas sombrías.
+El tramo final es el famoso sector de "los caracoles": una sucesión de zigzags empinados que ganan los últimos 400 metros de desnivel sobre la ladera del circo. La pendiente es sostenida y con carga se siente; conviene dosificar el paso y llevar agua. Al coronar el borde del circo la recompensa es inmediata: la Laguna Negra aparece oscura y especular, encajonada entre paredes grises, con el refugio de piedra asomado a la orilla como un pequeño faro de montaña.
 
-Sentado en la orilla norte de la laguna con vistas a los cerros circundantes es posible apreciar la escala real del trabajo geológico que modeló este paisaje durante las glaciaciones del Pleistoceno. El silencio solo se rompe por el viento y, ocasionalmente, por el estruendo de alguna pequeña avalancha de rocas en las paredes altas.`,
+El Refugio Italia — Manfredo Segre (1650 m) ofrece comidas, literas y zona de acampe. Por la longitud total de la ruta (unos 12 km por tramo) muchos senderistas eligen dormir en el refugio y bajar al día siguiente, o continuar la travesía de altura hacia el Refugio Jakob por la Laguna CAB y el filo (solo con buen tiempo y experiencia). El descenso por los caracoles exige rodillas frescas y atención con el pedrero suelto.`,
     gpxTrack: [
-      { lat: -41.1900, lon: -71.4800, ele: 1100 },
-      { lat: -41.1912, lon: -71.4830, ele: 1160 },
-      { lat: -41.1922, lon: -71.4870, ele: 1230 },
-      { lat: -41.1930, lon: -71.4910, ele: 1300 },
-      { lat: -41.1938, lon: -71.4950, ele: 1360 },
-      { lat: -41.1944, lon: -71.4990, ele: 1410 },
-      { lat: -41.1950, lon: -71.5030, ele: 1460 },
-      { lat: -41.1955, lon: -71.5075, ele: 1500 },
-      { lat: -41.1960, lon: -71.5120, ele: 1535 },
-      { lat: -41.1964, lon: -71.5165, ele: 1560 },
-      { lat: -41.1966, lon: -71.5210, ele: 1575 },
-      { lat: -41.1967, lon: -71.5283, ele: 1580 },
+      { lat: -41.0567, lon: -71.6000, ele: 800 },
+      { lat: -41.0620, lon: -71.6030, ele: 830 },
+      { lat: -41.0680, lon: -71.6060, ele: 870 },
+      { lat: -41.0740, lon: -71.6090, ele: 910 },
+      { lat: -41.0800, lon: -71.6120, ele: 950 },
+      { lat: -41.0860, lon: -71.6150, ele: 1000 },
+      { lat: -41.0920, lon: -71.6180, ele: 1060 },
+      { lat: -41.0970, lon: -71.6200, ele: 1130 },
+      { lat: -41.1010, lon: -71.6215, ele: 1220 },
+      { lat: -41.1040, lon: -71.6225, ele: 1330 },
+      { lat: -41.1060, lon: -71.6232, ele: 1450 },
+      { lat: -41.1075, lon: -71.6238, ele: 1560 },
+      { lat: -41.1085, lon: -71.6242, ele: 1650 },
     ],
     namedWaypoints: [
       {
-        lat: -41.1900,
-        lon: -71.4800,
-        name: 'Refugio Piedritas',
-        description: 'Punto de partida en el flanco oeste de Cerro Catedral. Pequeño refugio informal; buena referencia de inicio.',
+        lat: -41.0567,
+        lon: -71.6000,
+        name: 'Colonia Suiza — arroyo Goye',
+        description: 'Cruce del arroyo Goye y tranquera de ingreso con cartelería del parque. Inicio de la vieja huella vehicular.',
       },
       {
-        lat: -41.1930,
-        lon: -71.4910,
-        name: 'Límite de la vegetación',
-        description: 'Zona de transición donde los coihues se achaparran hasta desaparecer. Las vistas a los cerros se abren desde aquí.',
+        lat: -41.0800,
+        lon: -71.6120,
+        name: 'Valle del Goye',
+        description: 'Sendero de bosque nativo junto al arroyo. Mallines y cruces de afluentes; caudal alto en primavera.',
       },
       {
-        lat: -41.1950,
-        lon: -71.5030,
-        name: 'Campo de bloques técnico',
-        description: 'Sector donde el sendero se pierde entre bloques de granito. Seguir cairns. Dos pasos cortos requieren manos.',
+        lat: -41.0970,
+        lon: -71.6200,
+        name: 'Rancho Manolo',
+        description: 'Referencia clásica de la parte media del valle. Desde aquí la pendiente aumenta de forma gradual.',
       },
       {
-        lat: -41.1967,
-        lon: -71.5283,
-        name: 'Laguna Negra (1580 m)',
-        description: 'Lago de alta montaña de aguas oscuras y paredes grises. Excelente punto de almuerzo y fotografía.',
+        lat: -41.1050,
+        lon: -71.6228,
+        name: 'Los Caracoles',
+        description: 'Zigzags empinados que ganan los últimos 400 m de desnivel hasta el borde del circo. Tramo más exigente.',
+      },
+      {
+        lat: -41.1085,
+        lon: -71.6242,
+        name: 'Refugio Italia — Laguna Negra (1650 m)',
+        description: 'Refugio del CAB a orillas de la laguna, al pie del Cerro Negro. Comidas, literas y zona de acampe.',
       },
     ],
-    parking: 'Usar el mismo estacionamiento de la base de Cerro Catedral (Villa Catedral) y caminar 20 min hasta el Refugio Piedritas.',
-    access_notes: 'Acceso idéntico al Refugio Frey: Ruta 82 desde Bariloche hasta Villa Catedral (18 km). Desde la base seguir señalización hacia el Refugio Piedritas por el flanco oeste.',
-    water_sources: 'Arroyos de deshielo durante el trayecto de ascenso. La laguna misma tiene agua potable; filtrar o purificar igualmente.',
-    camping_allowed: false,
+    parking: 'Estacionamiento gratuito en Colonia Suiza, cerca del puente del arroyo Goye.',
+    access_notes: 'Desde Bariloche por Av. Bustillo y Ruta 79 hasta Colonia Suiza (22 km, 30-40 min en auto). En bus: línea 10 desde el centro hasta Colonia Suiza.',
+    water_sources: 'Arroyo Goye y afluentes durante casi todo el recorrido. El refugio tiene agua. Purificar siempre antes de consumir.',
+    camping_allowed: true,
+    refugio: 'Refugio Italia — Manfredo Segre (CAB)',
     round_trip: true,
   },
 
@@ -411,7 +432,7 @@ Sentado en la orilla norte de la laguna con vistas a los cerros circundantes es 
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'facil',
-    distance_km: 4,
+    distance_km: 3,
     elevation_gain_m: 260,
     max_altitude_m: 1049,
     duration: { min: 1, max: 2, unit: 'horas' },
@@ -488,9 +509,9 @@ Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro 
     activity: 'trekking',
     difficulty: 'moderado',
     distance_km: 14,
-    elevation_gain_m: 1025,
+    elevation_gain_m: 620,
     max_altitude_m: 1405,
-    duration: { min: 5, max: 7, unit: 'horas' },
+    duration: { min: 4, max: 6, unit: 'horas' },
     coordinates: { lat: -41.1233, lon: -71.3700 },
     photo_uri:
       'https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&q=80&fit=crop&auto=format',
@@ -498,8 +519,8 @@ Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro 
     permits_required: false,
     best_season: 'Oct – May',
     description:
-      'Ascenso al Cerro Otto (1405 m) directamente desde Bariloche, sin necesidad de vehículo. Vista 360° del distrito lacustre y las montañas circundantes.',
-    trailhead: 'Calle Bustillo km 6, salida oeste de Bariloche',
+      'Ascenso al Cerro Otto (1405 m) directamente desde Bariloche, sin necesidad de vehículo. Unos 620 m de desnivel desde la ciudad. Vista 360° del distrito lacustre y las montañas circundantes.',
+    trailhead: 'Av. de los Pioneros km 1, salida oeste de Bariloche',
     source: 'barilochetrekking.com',
     long_description: `El Cerro Otto tiene la ventaja única de ser accesible a pie directamente desde el centro de Bariloche, lo que lo convierte en la caminata urbana por excelencia de la ciudad de la montaña. El sendero parte desde la Avenida Bustillo en su kilómetro 6, asciende por pistas forestales y senderos de tierra a través de bosques de coihue y pino ponderosa que los primeros colonos plantaron en las laderas durante la primera mitad del siglo XX.
 
@@ -527,8 +548,8 @@ El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) 
       {
         lat: -41.1233,
         lon: -71.3700,
-        name: 'Inicio Av. Bustillo km 6',
-        description: 'Entrada al sendero desde la avenida. Cartel del parque con mapa de la ruta. Parada de bus cercana.',
+        name: 'Inicio Av. de los Pioneros km 1',
+        description: 'Entrada al sendero desde la avenida. Cartel con mapa de la ruta. Parada de bus cercana.',
       },
       {
         lat: -41.1260,
@@ -555,8 +576,8 @@ El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) 
         description: 'Confitería giratoria La Galería, terraza y vista 360°. Bariloche y 8 cuerpos de agua visibles simultáneamente.',
       },
     ],
-    parking: 'No se recomienda ir en auto: el acceso está diseñado para peatones. Si se va en auto, hay espacio informal en Av. Bustillo km 6. Alternativa: dejar el auto en el centro y comenzar la caminata desde allí.',
-    access_notes: 'Directamente accesible desde el centro de Bariloche en 20 min a pie hasta el inicio del sendero (Av. Bustillo km 6). Buses de línea 10 y 21 pasan por Bustillo.',
+    parking: 'No se recomienda ir en auto: el acceso está diseñado para peatones. Si se va en auto, hay espacio informal en Av. de los Pioneros km 1. Alternativa: dejar el auto en el centro y comenzar la caminata desde allí.',
+    access_notes: 'Directamente accesible desde el centro de Bariloche en 20-30 min a pie hasta el inicio del sendero (Av. de los Pioneros km 1). Varias líneas de bus urbano pasan cerca del acceso.',
     water_sources: 'No hay fuentes de agua en el trayecto. Llevar mínimo 1.5 litros. En la cima la confitería vende bebidas.',
     camping_allowed: false,
     round_trip: true,
@@ -567,84 +588,75 @@ El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) 
   // -------------------------------------------------------------------------
   {
     id: 'cascada-cantaros',
-    name: 'Cascada de los Cántaros — Circuito',
+    name: 'Cascada y Lago Los Cántaros (Puerto Blest)',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
-    subarea: 'Llao Llao',
+    subarea: 'Puerto Blest',
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'facil',
-    distance_km: 8,
-    elevation_gain_m: 350,
-    max_altitude_m: 950,
-    duration: { min: 3, max: 4, unit: 'horas' },
-    coordinates: { lat: -41.0400, lon: -71.5650 },
+    distance_km: 4,
+    elevation_gain_m: 240,
+    max_altitude_m: 1000,
+    duration: { min: 2, max: 3, unit: 'horas' },
+    coordinates: { lat: -41.0290, lon: -71.8130 },
     photo_uri:
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
-    tags: ['cascada', 'arrayán', 'bosque nativo', 'Llao Llao', 'lago', 'Brazo de la Tristeza'],
+    tags: ['cascada', 'selva valdiviana', 'alerces', 'navegación', 'Puerto Blest', 'Brazo Blest'],
     permits_required: false,
-    best_season: 'Oct – Abr',
+    best_season: 'Todo el año',
     description:
-      'Circuito por el bosque de arrayanes de Llao Llao hasta la Cascada de los Cántaros, con vistas al Brazo de la Tristeza del lago Nahuel Huapi.',
-    trailhead: 'Puerto Pañuelo / Hotel Llao Llao',
+      'Excursión lacustre-pedestre: navegación desde Puerto Pañuelo por el Brazo Blest y ascenso por la escalera de 600 escalones a la Cascada Los Cántaros y su lago, en plena selva valdiviana con alerces milenarios.',
+    trailhead: 'Puerto Blest / Puerto Cántaros (acceso en catamarán desde Puerto Pañuelo)',
     source: 'barilochetrekking.com',
-    long_description: `El circuito de la Cascada de los Cántaros es quizás la joya escondida del bosque de Llao Llao. El sendero parte desde el sector del Puerto Pañuelo, donde el barco patagónico de cruce a Chile hace escala, y penetra de inmediato en un bosque de arrayanes que es de los más representativos de la Patagonia andina. El arrayán (Luma apiculata) se reconoce por su corteza de color naranja-canela, lustrosa y fría al tacto, y su presencia masiva convierte el tramo inicial de la ruta en un túnel vegetal único en el mundo.
+    long_description: `Los Cántaros es la excursión que muestra la cara más húmeda y exuberante del Parque Nacional Nahuel Huapi: la selva valdiviana. El acceso es en sí parte del atractivo, porque no hay camino terrestre: se navega en catamarán desde Puerto Pañuelo (junto al Hotel Llao Llao) por el Brazo Blest del lago Nahuel Huapi, un fiordo de aguas profundas flanqueado por paredes de bosque que cae directamente al agua. La navegación toma alrededor de una hora por tramo.
 
-A medida que el sendero asciende suavemente por las lomadas del Parque Municipal Llao Llao las vistas al Brazo de la Tristeza —el brazo sur del lago Nahuel Huapi— comienzan a aparecer entre la vegetación. La masa de agua azul intensa enmarcada por bosques oscuros es una de las fotografías más reproducidas de la Patagonia. Los miradores informales sobre la costa permiten apreciar tanto el lago como los cerros nevados al fondo.
+Desde el muelle de Puerto Cántaros —frente a Puerto Blest— arranca la escalera de unos 600 escalones de madera que asciende junto a la caída de agua. El sendero pasa por miradores sucesivos de la Cascada Los Cántaros, que se precipita en varios saltos entre paredes tapizadas de musgos, helechos de gran porte y troncos cubiertos de líquenes. La humedad permanente del sector, con precipitaciones que superan los 3000 mm anuales, sostiene una vegetación que no existe en ningún otro punto del entorno de Bariloche.
 
-La cascada de los Cántaros (950 m) es una caída de agua de unos 30 metros que se precipita por una pared de basalto negro. En primavera, con el deshielo, el caudal es máximo y el ruido del agua se escucha desde los 200 metros de distancia. En verano la caída se reduce pero no pierde su encanto. La vegetación alrededor de la base de la cascada es especialmente exuberante: helechos de gran tamaño, musgos de distintos tonos verdes y flores silvestres patagónicas que buscan la humedad permanente del spray.
+En la parte alta del recorrido se llega al lago Los Cántaros, el cuerpo de agua que alimenta la cascada, un espejo oscuro y silencioso rodeado de selva fría. En el camino se pasa junto a un alerce (lahuán) de más de 1500 años, uno de los ejemplares milenarios accesibles del parque: la escala de tiempo del árbol, anterior a cualquier presencia europea en América, invita a la pausa.
 
-El regreso del circuito discurre por el lado opuesto de la lomada, con vistas distintas y algo de descenso más directo. Es ideal terminarlo con un café o mate en el Hotel Llao Llao —uno de los hoteles más elegantes de Sudamérica— cuya vista al lago desde la terraza es el broche perfecto para la excursión.`,
+El regreso es por la misma escalera hasta el muelle. La excursión se combina habitualmente con la visita a Puerto Blest y —opcionalmente— el cruce al lago Frías. Conviene reservar la navegación con anticipación en temporada alta y llevar ropa impermeable: en Blest puede llover cualquier día del año.`,
     gpxTrack: [
-      { lat: -41.0400, lon: -71.5650, ele: 780 },
-      { lat: -41.0415, lon: -71.5630, ele: 800 },
-      { lat: -41.0432, lon: -71.5608, ele: 820 },
-      { lat: -41.0448, lon: -71.5590, ele: 845 },
-      { lat: -41.0463, lon: -71.5575, ele: 870 },
-      { lat: -41.0477, lon: -71.5560, ele: 895 },
-      { lat: -41.0490, lon: -71.5548, ele: 920 },
-      { lat: -41.0503, lon: -71.5538, ele: 940 },
-      { lat: -41.0518, lon: -71.5530, ele: 950 },
-      { lat: -41.0530, lon: -71.5535, ele: 940 },
-      { lat: -41.0525, lon: -71.5550, ele: 920 },
-      { lat: -41.0515, lon: -71.5568, ele: 895 },
-      { lat: -41.0500, lon: -71.5585, ele: 865 },
-      { lat: -41.0480, lon: -71.5605, ele: 835 },
-      { lat: -41.0455, lon: -71.5625, ele: 810 },
-      { lat: -41.0427, lon: -71.5645, ele: 790 },
-      { lat: -41.0400, lon: -71.5650, ele: 780 },
+      { lat: -41.0290, lon: -71.8130, ele: 770 },
+      { lat: -41.0300, lon: -71.8145, ele: 800 },
+      { lat: -41.0310, lon: -71.8160, ele: 840 },
+      { lat: -41.0320, lon: -71.8172, ele: 880 },
+      { lat: -41.0330, lon: -71.8182, ele: 920 },
+      { lat: -41.0340, lon: -71.8190, ele: 960 },
+      { lat: -41.0350, lon: -71.8197, ele: 990 },
+      { lat: -41.0358, lon: -71.8202, ele: 1000 },
     ],
     namedWaypoints: [
       {
-        lat: -41.0400,
-        lon: -71.5650,
-        name: 'Puerto Pañuelo',
-        description: 'Punto de partida. Muelle de embarcaciones turísticas y de cruce a Chile. Inicio del sendero señalizado.',
+        lat: -41.0290,
+        lon: -71.8130,
+        name: 'Puerto Cántaros',
+        description: 'Muelle de desembarco del catamarán, frente a Puerto Blest. Inicio de la escalera de 600 escalones.',
       },
       {
-        lat: -41.0432,
-        lon: -71.5608,
-        name: 'Bosque de arrayanes',
-        description: 'Tramo denso de arrayanes con corteza naranja característica. Fotografía inmejorable.',
+        lat: -41.0320,
+        lon: -71.8172,
+        name: 'Miradores de la cascada',
+        description: 'Sucesión de miradores sobre los saltos de la Cascada Los Cántaros, entre musgos y helechos gigantes.',
       },
       {
-        lat: -41.0477,
-        lon: -71.5560,
-        name: 'Mirador Brazo de la Tristeza',
-        description: 'Vista al brazo sur del lago Nahuel Huapi con los cerros nevados al fondo. Uno de los miradores más fotografiados de la región.',
+        lat: -41.0340,
+        lon: -71.8190,
+        name: 'Alerce milenario',
+        description: 'Ejemplar de lahuán (alerce) de más de 1500 años junto al sendero.',
       },
       {
-        lat: -41.0518,
-        lon: -71.5530,
-        name: 'Cascada de los Cántaros',
-        description: 'Cascada de 30 m sobre pared de basalto negro. Microclima húmedo con helechos y musgos.',
+        lat: -41.0358,
+        lon: -71.8202,
+        name: 'Lago Los Cántaros',
+        description: 'Lago que alimenta la cascada, rodeado de selva valdiviana. Punto final del sendero.',
       },
     ],
-    parking: 'Estacionamiento en Puerto Pañuelo (gratuito, limitado). Alternativa: estacionar en el hotel Llao Llao o en el centro de Llao Llao.',
-    access_notes: 'Tomar la Ruta 77 circuito chico/grande desde Bariloche hasta Llao Llao (25 km, 30 min). El bus línea 20 desde la Terminal llega hasta Llao Llao.',
-    water_sources: 'El arroyo que alimenta la cascada tiene agua limpia. No hay otras fuentes en el circuito. Llevar agua propia.',
+    parking: 'Estacionamiento en Puerto Pañuelo (punto de embarque del catamarán). No hay acceso vehicular a Puerto Blest.',
+    access_notes: 'Desde Bariloche por Av. Bustillo hasta Puerto Pañuelo (25 km, bus línea 20). Desde allí, navegación en catamarán por el Brazo Blest (aprox. 1 h por tramo). Reservar pasajes con anticipación en temporada alta.',
+    water_sources: 'Arroyo de la cascada y lago Los Cántaros. Llevar agua propia para la excursión; hay confitería en Puerto Blest.',
     camping_allowed: false,
-    round_trip: false,
+    round_trip: true,
   },
 
   // -------------------------------------------------------------------------
@@ -652,86 +664,66 @@ El regreso del circuito discurre por el lado opuesto de la lomada, con vistas di
   // -------------------------------------------------------------------------
   {
     id: 'laguna-tempanos',
-    name: 'Laguna Los Témpanos desde Pampa Linda',
+    name: 'Laguna de los Témpanos — Mirador Ventisquero Negro',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
     subarea: 'Pampa Linda',
     region: 'patagonia-norte',
     activity: 'trekking',
-    difficulty: 'moderado',
-    distance_km: 18,
-    elevation_gain_m: 600,
-    max_altitude_m: 1400,
-    duration: { min: 5, max: 7, unit: 'horas' },
-    coordinates: { lat: -41.3298, lon: -71.8879 },
+    difficulty: 'facil',
+    distance_km: 13,
+    elevation_gain_m: 150,
+    max_altitude_m: 1020,
+    duration: { min: 3, max: 5, unit: 'horas' },
+    coordinates: { lat: -41.2175, lon: -71.8330 },
     photo_uri:
       'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80&fit=crop&auto=format',
-    tags: ['glaciar colgante', 'témpanos', 'laguna glaciar', 'remoto', 'Tronador', 'prístino'],
+    tags: ['témpanos', 'laguna proglaciar', 'Ventisquero Negro', 'Tronador', 'apto familias'],
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
-      'Ruta hasta la Laguna Los Témpanos, una laguna glaciar con témpanos flotantes desprendidos del glaciar colgante del Tronador. Acceso remoto y muy bajo tráfico.',
-    trailhead: 'Pampa Linda (90 km al sur-oeste de Bariloche)',
+      'Caminata suave desde Pampa Linda por el valle del río Manso superior hasta la Laguna de los Témpanos, la laguna proglaciar al pie del Ventisquero Negro donde flotan bloques de hielo oscuro desprendidos del glaciar. También accesible en vehículo: el mirador está junto al camino.',
+    trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
-    long_description: `La Laguna Los Témpanos es uno de los rincones más espectaculares y menos visitados del Parque Nacional Nahuel Huapi. Su nombre lo dice todo: en sus aguas de un verde azulado fluorescente flotan pequeños bloques de hielo desprendidos del glaciar colgante que desciende desde las paredes del Tronador directamente hacia la laguna. El espectáculo de los témpanos a la deriva, de dimensiones modestas pero de un azul celeste intenso, es surrealista en medio del bosque andino-patagónico.
+    long_description: `La Laguna de los Témpanos es el cuerpo de agua que se formó al pie del Ventisquero Negro por el retroceso del glaciar en las últimas décadas, y ofrece uno de los espectáculos más singulares del parque: bloques de hielo oscuro —teñidos por el sedimento que el glaciar arrastra— flotando a la deriva en aguas de tono lechoso. Cada temporada la laguna cambia de forma con los desprendimientos del frente del hielo.
 
-El sendero parte desde Pampa Linda, el mismo punto de partida que para el Glaciar Negro, pero toma una dirección distinta hacia el sudoeste, internándose en un bosque de coihues y tepuales que en algunos tramos bordea el río Alerce. El terreno es relativamente suave durante los primeros 6 km, con algunos cruces de arroyos en piedras o troncos. El bosque aquí es especialmente diverso: junto a los coihues aparecen notros de flores rojas, maitenes y, en los sectores más húmedos, espesos pajonales de caña.
+Desde Pampa Linda la caminata sigue el valle del río Manso superior hacia el noroeste, unos 6,5 km por camino y sendas laterales entre bosque de coihues y lengas, con el macizo del Tronador creciendo en el horizonte a cada paso. Es un recorrido de pendiente muy suave, ideal para familias o como caminata de aclimatación el día previo a rutas mayores como el Refugio Otto Meiling.
 
-A partir de los 7 km la pendiente aumenta y el sendero se vuelve más solitario, evidencia de que son pocos los excursionistas que van más allá del Glaciar Negro. El sonido del río Alerce crece en volumen a medida que la ruta se acerca a sus fuentes glaciares. El último kilómetro antes de la laguna traversa un campo de morrenas donde los bloques de roca ennegrecida por los sedimentos glaciares crean un paisaje casi lunar.
+El mirador del Ventisquero Negro, sobre la morrena que contiene la laguna, permite observar el frente del glaciar, los témpanos y —con paciencia— algún desprendimiento: primero se ve el bloque caer y segundos después llega el estruendo. Es también uno de los testimonios más didácticos del retroceso glaciar en la Patagonia: las morrenas laterales marcan dónde llegaba el hielo hace apenas unas décadas.
 
-La orilla de la Laguna Los Témpanos recompensa cada esfuerzo: el color del agua cambia de verde esmeralda a azul celeste según la posición del sol, los témpanos flotan silenciosamente y el glaciar colgante que los origina se ve suspendido en las paredes grises del Tronador, listo para dejar caer su siguiente bloque con un estruendo que llega hasta la orilla minutos después del impacto visual.`,
+Quienes van en vehículo pueden detenerse directamente en el mirador, que está junto al camino al Tronador, y combinar la parada con la senda corta a la Garganta del Diablo al final del camino. El camino funciona con horarios de mano única (subida por la mañana, bajada por la tarde); consultar los horarios vigentes antes de ir.`,
     gpxTrack: [
-      { lat: -41.3298, lon: -71.8879, ele: 1050 },
-      { lat: -41.3310, lon: -71.8910, ele: 1075 },
-      { lat: -41.3323, lon: -71.8942, ele: 1100 },
-      { lat: -41.3337, lon: -71.8972, ele: 1125 },
-      { lat: -41.3350, lon: -71.9002, ele: 1150 },
-      { lat: -41.3363, lon: -71.9035, ele: 1175 },
-      { lat: -41.3377, lon: -71.9068, ele: 1200 },
-      { lat: -41.3390, lon: -71.9100, ele: 1230 },
-      { lat: -41.3403, lon: -71.9130, ele: 1260 },
-      { lat: -41.3415, lon: -71.9162, ele: 1290 },
-      { lat: -41.3428, lon: -71.9195, ele: 1320 },
-      { lat: -41.3440, lon: -71.9225, ele: 1350 },
-      { lat: -41.3452, lon: -71.9252, ele: 1375 },
-      { lat: -41.3460, lon: -71.9267, ele: 1400 },
-      { lat: -41.3467, lon: -71.9267, ele: 1400 },
+      { lat: -41.2535, lon: -71.7755, ele: 890 },
+      { lat: -41.2480, lon: -71.7860, ele: 910 },
+      { lat: -41.2420, lon: -71.7970, ele: 935 },
+      { lat: -41.2360, lon: -71.8080, ele: 960 },
+      { lat: -41.2300, lon: -71.8190, ele: 985 },
+      { lat: -41.2240, lon: -71.8280, ele: 1005 },
+      { lat: -41.2175, lon: -71.8330, ele: 1020 },
     ],
     namedWaypoints: [
       {
-        lat: -41.3298,
-        lon: -71.8879,
-        name: 'Pampa Linda',
-        description: 'Punto de partida compartido con la ruta al Glaciar Negro. Tomar el sendero señalizado hacia el sudoeste para Los Témpanos.',
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda (890 m)',
+        description: 'Punto de partida con guardaparques, hostería y estacionamiento. Registro de trekking obligatorio.',
       },
       {
-        lat: -41.3350,
-        lon: -71.9002,
-        name: 'Orilla del río Alerce',
-        description: 'El sendero bordea el río Alerce de aguas color turquesa. Buena fuente de agua.',
+        lat: -41.2360,
+        lon: -71.8080,
+        name: 'Valle del río Manso superior',
+        description: 'Tramo suave entre bosque de coihues y lengas, con vistas crecientes al macizo del Tronador.',
       },
       {
-        lat: -41.3403,
-        lon: -71.9130,
-        name: 'Cruce de arroyos glaciares',
-        description: 'Tres arroyos pequeños en rápida sucesión. En épocas de deshielo el caudal puede ser alto; usar las piedras de cruce.',
-      },
-      {
-        lat: -41.3440,
-        lon: -71.9225,
-        name: 'Campo de morrenas',
-        description: 'Zona de bloques ennegrecidos por sedimento glaciar. Terreno inestable; cuidado al pisar.',
-      },
-      {
-        lat: -41.3467,
-        lon: -71.9267,
-        name: 'Laguna Los Témpanos (1400 m)',
-        description: 'Laguna glaciar con témpanos flotantes de color azul celeste. Glaciar colgante del Tronador visible en la pared superior.',
+        lat: -41.2175,
+        lon: -71.8330,
+        name: 'Mirador Ventisquero Negro — Laguna de los Témpanos',
+        description: 'Mirador sobre la morrena: frente del glaciar oscuro, laguna proglaciar y témpanos flotantes.',
       },
     ],
-    parking: 'Estacionamiento en Pampa Linda (mismo que Glaciar Negro). Portón de acceso con horario restringido.',
-    access_notes: 'Idéntico acceso que Tronador-Glaciar Negro: Ruta 258 sur hasta Villa Mascardi y luego camino de ripio a Pampa Linda (90 km total desde Bariloche, 1:30 h en auto).',
-    water_sources: 'Río Alerce y múltiples arroyos a lo largo del sendero. Agua muy limpia pero con algo de sedimento glaciar en suspensión; conveniente filtrar.',
+    parking: 'Estacionamiento en Pampa Linda o directamente en el mirador del Ventisquero Negro (junto al camino al Tronador).',
+    access_notes: 'Desde Bariloche por Ruta 40 sur hasta el desvío de Villa Mascardi y luego camino de ripio a Pampa Linda (90 km total, 2 h). El camino tiene horarios de mano única; consultar antes de ir.',
+    water_sources: 'Arroyos del valle del río Manso superior. No tomar agua de la laguna proglaciar (sedimento en suspensión) sin filtrar.',
     camping_allowed: true,
     round_trip: true,
   },
@@ -747,81 +739,71 @@ La orilla de la Laguna Los Témpanos recompensa cada esfuerzo: el color del agua
     subarea: 'Bariloche',
     region: 'patagonia-norte',
     activity: 'trekking',
-    difficulty: 'dificil',
-    distance_km: 18,
-    elevation_gain_m: 1200,
-    max_altitude_m: 1895,
-    duration: { min: 6, max: 8, unit: 'horas' },
-    coordinates: { lat: -41.2083, lon: -71.4667 },
+    difficulty: 'moderado',
+    distance_km: 12,
+    elevation_gain_m: 700,
+    max_altitude_m: 2000,
+    duration: { min: 5, max: 7, unit: 'horas' },
+    coordinates: { lat: -41.2470, lon: -71.2920 },
     photo_uri:
       'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80&fit=crop&auto=format',
     tags: ['cumbre', 'vistas sur', 'lago Gutiérrez', 'lago Mascardi', 'sendero empinado', 'bosque'],
     permits_required: false,
     best_season: 'Nov – Abr',
     description:
-      'Ascenso al Cerro Challhuaco (1895 m) desde el barrio Melipal. Sendero empinado a través de bosque cerrado con magníficas vistas al sur de Bariloche.',
-    trailhead: 'Barrio Melipal, sur de Bariloche',
+      'Ascenso al Cerro Challhuaco (~2000 m) desde el Refugio Neumeyer, en el Valle del Challhuaco. Sendero bien marcado por bosque de lengas con panorama del Nahuel Huapi, el Tronador y la estepa al este.',
+    trailhead: 'Refugio Neumeyer, Valle del Challhuaco (19 km de Bariloche)',
     source: 'barilochetrekking.com',
-    long_description: `El Cerro Challhuaco es una de las subidas más exigentes de los alrededores inmediatos de Bariloche y, paradójicamente, una de las menos conocidas por los turistas, lo que garantiza una experiencia de montaña auténtica y sin multitudes. El sendero parte desde el barrio Melipal, al sur del centro urbano, y asciende de manera casi sostenida por el flanco norte del cerro a través de un bosque de coihue denso y húmedo donde la luz del sol llega filtrada y la vegetación del sotobosque —helechos, quila, murtilla— se desarrolla con exuberancia.
+    long_description: `El Valle del Challhuaco es el rincón más tranquilo del entorno inmediato de Bariloche: un valle de bosque de lengas a solo 19 km del centro, con el Refugio Neumeyer (1320 m) como base de operaciones. El ascenso al Cerro Challhuaco es el clásico del valle y una de las mejores relaciones esfuerzo-recompensa de la zona, con un sendero bien marcado de principio a fin.
 
-Los primeros 4 km son los más forestales y también los más empinados en términos relativos: el sendero gana altitud con rapidez sin grandes horizontales de alivio. El suelo de tierra negra puede ser resbaladizo tras las lluvias frecuentes del verano andino, por lo que bastones de trekking son especialmente útiles aquí. A medida que se aproxima al km 6 el bosque comienza a abrirse y aparecen los primeros claros desde donde el lago Gutiérrez —de color verde jade— se ve al este.
+Desde el refugio, el sendero se interna en un bosque de lengas alto y luminoso, muy distinto del coihuar húmedo de las rutas del oeste. La subida es sostenida pero nunca extrema, y en una bifurcación señalizada se toma el ramal izquierdo que continúa hacia la cumbre. En otoño este bosque es uno de los espectáculos de la región: las lengas viran al rojo y al naranja en capas que cubren todo el valle.
 
-La zona alta del cerro, sobre los 1600 metros, es un páramo de roca y arbustos bajos donde el viento sopla con mayor intensidad. Los últimos 300 metros de desnivel hasta la cima requieren atención en la orientación ya que el terreno es más difuso y los senderos secundarios pueden llevar a pasajes sin salida. La señalización con cairns suele ser fiable en temporada alta pero puede ser escasa en condiciones de visibilidad reducida.
+Sobre los 1700 metros el bosque se achaparra hasta desaparecer y el sendero sale a terreno abierto de roca y arbustos rastreros, donde el viento sopla con intensidad. La señalización pasa a ser por hitos de piedra (cairns); con niebla conviene prestar atención al rumbo. El contraste es notable: hacia el oeste las cumbres nevadas de la cordillera, hacia el este el comienzo de la estepa patagónica que se pierde en el horizonte.
 
-Desde la cima del Challhuaco (1895 m) la vista al sur es la principal recompensa: el lago Gutiérrez en primer plano, el lago Mascardi detrás con su brazo que se pierde entre las montañas, y en el horizonte las cumbres nevadas del Tronador y los volcanes chilenos. Hacia el norte el lago Nahuel Huapi y la ciudad de Bariloche completan un panorama de escala regional que justifica cada metro de esfuerzo.`,
+Desde la cumbre del Challhuaco (~2000 m) el panorama abarca el lago Nahuel Huapi y Bariloche al norte, el cordón del Catedral y el Tronador al oeste, y la transición bosque-estepa al este — pocas cumbres muestran tan claramente los dos mundos que conviven en el parque. El descenso es por la misma ruta, con el Refugio Neumeyer como parada final para un té caliente en el valle.`,
     gpxTrack: [
-      { lat: -41.2083, lon: -71.4667, ele: 820 },
-      { lat: -41.2100, lon: -71.4693, ele: 900 },
-      { lat: -41.2118, lon: -71.4718, ele: 990 },
-      { lat: -41.2135, lon: -71.4740, ele: 1080 },
-      { lat: -41.2152, lon: -71.4762, ele: 1165 },
-      { lat: -41.2167, lon: -71.4782, ele: 1250 },
-      { lat: -41.2180, lon: -71.4800, ele: 1330 },
-      { lat: -41.2193, lon: -71.4817, ele: 1410 },
-      { lat: -41.2205, lon: -71.4833, ele: 1490 },
-      { lat: -41.2215, lon: -71.4847, ele: 1560 },
-      { lat: -41.2225, lon: -71.4858, ele: 1640 },
-      { lat: -41.2233, lon: -71.4862, ele: 1710 },
-      { lat: -41.2240, lon: -71.4864, ele: 1780 },
-      { lat: -41.2246, lon: -71.4865, ele: 1840 },
-      { lat: -41.2250, lon: -71.4867, ele: 1895 },
+      { lat: -41.2470, lon: -71.2920, ele: 1320 },
+      { lat: -41.2490, lon: -71.2950, ele: 1400 },
+      { lat: -41.2510, lon: -71.2980, ele: 1480 },
+      { lat: -41.2530, lon: -71.3010, ele: 1560 },
+      { lat: -41.2550, lon: -71.3040, ele: 1640 },
+      { lat: -41.2570, lon: -71.3065, ele: 1720 },
+      { lat: -41.2590, lon: -71.3085, ele: 1800 },
+      { lat: -41.2610, lon: -71.3100, ele: 1880 },
+      { lat: -41.2628, lon: -71.3110, ele: 1950 },
+      { lat: -41.2640, lon: -71.3118, ele: 2000 },
     ],
     namedWaypoints: [
       {
-        lat: -41.2083,
-        lon: -71.4667,
-        name: 'Inicio barrio Melipal',
-        description: 'Punto de partida en zona residencial al sur de Bariloche. Calle de tierra finaliza en el sendero.',
+        lat: -41.2470,
+        lon: -71.2920,
+        name: 'Refugio Neumeyer (1320 m)',
+        description: 'Base del Valle del Challhuaco, con comidas y alojamiento. Inicio del sendero señalizado a la cumbre.',
       },
       {
-        lat: -41.2135,
-        lon: -71.4740,
-        name: 'Bosque cerrado de coihue',
-        description: 'Tramo de bosque más denso. Suelo blando y húmedo. Puede ser resbaladizo; bastones recomendados.',
+        lat: -41.2530,
+        lon: -71.3010,
+        name: 'Bifurcación señalizada',
+        description: 'Tomar el ramal izquierdo hacia la cumbre del Challhuaco. El derecho conduce a otros paseos del valle.',
       },
       {
-        lat: -41.2193,
-        lon: -71.4817,
-        name: 'Primer claro con vistas al Gutiérrez',
-        description: 'El bosque se abre brevemente permitiendo las primeras vistas al lago Gutiérrez al este.',
+        lat: -41.2590,
+        lon: -71.3085,
+        name: 'Límite del bosque de lengas',
+        description: 'Las lengas se achaparran y el sendero sale a terreno abierto. Orientación por cairns; viento frecuente.',
       },
       {
-        lat: -41.2233,
-        lon: -71.4862,
-        name: 'Zona de páramo alto',
-        description: 'Sobre 1700 m; vegetación de altura rasa y viento permanente. Orientación por cairns.',
-      },
-      {
-        lat: -41.2250,
-        lon: -71.4867,
-        name: 'Cima Cerro Challhuaco (1895 m)',
-        description: 'Vista al sur con lagos Gutiérrez y Mascardi. Al norte, Nahuel Huapi y Bariloche. Punto de almuerzo excelente.',
+        lat: -41.2640,
+        lon: -71.3118,
+        name: 'Cumbre Cerro Challhuaco (~2000 m)',
+        description: 'Panorama del Nahuel Huapi y Bariloche al norte, el Catedral y el Tronador al oeste y la estepa al este.',
       },
     ],
-    parking: 'Estacionamiento informal al final de la calle de tierra en barrio Melipal. Espacio para unos 10 vehículos.',
-    access_notes: 'Desde el centro de Bariloche tomar la Av. Bustillo hacia el sur, girar en el acceso al barrio Melipal y seguir las calles de tierra hasta el final de la calle Chalhuaco. Aproximadamente 8 km desde el centro (15 min en auto).',
-    water_sources: 'Un arroyo al inicio del sendero (km 1) y otro hacia el km 4 en el bosque. No hay agua en la zona alta. Llevar suficiente para el día.',
+    parking: 'Estacionamiento en el Refugio Neumeyer, al final del camino del Valle del Challhuaco.',
+    access_notes: 'Desde Bariloche tomar la Ruta 40 hacia el sur y el desvío señalizado al Valle del Challhuaco; camino de ripio hasta el Refugio Neumeyer (19 km desde el centro, 40 min). No hay transporte público hasta el valle.',
+    water_sources: 'Arroyo Challhuaco cerca del refugio y un arroyo en la parte baja del sendero. No hay agua en la zona alta; llevar suficiente para el día.',
     camping_allowed: false,
+    refugio: 'Refugio Neumeyer (CAB)',
     round_trip: true,
   },
 
@@ -837,10 +819,10 @@ Desde la cima del Challhuaco (1895 m) la vista al sur es la principal recompensa
     region: 'patagonia-norte',
     activity: 'travesia',
     difficulty: 'dificil',
-    distance_km: 35,
-    elevation_gain_m: 2100,
-    max_altitude_m: 2000,
-    duration: { min: 2, max: 2, unit: 'dias' },
+    distance_km: 33,
+    elevation_gain_m: 1450,
+    max_altitude_m: 1900,
+    duration: { min: 2, max: 3, unit: 'dias' },
     coordinates: { lat: -41.1855, lon: -71.4499 },
     photo_uri:
       'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&q=80&fit=crop&auto=format',
@@ -848,16 +830,16 @@ Desde la cima del Challhuaco (1895 m) la vista al sur es la principal recompensa
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
-      'Clásica travesía de dos días por la alta montaña de Bariloche: Catedral → Frey → Paso de las Nubes → Refugio Jakob → Colonia Suiza. Experiencia técnica con pasos expuestos.',
+      'Clásica travesía de dos o tres días por la alta montaña de Bariloche: Catedral → Refugio Frey → filo por Laguna Schmoll → valle del Rucaco → Brecha Negra → Refugio Jakob → bajada a Tambo Báez. Solo con buen tiempo y experiencia.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `La Travesía Frey–Jakob es la excursión de dos días de referencia absoluta de Bariloche y una de las rutas de montaña más completas de la Patagonia andina. Combina bosque, laguna glaciar, pasos de altura expuestos y el camaradería única de las noches en refugio de alta montaña. No en vano es el sueño cumplido de todo amante del trekking que visita la región.
 
-El primer día replica el sendero al Refugio Frey por la ruta de la Cancha de Fútbol (ver descripción separada), con llegada al refugio a orillas de la Laguna Schmoll en la tarde. La noche en el refugio Frey es una experiencia en sí misma: la terraza iluminada por los últimos rayos del sol sobre las agujas de granito, el tintineo de cuerdas y mosquetones de los escaladores, y una cena caliente rodeado de montañeros de distintos países que comparten historias de vías y cumbres.
+El primer día replica el sendero al Refugio Frey desde la base de Catedral (ver descripción separada), con llegada al refugio a orillas de la Laguna Toncek en la tarde. La noche en el refugio Frey es una experiencia en sí misma: la terraza iluminada por los últimos rayos del sol sobre las agujas de granito, el tintineo de cuerdas y mosquetones de los escaladores, y una cena caliente rodeado de montañeros de distintos países que comparten historias de vías y cumbres.
 
-El segundo día es el más exigente y el más recompensante. Desde Frey el sendero asciende hacia el Paso de las Nubes (2000 m), una arista entre dos mundos: del lado de Frey las agujas y la laguna; del lado de Jakob los valles abiertos y los glaciares suspendidos del Cerro Negro. El paso es técnico en sus últimos 200 metros de desnivel: roca firme pero expuesta, requiriendo atención y en algunas condiciones el uso de las manos. El viento en el paso puede ser intenso.
+El segundo día es el más exigente y el más recompensante. Desde Frey el sendero trepa junto a la Laguna Schmoll hasta el filo del Catedral (~1900 m), una arista entre dos mundos: del lado de Frey las agujas y las lagunas; del otro, el profundo valle del arroyo Rucaco. La bajada al Rucaco pierde unos 500 metros por pedrero empinado, el valle se cruza entre lengas achaparradas, y al final espera la subida a la Brecha Negra (~1900 m), un portezuelo de roca oscura con pendiente fuerte y terreno suelto donde en ocasiones se usan las manos. El viento en los filos puede ser intenso; con nieve, hielo o mal tiempo la travesía no debe intentarse.
 
-La bajada hacia el Refugio Jakob atraviesa paisajes de alta montaña que cambian constantemente de vegetación y tipo de terreno. El refugio Jakob (oficialmente Refugio San Martín, 2000 m) aparece en un valle glaciar con paredes que lo rodean en tres lados. Desde aquí el descenso a Colonia Suiza (830 m) recupera los 1170 metros de desnivel ganados a través de un bosque de coihues que parece más verde y más vivo después de los dos días en la piedra y el hielo.`,
+Del otro lado de la Brecha, la bajada conduce al Refugio Jakob (oficialmente Refugio San Martín, 1600 m), asomado a la laguna Jakob en un valle glaciar espectacular. Se puede pernoctar allí y bajar al día siguiente por el valle del arroyo Casa de Piedra hasta Tambo Báez (unos 14 km, sobre la Ruta 79 camino a Colonia Suiza), cerrando una de las travesías más completas de la Patagonia andina.`,
     gpxTrack: [
       { lat: -41.1855, lon: -71.4499, ele: 1050 },
       { lat: -41.1905, lon: -71.4585, ele: 1230 },
@@ -867,14 +849,14 @@ La bajada hacia el Refugio Jakob atraviesa paisajes de alta montaña que cambian
       { lat: -41.1975, lon: -71.4790, ele: 1760 },
       { lat: -41.1940, lon: -71.4850, ele: 1830 },
       { lat: -41.1900, lon: -71.4900, ele: 1900 },
-      { lat: -41.1833, lon: -71.4933, ele: 1960 },
-      { lat: -41.1733, lon: -71.4967, ele: 2000 },
-      { lat: -41.1633, lon: -71.4983, ele: 2000 },
-      { lat: -41.1533, lon: -71.5000, ele: 1990 },
-      { lat: -41.1433, lon: -71.5033, ele: 1950 },
-      { lat: -41.1367, lon: -71.5067, ele: 2000 },
-      { lat: -41.1267, lon: -71.5117, ele: 2000 },
-      { lat: -41.1167, lon: -71.5200, ele: 1700 },
+      { lat: -41.1833, lon: -71.4933, ele: 1700 },
+      { lat: -41.1733, lon: -71.4967, ele: 1500 },
+      { lat: -41.1633, lon: -71.4983, ele: 1400 },
+      { lat: -41.1533, lon: -71.5000, ele: 1500 },
+      { lat: -41.1433, lon: -71.5033, ele: 1700 },
+      { lat: -41.1400, lon: -71.5050, ele: 1900 },
+      { lat: -41.1267, lon: -71.5117, ele: 1600 },
+      { lat: -41.1167, lon: -71.5200, ele: 1450 },
       { lat: -41.1067, lon: -71.5350, ele: 1400 },
       { lat: -41.0900, lon: -71.5500, ele: 1100 },
       { lat: -41.0733, lon: -71.5633, ele: 900 },
@@ -891,30 +873,42 @@ La bajada hacia el Refugio Jakob atraviesa paisajes de alta montaña que cambian
         lat: -41.1997,
         lon: -71.4741,
         name: 'Refugio Frey (1700 m) — noche 1',
-        description: 'Refugio del CAB. Reserva obligatoria en temporada alta. Cenas y desayunos disponibles. Carpas en la orilla de la laguna.',
+        description: 'Refugio del CAB a orillas de la Laguna Toncek. Reserva obligatoria en temporada alta. Cenas y desayunos disponibles. Carpas en la orilla de la laguna.',
+      },
+      {
+        lat: -41.1900,
+        lon: -71.4900,
+        name: 'Filo del Catedral por Laguna Schmoll (~1900 m)',
+        description: 'Subida junto a la Laguna Schmoll hasta el filo. Vistas a ambos lados: agujas de Frey y valle del Rucaco. Viento frecuente.',
       },
       {
         lat: -41.1633,
         lon: -71.4983,
-        name: 'Paso de las Nubes (2000 m)',
-        description: 'Paso técnico y expuesto. Punto más alto de la travesía. Vistas a ambos lados: agujas de Frey y valles de Jakob. Viento frecuente.',
+        name: 'Valle del arroyo Rucaco',
+        description: 'Bajada de ~500 m por pedrero y cruce del valle entre lengas achaparradas. Buena fuente de agua.',
+      },
+      {
+        lat: -41.1400,
+        lon: -71.5050,
+        name: 'Brecha Negra (~1900 m)',
+        description: 'Portezuelo de roca oscura con pendiente fuerte y terreno suelto; en ocasiones se usan las manos. No cruzar con nieve, hielo o mal tiempo.',
       },
       {
         lat: -41.1267,
         lon: -71.5117,
-        name: 'Refugio San Martín / Jakob (2000 m)',
-        description: 'Refugio remoto en un circo glaciar. Punto de reabastecimiento y, para los que alargan la travesía, noche 2 opcional.',
+        name: 'Refugio San Martín / Jakob (1600 m)',
+        description: 'Refugio del CAB junto a la laguna Jakob. Noche 2 recomendada antes de la bajada por el valle del Casa de Piedra.',
       },
       {
         lat: -41.0567,
         lon: -71.5867,
-        name: 'Colonia Suiza (final, 830 m)',
-        description: 'Fin de la travesía en la histórica colonia de inmigrantes suizos. Restaurante con curanto al hoyo los fines de semana. Taxi o bus de regreso a Bariloche.',
+        name: 'Tambo Báez / Colonia Suiza (final)',
+        description: 'Fin de la bajada por el valle del arroyo Casa de Piedra, sobre la Ruta 79. Bus o taxi de regreso a Bariloche; curanto en Colonia Suiza los fines de semana.',
       },
     ],
-    parking: 'Dejar el vehículo en la base de Cerro Catedral (pago por días). Al finalizar en Colonia Suiza, tomar bus o taxi de regreso a Catedral.',
-    access_notes: 'Inicio en Cerro Catedral (Ruta 82, 18 km desde Bariloche). Fin en Colonia Suiza sobre la Ruta 79 (bus línea 10 de regreso al centro). La logística de dos puntos distintos debe planificarse con antelación.',
-    water_sources: 'Abundante durante toda la travesía. Laguna Schmoll en Frey, arroyos en el paso y múltiples fuentes en el descenso a Colonia Suiza.',
+    parking: 'Dejar el vehículo en la base de Cerro Catedral (pago por días). Al finalizar en Tambo Báez / Colonia Suiza, tomar bus o taxi de regreso.',
+    access_notes: 'Inicio en Cerro Catedral (Ruta 82, 18 km desde Bariloche). Fin en Tambo Báez, sobre la Ruta 79 camino a Colonia Suiza (bus línea 10 de regreso al centro). La logística de dos puntos distintos debe planificarse con antelación.',
+    water_sources: 'Abundante durante toda la travesía: lagunas Toncek y Schmoll, arroyo Rucaco en el valle y arroyo Casa de Piedra en la bajada.',
     camping_allowed: true,
     refugio: 'Refugio Frey (CAB)',
     round_trip: false,
@@ -1024,77 +1018,73 @@ El regreso al pueblo coincide habitualmente con la hora del curanto, el tradicio
     activity: 'trekking',
     difficulty: 'facil',
     distance_km: 14,
-    elevation_gain_m: 300,
-    max_altitude_m: 900,
-    duration: { min: 4, max: 5, unit: 'horas' },
-    coordinates: { lat: -41.2150, lon: -71.4050 },
+    elevation_gain_m: 150,
+    max_altitude_m: 850,
+    duration: { min: 3, max: 5, unit: 'horas' },
+    coordinates: { lat: -41.1660, lon: -71.4120 },
     photo_uri:
       'https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=800&q=80&fit=crop&auto=format',
     tags: ['lago', 'costa', 'natación', 'bosque', 'tranquilo', 'familia', 'menos concurrido'],
     permits_required: false,
     best_season: 'Oct – Abr',
     description:
-      'Sendero por la costa sur del lago Gutiérrez, bordeando el lago a través de bosque nativo con posibilidades de natación. Mucho menos concurrido que otras rutas de Bariloche.',
-    trailhead: 'Camping Petunia, costado sur del lago Gutiérrez',
+      'Sendero costero por la orilla oeste del lago Gutiérrez, desde la seccional de guardaparques de Villa Los Coihues hasta Playa Muñoz, a través de bosque nativo con playas aptas para baño. Mucho menos concurrido que otras rutas de Bariloche.',
+    trailhead: 'Seccional de Guardaparques Lago Gutiérrez, Villa Los Coihues',
     source: 'barilochetrekking.com',
-    long_description: `El lago Gutiérrez es el segundo lago más grande en el entorno inmediato de Bariloche, apenas 8 km al sur de la ciudad, y su costa sur está atravesada por un sendero forestal que es quizás el mejor secreto de la región para quienes buscan un trekking tranquilo en un entorno natural pristino sin multitudes. Mientras las rutas del Catedral se llenan de caminantes, la orilla del Gutiérrez permanece silenciosa incluso en pleno enero.
+    long_description: `El lago Gutiérrez es el lago más cercano a Bariloche, apenas 10 km al sur de la ciudad, y su orilla oeste está recorrida por un sendero costero que es quizás el mejor secreto de la región para quienes buscan un trekking tranquilo en un entorno natural prístino sin multitudes. Mientras las rutas del Catedral se llenan de caminantes, la orilla del Gutiérrez permanece silenciosa incluso en pleno enero.
 
-El sendero parte del Camping Petunia y sigue la costa del lago con algunos suaves ascensos y descensos que suponen pocas veces más de 50 metros de desnivel. El bosque de coihue y ciprés de la cordillera (Austrocedrus chilensis) que acompaña la mayor parte de la ruta es uno de los más tranquilos y aromáticos de la zona: el olor a resina de ciprés, especialmente en los tramos soleados, tiene algo de medicinal que relaja el paso y ralentiza la marcha de manera casi involuntaria.
+El sendero parte de la seccional de guardaparques de Villa Los Coihues, en el extremo norte del lago, y sigue la costa oeste hacia el sur con suaves ascensos y descensos que pocas veces superan los 50 metros de desnivel. El bosque de coihue y ciprés de la cordillera (Austrocedrus chilensis) que acompaña la mayor parte de la ruta es uno de los más tranquilos y aromáticos de la zona: el olor a resina de ciprés, especialmente en los tramos soleados, tiene algo de medicinal que relaja el paso y ralentiza la marcha de manera casi involuntaria.
 
 El lago Gutiérrez destaca por la extraordinaria claridad de sus aguas en la orilla pedregosa. El color varía entre el turquesa profundo en los sectores de mayor profundidad y el verde claro en las playas de guijarros donde el fondo se ve hasta 6-7 metros de profundidad. En el verano patagónico las temperaturas del agua alcanzan los 18-20 °C en las zonas someras, lo que convierte cualquier playa del sendero en un lugar idóneo para un baño revitalizante a mitad de ruta.
 
-La Playa Muñoz, al final del tramo de ida, es una pequeña bahía de piedras blancas con vistas al Cerro Catedral al norte. El silencio aquí es notable. En el entorno se ven carpinchos en los cañaverales de la orilla baja, y los martín pescadores patrullan el litoral con sus vuelos rasantes sobre el agua. El regreso por la misma ruta al atardecer ofrece la luz más cálida del día sobre el espejo del lago.`,
+La Playa Muñoz, al final del tramo de ida (~7 km, 1:30-2 h), es una playa de piedras claras con vistas al macizo del Catedral. El silencio aquí es notable. En el entorno se ven bandurrias y cauquenes en las orillas bajas, y los martín pescadores patrullan el litoral con sus vuelos rasantes sobre el agua. El regreso por la misma ruta al atardecer ofrece la luz más cálida del día sobre el espejo del lago.`,
     gpxTrack: [
-      { lat: -41.2150, lon: -71.4050, ele: 770 },
-      { lat: -41.2175, lon: -71.4027, ele: 790 },
-      { lat: -41.2200, lon: -71.4010, ele: 810 },
-      { lat: -41.2225, lon: -71.3998, ele: 830 },
-      { lat: -41.2250, lon: -71.3992, ele: 850 },
-      { lat: -41.2275, lon: -71.3990, ele: 865 },
-      { lat: -41.2300, lon: -71.3988, ele: 875 },
-      { lat: -41.2325, lon: -71.3987, ele: 885 },
-      { lat: -41.2350, lon: -71.3987, ele: 892 },
-      { lat: -41.2375, lon: -71.3985, ele: 898 },
-      { lat: -41.2400, lon: -71.3983, ele: 900 },
-      { lat: -41.2425, lon: -71.3982, ele: 895 },
-      { lat: -41.2450, lon: -71.3983, ele: 780 },
+      { lat: -41.1660, lon: -71.4120, ele: 800 },
+      { lat: -41.1700, lon: -71.4150, ele: 810 },
+      { lat: -41.1740, lon: -71.4180, ele: 820 },
+      { lat: -41.1780, lon: -71.4210, ele: 830 },
+      { lat: -41.1820, lon: -71.4230, ele: 840 },
+      { lat: -41.1860, lon: -71.4250, ele: 830 },
+      { lat: -41.1900, lon: -71.4265, ele: 840 },
+      { lat: -41.1935, lon: -71.4278, ele: 850 },
+      { lat: -41.1960, lon: -71.4285, ele: 820 },
     ],
     namedWaypoints: [
       {
-        lat: -41.2150,
-        lon: -71.4050,
-        name: 'Camping Petunia',
-        description: 'Punto de partida con baños y zona de acampe. Buena base para la noche anterior al trekking.',
+        lat: -41.1660,
+        lon: -71.4120,
+        name: 'Seccional Guardaparques Lago Gutiérrez',
+        description: 'Punto de partida en Villa Los Coihues, extremo norte del lago. Cartelería del parque y registro.',
       },
       {
-        lat: -41.2225,
-        lon: -71.3998,
-        name: 'Primera playa de piedras',
-        description: 'Playa pedregosa con aguas cristalinas aptas para baño en verano. Vista al Cerro Catedral al norte.',
+        lat: -41.1700,
+        lon: -71.4150,
+        name: 'Desvío a la Cascada de los Duendes',
+        description: 'A pocos minutos del inicio, senda corta autoguiada a la cascada sobre el arroyo Pescadero.',
       },
       {
-        lat: -41.2300,
-        lon: -71.3988,
+        lat: -41.1780,
+        lon: -71.4210,
+        name: 'Mirador del lago',
+        description: 'Balcón natural con vistas al lago Gutiérrez y al macizo del Catedral.',
+      },
+      {
+        lat: -41.1860,
+        lon: -71.4250,
         name: 'Bosque de cipreses cordilleranos',
         description: 'Tramo más aromático del sendero con cipreses de la cordillera maduros. Aroma resinoso característico.',
       },
       {
-        lat: -41.2375,
-        lon: -71.3985,
-        name: 'Bahía de los carpinchos',
-        description: 'Zona de cañaverales donde es frecuente ver carpinchos al amanecer y al atardecer.',
-      },
-      {
-        lat: -41.2450,
-        lon: -71.3983,
+        lat: -41.1960,
+        lon: -71.4285,
         name: 'Playa Muñoz',
-        description: 'Bahía de piedras blancas, fin del sendero. Silencio total, martín pescadores y vistas al Catedral.',
+        description: 'Playa de piedras claras y aguas transparentes, fin del recorrido (~7 km desde la seccional, 1:30-2 h). Apta para baño en verano.',
       },
     ],
-    parking: 'Estacionamiento en el Camping Petunia (pago). También se puede acceder desde el centro en bicicleta por la Av. Bustillo.',
-    access_notes: 'Desde Bariloche tomar la Av. Bustillo hacia el sudeste hasta el Camping Petunia (8 km, 12 min). Bus línea 50 desde la Terminal hasta las proximidades.',
-    water_sources: 'El lago Gutiérrez tiene agua limpia disponible en toda la orilla (potable con purificación). Ideal llevar botella y tabletas purificadoras.',
-    camping_allowed: true,
+    parking: 'Estacionamiento en Villa Los Coihues, cerca de la seccional de guardaparques.',
+    access_notes: 'Desde Bariloche tomar la Ruta 82 hacia el lago Gutiérrez y el acceso a Villa Los Coihues (10 km, 15 min). Bus línea 50 desde el centro hasta Villa Los Coihues.',
+    water_sources: 'El lago Gutiérrez tiene agua limpia disponible en toda la orilla (potable con purificación) y el arroyo Pescadero al inicio. Ideal llevar botella y tabletas purificadoras.',
+    camping_allowed: false,
     round_trip: true,
   },
 
@@ -1103,88 +1093,68 @@ La Playa Muñoz, al final del tramo de ida, es una pequeña bahía de piedras bl
   // -------------------------------------------------------------------------
   {
     id: 'cerro-san-martin',
-    name: 'Cerro San Martín desde Llao Llao',
+    name: 'Cerro San Martín (La Vieja)',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
-    subarea: 'Llao Llao',
+    subarea: 'Bariloche',
     region: 'patagonia-norte',
     activity: 'trekking',
-    difficulty: 'moderado',
-    distance_km: 16,
-    elevation_gain_m: 820,
-    max_altitude_m: 1621,
-    duration: { min: 6, max: 7, unit: 'horas' },
-    coordinates: { lat: -41.0417, lon: -71.5483 },
+    difficulty: 'facil',
+    distance_km: 7,
+    elevation_gain_m: 280,
+    max_altitude_m: 1275,
+    duration: { min: 2, max: 4, unit: 'horas' },
+    coordinates: { lat: -41.1520, lon: -71.4380 },
     photo_uri:
       'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
-    tags: ['Llao Llao', 'cima', 'alternativa tranquila', 'bosque', 'vistas Andinas', 'menos concurrido'],
+    tags: ['mirador', 'lago Gutiérrez', 'Catedral', 'apto familias', 'medio día', 'menos concurrido'],
     permits_required: false,
-    best_season: 'Nov – Abr',
+    best_season: 'Todo el año',
     description:
-      'Ascenso al Cerro San Martín (1621 m) desde la península de Llao Llao. Alternativa más tranquila al Campanario o al López, con vistas únicas desde el reverso de la península.',
-    trailhead: 'Villa Llao Llao, a 500 m del Hotel Llao Llao',
+      'Ascenso corto al Cerro San Martín (1275 m), conocido localmente como La Vieja, frente al macizo del Catedral. Excelente mirador del lago Gutiérrez con poco esfuerzo, ideal para medio día.',
+    trailhead: 'Camino a Villa Catedral (Ruta 82), desvío señalizado',
     source: 'barilochetrekking.com',
-    long_description: `El Cerro San Martín es la cumbre discreta de la península de Llao Llao, eclipsada en popularidad por el Campanario pero comparable en recompensa paisajística. Su ascenso desde la Villa Llao Llao pasa por el reverso de la famosa península y ofrece perspectivas del lago Nahuel Huapi, el lago Moreno y el lago Escondido que difieren completamente de las obtenidas desde los miradores clásicos, ya que el observador se sitúa en el interior del macizo en lugar de en su periferia.
+    long_description: `El Cerro San Martín —que los barilochenses llaman La Vieja— es la cumbre baja que se levanta frente al macizo del Catedral, sobre la cabecera norte del lago Gutiérrez. Es una de las mejores relaciones esfuerzo-vista de todo el entorno de Bariloche: con apenas 280 metros de desnivel y 7 km ida y vuelta se obtiene un balcón privilegiado sobre el lago Gutiérrez, el cordón del Catedral y el cerro Ventana.
 
-El sendero arranca desde la Villa Llao Llao, una pequeña comunidad de casas de madera y piedra que existe en las sombras del célebre hotel homónimo, y asciende de inmediato por un bosque mixto de coihue y arrayán donde la mezcla de texturas de corteza —gris rugosa del coihue, naranja lisa del arrayán— crea un efecto visual sorprendente. En los primeros 2 km la inclinación es suave y el sendero bien marcado; es una buena zona para calentar músculos antes de la parte más empinada.
+El acceso parte del camino a Villa Catedral (Ruta 82) y sigue un viejo camino vehicular hoy cerrado al tránsito de autos, que suben solo caminantes y ciclistas de montaña. La pendiente es amable y constante, entre bosque bajo de ciprés de la cordillera y maitenes, con claros que van abriendo vistas parciales a medida que se gana altura. Existen además picadas más directas y empinadas para quien prefiera un ascenso más deportivo.
 
-A partir del km 3 la pendiente aumenta y el sendero se aleja de la línea arbórea baja ascendiendo por laderas abiertas con arbustos de chaura y notro. En la época de floración del notro (diciembre–enero) las flores rojas brillantes salpican el paisaje con un color que contrasta con el verde apagado de la vegetación dominante. La segunda mitad del ascenso transcurre sobre sendero de tierra compacta entre rocas, con algunos tramos en que el camino se estrecha y la vegetación se cierra a ambos lados.
+La cumbre es amplia y despejada. Hacia el sur, el lago Gutiérrez se despliega completo con sus playas y bahías; al oeste, la mole del Catedral con sus antenas y pistas; al norte, la ciudad de Bariloche y el Nahuel Huapi; al este, el perfil rocoso del cerro Ventana y la transición hacia la estepa. Al atardecer la luz baja sobre el Gutiérrez convierte la caminata de bajada en un espectáculo.
 
-Desde la cima del Cerro San Martín (1621 m) la vista es realmente amplia: al norte el lago Nahuel Huapi con sus brazos y penínsulas; al este Bariloche y sus cerros traseros; al sur el lago Moreno y, en días claros, el lago Escondido; al oeste el Cerro López y más lejos los nevados de la cordillera. El silencio aquí es notable comparado con los miradores turísticos más concurridos: en este cerro es habitual no encontrar a nadie más.`,
+Por su corta duración y baja exigencia es una salida ideal para familias, para el día de llegada a Bariloche o para tardes de otoño e invierno: con nieve el camino se transforma en una caminata invernal sencilla (con el calzado adecuado). No hay agua en el recorrido, así que conviene llevar botella propia.`,
     gpxTrack: [
-      { lat: -41.0417, lon: -71.5483, ele: 800 },
-      { lat: -41.0428, lon: -71.5455, ele: 850 },
-      { lat: -41.0440, lon: -71.5425, ele: 905 },
-      { lat: -41.0452, lon: -71.5393, ele: 960 },
-      { lat: -41.0462, lon: -71.5360, ele: 1015 },
-      { lat: -41.0470, lon: -71.5325, ele: 1075 },
-      { lat: -41.0477, lon: -71.5290, ele: 1130 },
-      { lat: -41.0480, lon: -71.5253, ele: 1185 },
-      { lat: -41.0482, lon: -71.5215, ele: 1240 },
-      { lat: -41.0482, lon: -71.5177, ele: 1300 },
-      { lat: -41.0478, lon: -71.5137, ele: 1360 },
-      { lat: -41.0467, lon: -71.5095, ele: 1420 },
-      { lat: -41.0450, lon: -71.5055, ele: 1480 },
-      { lat: -41.0430, lon: -71.5022, ele: 1545 },
-      { lat: -41.0410, lon: -71.5003, ele: 1590 },
-      { lat: -41.0390, lon: -71.5000, ele: 1610 },
-      { lat: -41.0717, lon: -71.5000, ele: 1621 },
+      { lat: -41.1520, lon: -71.4380, ele: 995 },
+      { lat: -41.1535, lon: -71.4400, ele: 1030 },
+      { lat: -41.1550, lon: -71.4420, ele: 1065 },
+      { lat: -41.1565, lon: -71.4440, ele: 1100 },
+      { lat: -41.1580, lon: -71.4460, ele: 1140 },
+      { lat: -41.1595, lon: -71.4478, ele: 1180 },
+      { lat: -41.1610, lon: -71.4494, ele: 1220 },
+      { lat: -41.1622, lon: -71.4506, ele: 1250 },
+      { lat: -41.1632, lon: -71.4515, ele: 1275 },
     ],
     namedWaypoints: [
       {
-        lat: -41.0417,
-        lon: -71.5483,
-        name: 'Villa Llao Llao',
-        description: 'Inicio del sendero en la pequeña villa residencial junto al famoso hotel. Cartel de inicio del sendero en calle principal.',
+        lat: -41.1520,
+        lon: -71.4380,
+        name: 'Desvío del camino a Villa Catedral',
+        description: 'Inicio del viejo camino vehicular, cerrado al tránsito de autos. Cartel indicador.',
       },
       {
-        lat: -41.0452,
-        lon: -71.5393,
-        name: 'Bosque de arrayanes y coihues',
-        description: 'Zona mixta de arrayán y coihue. Cortezas de naranja y gris se alternan. Muy fotogénico en las primeras horas.',
+        lat: -41.1580,
+        lon: -71.4460,
+        name: 'Bosque de cipreses y maitenes',
+        description: 'Subida amable con claros que abren vistas parciales al lago Gutiérrez y al Catedral.',
       },
       {
-        lat: -41.0477,
-        lon: -71.5290,
-        name: 'Ladera de notros',
-        description: 'Arbustos de notro en flor (diciembre–enero). Flores rojas llamativas sobre ladera abierta con vistas nacientes al lago.',
-      },
-      {
-        lat: -41.0450,
-        lon: -71.5055,
-        name: 'Cresta previa a la cima',
-        description: 'La ruta se afina sobre una cresta con exposición a ambos lados. Viento frecuente; precaución.',
-      },
-      {
-        lat: -41.0717,
-        lon: -71.5000,
-        name: 'Cima Cerro San Martín (1621 m)',
-        description: 'Cumbre silenciosa con panorámica completa. Lagos Nahuel Huapi, Moreno y Escondido visibles. Sin multitudes.',
+        lat: -41.1632,
+        lon: -71.4515,
+        name: 'Cumbre Cerro San Martín / La Vieja (1275 m)',
+        description: 'Balcón sobre el lago Gutiérrez, el Catedral, el cerro Ventana y la ciudad de Bariloche.',
       },
     ],
-    parking: 'Estacionamiento informal en Villa Llao Llao (calle principal). También se puede llegar en bus (línea 20) desde Bariloche y comenzar desde allí.',
-    access_notes: 'Desde Bariloche por Ruta 77 circuito chico/grande hasta Llao Llao (25 km, 30 min). Villa Llao Llao está a 500 m del hotel. Bus línea 20.',
-    water_sources: 'Un arroyo al inicio del sendero (km 1). No hay agua en la parte alta; llevar suficiente para el día completo.',
+    parking: 'Espacio para estacionar en el desvío sobre el camino a Villa Catedral (Ruta 82).',
+    access_notes: 'Desde Bariloche tomar la Ruta 82 hacia Villa Catedral; el desvío señalizado está a unos 15 km del centro (20 min en auto). En bus: línea 55 hacia Catedral, bajarse en el desvío.',
+    water_sources: 'No hay fuentes de agua en el recorrido. Llevar agua propia.',
     camping_allowed: false,
     round_trip: true,
   },
@@ -1194,86 +1164,78 @@ Desde la cima del Cerro San Martín (1621 m) la vista es realmente amplia: al no
   // -------------------------------------------------------------------------
   {
     id: 'refugio-jakob',
-    name: 'Refugio Jakob desde Colonia Suiza',
+    name: 'Refugio Jakob (San Martín) desde Tambo Báez',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
     subarea: 'Bariloche',
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'dificil',
-    distance_km: 20,
-    elevation_gain_m: 1170,
-    max_altitude_m: 2000,
-    duration: { min: 7, max: 9, unit: 'horas' },
-    coordinates: { lat: -41.0567, lon: -71.5867 },
+    distance_km: 27,
+    elevation_gain_m: 850,
+    max_altitude_m: 1600,
+    duration: { min: 9, max: 12, unit: 'horas' },
+    coordinates: { lat: -41.0700, lon: -71.5350 },
     photo_uri:
       'https://images.unsplash.com/photo-1482685945432-29a7abf2f466?w=800&q=80&fit=crop&auto=format',
     tags: ['refugio', 'alta montaña', 'circo glaciar', 'traversía', 'solitario', 'Jakob'],
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
-      'Ascenso al Refugio San Martín (Jakob) desde Colonia Suiza, en el límite de los 2000 m. Punto de inicio de la travesía Jakob–Frey y acceso al backcountry de Bariloche.',
-    trailhead: 'Colonia Suiza, sobre la Ruta 79',
+      'Larga caminata por el valle del arroyo Casa de Piedra desde Tambo Báez hasta el Refugio San Martín (Jakob, 1600 m), a orillas de la laguna Jakob. Unos 13-14 km por tramo; muchos lo hacen con noche en el refugio.',
+    trailhead: 'Tambo Báez, Ruta 79 (camino a Colonia Suiza)',
     source: 'barilochetrekking.com',
-    long_description: `El Refugio San Martín, universalmente conocido como Refugio Jakob en honor al explorador alemán que cartografió la zona a principios del siglo XX, es el refugio más remoto y elevado de los administrados por el Club Andino Bariloche en el entorno de Bariloche. Su acceso desde Colonia Suiza es la ruta más directa y también la más exigente desde el fondo del valle, sumando 1170 metros de desnivel en un trayecto de 10 kilómetros de ida.
+    long_description: `El Refugio San Martín, universalmente conocido como Refugio Jakob, es uno de los refugios más remotos del Club Andino Bariloche en el entorno inmediato de la ciudad, y su valle de acceso —el del arroyo Casa de Piedra— uno de los más hermosos. La ruta clásica parte de Tambo Báez, un establecimiento privado sobre la Ruta 79 poco antes de Colonia Suiza donde se abona un ingreso simbólico, y remonta el valle en unos 13-14 kilómetros de ida con un desnivel total moderado pero una longitud que exige buen estado físico.
 
-El sendero parte del centro de Colonia Suiza y asciende hacia el este por el flanco del cordón Frey, penetrando en un bosque de coihue viejo que se hace más espeso y oscuro a medida que el desnivel aumenta. El suelo es esponjoso y el sendero a veces lleva agua en los tramos de descarga de arroyos laterales. Durante la primera hora el rumor del arroyo del Casero —que desciende desde el glaciar hasta la colonia— acompaña casi constantemente el camino.
+La primera mitad del recorrido es amable: el sendero acompaña al arroyo Casa de Piedra por un bosque de coihues alto, con pendiente suave y varios accesos al agua. El rumor del arroyo es constante y en los claros se asoman las paredes del cordón que separa este valle del circo del Frey. Es un tramo para caminar a ritmo sostenido sin quemar energía.
 
-A los 5-6 km el bosque se aclara y el paisaje se transforma de manera radical: los circos glaciares comienzan a hacerse visibles, las paredes de roca gris asoman por encima de los últimos árboles, y el silencio —que el bosque amortigua eficazmente— aparece de golpe en toda su intensidad de alta montaña. El sendero se vuelve más técnico en este tramo, con varios pasos entre bloques de roca y cruces de arroyos de deshielo que pueden tener caudal significativo en enero y febrero.
+En la segunda mitad el valle se empina: aparecen los escalones glaciares, el bosque se achaparra y el sendero gana altura en tramos de zigzag, con algún paso de roca donde apoyar las manos. Los cruces de arroyos de deshielo pueden llevar buen caudal en noviembre y diciembre. El último escalón deposita al caminante en el borde del circo, y la laguna Jakob aparece de golpe: azul intensa, encajonada entre paredes, con el refugio de piedra en su orilla.
 
-El Refugio Jakob aparece en el fondo de un circo glaciar espectacular: paredes que suben 600-700 metros sobre el refugio, pequeños lagos de altura de color azul intenso en los llanos glaciares, y una quietud que hace que la llegada al refugio sea una de las experiencias más memorables del trekking patagónico. El refugio es el punto de partida para el cruce al Refugio Frey por el Paso de las Nubes, una de las travesías más clásicas de la región andino-patagónica.`,
+El Refugio Jakob (1600 m), reconstruido y reinaugurado en años recientes, ofrece comidas, literas y zona de acampe. Por la longitud total (unos 27 km ida y vuelta) la mayoría pernocta y baja al día siguiente. Para quienes buscan más, desde el refugio salen la subida corta a la laguna de los Témpanos superior del circo, el cruce a la Laguna Negra por el filo (solo expertos, con buen tiempo) y la clásica travesía a Frey por la Brecha Negra en sentido inverso.`,
     gpxTrack: [
-      { lat: -41.0567, lon: -71.5867, ele: 830 },
-      { lat: -41.0617, lon: -71.5800, ele: 900 },
-      { lat: -41.0667, lon: -71.5733, ele: 980 },
-      { lat: -41.0717, lon: -71.5667, ele: 1060 },
-      { lat: -41.0767, lon: -71.5600, ele: 1140 },
-      { lat: -41.0817, lon: -71.5533, ele: 1220 },
-      { lat: -41.0867, lon: -71.5467, ele: 1300 },
-      { lat: -41.0917, lon: -71.5400, ele: 1380 },
-      { lat: -41.0967, lon: -71.5333, ele: 1460 },
-      { lat: -41.1017, lon: -71.5267, ele: 1540 },
-      { lat: -41.1067, lon: -71.5217, ele: 1620 },
-      { lat: -41.1117, lon: -71.5175, ele: 1700 },
-      { lat: -41.1167, lon: -71.5150, ele: 1790 },
-      { lat: -41.1217, lon: -71.5133, ele: 1870 },
-      { lat: -41.1267, lon: -71.5117, ele: 2000 },
+      { lat: -41.0700, lon: -71.5350, ele: 900 },
+      { lat: -41.0760, lon: -71.5330, ele: 930 },
+      { lat: -41.0820, lon: -71.5315, ele: 960 },
+      { lat: -41.0880, lon: -71.5300, ele: 990 },
+      { lat: -41.0940, lon: -71.5290, ele: 1020 },
+      { lat: -41.1000, lon: -71.5280, ele: 1060 },
+      { lat: -41.1060, lon: -71.5270, ele: 1100 },
+      { lat: -41.1120, lon: -71.5255, ele: 1150 },
+      { lat: -41.1170, lon: -71.5240, ele: 1210 },
+      { lat: -41.1210, lon: -71.5220, ele: 1290 },
+      { lat: -41.1240, lon: -71.5190, ele: 1380 },
+      { lat: -41.1260, lon: -71.5160, ele: 1480 },
+      { lat: -41.1267, lon: -71.5117, ele: 1600 },
     ],
     namedWaypoints: [
       {
-        lat: -41.0567,
-        lon: -71.5867,
-        name: 'Colonia Suiza',
-        description: 'Inicio del sendero. Restaurantes, baños y transporte disponibles. Señalización clara al comienzo.',
+        lat: -41.0700,
+        lon: -71.5350,
+        name: 'Tambo Báez (900 m)',
+        description: 'Inicio del sendero en un establecimiento privado sobre la Ruta 79 (ingreso simbólico). Estacionamiento disponible.',
       },
       {
-        lat: -41.0717,
-        lon: -71.5667,
-        name: 'Arroyo del Casero',
-        description: 'Cruce del arroyo principal que baja del glaciar de Jakob. Buena fuente de agua.',
+        lat: -41.0940,
+        lon: -71.5290,
+        name: 'Valle del arroyo Casa de Piedra',
+        description: 'Tramo largo y amable de bosque de coihues junto al arroyo. Varias fuentes de agua.',
       },
       {
-        lat: -41.0917,
-        lon: -71.5400,
-        name: 'Salida del bosque de coihue',
-        description: 'El bosque se adelgaza y aparecen los primeros circos glaciares. El sendero se vuelve más técnico.',
-      },
-      {
-        lat: -41.1117,
-        lon: -71.5175,
-        name: 'Pasos entre bloques de roca',
-        description: 'Sector más técnico del ascenso. Manos necesarias en dos o tres pasos. Arroyos de deshielo frecuentes.',
+        lat: -41.1210,
+        lon: -71.5220,
+        name: 'Escalones glaciares',
+        description: 'El valle se empina en zigzags con algún paso de roca. Cruces de arroyos con caudal en el deshielo.',
       },
       {
         lat: -41.1267,
         lon: -71.5117,
-        name: 'Refugio San Martín / Jakob (2000 m)',
-        description: 'Refugio en circo glaciar con vistas espectaculares. Inicio de la travesía al Refugio Frey. Reserva obligatoria en temporada.',
+        name: 'Refugio San Martín / Jakob (1600 m)',
+        description: 'Refugio del CAB a orillas de la laguna Jakob, en circo glaciar. Comidas, literas y acampe. Reserva en temporada.',
       },
     ],
-    parking: 'Estacionamiento en Colonia Suiza (gratuito). Si se pernocta en el refugio, el auto puede quedar sin problema hasta el día siguiente.',
-    access_notes: 'Desde Bariloche por Ruta 79 oeste hasta Colonia Suiza (22 km, 30 min en auto). Bus línea 10 con servicio frecuente desde la Terminal de Bariloche.',
-    water_sources: 'Arroyo del Casero y múltiples afluentes durante el ascenso. Agua abundante y de buena calidad (purificar igualmente). El refugio tiene agua disponible.',
+    parking: 'Estacionamiento en Tambo Báez (privado, ingreso simbólico). Si se pernocta en el refugio, el auto puede quedar hasta el día siguiente.',
+    access_notes: 'Desde Bariloche por Av. Bustillo y Ruta 79 hacia Colonia Suiza; Tambo Báez está señalizado sobre la ruta, unos 6 km antes de la colonia (25 km, 35 min en auto). Bus línea 10 hasta las cercanías.',
+    water_sources: 'Arroyo Casa de Piedra y múltiples afluentes durante el ascenso. Agua abundante y de buena calidad (purificar igualmente). El refugio tiene agua disponible.',
     camping_allowed: true,
     refugio: 'Refugio San Martín / Jakob (CAB)',
     round_trip: true,
@@ -1284,84 +1246,311 @@ El Refugio Jakob aparece en el fondo de un circo glaciar espectacular: paredes q
   // -------------------------------------------------------------------------
   {
     id: 'laguna-ilon',
-    name: 'Laguna Ilón',
+    name: 'Laguna Ilón desde Pampa Linda',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Pampa Linda',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 16,
+    elevation_gain_m: 550,
+    max_altitude_m: 1350,
+    duration: { min: 7, max: 9, unit: 'horas' },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1540390769625-2fc3f8b1d50c?w=800&q=80&fit=crop&auto=format',
+    tags: ['laguna', 'lengas', 'Mirada del Doctor', 'Mascardi', 'acampe', 'refugio'],
+    permits_required: false,
+    best_season: 'Dic – Abr',
+    description:
+      'Sendero desde Pampa Linda a la Laguna Ilón por la Mirada del Doctor: subida sostenida al principio y un largo tramo llano entre lengas, con el balcón sobre el lago Mascardi como premio intermedio. Refugio y zona de acampe en la laguna.',
+    trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `La Laguna Ilón es uno de los destinos más armoniosos del sector Tronador: una laguna de montaña rodeada de lengas y pastizales de altura, con un refugio pequeño y una zona de acampe que la convierten en base ideal para explorar el corazón del parque. La ruta desde Pampa Linda toma 4 a 5 horas de ida y concentra su esfuerzo al principio: una subida sostenida en zigzag que gana la mayor parte de los 550 metros de desnivel.
+
+El premio intermedio de esa subida es la Mirada del Doctor, un balcón natural sobre el brazo Tronador del lago Mascardi: el agua turquesa lechosa —teñida por el sedimento glaciar del río Manso— serpentea entre laderas boscosas cientos de metros más abajo, en una de las vistas más fotografiadas del sector. Es parada obligada para recuperar el aliento.
+
+Superada la subida, el sendero se vuelve un paseo: un largo tramo casi llano por bosque de lengas altas, con claros de pastizal y cruces de arroyos menores. La llegada a la laguna es suave, sin el dramatismo de los circos de granito de Catedral, pero con una serenidad propia: la Laguna Ilón (~1350 m) descansa entre lomadas verdes con el pico Bonete asomando detrás.
+
+En la laguna funcionan en temporada un refugio pequeño y una zona de acampe. Pernoctar permite continuar al día siguiente hacia el mirador del Cerro Bonete o enlazar la travesía hacia el Refugio Agostino Rocca por Paso de las Nubes. Atención a la logística del camino a Pampa Linda: funciona con horarios de mano única (subida por la mañana, bajada por la tarde), lo que condiciona los horarios de inicio y regreso.`,
+    gpxTrack: [
+      { lat: -41.2535, lon: -71.7755, ele: 890 },
+      { lat: -41.2570, lon: -71.7740, ele: 950 },
+      { lat: -41.2610, lon: -71.7730, ele: 1030 },
+      { lat: -41.2650, lon: -71.7725, ele: 1110 },
+      { lat: -41.2690, lon: -71.7725, ele: 1190 },
+      { lat: -41.2725, lon: -71.7730, ele: 1250 },
+      { lat: -41.2760, lon: -71.7740, ele: 1290 },
+      { lat: -41.2800, lon: -71.7755, ele: 1310 },
+      { lat: -41.2840, lon: -71.7775, ele: 1330 },
+      { lat: -41.2875, lon: -71.7795, ele: 1345 },
+      { lat: -41.2900, lon: -71.7810, ele: 1350 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda (890 m)',
+        description: 'Punto de partida con guardaparques, hostería y estacionamiento. Registro de trekking obligatorio.',
+      },
+      {
+        lat: -41.2650,
+        lon: -71.7725,
+        name: 'Zigzags de la subida',
+        description: 'Tramo de mayor esfuerzo: subida sostenida en zigzag que concentra casi todo el desnivel de la ruta.',
+      },
+      {
+        lat: -41.2725,
+        lon: -71.7730,
+        name: 'Mirada del Doctor (~1250 m)',
+        description: 'Balcón sobre el brazo Tronador del lago Mascardi, de aguas turquesa lechosas. Parada obligada.',
+      },
+      {
+        lat: -41.2840,
+        lon: -71.7775,
+        name: 'Bosque de lengas',
+        description: 'Largo tramo casi llano entre lengas altas y claros de pastizal. Cruces de arroyos menores.',
+      },
+      {
+        lat: -41.2900,
+        lon: -71.7810,
+        name: 'Laguna Ilón (~1350 m)',
+        description: 'Laguna entre lomadas verdes con refugio pequeño y zona de acampe en temporada. Base para el Cerro Bonete y la travesía al Refugio Rocca.',
+      },
+    ],
+    parking: 'Estacionamiento en Pampa Linda. El camino de acceso funciona con horarios de mano única; planificar ida y vuelta.',
+    access_notes: 'Desde Bariloche por Ruta 40 sur hasta el desvío de Villa Mascardi y camino de ripio a Pampa Linda (90 km, 2 h). Consultar horarios de mano única del camino antes de ir.',
+    water_sources: 'Arroyos menores a lo largo del tramo alto y la laguna al final. Purificar antes de consumir.',
+    camping_allowed: true,
+    refugio: 'Refugio Ilón',
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // 16. Refugio Otto Meiling (Pampa Linda)
+  // -------------------------------------------------------------------------
+  {
+    id: 'refugio-otto-meiling',
+    name: 'Refugio Otto Meiling — Cerro Tronador',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Pampa Linda',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 27,
+    elevation_gain_m: 1100,
+    max_altitude_m: 2000,
+    duration: { min: 8, max: 10, unit: 'horas' },
+    coordinates: { lat: -41.1920, lon: -71.8280 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80&fit=crop&auto=format',
+    tags: ['refugio', 'glaciares', 'Tronador', 'filo', 'alta montaña', 'clásico Bariloche'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso desde Pampa Linda al Refugio Otto Meiling (2000 m), sobre el filo entre los glaciares Castaño Overa y Alerce del Tronador. Unos 13-14 km y 1000-1050 m de desnivel por tramo; la mayoría pernocta en el refugio.',
+    trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Otto Meiling es el refugio de alta montaña por excelencia del Tronador y una de las excursiones más espectaculares de toda la Patagonia norte: se duerme a 2000 metros, sobre un filo rocoso encajado entre dos glaciares, con el macizo de tres cumbres rugiendo desprendimientos de hielo a lo largo de toda la noche. Es también la base histórica para los cursos de hielo y las ascensiones al Pico Argentino del Tronador.
+
+La ruta parte de Pampa Linda y durante los dos primeros tercios sube por bosque de coihues y lengas, con señalización de carteles y marcas amarillas. La pendiente es sostenida pero regular, con un par de bifurcaciones señalizadas (mantener el rumbo al refugio) y buenos lugares de descanso en los claros, desde donde asoman las paredes del valle del río Castaño Overa.
+
+El tercio final es otro mundo: el bosque queda atrás y el sendero gana el filo de la Motte, una cresta pedregosa y ventosa entre los glaciares Castaño Overa y Alerce. La sensación de caminar con hielo a ambos lados, el Nahuel Huapi al fondo y las cumbres del Tronador creciendo delante es única en la región. Con niebla o viento fuerte este tramo exige atención: no hay resguardo hasta el refugio.
+
+El Refugio Otto Meiling (2000 m, CAB) ofrece comidas, literas y una terraza natural con uno de los atardeceres más celebrados de la Patagonia. La subida completa toma unas 5 horas (algo menos sin carga) y la bajada unas 3,5, por lo que hacerlo en el día es posible pero exigente: la mayoría pernocta. Desde el refugio salen paseos cortos al mirador del glaciar Castaño Overa y, para quienes contratan guía, caminatas por el hielo.`,
+    gpxTrack: [
+      { lat: -41.2535, lon: -71.7755, ele: 890 },
+      { lat: -41.2490, lon: -71.7810, ele: 960 },
+      { lat: -41.2440, lon: -71.7870, ele: 1040 },
+      { lat: -41.2390, lon: -71.7930, ele: 1120 },
+      { lat: -41.2340, lon: -71.7985, ele: 1200 },
+      { lat: -41.2290, lon: -71.8040, ele: 1280 },
+      { lat: -41.2240, lon: -71.8090, ele: 1360 },
+      { lat: -41.2190, lon: -71.8140, ele: 1450 },
+      { lat: -41.2140, lon: -71.8180, ele: 1550 },
+      { lat: -41.2090, lon: -71.8215, ele: 1650 },
+      { lat: -41.2040, lon: -71.8240, ele: 1750 },
+      { lat: -41.1990, lon: -71.8260, ele: 1850 },
+      { lat: -41.1950, lon: -71.8272, ele: 1930 },
+      { lat: -41.1920, lon: -71.8280, ele: 2000 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda (890 m)',
+        description: 'Punto de partida con guardaparques, hostería y estacionamiento. Registro de trekking obligatorio.',
+      },
+      {
+        lat: -41.2340,
+        lon: -71.7985,
+        name: 'Bosque de coihues y lengas',
+        description: 'Dos tercios de la ruta suben por bosque con carteles y marcas amarillas. Pendiente sostenida y regular.',
+      },
+      {
+        lat: -41.2090,
+        lon: -71.8215,
+        name: 'Salida del bosque — filo de la Motte',
+        description: 'El sendero gana la cresta pedregosa entre los glaciares Castaño Overa y Alerce. Viento frecuente; sin resguardo hasta el refugio.',
+      },
+      {
+        lat: -41.1920,
+        lon: -71.8280,
+        name: 'Refugio Otto Meiling (2000 m)',
+        description: 'Refugio del CAB entre dos glaciares, base de los cursos de hielo y las ascensiones al Tronador. Comidas, literas y acampe.',
+      },
+    ],
+    parking: 'Estacionamiento en Pampa Linda. El camino de acceso funciona con horarios de mano única; planificar ida y vuelta.',
+    access_notes: 'Desde Bariloche por Ruta 40 sur hasta el desvío de Villa Mascardi y camino de ripio a Pampa Linda (90 km, 2 h). En temporada alta hay traslados desde Bariloche. Consultar horarios de mano única del camino.',
+    water_sources: 'Arroyos en el tramo de bosque. En el filo superior no hay agua hasta el refugio; llevar reserva.',
+    camping_allowed: true,
+    refugio: 'Refugio Otto Meiling (CAB)',
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // 17. Cerro Llao Llao
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-llao-llao',
+    name: 'Cerro Llao Llao — Parque Municipal',
+    province: 'Río Negro',
+    area: 'Parque Municipal Llao Llao',
+    subarea: 'Llao Llao',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 8,
+    elevation_gain_m: 225,
+    max_altitude_m: 1050,
+    duration: { min: 2, max: 3, unit: 'horas' },
+    coordinates: { lat: -41.0400, lon: -71.5820 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1469521669194-babb45599def?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'apto familias', 'Circuito Chico', 'bosque nativo', 'arrayanes', 'medio día'],
+    permits_required: false,
+    best_season: 'Todo el año',
+    description:
+      'El mirador más famoso del Circuito Chico: caminata fácil por el Parque Municipal Llao Llao hasta el cerrito Llao Llao (1050 m), con panorámica del Brazo de la Tristeza, la Isla Victoria y los cerros López y Capilla.',
+    trailhead: 'Portada del Parque Municipal Llao Llao, Ruta 77 (cartel de madera)',
+    source: 'barilochetrekking.com',
+    long_description: `El Cerro Llao Llao es probablemente la caminata corta más popular de Bariloche, y con razón: por un sendero fácil de bosque se llega en una hora a un mirador de postal, con el lago Nahuel Huapi ramificándose en brazos azules entre penínsulas boscosas y los cerros López, Capilla y Millaqueo cerrando el horizonte. Para muchos visitantes es la primera —y más recordada— foto de la Patagonia andina.
+
+El recorrido arranca en la portada del Parque Municipal Llao Llao, señalizada con un cartel de madera sobre la Ruta 77, pasado el hotel Llao Llao. El sendero avanza primero casi llano por bosque de coihues, con desvíos señalizados a la playita de Villa Tacul y al bosque de arrayanes de la península —ambos merecen la visita si sobra tiempo—. El último tramo es la única subida real: unos 20-30 minutos de pendiente sostenida en zigzag hasta la cumbre del cerrito.
+
+Arriba hay tres miradores que se complementan: hacia el oeste el Brazo de la Tristeza y la Isla Victoria; hacia el norte el hotel Llao Llao con Puerto Pañuelo y el cerro Campanario detrás; hacia el sudoeste el cordón del López. Al atardecer la luz lateral sobre los brazos del lago produce los colores más intensos, aunque implica bajar con la última luz.
+
+Es una salida ideal para familias con niños, para el día de llegada o para combinar con el resto del Circuito Chico en bicicleta. No hay agua en el recorrido y en verano la subida final puede dar calor: llevar botella. El parque es municipal y de acceso gratuito; los senderos cierran al anochecer.`,
+    gpxTrack: [
+      { lat: -41.0330, lon: -71.5710, ele: 825 },
+      { lat: -41.0345, lon: -71.5740, ele: 830 },
+      { lat: -41.0360, lon: -71.5765, ele: 840 },
+      { lat: -41.0372, lon: -71.5785, ele: 855 },
+      { lat: -41.0382, lon: -71.5800, ele: 890 },
+      { lat: -41.0390, lon: -71.5810, ele: 940 },
+      { lat: -41.0396, lon: -71.5816, ele: 1000 },
+      { lat: -41.0400, lon: -71.5820, ele: 1050 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0330,
+        lon: -71.5710,
+        name: 'Portada Parque Municipal Llao Llao',
+        description: 'Cartel de madera sobre la Ruta 77, pasado el hotel Llao Llao. Estacionamiento en la banquina.',
+      },
+      {
+        lat: -41.0360,
+        lon: -71.5765,
+        name: 'Desvíos a Villa Tacul y arrayanes',
+        description: 'Desvíos señalizados a la playa de Villa Tacul y al bosque de arrayanes de la península.',
+      },
+      {
+        lat: -41.0390,
+        lon: -71.5810,
+        name: 'Zigzags finales',
+        description: 'Única subida real del recorrido: 20-30 min de pendiente sostenida hasta la cumbre.',
+      },
+      {
+        lat: -41.0400,
+        lon: -71.5820,
+        name: 'Miradores del Cerro Llao Llao (1050 m)',
+        description: 'Tres miradores: Brazo de la Tristeza e Isla Victoria, hotel Llao Llao y Campanario, y cordón del López.',
+      },
+    ],
+    parking: 'Banquina junto a la portada del parque sobre la Ruta 77. Se llena temprano en temporada alta.',
+    access_notes: 'Desde Bariloche por Av. Bustillo y Ruta 77 (Circuito Chico) hasta pasar el hotel Llao Llao; la portada del parque está señalizada (27 km, 40 min). Bus línea 20 hasta Puerto Pañuelo y 1,5 km a pie.',
+    water_sources: 'No hay fuentes de agua en el recorrido. Llevar botella propia.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // 18. Cascada de los Duendes (Lago Gutiérrez)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cascada-duendes',
+    name: 'Cascada de los Duendes y Mirador Lago Gutiérrez',
     province: 'Río Negro',
     area: 'Parque Nacional Nahuel Huapi',
     subarea: 'Bariloche',
     region: 'patagonia-norte',
     activity: 'trekking',
-    difficulty: 'moderado',
-    distance_km: 12,
-    elevation_gain_m: 600,
-    max_altitude_m: 1450,
-    duration: { min: 4, max: 6, unit: 'horas' },
-    coordinates: { lat: -41.2000, lon: -71.4600 },
+    difficulty: 'facil',
+    distance_km: 3,
+    elevation_gain_m: 80,
+    max_altitude_m: 880,
+    duration: { min: 1, max: 2, unit: 'horas' },
+    coordinates: { lat: -41.1660, lon: -71.4120 },
     photo_uri:
-      'https://images.unsplash.com/photo-1540390769625-2fc3f8b1d50c?w=800&q=80&fit=crop&auto=format',
-    tags: ['laguna oculta', 'pesca', 'bajo tráfico', 'sur Catedral', 'bosque nativo', 'tranquilo'],
+      'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&q=80&fit=crop&auto=format',
+    tags: ['cascada', 'apto familias', 'sendero autoguiado', 'lago Gutiérrez', 'niños', 'corto'],
     permits_required: false,
-    best_season: 'Nov – Abr',
+    best_season: 'Todo el año',
     description:
-      'Sendero a la Laguna Ilón, un lago escondido al sur del macizo de Cerro Catedral con muy bajo tráfico y buena pesca de trucha arcoíris y marrón.',
-    trailhead: 'Zona baja del área de esquí de Cerro Catedral, lado sur',
+      'Paseo corto y autoguiado desde la seccional de guardaparques del lago Gutiérrez: la Cascada de los Duendes sobre el arroyo Pescadero y, con un desvío de 1 km, el mirador del lago. Ideal con niños.',
+    trailhead: 'Seccional de Guardaparques Lago Gutiérrez, Villa Los Coihues',
     source: 'barilochetrekking.com',
-    long_description: `La Laguna Ilón es el secreto mejor guardado del sector de Cerro Catedral y uno de los destinos de trekking con menor presión de visitantes de toda la región de Bariloche. Situada al sur del macizo de Catedral, esta laguna de montaña ocupa el fondo de un pequeño circo glaciar que el turismo masivo no ha descubierto todavía, lo que se traduce en una experiencia de naturaleza auténtica y sin interrupciones.
+    long_description: `La Cascada de los Duendes es la caminata iniciática de Bariloche: corta, segura, señalizada y con premio garantizado. Parte de la seccional de guardaparques del lago Gutiérrez, en Villa Los Coihues, y en unos 600 metros de sendero ancho y casi llano llega a la cascada sobre el arroyo Pescadero, una caída modesta pero encantadora que salta entre bloques cubiertos de musgo en plena penumbra del bosque.
 
-El sendero parte de la zona baja del área de esquí de Cerro Catedral en su flanco sur y asciende de manera sostenida por un bosque de coihue mezclado con arbustos de quila y notro. A diferencia de la ruta norte al Refugio Frey, este sendero está menos mantenido y en algunos tramos la quila puede estrechar el paso considerablemente. Quien busca un sendero en solitario lo tiene aquí. La primera hora es completamente boscosa y el silencio, roto solo por los pájaros del bosque y el viento en las copas de los coihues, predispone a un estado de calma que las rutas más concurridas no permiten alcanzar.
+El sendero es autoguiado, con carteles interpretativos sobre el bosque andino-patagónico: coihues, cipreses de la cordillera, radales y el sotobosque de caña colihue. Es una introducción perfecta al ecosistema del parque para quien recién llega, y una salida ideal para familias con niños pequeños o para tardes de clima inestable, porque el bosque protege del viento y de la llovizna.
 
-A partir del km 4 el bosque se abre y el sendero discurre entre arbustos bajos con vistas a las cumbres del sur del macizo de Catedral. El terreno sube con mayor pendiente en los últimos 2 km antes de la laguna, con algunos tramos de roca suelta que requieren atención. La aparición de la Laguna Ilón desde el borde del circo glaciar es siempre sorpresiva: el agua de color verde-azulado brilla contenida entre paredes de roca y pasturas de altura, sin un solo edificio o instalación humana a la vista.
+Desde la cascada, un desvío señalizado de aproximadamente 1 km sube al mirador del lago Gutiérrez, un balcón rocoso con vista al lago completo y al macizo del Catedral detrás. Este tramo tiene algo más de pendiente pero sigue siendo accesible para cualquier persona en condiciones básicas de caminar en montaña.
 
-La laguna es conocida entre los pescadores locales como uno de los mejores spots de pesca de trucha arcoíris y trucha marrón de todo el parque. La razón es la combinación de baja presión pesquera y las condiciones de agua fría y bien oxigenada ideales para las trótas. Se requiere licencia de pesca de la Provincia de Río Negro para practicar la actividad. El trekker que no pesca también encontrará en la orilla norte de la laguna un lugar excepcional para sentarse, contemplar el reflejo de las montañas en el agua y escuchar el viento patagónico sin apuros.`,
+El paseo se combina naturalmente con el sendero costero a Playa Muñoz, que parte de la misma seccional, o con una tarde de playa en Villa Los Coihues. En invierno, con nieve, el bosque y la cascada congelada tienen un encanto particular y el recorrido sigue siendo transitable con calzado adecuado.`,
     gpxTrack: [
-      { lat: -41.2000, lon: -71.4600, ele: 1100 },
-      { lat: -41.2033, lon: -71.4633, ele: 1145 },
-      { lat: -41.2067, lon: -71.4667, ele: 1190 },
-      { lat: -41.2100, lon: -71.4700, ele: 1230 },
-      { lat: -41.2133, lon: -71.4733, ele: 1265 },
-      { lat: -41.2167, lon: -71.4767, ele: 1295 },
-      { lat: -41.2200, lon: -71.4800, ele: 1325 },
-      { lat: -41.2233, lon: -71.4833, ele: 1355 },
-      { lat: -41.2267, lon: -71.4867, ele: 1385 },
-      { lat: -41.2333, lon: -71.4900, ele: 1415 },
-      { lat: -41.2400, lon: -71.4933, ele: 1438 },
-      { lat: -41.2450, lon: -71.4967, ele: 1448 },
-      { lat: -41.2483, lon: -71.5033, ele: 1450 },
+      { lat: -41.1660, lon: -71.4120, ele: 800 },
+      { lat: -41.1670, lon: -71.4135, ele: 810 },
+      { lat: -41.1680, lon: -71.4150, ele: 820 },
+      { lat: -41.1690, lon: -71.4162, ele: 830 },
+      { lat: -41.1700, lon: -71.4172, ele: 840 },
+      { lat: -41.1712, lon: -71.4185, ele: 865 },
+      { lat: -41.1720, lon: -71.4195, ele: 880 },
     ],
     namedWaypoints: [
       {
-        lat: -41.2000,
-        lon: -71.4600,
-        name: 'Inicio zona sur Cerro Catedral',
-        description: 'Acceso por el flanco sur del área de esquí. Señalización escasa; conveniente llevar mapa o GPS.',
+        lat: -41.1660,
+        lon: -71.4120,
+        name: 'Seccional Guardaparques Lago Gutiérrez',
+        description: 'Inicio del sendero autoguiado frente a la oficina de guardaparques, en Villa Los Coihues.',
       },
       {
-        lat: -41.2067,
-        lon: -71.4667,
-        name: 'Bosque de coihue y quila',
-        description: 'Tramo con quila densa que puede estrechar el sendero. Prever ropa de manga larga en este sector.',
+        lat: -41.1690,
+        lon: -71.4162,
+        name: 'Cascada de los Duendes',
+        description: 'Caída del arroyo Pescadero entre bloques con musgo, a ~600 m del inicio por sendero ancho y llano.',
       },
       {
-        lat: -41.2200,
-        lon: -71.4800,
-        name: 'Apertura del bosque',
-        description: 'El coihue se adelgaza y aparecen arbustos de notro. Primeras vistas a las cumbres del sur del macizo de Catedral.',
-      },
-      {
-        lat: -41.2400,
-        lon: -71.4933,
-        name: 'Zona de roca suelta',
-        description: 'Tramo de roca suelta en el acceso al circo. Cuidado al pisar; bastones recomendados.',
-      },
-      {
-        lat: -41.2483,
-        lon: -71.5033,
-        name: 'Laguna Ilón (1450 m)',
-        description: 'Laguna en circo glaciar de baja presión turística. Excelente pesca de trucha (licencia requerida). Vista a cumbres de Catedral.',
+        lat: -41.1720,
+        lon: -71.4195,
+        name: 'Mirador Lago Gutiérrez',
+        description: 'Balcón rocoso con vista al lago completo y al macizo del Catedral, a ~1 km de la cascada.',
       },
     ],
-    parking: 'Usar el estacionamiento de la base de Cerro Catedral y acceder al sendero sur a pie (1.5 km adicionales).',
-    access_notes: 'Acceso por la Ruta 82 hasta Villa Catedral (18 km desde Bariloche). Desde la base de Catedral seguir la pista forestal hacia el sur. La señalización es escasa; se recomienda mapa o GPS.',
-    water_sources: 'Un arroyo en el km 3 y la laguna misma al final. Agua disponible y de buena calidad; filtrar antes de consumir.',
+    parking: 'Estacionamiento en Villa Los Coihues, cerca de la seccional de guardaparques.',
+    access_notes: 'Desde Bariloche por Ruta 82 hacia el lago Gutiérrez y acceso a Villa Los Coihues (10 km, 15 min). Bus línea 50 desde el centro hasta Villa Los Coihues.',
+    water_sources: 'Arroyo Pescadero junto al sendero. Llevar agua propia para el paseo.',
     camping_allowed: false,
     round_trip: true,
   },
