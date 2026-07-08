@@ -20,7 +20,6 @@ import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
-import { shareOnWhatsApp, SITE_URL } from '../../src/utils/share';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
 
@@ -253,14 +252,6 @@ export default function InicioScreen() {
     const timer = setTimeout(() => animateScrollReveal(), 300);
     return () => clearTimeout(timer);
   }, []);
-
-  const onShareWhatsApp = () => {
-    const msg = `${t(
-      'Descubrí Sliabh 🏔️ Rutas de senderismo, mapas offline y GPS para explorar los Parques Nacionales de Argentina.',
-      'Discover Sliabh 🏔️ Hiking trails, offline maps and GPS to explore the National Parks of Argentina.',
-    )}\n${SITE_URL}`;
-    shareOnWhatsApp(msg);
-  };
 
   const HERO_STATS = [
     `${ARGENTINA_TRAILS.length} ${t('rutas', 'trails')}`,
@@ -777,24 +768,14 @@ export default function InicioScreen() {
               </Text>
             </View>
           </View>
-          <View style={styles.cafecitoBtns}>
-            <TouchableOpacity
-              style={[styles.cafecitoBtn, !isWide && styles.cafecitoBtnFull]}
-              activeOpacity={0.85}
-              onPress={() => Linking.openURL(MERCADOPAGO_URL)}
-            >
-              <Ionicons name="cafe" size={15} color="#0f172a" />
-              <Text style={styles.cafecitoBtnTxt}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.whatsappBtn, !isWide && styles.cafecitoBtnFull]}
-              activeOpacity={0.85}
-              onPress={onShareWhatsApp}
-            >
-              <Ionicons name="logo-whatsapp" size={15} color="#fff" />
-              <Text style={styles.whatsappBtnTxt}>{t('Compartir por WhatsApp', 'Share on WhatsApp')}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.cafecitoBtn, !isWide && styles.cafecitoBtnFull]}
+            activeOpacity={0.85}
+            onPress={() => Linking.openURL(MERCADOPAGO_URL)}
+          >
+            <Ionicons name="cafe" size={15} color="#0f172a" />
+            <Text style={styles.cafecitoBtnTxt}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
+          </TouchableOpacity>
         </View>
 
         {/* ── AUTH BANNER ── */}
@@ -1095,11 +1076,4 @@ const styles = StyleSheet.create({
   },
   cafecitoBtnFull: { alignSelf: 'stretch' },
   cafecitoBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
-  cafecitoBtns: { gap: 10 },
-  whatsappBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7,
-    backgroundColor: '#25D366', borderRadius: 999,
-    paddingHorizontal: 16, paddingVertical: 10, flexShrink: 0,
-  },
-  whatsappBtnTxt: { fontSize: 13, fontWeight: '700', color: '#fff' },
 });

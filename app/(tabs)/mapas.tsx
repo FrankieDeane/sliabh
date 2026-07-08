@@ -785,6 +785,20 @@ const NATIONAL_PARKS = [
   },
 ];
 
+// Download list grouped by province (alphabetical), rendered with a header per
+// province in the web download center and in the native download sheet.
+const PARKS_BY_PROVINCE = (() => {
+  const groups = new Map<string, typeof NATIONAL_PARKS>();
+  for (const park of NATIONAL_PARKS) {
+    const list = groups.get(park.province) ?? [];
+    list.push(park);
+    groups.set(park.province, list);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b, 'es'))
+    .map(([province, parks]) => ({ province, parks }));
+})();
+
 // ─── Download card ────────────────────────────────────────────────────────────
 function DownloadCard({
   park, c, onViewMap, onFlyTo, onShowTrack,
@@ -1131,8 +1145,20 @@ export default function MapasScreen() {
                 {t('Descargá y accedé a los mapas sin señal.', 'Download and access maps without signal.')}
               </Text>
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
-                {NATIONAL_PARKS.map((park) => (
-                  <DownloadCard key={park.id} park={park} c={c} onViewMap={handleViewMap} />
+                {PARKS_BY_PROVINCE.map((group) => (
+                  <View key={group.province}>
+                    <View style={nS.provinceHeader}>
+                      <Ionicons name="location-outline" size={13} color="#22c55e" />
+                      <Text style={[nS.provinceName, { color: c.text }]}>{group.province}</Text>
+                      <View style={[nS.provinceLine, { backgroundColor: c.border }]} />
+                      <Text style={[nS.provinceCount, { color: c.muted }]}>
+                        {group.parks.length} {group.parks.length === 1 ? t('mapa', 'map') : t('mapas', 'maps')}
+                      </Text>
+                    </View>
+                    {group.parks.map((park) => (
+                      <DownloadCard key={park.id} park={park} c={c} onViewMap={handleViewMap} />
+                    ))}
+                  </View>
                 ))}
               </ScrollView>
             </View>
@@ -1233,22 +1259,34 @@ export default function MapasScreen() {
           </Text>
         </View>
         <View style={s.dlGrid}>
-          {NATIONAL_PARKS.map((park) => (
-            <DownloadCard
-              key={park.id}
-              park={park}
-              c={c}
-              onFlyTo={(lat, lng, zoom) => {
-                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                setTimeout(() => sendFlyTo(lat, lng, zoom), 450);
-              }}
-              onShowTrack={(points) => {
-                if (iframeLoaded.current && iframeRef.current?.contentWindow) {
-                  iframeRef.current.contentWindow.postMessage({ type: 'showTrack', points }, '*');
-                }
-                iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-            />
+          {PARKS_BY_PROVINCE.map((group) => (
+            <View key={group.province}>
+              <View style={s.provinceHeader}>
+                <Ionicons name="location-outline" size={14} color="#22c55e" />
+                <Text style={[s.provinceName, { color: c.text }]}>{group.province}</Text>
+                <View style={[s.provinceLine, { backgroundColor: c.border }]} />
+                <Text style={[s.provinceCount, { color: c.muted }]}>
+                  {group.parks.length} {group.parks.length === 1 ? t('mapa', 'map') : t('mapas', 'maps')}
+                </Text>
+              </View>
+              {group.parks.map((park) => (
+                <DownloadCard
+                  key={park.id}
+                  park={park}
+                  c={c}
+                  onFlyTo={(lat, lng, zoom) => {
+                    iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => sendFlyTo(lat, lng, zoom), 450);
+                  }}
+                  onShowTrack={(points) => {
+                    if (iframeLoaded.current && iframeRef.current?.contentWindow) {
+                      iframeRef.current.contentWindow.postMessage({ type: 'showTrack', points }, '*');
+                    }
+                    iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                />
+              ))}
+            </View>
           ))}
         </View>
       </View>
@@ -1292,6 +1330,10 @@ const nS = StyleSheet.create({
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   sheetTitle: { fontSize: 18, fontWeight: '800' },
   sheetSub: { fontSize: 13, marginBottom: 16 },
+  provinceHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 16, marginBottom: 12 },
+  provinceName: { fontSize: 12, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase' },
+  provinceLine: { flex: 1, height: 1, opacity: 0.6 },
+  provinceCount: { fontSize: 11, fontWeight: '600' },
 });
 
 const s = StyleSheet.create({
@@ -1339,4 +1381,8 @@ const s = StyleSheet.create({
   sectionTitle: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5, marginBottom: 8 },
   sectionSub: { fontSize: 15, lineHeight: 24 },
   dlGrid: { paddingHorizontal: 24, maxWidth: 1200, alignSelf: 'center', width: '100%' },
+  provinceHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 20, marginBottom: 14 },
+  provinceName: { fontSize: 13, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase' },
+  provinceLine: { flex: 1, height: 1, opacity: 0.6 },
+  provinceCount: { fontSize: 11, fontWeight: '600' },
 });
