@@ -675,7 +675,7 @@ El regreso es por la misma escalera hasta el muelle. La excursión se combina ha
     elevation_gain_m: 150,
     max_altitude_m: 1020,
     duration: { min: 3, max: 5, unit: 'horas' },
-    coordinates: { lat: -41.2175, lon: -71.8330 },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
     photo_uri:
       'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80&fit=crop&auto=format',
     tags: ['témpanos', 'laguna proglaciar', 'Ventisquero Negro', 'Tronador', 'apto familias'],
@@ -1343,7 +1343,7 @@ En la laguna funcionan en temporada un refugio pequeño y una zona de acampe. Pe
     elevation_gain_m: 1100,
     max_altitude_m: 2000,
     duration: { min: 8, max: 10, unit: 'horas' },
-    coordinates: { lat: -41.1920, lon: -71.8280 },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
     photo_uri:
       'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80&fit=crop&auto=format',
     tags: ['refugio', 'glaciares', 'Tronador', 'filo', 'alta montaña', 'clásico Bariloche'],
