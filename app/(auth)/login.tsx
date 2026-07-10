@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -15,6 +14,7 @@ import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { signIn } from '../../src/services/supabase';
+import { showAlert, normalizeEmail, isValidEmail } from '../../src/utils/alert';
 
 function translateError(message: string): string {
   const lower = message.toLowerCase();
@@ -27,9 +27,10 @@ function translateError(message: string): string {
   if (lower.includes('too many requests')) {
     return 'Demasiados intentos. Espera unos minutos antes de intentarlo de nuevo.';
   }
-  if (lower.includes('user not found')) {
-    return 'No existe ninguna cuenta con ese correo.';
-  }
+  // NOTE: we deliberately do NOT surface a distinct "no account with that email"
+  // message. Distinguishing "wrong password" from "unknown email" is a user
+  // enumeration vector (an attacker can probe which emails are registered), so
+  // both collapse into the generic "credenciales incorrectas" case below.
   if (lower.includes('network') || lower.includes('fetch')) {
     return 'Error de conexión. Comprueba tu red e inténtalo de nuevo.';
   }
@@ -55,15 +56,20 @@ export default function LoginScreen() {
   const linkColor = 'text-brand-500';
 
   async function handleLogin() {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Campos vacíos', 'Por favor ingresa tu correo y contraseña.');
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanEmail || !password) {
+      showAlert('Campos vacíos', 'Por favor ingresa tu correo y contraseña.');
+      return;
+    }
+    if (!isValidEmail(cleanEmail)) {
+      showAlert('Correo inválido', 'El formato del correo electrónico no es válido.');
       return;
     }
     setLoading(true);
     try {
-      const { data, error } = await signIn(email.trim(), password);
+      const { data, error } = await signIn(cleanEmail, password);
       if (error) {
-        Alert.alert('Error al iniciar sesión', translateError(error.message));
+        showAlert('Error al iniciar sesión', translateError(error.message));
         return;
       }
       if (data.user) {
@@ -79,7 +85,7 @@ export default function LoginScreen() {
       }
       router.replace('/(tabs)/inicio');
     } catch (e: any) {
-      Alert.alert('Error', translateError(e?.message ?? 'Error desconocido'));
+      showAlert('Error', translateError(e?.message ?? 'Error desconocido'));
     } finally {
       setLoading(false);
     }
@@ -126,6 +132,8 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                autoComplete="email"
+                textContentType="username"
                 className={`rounded-xl border px-4 py-3 text-sm ${inputBg}`}
               />
             </View>
@@ -139,6 +147,9 @@ export default function LoginScreen() {
                 placeholder="Tu contraseña"
                 placeholderTextColor={isDark ? '#6b7280' : '#9ca3af'}
                 secureTextEntry
+                autoCapitalize="none"
+                autoComplete="password"
+                textContentType="password"
                 className={`rounded-xl border px-4 py-3 text-sm ${inputBg}`}
               />
             </View>

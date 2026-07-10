@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { verifyRecoveryCode, updatePassword } from '../../src/services/supabase';
+import { showAlert } from '../../src/utils/alert';
 
 export default function CodigoScreen() {
   const { isDark } = useTheme();
@@ -23,14 +24,14 @@ export default function CodigoScreen() {
 
   const handleVerifyCode = async () => {
     if (code.length !== 6) {
-      Alert.alert('Error', 'El código debe tener 6 dígitos.');
+      showAlert('Error', 'El código debe tener 6 dígitos.');
       return;
     }
     setLoading(true);
     const { error } = await verifyRecoveryCode(email ?? '', code);
     setLoading(false);
     if (error) {
-      Alert.alert('Código inválido', 'El código no es correcto o ha expirado. Solicita uno nuevo.');
+      showAlert('Código inválido', 'El código no es correcto o ha expirado. Solicita uno nuevo.');
     } else {
       setCodeVerified(true);
     }
@@ -38,18 +39,18 @@ export default function CodigoScreen() {
 
   const handleUpdatePassword = async () => {
     if (password.length < 6) {
-      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
+      showAlert('Error', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
     if (password !== confirm) {
-      Alert.alert('Error', 'Las contraseñas no coinciden.');
+      showAlert('Error', 'Las contraseñas no coinciden.');
       return;
     }
     setLoading(true);
     const { error } = await updatePassword(password);
     setLoading(false);
     if (error) {
-      Alert.alert('Error', error.message);
+      showAlert('Error', error.message);
     } else {
       setDone(true);
     }

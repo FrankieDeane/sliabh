@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 
 // Replace with your Supabase project values
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
@@ -27,7 +28,21 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signUp(email: string, password: string) {
-  return supabase.auth.signUp({ email, password });
+  // Pin the email-verification link back to *this* origin so the confirmation
+  // opt-in actually lands on the deployed app. Without emailRedirectTo, Supabase
+  // uses the project's default Site URL, which is why verification links can
+  // bounce. On web this must also be present in the Supabase Auth "Redirect
+  // URLs" allow-list; unlisted URLs are rejected server-side, which prevents
+  // open-redirect abuse of the confirmation link.
+  const emailRedirectTo =
+    Platform.OS === 'web' && typeof window !== 'undefined'
+      ? `${window.location.origin}/(auth)/login`
+      : undefined;
+  return supabase.auth.signUp({
+    email,
+    password,
+    options: emailRedirectTo ? { emailRedirectTo } : undefined,
+  });
 }
 
 export async function signOut() {

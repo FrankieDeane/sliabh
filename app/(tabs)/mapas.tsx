@@ -1012,8 +1012,12 @@ export default function MapasScreen() {
   const { isDark } = useTheme();
   const { isOffline } = useNetwork();
   const { lang, t } = useLangStore();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const isMobile = width < 720;
+  // Desktop: size the map to the viewport so the embedded park map and its
+  // white trail info panels have room to render fully instead of being clipped
+  // by a short fixed height. Floor keeps it usable on short laptop screens.
+  const desktopMapHeight = Math.max(760, Math.round(height - 150));
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
   const [esriLayer, setEsriLayer] = useState<'esri-topo' | 'esri-satellite' | 'esri-streets'>('esri-topo');
@@ -1186,7 +1190,7 @@ export default function MapasScreen() {
         </View>
       </View>
 
-      <View style={[s.iframeWrapper, isMobile && { height: Math.round(width * 1.4) } as any]}>
+      <View style={[s.iframeWrapper, isMobile ? { height: Math.round(width * 1.4) } as any : { height: desktopMapHeight } as any]}>
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
