@@ -2,8 +2,16 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
-import { DIFFICULTY_LABEL, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
+import { difficultyLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
 import { fetchWikiImage } from '../../utils/wikiImage';
+import { useLangStore, Lang } from '../../store/langStore';
+
+/** Translate a trail duration unit ('horas'/'dias') for display. */
+function unitLabel(unit: string, lang: Lang): string {
+  if (unit === 'horas') return lang === 'es' ? 'horas' : 'hours';
+  if (unit === 'dias') return lang === 'es' ? 'días' : 'days';
+  return unit;
+}
 
 // Resolve a real Wikimedia photo for the trail's place; falls back to its photo.
 function useWikiPhoto(trail: ArgentinaTrail): string {
@@ -29,6 +37,7 @@ interface FeaturedProps {
 export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
   const photo = useWikiPhoto(trail);
+  const { t, lang } = useLangStore();
 
   return (
     <TouchableOpacity style={styles.featured} onPress={onPress} activeOpacity={0.9}>
@@ -44,13 +53,13 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
       <View style={styles.featuredTop}>
         <View style={[styles.diffBadge, { backgroundColor: diff.bg }]}>
           <Text style={[styles.diffBadgeText, { color: diff.text }]}>
-            {DIFFICULTY_LABEL[trail.difficulty]}
+            {difficultyLabel(trail.difficulty, lang)}
           </Text>
         </View>
         {trail.permits_required && (
           <View style={styles.permitBadge}>
             <Ionicons name="document-text-outline" size={10} color="#fbbf24" />
-            <Text style={styles.permitBadgeText}>Permiso</Text>
+            <Text style={styles.permitBadgeText}>{t('Permiso', 'Permit')}</Text>
           </View>
         )}
       </View>
@@ -66,7 +75,7 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
           <StatChip icon="trending-up-outline" value={`+${trail.elevation_gain_m} m`} />
           <StatChip
             icon="time-outline"
-            value={`${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`}
+            value={`${trail.duration.min}–${trail.duration.max} ${unitLabel(trail.duration.unit, lang)}`}
           />
         </View>
       </View>
@@ -85,6 +94,7 @@ interface ListProps {
 export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
   const photo = useWikiPhoto(trail);
+  const { lang } = useLangStore();
 
   return (
     <TouchableOpacity
@@ -101,7 +111,7 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
         />
         <View style={[styles.diffCorner, { backgroundColor: diff.bg }]}>
           <Text style={[styles.diffCornerText, { color: diff.text }]}>
-            {DIFFICULTY_LABEL[trail.difficulty]}
+            {difficultyLabel(trail.difficulty, lang)}
           </Text>
         </View>
       </View>
@@ -123,7 +133,7 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
           <MiniStat icon="trending-up-outline" value={`+${trail.elevation_gain_m} m`} color={c.muted} />
           <MiniStat
             icon="time-outline"
-            value={`${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}`}
+            value={`${trail.duration.min}–${trail.duration.max} ${unitLabel(trail.duration.unit, lang)}`}
             color={c.muted}
           />
         </View>
