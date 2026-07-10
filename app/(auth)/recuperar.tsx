@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { sendRecoveryCode } from '../../src/services/supabase';
+import { showAlert, normalizeEmail, isValidEmail } from '../../src/utils/alert';
 
 export default function RecuperarScreen() {
   const { isDark } = useTheme();
@@ -17,20 +18,27 @@ export default function RecuperarScreen() {
   const inputClass = `border rounded-xl px-4 py-3 mb-6 ${isDark ? 'bg-stone-800 border-stone-600 text-stone-100' : 'bg-white border-stone-300 text-stone-900'}`;
 
   const handleSend = async () => {
-    if (!email.trim()) {
-      Alert.alert('Error', 'Introduce tu correo electrónico.');
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanEmail) {
+      showAlert('Error', 'Introduce tu correo electrónico.');
+      return;
+    }
+    if (!isValidEmail(cleanEmail)) {
+      showAlert('Correo inválido', 'El formato del correo electrónico no es válido.');
       return;
     }
     setLoading(true);
-    const { error } = await sendRecoveryCode(email.trim());
+    const { error } = await sendRecoveryCode(cleanEmail);
     setLoading(false);
-    if (error) {
-      Alert.alert('Error', error.message.includes('not found')
-        ? 'No encontramos una cuenta con ese correo.'
-        : error.message);
-    } else {
-      router.push({ pathname: '/(auth)/codigo', params: { email: email.trim() } } as any);
+    // Only surface genuine connectivity failures. A "user not found" error is
+    // deliberately swallowed: telling the user whether an email is registered
+    // is an account-enumeration leak. We proceed to the code screen either way,
+    // so the response is identical whether or not the account exists.
+    if (error && /network|fetch/i.test(error.message)) {
+      showAlert('Error de conexión', 'Comprueba tu red e inténtalo de nuevo.');
+      return;
     }
+    router.push({ pathname: '/(auth)/codigo', params: { email: cleanEmail } } as any);
   };
 
   return (
@@ -54,6 +62,8 @@ export default function RecuperarScreen() {
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
+        autoComplete="email"
+        textContentType="username"
         className={inputClass}
       />
 

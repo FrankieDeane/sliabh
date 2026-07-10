@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { usePlannerStore } from '../../store/plannerStore';
 import { useTheme } from '../../hooks/useTheme';
+import { useLangStore } from '../../store/langStore';
 
 export function WaypointList() {
   const { waypoints, removeWaypoint } = usePlannerStore();
   const { isDark } = useTheme();
+  const { t } = useLangStore();
   const textClass = isDark ? 'text-stone-100' : 'text-stone-900';
   const mutedClass = isDark ? 'text-stone-400' : 'text-stone-500';
   const itemBg = isDark ? 'bg-stone-800' : 'bg-white';
@@ -14,7 +16,7 @@ export function WaypointList() {
     return (
       <View className="flex-1 items-center justify-center p-6">
         <Text className="text-3xl mb-2">📍</Text>
-        <Text className={`text-center ${mutedClass}`}>Toca el mapa para añadir puntos de ruta</Text>
+        <Text className={`text-center ${mutedClass}`}>{t('Toca el mapa para añadir puntos de ruta', 'Tap the map to add route points')}</Text>
       </View>
     );
   }

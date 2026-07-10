@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { usePlannerStore, Waypoint } from '../../store/plannerStore';
 import { useTheme } from '../../hooks/useTheme';
+import { useLangStore } from '../../store/langStore';
 
 function haversineKm(a: Waypoint, b: Waypoint): number {
   const R = 6371;
@@ -20,6 +21,7 @@ function naismithHours(distKm: number, elevGainM: number): number {
 export function RouteStats() {
   const { waypoints } = usePlannerStore();
   const { isDark } = useTheme();
+  const { t } = useLangStore();
   const bgClass = isDark ? 'bg-stone-800 border-stone-700' : 'bg-white border-stone-200';
   const textClass = isDark ? 'text-stone-100' : 'text-stone-900';
   const mutedClass = isDark ? 'text-stone-400' : 'text-stone-500';
@@ -38,15 +40,15 @@ export function RouteStats() {
   const days = hours / 8;
 
   const stats = [
-    { icon: '📏', label: 'Distancia', value: `${totalKm.toFixed(1)} km` },
-    { icon: '⛰', label: 'Desnivel', value: `+${elevGain} m` },
-    { icon: '⏱', label: 'Tiempo est.', value: hours < 8 ? `${hours.toFixed(1)}h` : `${days.toFixed(1)} días` },
-    { icon: '📍', label: 'Puntos', value: `${waypoints.length}` },
+    { icon: '📏', label: t('Distancia', 'Distance'), value: `${totalKm.toFixed(1)} km` },
+    { icon: '⛰', label: t('Desnivel', 'Elevation'), value: `+${elevGain} m` },
+    { icon: '⏱', label: t('Tiempo est.', 'Est. time'), value: hours < 8 ? `${hours.toFixed(1)}h` : `${days.toFixed(1)} ${t('días', 'days')}` },
+    { icon: '📍', label: t('Puntos', 'Points'), value: `${waypoints.length}` },
   ];
 
   return (
     <View className={`mx-3 mb-3 p-3 rounded-2xl border ${bgClass}`}>
-      <Text className={`text-xs font-semibold mb-2 ${mutedClass}`}>ESTADÍSTICAS DE RUTA</Text>
+      <Text className={`text-xs font-semibold mb-2 ${mutedClass}`}>{t('ESTADÍSTICAS DE RUTA', 'ROUTE STATS')}</Text>
       <View className="flex-row flex-wrap gap-3">
         {stats.map((s) => (
           <View key={s.label} className="items-center flex-1 min-w-16">

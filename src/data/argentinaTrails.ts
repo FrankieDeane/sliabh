@@ -1298,6 +1298,19 @@ export const DIFFICULTY_LABEL: Record<string, string> = {
   extremo: 'Extremo',
 };
 
+/** Bilingual difficulty labels. Use `difficultyLabel(diff, lang)` to display. */
+export const DIFFICULTY_LABEL_EN: Record<string, string> = {
+  facil: 'Easy',
+  moderado: 'Moderate',
+  dificil: 'Hard',
+  extremo: 'Extreme',
+};
+
+export function difficultyLabel(diff: string, lang: 'es' | 'en'): string {
+  const map = lang === 'en' ? DIFFICULTY_LABEL_EN : DIFFICULTY_LABEL;
+  return map[diff] ?? diff;
+}
+
 export const DIFFICULTY_COLOR: Record<string, { bg: string; text: string }> = {
   facil: { bg: 'rgba(34,197,94,0.18)', text: '#22c55e' },
   moderado: { bg: 'rgba(251,191,36,0.18)', text: '#fbbf24' },

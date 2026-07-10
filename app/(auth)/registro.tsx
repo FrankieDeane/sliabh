@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import { Link, useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { signUp, upsertProfile } from '../../src/services/supabase';
+import { showAlert, normalizeEmail, isValidEmail } from '../../src/utils/alert';
 
 function translateError(message: string): string {
   const lower = message.toLowerCase();
@@ -54,23 +54,28 @@ export default function RegistroScreen() {
   const successBg = isDark ? 'bg-brand-950 border-brand-800' : 'bg-brand-50 border-brand-200';
 
   async function handleRegister() {
-    if (!email.trim() || !password.trim() || !displayName.trim()) {
-      Alert.alert('Campos vacíos', 'Por favor completa todos los campos.');
+    const cleanEmail = normalizeEmail(email);
+    if (!cleanEmail || !password.trim() || !displayName.trim()) {
+      showAlert('Campos vacíos', 'Por favor completa todos los campos.');
+      return;
+    }
+    if (!isValidEmail(cleanEmail)) {
+      showAlert('Correo inválido', 'El formato del correo electrónico no es válido.');
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Contraseñas distintas', 'Las contraseñas no coinciden. Vuelve a escribirlas.');
+      showAlert('Contraseñas distintas', 'Las contraseñas no coinciden. Vuelve a escribirlas.');
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Contraseña corta', 'La contraseña debe tener al menos 6 caracteres.');
+      showAlert('Contraseña corta', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
     setLoading(true);
     try {
-      const { data, error } = await signUp(email.trim(), password);
+      const { data, error } = await signUp(cleanEmail, password);
       if (error) {
-        Alert.alert('Error al crear cuenta', translateError(error.message));
+        showAlert('Error al crear cuenta', translateError(error.message));
         return;
       }
       // Supabase hides "email already registered" for security: when an account
@@ -78,7 +83,7 @@ export default function RegistroScreen() {
       // `identities` array (and no error) instead of creating one. Detect that
       // and tell the user to sign in rather than faking a success screen.
       if (data.user && (data.user.identities?.length ?? 0) === 0) {
-        Alert.alert(
+        showAlert(
           'Cuenta existente',
           'Ya existe una cuenta con ese correo. Iniciá sesión con tu contraseña o recuperala si la olvidaste.',
         );
@@ -89,7 +94,7 @@ export default function RegistroScreen() {
       }
       setSuccess(true);
     } catch (e: any) {
-      Alert.alert('Error', translateError(e?.message ?? 'Error desconocido'));
+      showAlert('Error', translateError(e?.message ?? 'Error desconocido'));
     } finally {
       setLoading(false);
     }
@@ -175,6 +180,8 @@ export default function RegistroScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                autoComplete="email"
+                textContentType="username"
                 className={`rounded-xl border px-4 py-3 text-sm ${inputBg}`}
               />
             </View>
@@ -188,6 +195,9 @@ export default function RegistroScreen() {
                 placeholder="Mínimo 6 caracteres"
                 placeholderTextColor={isDark ? '#6b7280' : '#9ca3af'}
                 secureTextEntry
+                autoCapitalize="none"
+                autoComplete="new-password"
+                textContentType="newPassword"
                 className={`rounded-xl border px-4 py-3 text-sm ${inputBg}`}
               />
             </View>
