@@ -196,8 +196,8 @@ const FEATURE_CARDS = [
     icon: 'map-outline' as const,
     titleEs: 'Mapas offline',
     titleEn: 'Offline maps',
-    descEs: 'Descargá mapas de parques nacionales en PDF',
-    descEn: 'Download national park maps in PDF',
+    descEs: 'Descargá mapas offline',
+    descEn: 'Download offline maps',
     route: '/(tabs)/mapas' as const,
   },
   {
