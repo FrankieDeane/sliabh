@@ -12,7 +12,7 @@ import {
 import { Link, useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
-import { signUp, upsertProfile } from '../../src/services/supabase';
+import { signUp } from '../../src/services/supabase';
 import { showAlert, normalizeEmail, isValidEmail } from '../../src/utils/alert';
 
 function translateError(message: string): string {
@@ -41,7 +41,6 @@ export default function RegistroScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const bg = isDark ? 'bg-stone-950' : 'bg-stone-50';
   const textPrimary = isDark ? 'text-stone-50' : 'text-stone-900';
@@ -51,7 +50,6 @@ export default function RegistroScreen() {
     : 'bg-white border-stone-300 text-stone-900';
   const cardBg = isDark ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-200';
   const linkColor = 'text-brand-500';
-  const successBg = isDark ? 'bg-brand-950 border-brand-800' : 'bg-brand-50 border-brand-200';
 
   async function handleRegister() {
     const cleanEmail = normalizeEmail(email);
@@ -73,7 +71,7 @@ export default function RegistroScreen() {
     }
     setLoading(true);
     try {
-      const { data, error } = await signUp(cleanEmail, password);
+      const { data, error } = await signUp(cleanEmail, password, displayName.trim());
       if (error) {
         showAlert('Error al crear cuenta', translateError(error.message));
         return;
@@ -89,41 +87,18 @@ export default function RegistroScreen() {
         );
         return;
       }
-      if (data.user) {
-        await upsertProfile(data.user.id, { display_name: displayName.trim() });
-      }
-      setSuccess(true);
+      // Code-based verification: Supabase e-mailed a 6-digit code. Send the user
+      // to the verification screen, carrying the name so we can create their
+      // profile once the code confirms the account.
+      router.push({
+        pathname: '/(auth)/verificar',
+        params: { email: cleanEmail, name: displayName.trim() },
+      } as any);
     } catch (e: any) {
       showAlert('Error', translateError(e?.message ?? 'Error desconocido'));
     } finally {
       setLoading(false);
     }
-  }
-
-  if (success) {
-    return (
-      <SafeAreaView className={`flex-1 ${bg}`}>
-        <View className="flex-1 items-center justify-center p-6">
-          <View className={`rounded-3xl border p-8 items-center ${successBg}`}>
-            <Text className="text-5xl mb-4">✉️</Text>
-            <Text className={`text-xl font-bold text-center mb-3 ${textPrimary}`}>
-              ¡Cuenta creada!
-            </Text>
-            <Text className={`text-sm text-center leading-6 mb-6 ${textMuted}`}>
-              Hemos enviado un correo de verificación a{'\n'}
-              <Text className="font-semibold text-brand-500">{email.trim()}</Text>
-              {'\n\n'}
-              Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.
-            </Text>
-            <Button
-              label="Ir a iniciar sesión"
-              onPress={() => router.replace('/(auth)/login')}
-              fullWidth
-            />
-          </View>
-        </View>
-      </SafeAreaView>
-    );
   }
 
   return (

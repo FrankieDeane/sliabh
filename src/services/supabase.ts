@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { Platform } from 'react-native';
 
 // Replace with your Supabase project values
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
@@ -27,22 +26,30 @@ export async function signIn(email: string, password: string) {
   return supabase.auth.signInWithPassword({ email, password });
 }
 
-export async function signUp(email: string, password: string) {
-  // Pin the email-verification link back to *this* origin so the confirmation
-  // opt-in actually lands on the deployed app. Without emailRedirectTo, Supabase
-  // uses the project's default Site URL, which is why verification links can
-  // bounce. On web this must also be present in the Supabase Auth "Redirect
-  // URLs" allow-list; unlisted URLs are rejected server-side, which prevents
-  // open-redirect abuse of the confirmation link.
-  const emailRedirectTo =
-    Platform.OS === 'web' && typeof window !== 'undefined'
-      ? `${window.location.origin}/(auth)/login`
-      : undefined;
+export async function signUp(email: string, password: string, displayName?: string) {
+  // Code-based verification: instead of an email *link* (which broke when the
+  // redirect URL didn't match Supabase's allow-list), the confirmation email
+  // carries a 6-digit `{{ .Token }}` that the user types on the /codigo screen.
+  // We therefore pass no `emailRedirectTo`; `display_name` is stashed in the
+  // user's metadata so it survives until the profile row is created.
   return supabase.auth.signUp({
     email,
     password,
-    options: emailRedirectTo ? { emailRedirectTo } : undefined,
+    options: displayName ? { data: { display_name: displayName } } : undefined,
   });
+}
+
+/**
+ * Verifies the 6-digit code sent when a new account signs up. On success the
+ * user is confirmed and a session is established.
+ */
+export async function verifySignupCode(email: string, token: string) {
+  return supabase.auth.verifyOtp({ email, token, type: 'signup' });
+}
+
+/** Re-sends the signup confirmation code to a pending (unconfirmed) account. */
+export async function resendSignupCode(email: string) {
+  return supabase.auth.resend({ type: 'signup', email });
 }
 
 export async function signOut() {
