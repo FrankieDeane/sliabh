@@ -56,6 +56,15 @@ export async function signOut() {
   return supabase.auth.signOut();
 }
 
+/**
+ * Fires a transactional account email (welcome / goodbye) via the
+ * `send-account-email` Edge Function. Best-effort: callers should not block the
+ * UI on it. The function only ever emails the authenticated user's own address.
+ */
+export async function sendAccountEmail(type: 'welcome' | 'goodbye') {
+  return supabase.functions.invoke('send-account-email', { body: { type } });
+}
+
 export async function sendRecoveryCode(email: string) {
   // Uses Supabase OTP email — user receives 6-digit code
   return supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });

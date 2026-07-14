@@ -5,7 +5,7 @@ import { Button } from '../../src/components/ui/Button';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { useAuthStore } from '../../src/store/authStore';
-import { verifySignupCode, resendSignupCode, upsertProfile } from '../../src/services/supabase';
+import { verifySignupCode, resendSignupCode, upsertProfile, sendAccountEmail } from '../../src/services/supabase';
 import { showAlert } from '../../src/utils/alert';
 
 export default function VerificarScreen() {
@@ -60,6 +60,8 @@ export default function VerificarScreen() {
         });
       }
       if (data.session) setSession(data.session.access_token);
+      // Fire the welcome email (best-effort — never block navigation on it).
+      sendAccountEmail('welcome').catch(() => {});
       router.replace('/(tabs)/inicio');
     } catch (e: any) {
       showAlert(t('Error', 'Error'), t('Ocurrió un error. Intentá de nuevo.', 'Something went wrong. Try again.'));
