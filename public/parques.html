@@ -23,7 +23,6 @@
   <meta name="twitter:title" content="Parques Nacionales de Argentina — Sliabh" />
   <meta name="twitter:description" content="Mapa interactivo de los 39 Parques Nacionales de Argentina. Rutas, mapas offline y guías de montaña." />
   <meta name="twitter:image" content="https://sliabh.netlify.app/og-image.jpg" />
-  <link rel="preconnect" href="https://unpkg.com">
   <style>
     :root {
       --bg: #070b14;
@@ -474,9 +473,9 @@
     <div id="footerText">Mapa base Esri World Imagery · Datos SIB/APN · Sliabh</div>
   </footer>
 
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="/vendor/maplibre-gl-4.7.1.css" />
+  <script src="/vendor/maplibre-gl-4.7.1.js"></script>
+  <script src="/vendor/jspdf-2.5.1.umd.min.js"></script>
   <script>
     const parks = [
       {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},

@@ -1,14 +1,27 @@
 /**
  * Real offline tile caching (web only).
- * Downloads OpenTopoMap tiles around a point into the Cache Storage API
- * so Leaflet can render them without a connection (served via the
- * service worker / browser HTTP cache).
+ *
+ * Downloads the SAME tiles the interactive map renders — ESRI World Imagery
+ * satellite — into the Cache Storage API so the MapLibre map in parques.html
+ * (and the service worker fallback) can serve them without a connection.
+ *
+ * Must stay in sync with parques.html: same tile provider (ESRI_SAT), same
+ * cache name (sliabh-tiles-v1). Caching any other provider here produces the
+ * "downloaded but the map is blank offline" bug.
  */
 import { Platform } from 'react-native';
 
 const TILE_CACHE = 'sliabh-tiles-v1';
+
+// ESRI World Imagery — the base layer used by the map. Note the {z}/{y}/{x}
+// order (y before x), which is how ArcGIS serves tiles.
 const TILE_URL = (z: number, x: number, y: number) =>
-  `https://tile.opentopomap.org/${z}/${x}/${y}.png`;
+  `https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
+
+// Per-zoom tile radius around the park centre. Zooms 10–15 give both an
+// overview and enough on-trail detail to navigate; the radii keep the total
+// bounded (~600 tiles, ~10–20 MB of satellite imagery per park).
+const ZOOM_RADII: Record<number, number> = { 10: 2, 11: 2, 12: 3, 13: 4, 14: 6, 15: 8 };
 
 function lonToTileX(lon: number, z: number) {
   return Math.floor(((lon + 180) / 360) * 2 ** z);
@@ -28,9 +41,16 @@ export function isTileCachingSupported(): boolean {
   return Platform.OS === 'web' && typeof caches !== 'undefined';
 }
 
+/** Rough estimate of how much imagery a park download will store, in MB. */
+export function estimateAreaSizeMb(): number {
+  const tiles = Object.values(ZOOM_RADII).reduce((sum, r) => sum + (2 * r + 1) ** 2, 0);
+  // ESRI World Imagery JPEG tiles average ~18 KB each.
+  return Math.round((tiles * 18) / 1024);
+}
+
 /**
- * Cache tiles for zoom levels 8–12 in a small radius around the point.
- * Roughly 100–150 tiles (~2–4 MB) per park — enough for offline browsing.
+ * Cache ESRI satellite tiles around a point across zoom levels 10–15 so the
+ * park is fully browsable offline in the same map the user already sees.
  */
 export async function downloadAreaTiles(
   lat: number,
@@ -40,10 +60,10 @@ export async function downloadAreaTiles(
   if (!isTileCachingSupported()) return { total: 0, cached: 0, failed: 0 };
 
   const jobs: string[] = [];
-  for (let z = 8; z <= 12; z++) {
+  for (const [zStr, radius] of Object.entries(ZOOM_RADII)) {
+    const z = Number(zStr);
     const cx = lonToTileX(lon, z);
     const cy = latToTileY(lat, z);
-    const radius = z <= 9 ? 1 : z <= 11 ? 2 : 3;
     for (let x = cx - radius; x <= cx + radius; x++) {
       for (let y = cy - radius; y <= cy + radius; y++) {
         jobs.push(TILE_URL(z, x, y));
@@ -83,6 +103,7 @@ export async function downloadAreaTiles(
 export async function isAreaCached(lat: number, lon: number): Promise<boolean> {
   if (!isTileCachingSupported()) return false;
   const cache = await caches.open(TILE_CACHE);
-  const probe = TILE_URL(10, lonToTileX(lon, 10), latToTileY(lat, 10));
+  // Probe a mid-zoom tile at the park centre — present only after a download.
+  const probe = TILE_URL(13, lonToTileX(lon, 13), latToTileY(lat, 13));
   return !!(await cache.match(probe));
 }

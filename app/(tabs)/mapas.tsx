@@ -11,7 +11,7 @@ import { SenderoCorrection } from '../../src/components/contribute/SenderoCorrec
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
 import { useLangStore } from '../../src/utils/../store/langStore';
-import { downloadAreaTiles, isAreaCached, isTileCachingSupported } from '../../src/utils/offlineTiles';
+import { downloadAreaTiles, isAreaCached, isTileCachingSupported, estimateAreaSizeMb } from '../../src/utils/offlineTiles';
 import { downloadGpx } from '../../src/utils/gpx';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
@@ -900,7 +900,7 @@ function DownloadCard({
         ) : null}
         <View style={dlS.photoOverlay} />
         <View style={dlS.sizeBadge}>
-          <Text style={dlS.sizeTxt}>{park.size}</Text>
+          <Text style={dlS.sizeTxt}>{Platform.OS === 'web' ? `~${estimateAreaSizeMb()} MB` : park.size}</Text>
         </View>
         {park.unesco && (
           <View style={dlS.unescoBadge}>
