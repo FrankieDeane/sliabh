@@ -69,6 +69,12 @@ export default function LoginScreen() {
     try {
       const { data, error } = await signIn(cleanEmail, password);
       if (error) {
+        // Account exists but the email was never confirmed → route the user to
+        // the code-verification screen instead of leaving them stuck.
+        if (/email not confirmed/i.test(error.message)) {
+          router.push({ pathname: '/(auth)/verificar', params: { email: cleanEmail } } as any);
+          return;
+        }
         showAlert('Error al iniciar sesión', translateError(error.message));
         return;
       }
