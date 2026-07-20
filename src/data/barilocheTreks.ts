@@ -117,7 +117,7 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
       { lat: -41.1985, lon: -71.4737, ele: 1655 },
       { lat: -41.1990, lon: -71.4739, ele: 1680 },
       { lat: -41.1995, lon: -71.4740, ele: 1695 },
-      { lat: -41.1997, lon: -71.4741, ele: 1700 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
     ],
     namedWaypoints: [
       {
@@ -145,8 +145,8 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
         description: 'Sector de bloques donde el sendero se vuelve expuesto; se requiere el uso de manos en dos cortos tramos.',
       },
       {
-        lat: -41.1997,
-        lon: -71.4741,
+        lat: -41.1972,
+        lon: -71.4830,
         name: 'Refugio Frey / Laguna Toncek',
         description: 'Refugio del CAB a 1700 m con alojamiento, comidas y terraza sobre la Laguna Toncek. Centro neurálgico de la escalada patagónica. La Laguna Schmoll queda 20-30 min más arriba.',
       },
@@ -522,7 +522,7 @@ Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro 
       'Ascenso al Cerro Otto (1405 m) directamente desde Bariloche, sin necesidad de vehículo. Unos 620 m de desnivel desde la ciudad. Vista 360° del distrito lacustre y las montañas circundantes.',
     trailhead: 'Av. de los Pioneros km 1, salida oeste de Bariloche',
     source: 'barilochetrekking.com',
-    long_description: `El Cerro Otto tiene la ventaja única de ser accesible a pie directamente desde el centro de Bariloche, lo que lo convierte en la caminata urbana por excelencia de la ciudad de la montaña. El sendero parte desde la Avenida Bustillo en su kilómetro 6, asciende por pistas forestales y senderos de tierra a través de bosques de coihue y pino ponderosa que los primeros colonos plantaron en las laderas durante la primera mitad del siglo XX.
+    long_description: `El Cerro Otto tiene la ventaja única de ser accesible a pie directamente desde el centro de Bariloche, lo que lo convierte en la caminata urbana por excelencia de la ciudad de la montaña. El sendero parte desde la Avenida de los Pioneros, en la salida oeste de la ciudad, y asciende por pistas forestales y senderos de tierra a través de bosques de coihue y pino ponderosa que los primeros colonos plantaron en las laderas durante la primera mitad del siglo XX.
 
 Durante el ascenso el bosque se va abriendo en claros que permiten las primeras vistas hacia el lago Nahuel Huapi y la ciudad de Bariloche, que se ve empequeñecer a medida que se gana altura. Los pinos llenan el aire de resina aromática y el suelo se cubre de una alfombra de acículas de color ocre. Es frecuente encontrar pájaros carpinteros gigantes (Campephilus magellanicus) trabajando los troncos muertos en los tramos más boscosos.
 
@@ -596,8 +596,8 @@ El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) 
     activity: 'trekking',
     difficulty: 'facil',
     distance_km: 4,
-    elevation_gain_m: 240,
-    max_altitude_m: 1000,
+    elevation_gain_m: 150,
+    max_altitude_m: 870,
     duration: { min: 2, max: 3, unit: 'horas' },
     coordinates: { lat: -41.0290, lon: -71.8130 },
     photo_uri:
@@ -617,14 +617,14 @@ En la parte alta del recorrido se llega al lago Los Cántaros, el cuerpo de agua
 
 El regreso es por la misma escalera hasta el muelle. La excursión se combina habitualmente con la visita a Puerto Blest y —opcionalmente— el cruce al lago Frías. Conviene reservar la navegación con anticipación en temporada alta y llevar ropa impermeable: en Blest puede llover cualquier día del año.`,
     gpxTrack: [
-      { lat: -41.0290, lon: -71.8130, ele: 770 },
-      { lat: -41.0300, lon: -71.8145, ele: 800 },
-      { lat: -41.0310, lon: -71.8160, ele: 840 },
-      { lat: -41.0320, lon: -71.8172, ele: 880 },
-      { lat: -41.0330, lon: -71.8182, ele: 920 },
-      { lat: -41.0340, lon: -71.8190, ele: 960 },
-      { lat: -41.0350, lon: -71.8197, ele: 990 },
-      { lat: -41.0358, lon: -71.8202, ele: 1000 },
+      { lat: -41.0290, lon: -71.8130, ele: 767 },
+      { lat: -41.0300, lon: -71.8145, ele: 795 },
+      { lat: -41.0310, lon: -71.8160, ele: 815 },
+      { lat: -41.0320, lon: -71.8172, ele: 830 },
+      { lat: -41.0330, lon: -71.8182, ele: 843 },
+      { lat: -41.0340, lon: -71.8190, ele: 852 },
+      { lat: -41.0350, lon: -71.8197, ele: 862 },
+      { lat: -41.0358, lon: -71.8202, ele: 870 },
     ],
     namedWaypoints: [
       {
@@ -741,8 +741,8 @@ Quienes van en vehículo pueden detenerse directamente en el mirador, que está 
     activity: 'trekking',
     difficulty: 'moderado',
     distance_km: 12,
-    elevation_gain_m: 700,
-    max_altitude_m: 2000,
+    elevation_gain_m: 850,
+    max_altitude_m: 2094,
     duration: { min: 5, max: 7, unit: 'horas' },
     coordinates: { lat: -41.2470, lon: -71.2920 },
     photo_uri:
@@ -751,18 +751,18 @@ Quienes van en vehículo pueden detenerse directamente en el mirador, que está 
     permits_required: false,
     best_season: 'Nov – Abr',
     description:
-      'Ascenso al Cerro Challhuaco (~2000 m) desde el Refugio Neumeyer, en el Valle del Challhuaco. Sendero bien marcado por bosque de lengas con panorama del Nahuel Huapi, el Tronador y la estepa al este.',
+      'Ascenso al Cerro Challhuaco (2094 m) desde el Refugio Neumeyer, en el Valle del Challhuaco. Sendero bien marcado por bosque de lengas con panorama del Nahuel Huapi, el Tronador y la estepa al este.',
     trailhead: 'Refugio Neumeyer, Valle del Challhuaco (19 km de Bariloche)',
     source: 'barilochetrekking.com',
-    long_description: `El Valle del Challhuaco es el rincón más tranquilo del entorno inmediato de Bariloche: un valle de bosque de lengas a solo 19 km del centro, con el Refugio Neumeyer (1320 m) como base de operaciones. El ascenso al Cerro Challhuaco es el clásico del valle y una de las mejores relaciones esfuerzo-recompensa de la zona, con un sendero bien marcado de principio a fin.
+    long_description: `El Valle del Challhuaco es el rincón más tranquilo del entorno inmediato de Bariloche: un valle de bosque de lengas a solo 19 km del centro, con el Refugio Neumeyer (1250 m) como base de operaciones. El ascenso al Cerro Challhuaco es el clásico del valle y una de las mejores relaciones esfuerzo-recompensa de la zona, con un sendero bien marcado de principio a fin.
 
 Desde el refugio, el sendero se interna en un bosque de lengas alto y luminoso, muy distinto del coihuar húmedo de las rutas del oeste. La subida es sostenida pero nunca extrema, y en una bifurcación señalizada se toma el ramal izquierdo que continúa hacia la cumbre. En otoño este bosque es uno de los espectáculos de la región: las lengas viran al rojo y al naranja en capas que cubren todo el valle.
 
 Sobre los 1700 metros el bosque se achaparra hasta desaparecer y el sendero sale a terreno abierto de roca y arbustos rastreros, donde el viento sopla con intensidad. La señalización pasa a ser por hitos de piedra (cairns); con niebla conviene prestar atención al rumbo. El contraste es notable: hacia el oeste las cumbres nevadas de la cordillera, hacia el este el comienzo de la estepa patagónica que se pierde en el horizonte.
 
-Desde la cumbre del Challhuaco (~2000 m) el panorama abarca el lago Nahuel Huapi y Bariloche al norte, el cordón del Catedral y el Tronador al oeste, y la transición bosque-estepa al este — pocas cumbres muestran tan claramente los dos mundos que conviven en el parque. El descenso es por la misma ruta, con el Refugio Neumeyer como parada final para un té caliente en el valle.`,
+Desde la cumbre del Challhuaco (2094 m) el panorama abarca el lago Nahuel Huapi y Bariloche al norte, el cordón del Catedral y el Tronador al oeste, y la transición bosque-estepa al este — pocas cumbres muestran tan claramente los dos mundos que conviven en el parque. El descenso es por la misma ruta, con el Refugio Neumeyer como parada final para un té caliente en el valle.`,
     gpxTrack: [
-      { lat: -41.2470, lon: -71.2920, ele: 1320 },
+      { lat: -41.2470, lon: -71.2920, ele: 1250 },
       { lat: -41.2490, lon: -71.2950, ele: 1400 },
       { lat: -41.2510, lon: -71.2980, ele: 1480 },
       { lat: -41.2530, lon: -71.3010, ele: 1560 },
@@ -771,13 +771,13 @@ Desde la cumbre del Challhuaco (~2000 m) el panorama abarca el lago Nahuel Huapi
       { lat: -41.2590, lon: -71.3085, ele: 1800 },
       { lat: -41.2610, lon: -71.3100, ele: 1880 },
       { lat: -41.2628, lon: -71.3110, ele: 1950 },
-      { lat: -41.2640, lon: -71.3118, ele: 2000 },
+      { lat: -41.2640, lon: -71.3118, ele: 2094 },
     ],
     namedWaypoints: [
       {
         lat: -41.2470,
         lon: -71.2920,
-        name: 'Refugio Neumeyer (1320 m)',
+        name: 'Refugio Neumeyer (1250 m)',
         description: 'Base del Valle del Challhuaco, con comidas y alojamiento. Inicio del sendero señalizado a la cumbre.',
       },
       {
@@ -795,7 +795,7 @@ Desde la cumbre del Challhuaco (~2000 m) el panorama abarca el lago Nahuel Huapi
       {
         lat: -41.2640,
         lon: -71.3118,
-        name: 'Cumbre Cerro Challhuaco (~2000 m)',
+        name: 'Cumbre Cerro Challhuaco (2094 m)',
         description: 'Panorama del Nahuel Huapi y Bariloche al norte, el Catedral y el Tronador al oeste y la estepa al este.',
       },
     ],
@@ -845,7 +845,7 @@ Del otro lado de la Brecha, la bajada conduce al Refugio Jakob (oficialmente Ref
       { lat: -41.1905, lon: -71.4585, ele: 1230 },
       { lat: -41.1950, lon: -71.4670, ele: 1420 },
       { lat: -41.1975, lon: -71.4727, ele: 1580 },
-      { lat: -41.1997, lon: -71.4741, ele: 1700 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
       { lat: -41.1975, lon: -71.4790, ele: 1760 },
       { lat: -41.1940, lon: -71.4850, ele: 1830 },
       { lat: -41.1900, lon: -71.4900, ele: 1900 },
@@ -870,8 +870,8 @@ Del otro lado de la Brecha, la bajada conduce al Refugio Jakob (oficialmente Ref
         description: 'Punto de partida. Estacionamiento con servicio de guarda de vehículos por 2 días. Inicio del sendero al Refugio Frey.',
       },
       {
-        lat: -41.1997,
-        lon: -71.4741,
+        lat: -41.1972,
+        lon: -71.4830,
         name: 'Refugio Frey (1700 m) — noche 1',
         description: 'Refugio del CAB a orillas de la Laguna Toncek. Reserva obligatoria en temporada alta. Cenas y desayunos disponibles. Carpas en la orilla de la laguna.',
       },
