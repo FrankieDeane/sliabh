@@ -77,12 +77,19 @@ export async function deleteAccount() {
 }
 
 export async function sendRecoveryCode(email: string) {
-  // Uses Supabase OTP email — user receives 6-digit code
-  return supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+  // Password recovery. This fires Supabase's "Reset password" email template
+  // (NOT "Magic Link"), which is the one docs/emails/reset-password.html is
+  // written for — it delivers the 6-digit `{{ .Token }}` code the /codigo
+  // screen expects. Using signInWithOtp here instead sent the "Magic Link"
+  // template, whose default body is a *link*, so users got a URL and no code.
+  return supabase.auth.resetPasswordForEmail(email);
 }
 
 export async function verifyRecoveryCode(email: string, token: string) {
-  return supabase.auth.verifyOtp({ email, token, type: 'email' });
+  // `recovery` matches resetPasswordForEmail above (was `email`, which pairs
+  // with signInWithOtp). On success a recovery session is established so the
+  // subsequent updatePassword() call is authorized.
+  return supabase.auth.verifyOtp({ email, token, type: 'recovery' });
 }
 
 export async function updatePassword(password: string) {
