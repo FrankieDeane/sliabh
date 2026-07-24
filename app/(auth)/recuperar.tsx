@@ -11,6 +11,7 @@ export default function RecuperarScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const bg = isDark ? 'bg-gray-900' : 'bg-stone-50';
   const textPrimary = isDark ? 'text-stone-50' : 'text-stone-900';
@@ -32,14 +33,33 @@ export default function RecuperarScreen() {
     setLoading(false);
     // Only surface genuine connectivity failures. A "user not found" error is
     // deliberately swallowed: telling the user whether an email is registered
-    // is an account-enumeration leak. We proceed to the code screen either way,
-    // so the response is identical whether or not the account exists.
+    // is an account-enumeration leak. We show the same "check your email"
+    // confirmation either way, so the response is identical whether or not the
+    // account exists.
     if (error && /network|fetch/i.test(error.message)) {
       showAlert('Error de conexión', 'Comprueba tu red e inténtalo de nuevo.');
       return;
     }
-    router.push({ pathname: '/(auth)/codigo', params: { email: cleanEmail } } as any);
+    setSent(true);
   };
+
+  if (sent) {
+    return (
+      <View className={`flex-1 px-6 pt-16 ${bg}`}>
+        <TouchableOpacity onPress={() => router.replace('/(auth)/login' as any)} className="mb-8">
+          <Text className={textMuted}>‹ Volver</Text>
+        </TouchableOpacity>
+        <Text className="text-4xl mb-3">📩</Text>
+        <Text className={`text-2xl font-bold mb-2 ${textPrimary}`}>Revisá tu correo</Text>
+        <Text className={`text-sm leading-5 ${textMuted}`}>
+          Si hay una cuenta asociada a{'\n'}
+          <Text className={`font-semibold ${textPrimary}`}>{normalizeEmail(email)}</Text>
+          {'\n\n'}te enviamos un enlace para restablecer tu contraseña. Abrilo desde este
+          dispositivo y vas a poder elegir una nueva. El enlace vence en 1 hora.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View className={`flex-1 px-6 pt-16 ${bg}`}>
@@ -50,7 +70,7 @@ export default function RecuperarScreen() {
       <Text className="text-4xl mb-3">🔑</Text>
       <Text className={`text-2xl font-bold mb-2 ${textPrimary}`}>¿Olvidaste tu contraseña?</Text>
       <Text className={`text-sm mb-8 leading-5 ${textMuted}`}>
-        Introduce tu correo y te enviaremos un código de 6 dígitos para restablecer tu contraseña.
+        Introduce tu correo y te enviaremos un enlace para restablecer tu contraseña.
       </Text>
 
       <Text className={`text-sm font-medium mb-1 ${textPrimary}`}>Correo electrónico</Text>
@@ -67,7 +87,7 @@ export default function RecuperarScreen() {
         className={inputClass}
       />
 
-      <Button label="Enviar código" onPress={handleSend} loading={loading} fullWidth />
+      <Button label="Enviar enlace" onPress={handleSend} loading={loading} fullWidth />
     </View>
   );
 }
