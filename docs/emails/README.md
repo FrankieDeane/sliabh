@@ -42,3 +42,9 @@ así que las variables (nombre, etc.) se reemplazan desde ahí.
    **activado** (así se pide el código al registrarse).
 5. (Opcional) Desplegar la Edge Function de `welcome`/`goodbye` para los correos de
    bienvenida y despedida.
+6. Desplegar `supabase/functions/delete-account` y setear el secret
+   `SUPABASE_SERVICE_ROLE_KEY` (Project Settings → API → `service_role`) — la
+   necesita para poder borrar la cuenta con `auth.admin.deleteUser`. Sin esto,
+   el botón "Eliminar cuenta" del header web falla. El botón ya está
+   conectado: envía el goodbye y borra la cuenta (cascadea a perfil, aportes,
+   reportes y caminatas).
