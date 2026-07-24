@@ -21,11 +21,12 @@ import {
   DIFFICULTY_COLOR,
 } from '../../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS } from '../../../src/data/barilocheTreks';
+import type { ExtendedTrail } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
 import { saveTrailTrack, isSupabaseConfigured } from '../../../src/services/supabase';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
-import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
+import type { TrailDifficulty, TrailActivity, ArgentinaTrail } from '../../../src/data/argentinaTrails';
 // Platform-specific 3D map — .web.tsx / .native.tsx resolved by bundler
 const TrailMap3D = Platform.OS === 'web'
   ? require('../../../src/components/map/TrailMap3D.web').default
@@ -45,7 +46,14 @@ import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsr
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 
-const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
+// Base Argentina trails plus the richer Bariloche treks. Bariloche entries add
+// optional detail fields (long_description, namedWaypoints, logistics, …); the
+// element type keeps them so the detail screen can read them type-safely.
+export type TrailDetail = ArgentinaTrail & Partial<ExtendedTrail>;
+const ALL_TRAILS: TrailDetail[] = [
+  ...ARGENTINA_TRAILS,
+  ...BARILOCHE_TRAILS,
+];
 
 // ─── Theme context (avoids prop-drilling through all sub-components) ──────────
 type ThemeColors = { bg: string; surface: string; elevated: string; border: string; text: string; muted: string; accent: string };
@@ -88,7 +96,7 @@ type TabKey = 'overview' | 'logistics' | 'safety' | 'gear';
 
 // ─── Content generators (bilingual) ──────────────────────────────────────────
 function getLogisticsContent(
-  trail: (typeof ARGENTINA_TRAILS)[0],
+  trail: TrailDetail,
   lang: 'es' | 'en',
 ): string[] {
   if (lang === 'en') {
@@ -949,7 +957,7 @@ function DownloadRow({
   trail,
   t,
 }: {
-  trail: (typeof ARGENTINA_TRAILS)[0] & { gpxTrack?: Array<{ lat: number; lon: number; ele?: number }>; long_description?: string; parking?: string; access_notes?: string; water_sources?: string; refugio?: string; namedWaypoints?: Array<{ lat: number; lon: number; name: string; description: string }> };
+  trail: TrailDetail;
   t: (es: string, en: string) => string;
 }) {
   const C = useC();
@@ -1087,7 +1095,7 @@ function OverviewTab({
   t,
   onStartHike,
 }: {
-  trail: (typeof ARGENTINA_TRAILS)[0];
+  trail: TrailDetail;
   lang: 'es' | 'en';
   t: (es: string, en: string) => string;
   onStartHike: () => void;
@@ -1503,7 +1511,7 @@ function haversineKm(a: { lat: number; lon: number }, b: { lat: number; lon: num
 
 interface HikeModeProps {
   visible: boolean;
-  trail: (typeof ALL_TRAILS)[0];
+  trail: TrailDetail;
   onClose: () => void;
   t: (es: string, en: string) => string;
 }
