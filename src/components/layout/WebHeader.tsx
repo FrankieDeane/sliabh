@@ -16,6 +16,8 @@ import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
+import { deleteAccount } from '../../services/supabase';
+import { showAlert, showConfirm } from '../../utils/alert';
 
 const MAX_CONTENT = 1200;
 
@@ -42,6 +44,38 @@ export function WebHeader() {
   const { width } = useWindowDimensions();
   const scrolled = useScrolled();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  function handleDeleteAccount() {
+    showConfirm({
+      title: t('Eliminar cuenta', 'Delete account'),
+      message: t(
+        'Se eliminará tu cuenta y todos tus datos (perfil, aportes, reportes y caminatas) de forma permanente. Esta acción no se puede deshacer.',
+        'Your account and all your data (profile, contributions, reports and hikes) will be permanently deleted. This action cannot be undone.',
+      ),
+      confirmLabel: t('Eliminar', 'Delete'),
+      cancelLabel: t('Cancelar', 'Cancel'),
+      destructive: true,
+      onConfirm: async () => {
+        setDeletingAccount(true);
+        try {
+          const { error } = await deleteAccount();
+          if (error) {
+            showAlert(
+              t('Error', 'Error'),
+              t('No se pudo eliminar la cuenta. Intentá de nuevo.', "Couldn't delete the account. Try again."),
+            );
+            return;
+          }
+          setDrawerOpen(false);
+          signOut();
+          router.replace('/(tabs)/inicio');
+        } finally {
+          setDeletingAccount(false);
+        }
+      },
+    });
+  }
 
   const NAV = [
     { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const, scrollTo: null as string | null },
@@ -173,6 +207,16 @@ export function WebHeader() {
                     <Ionicons name="log-out-outline" size={15} color={c.muted} />
                     <Text style={[styles.loginBtnTxt, { color: c.muted }]}>{t('Salir', 'Sign out')}</Text>
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleDeleteAccount}
+                    disabled={deletingAccount}
+                    style={[styles.deleteAccountBtn, { opacity: deletingAccount ? 0.6 : 1 }]}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.deleteAccountTxt}>
+                      {deletingAccount ? t('Eliminando…', 'Deleting…') : t('Eliminar cuenta', 'Delete account')}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               ) : (
                 <TouchableOpacity style={styles.loginBtn} onPress={() => router.push('/(auth)/login')} activeOpacity={0.85}>
@@ -237,10 +281,22 @@ export function WebHeader() {
               {/* Drawer footer */}
               <View style={[styles.drawerFooter, { borderTopColor: c.border }]}>
                 {user ? (
-                  <TouchableOpacity onPress={() => { setDrawerOpen(false); signOut(); }} style={styles.drawerFooterBtn}>
-                    <Ionicons name="log-out-outline" size={16} color={c.muted} />
-                    <Text style={[styles.drawerFooterTxt, { color: c.muted }]}>{t('Cerrar sesión', 'Sign out')}</Text>
-                  </TouchableOpacity>
+                  <>
+                    <TouchableOpacity onPress={() => { setDrawerOpen(false); signOut(); }} style={styles.drawerFooterBtn}>
+                      <Ionicons name="log-out-outline" size={16} color={c.muted} />
+                      <Text style={[styles.drawerFooterTxt, { color: c.muted }]}>{t('Cerrar sesión', 'Sign out')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleDeleteAccount}
+                      disabled={deletingAccount}
+                      style={[styles.drawerFooterBtn, { opacity: deletingAccount ? 0.6 : 1 }]}
+                    >
+                      <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                      <Text style={[styles.drawerFooterTxt, { color: '#ef4444' }]}>
+                        {deletingAccount ? t('Eliminando…', 'Deleting…') : t('Eliminar cuenta', 'Delete account')}
+                      </Text>
+                    </TouchableOpacity>
+                  </>
                 ) : (
                   <TouchableOpacity onPress={() => navigate('/(auth)/login')} style={styles.drawerFooterBtn}>
                     <Ionicons name="person-outline" size={16} color="#22c55e" />
@@ -373,6 +429,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#22c55e',
+  },
+  deleteAccountBtn: {
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+  },
+  deleteAccountTxt: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#ef4444',
   },
   // Drawer
   drawerBackdrop: {

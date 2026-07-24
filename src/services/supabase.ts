@@ -65,6 +65,17 @@ export async function sendAccountEmail(type: 'welcome' | 'goodbye') {
   return supabase.functions.invoke('send-account-email', { body: { type } });
 }
 
+/**
+ * Permanently deletes the signed-in user's account via the `delete-account`
+ * Edge Function: sends the goodbye email, then deletes the auth user, which
+ * cascades (on delete cascade) to their profile, contributions, reports and
+ * hike tracks. Does not sign the local session out — callers should do that
+ * once the deletion succeeds.
+ */
+export async function deleteAccount() {
+  return supabase.functions.invoke('delete-account', { body: {} });
+}
+
 export async function sendRecoveryCode(email: string) {
   // Uses Supabase OTP email — user receives 6-digit code
   return supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });

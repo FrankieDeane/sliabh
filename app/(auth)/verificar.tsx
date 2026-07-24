@@ -61,7 +61,9 @@ export default function VerificarScreen() {
       }
       if (data.session) setSession(data.session.access_token);
       // Fire the welcome email (best-effort — never block navigation on it).
-      sendAccountEmail('welcome').catch(() => {});
+      sendAccountEmail('welcome').then(({ error }) => {
+        if (error) console.error('sendAccountEmail(welcome) failed:', error);
+      }).catch((e) => console.error('sendAccountEmail(welcome) failed:', e));
       router.replace('/(tabs)/inicio');
     } catch (e: any) {
       showAlert(t('Error', 'Error'), t('Ocurrió un error. Intentá de nuevo.', 'Something went wrong. Try again.'));

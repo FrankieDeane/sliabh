@@ -21,6 +21,32 @@ export function showAlert(title: string, message?: string): void {
   Alert.alert(title, message);
 }
 
+/**
+ * Cross-platform confirm dialog, same rationale as showAlert above (RN's
+ * `Alert` doesn't render on react-native-web). Falls back to
+ * `window.confirm`; `onConfirm` only fires if the user accepts.
+ */
+export function showConfirm(opts: {
+  title: string;
+  message?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  destructive?: boolean;
+  onConfirm: () => void;
+}): void {
+  const { title, message, confirmLabel = 'OK', cancelLabel = 'Cancel', destructive, onConfirm } = opts;
+  if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+      if (window.confirm(message ? `${title}\n\n${message}` : title)) onConfirm();
+    }
+    return;
+  }
+  Alert.alert(title, message, [
+    { text: cancelLabel, style: 'cancel' },
+    { text: confirmLabel, style: destructive ? 'destructive' : 'default', onPress: onConfirm },
+  ]);
+}
+
 // ── Auth input hardening ─────────────────────────────────────────────
 
 /**
