@@ -83,3 +83,34 @@ create policy "Users insert their own reports"
   with check (auth.uid() = user_id);
 
 create index if not exists trail_reports_trail_idx on public.trail_reports (trail_id, created_at desc);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- trail_tracks: GPS track recorded during "Modo Caminata" (Hike Mode).
+-- Saved automatically for every signed-in user when a hike is stopped —
+-- not opt-in. Anonymous (not logged-in) hikes are never persisted here.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.trail_tracks (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users (id) on delete cascade,
+  trail_id    text not null,
+  points      jsonb not null, -- array of {lat, lon, t} (t = ms epoch)
+  distance_km double precision not null default 0,
+  duration_s  integer not null default 0,
+  started_at  timestamptz not null,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.trail_tracks enable row level security;
+
+drop policy if exists "Users view their own tracks" on public.trail_tracks;
+create policy "Users view their own tracks"
+  on public.trail_tracks for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users insert their own tracks" on public.trail_tracks;
+create policy "Users insert their own tracks"
+  on public.trail_tracks for insert
+  with check (auth.uid() = user_id);
+
+create index if not exists trail_tracks_user_idx on public.trail_tracks (user_id);
+create index if not exists trail_tracks_trail_idx on public.trail_tracks (trail_id, created_at desc);

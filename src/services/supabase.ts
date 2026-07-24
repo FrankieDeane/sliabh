@@ -126,6 +126,39 @@ export async function submitSenderoCorrection(opts: {
   });
 }
 
+// ── Hike tracks ("Modo Caminata" GPS recording) ──────────────────────
+
+export interface TrackPoint {
+  lat: number;
+  lon: number;
+  t: number; // ms epoch
+}
+
+/**
+ * Persists a completed hike's GPS track. Called automatically when a
+ * signed-in user stops "Modo Caminata" — recording is mandatory for logged-in
+ * users, not an opt-in choice. Silently no-ops when there's no authenticated
+ * user (anonymous hikes are never saved).
+ */
+export async function saveTrailTrack(opts: {
+  trailId: string;
+  points: TrackPoint[];
+  distanceKm: number;
+  durationS: number;
+  startedAt: string;
+}) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: null, error: null };
+  return supabase.from('trail_tracks').insert({
+    user_id: user.id,
+    trail_id: opts.trailId,
+    points: opts.points,
+    distance_km: opts.distanceKm,
+    duration_s: opts.durationS,
+    started_at: opts.startedAt,
+  });
+}
+
 // ── Trail condition reports (live, perishable) ──────────────────────
 
 export type TrailCondition = 'ok' | 'nieve' | 'rio_crecido' | 'cerrado' | 'huella_perdida' | 'barro' | 'otro';
