@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { Platform } from 'react-native';
 
 // Replace with your Supabase project values
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
@@ -16,7 +17,10 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    // On web we let supabase-js parse the recovery token from the URL when the
+    // user opens the password-reset link (see sendRecoveryCode + the
+    // /nueva-clave screen). Native uses a code flow, so it stays off there.
+    detectSessionInUrl: Platform.OS === 'web',
   },
 });
 
@@ -77,18 +81,22 @@ export async function deleteAccount() {
 }
 
 export async function sendRecoveryCode(email: string) {
-  // Password recovery. This fires Supabase's "Reset password" email template
-  // (NOT "Magic Link"), which is the one docs/emails/reset-password.html is
-  // written for — it delivers the 6-digit `{{ .Token }}` code the /codigo
-  // screen expects. Using signInWithOtp here instead sent the "Magic Link"
-  // template, whose default body is a *link*, so users got a URL and no code.
-  return supabase.auth.resetPasswordForEmail(email);
+  // Password recovery via the reset *link* (not a typed code). This works with
+  // Supabase's DEFAULT "Reset password" email template — whose body is the
+  // `{{ .ConfirmationURL }}` link — so it needs no template editing (the
+  // template editor is locked until custom SMTP is configured). The link lands
+  // the user on /nueva-clave, where detectSessionInUrl has already exchanged
+  // the token for a recovery session, and they set a new password.
+  const redirectTo =
+    typeof window !== 'undefined' && window.location
+      ? `${window.location.origin}/nueva-clave`
+      : undefined;
+  return supabase.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
 }
 
 export async function verifyRecoveryCode(email: string, token: string) {
-  // `recovery` matches resetPasswordForEmail above (was `email`, which pairs
-  // with signInWithOtp). On success a recovery session is established so the
-  // subsequent updatePassword() call is authorized.
+  // Retained for the native code-based path. On web the link flow above
+  // establishes the recovery session directly, so this isn't used there.
   return supabase.auth.verifyOtp({ email, token, type: 'recovery' });
 }
 
