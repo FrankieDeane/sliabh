@@ -23,6 +23,7 @@ import {
 import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
+import { saveTrailTrack, isSupabaseConfigured } from '../../../src/services/supabase';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
 import type { TrailDifficulty, TrailActivity } from '../../../src/data/argentinaTrails';
 // Platform-specific 3D map — .web.tsx / .native.tsx resolved by bundler
@@ -1511,7 +1512,8 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
   const C = useC();
   const [elapsed, setElapsed] = useState(0);
   const [userPos, setUserPos] = useState<{ lat: number; lon: number } | null>(null);
-  const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number }>>([]);
+  const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
+  const [stopping, setStopping] = useState(false);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
@@ -1520,7 +1522,7 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
   const updatePosition = useCallback((lat: number, lon: number) => {
     setUserPos({ lat, lon });
     setPosHistory((prev) => {
-      const next = [...prev, { lat, lon }];
+      const next = [...prev, { lat, lon, t: Date.now() }];
       return next;
     });
   }, []);
@@ -1566,6 +1568,28 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
     ? posHistory.reduce((sum, p, i) => i === 0 ? 0 : sum + haversineKm(posHistory[i - 1], p), 0)
     : 0;
 
+  // Recording is mandatory for signed-in users — saveTrailTrack no-ops for
+  // anonymous ones, so this always runs, never behind a toggle.
+  const handleStop = useCallback(async () => {
+    if (posHistory.length >= 2 && isSupabaseConfigured()) {
+      setStopping(true);
+      try {
+        await saveTrailTrack({
+          trailId: trail.id,
+          points: posHistory,
+          distanceKm: distanceCovered,
+          durationS: Math.round(elapsed / 1000),
+          startedAt: new Date(startRef.current).toISOString(),
+        });
+      } catch {
+        // best-effort — never block the user from stopping their hike
+      } finally {
+        setStopping(false);
+      }
+    }
+    onClose();
+  }, [posHistory, distanceCovered, elapsed, trail.id, onClose]);
+
   const mapCenter: [number, number] = [trail.coordinates.lat, trail.coordinates.lon];
 
   return (
@@ -1580,12 +1604,15 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
             </Text>
           </View>
           <TouchableOpacity
-            style={[hikeS.stopBtn, { borderColor: '#ef4444' }]}
-            onPress={onClose}
+            style={[hikeS.stopBtn, { borderColor: '#ef4444', opacity: stopping ? 0.6 : 1 }]}
+            onPress={handleStop}
+            disabled={stopping}
             activeOpacity={0.8}
           >
             <Ionicons name="stop-circle-outline" size={16} color="#ef4444" />
-            <Text style={hikeS.stopBtnText}>{t('Detener', 'Stop')}</Text>
+            <Text style={hikeS.stopBtnText}>
+              {stopping ? t('Guardando…', 'Saving…') : t('Detener', 'Stop')}
+            </Text>
           </TouchableOpacity>
         </View>
 
