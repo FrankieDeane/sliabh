@@ -1,0 +1,34 @@
+name: Supabase keep-alive
+
+# The Free-tier Supabase project auto-pauses after 7 days with no database
+# activity — which silently breaks login/logout/registration and every other
+# Supabase-backed feature until someone notices and restores it from the
+# dashboard. This runs a trivial read against a public table daily so the
+# project never goes 7 days idle.
+#
+# Uses the same public anon key committed in netlify.toml (safe to commit —
+# it's embedded in the client bundle and gated by Row Level Security).
+on:
+  schedule:
+    - cron: '0 12 * * *' # daily at 12:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
+    steps:
+      - name: Ping Supabase (read one row from trail_reports)
+        run: |
+          status=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/trail_reports?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          echo "HTTP $status"
+          cat /tmp/resp.json
+          if [ "$status" -ge 300 ]; then
+            echo "::error::Supabase ping failed with HTTP $status — project may be paused or unreachable."
+            exit 1
+          fi

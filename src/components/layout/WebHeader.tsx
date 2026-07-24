@@ -16,7 +16,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
-import { deleteAccount } from '../../services/supabase';
+import { deleteAccount, signOut as supabaseSignOut } from '../../services/supabase';
 import { showAlert, showConfirm } from '../../utils/alert';
 
 const MAX_CONTENT = 1200;
@@ -46,6 +46,18 @@ export function WebHeader() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
+  // Terminates the real Supabase session (not just the local UI state) —
+  // signOut() alone only cleared the Zustand store, leaving the actual
+  // auth session alive so any Supabase call could still succeed as that user.
+  async function handleSignOut() {
+    try {
+      await supabaseSignOut();
+    } catch {
+      // best-effort — still clear local state below even if this fails
+    }
+    signOut();
+  }
+
   function handleDeleteAccount() {
     showConfirm({
       title: t('Eliminar cuenta', 'Delete account'),
@@ -68,7 +80,7 @@ export function WebHeader() {
             return;
           }
           setDrawerOpen(false);
-          signOut();
+          await handleSignOut();
           router.replace('/(tabs)/inicio');
         } finally {
           setDeletingAccount(false);
@@ -203,7 +215,7 @@ export function WebHeader() {
             {!isCompact && (
               user ? (
                 <View style={styles.userRow}>
-                  <TouchableOpacity onPress={signOut} style={[styles.loginBtn, { borderColor: c.border }]} activeOpacity={0.8}>
+                  <TouchableOpacity onPress={handleSignOut} style={[styles.loginBtn, { borderColor: c.border }]} activeOpacity={0.8}>
                     <Ionicons name="log-out-outline" size={15} color={c.muted} />
                     <Text style={[styles.loginBtnTxt, { color: c.muted }]}>{t('Salir', 'Sign out')}</Text>
                   </TouchableOpacity>
@@ -282,7 +294,7 @@ export function WebHeader() {
               <View style={[styles.drawerFooter, { borderTopColor: c.border }]}>
                 {user ? (
                   <>
-                    <TouchableOpacity onPress={() => { setDrawerOpen(false); signOut(); }} style={styles.drawerFooterBtn}>
+                    <TouchableOpacity onPress={() => { setDrawerOpen(false); handleSignOut(); }} style={styles.drawerFooterBtn}>
                       <Ionicons name="log-out-outline" size={16} color={c.muted} />
                       <Text style={[styles.drawerFooterTxt, { color: c.muted }]}>{t('Cerrar sesión', 'Sign out')}</Text>
                     </TouchableOpacity>
