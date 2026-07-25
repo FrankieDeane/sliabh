@@ -36,3 +36,6 @@ yarn-error.*
 nativewind-env.d.ts
 .claude/
 .netlify/
+
+# graphify knowledge-graph output (generated locally, no need to version)
+graphify-out/
