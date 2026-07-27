@@ -453,16 +453,9 @@ El sendero peatonal, alternativa libre al telesilla de pago que también sube a 
 La cima dispone de una confitería con vistas de 270 grados y una terraza al aire libre desde donde los guías fotográficos suelen detallar los puntos de referencia: el lago Nahuel Huapi al norte, el lago Moreno al este, el lago Perito Moreno y el lago Escondido al sur, y las cumbres del Cerro López y el Cerro Tronador al oeste. La combinación de escala y belleza hace que muchos visitantes se queden más tiempo del previsto, simplemente mirando.
 
 Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro Campanario no decepciona incluso al trekker experimentado. La recomendación es subir caminando y bajar en telesilla, o subir temprano para evitar la aglomeración de grupos de turismo que llegan en los ómnibus de excursión a partir de las 10:00 h.`,
-    gpxTrack: [
-      { lat: -41.0708, lon: -71.4749, ele: 770 },
-      { lat: -41.0714, lon: -71.4752, ele: 815 },
-      { lat: -41.0720, lon: -71.4755, ele: 860 },
-      { lat: -41.0725, lon: -71.4758, ele: 905 },
-      { lat: -41.0730, lon: -71.4761, ele: 950 },
-      { lat: -41.0736, lon: -71.4763, ele: 990 },
-      { lat: -41.0741, lon: -71.4766, ele: 1025 },
-      { lat: -41.0745, lon: -71.4768, ele: 1049 },
-    ],
+    // Track removed: previous coordinates rendered over Lago Nahuel Huapi /
+    // Moreno on the Mapas map. Kept the trail card; needs re-surveyed points.
+    gpxTrack: [],
     namedWaypoints: [
       {
         lat: -41.0708,
@@ -529,21 +522,9 @@ Durante el ascenso el bosque se va abriendo en claros que permiten las primeras 
 La parte alta del sendero, por encima de los 1200 metros, sale del bosque y cruza pasturas abigas con arbustos de neneo y mata negra. Desde aquí la vista se amplía en todas las direcciones: al norte el lago Nahuel Huapi se extiende hasta el horizonte con sus penínsulas y bahías; al este la estepa patagónica comienza a dominar el paisaje; al sur el lago Gutiérrez refleja el Cerro Catedral; y al oeste los nevados de la cordillera cierran el panorama. En la cima una gran rotonda de piedra con la confitería giratoria La Galería ofrece un abrazo de 360 grados al paisaje, aunque muchos prefieren las terrazas exteriores al edificio.
 
 El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) hasta la base y luego un remís de regreso al centro. Aquellos con energía pueden combinar el Otto con la Laguna de los Duendes, una pequeña laguna ubicada 45 minutos al sudeste de la cima.`,
-    gpxTrack: [
-      { lat: -41.1410, lon: -71.3300, ele: 800 },
-      { lat: -41.1418, lon: -71.3345, ele: 860 },
-      { lat: -41.1426, lon: -71.3390, ele: 930 },
-      { lat: -41.1433, lon: -71.3435, ele: 1000 },
-      { lat: -41.1440, lon: -71.3480, ele: 1065 },
-      { lat: -41.1446, lon: -71.3525, ele: 1130 },
-      { lat: -41.1451, lon: -71.3575, ele: 1190 },
-      { lat: -41.1456, lon: -71.3620, ele: 1245 },
-      { lat: -41.1461, lon: -71.3665, ele: 1290 },
-      { lat: -41.1465, lon: -71.3710, ele: 1330 },
-      { lat: -41.1469, lon: -71.3750, ele: 1368 },
-      { lat: -41.1471, lon: -71.3775, ele: 1390 },
-      { lat: -41.1473, lon: -71.3795, ele: 1405 },
-    ],
+    // Track removed: previous coordinates rendered over Lago Nahuel Huapi on
+    // the Mapas map. Kept the trail card; needs re-surveyed points.
+    gpxTrack: [],
     namedWaypoints: [
       {
         lat: -41.1410,
@@ -1441,16 +1422,10 @@ El recorrido arranca en la portada del Parque Municipal Llao Llao, señalizada c
 Arriba hay tres miradores que se complementan: hacia el oeste el Brazo de la Tristeza y la Isla Victoria; hacia el norte el hotel Llao Llao con Puerto Pañuelo y el cerro Campanario detrás; hacia el sudoeste el cordón del López. Al atardecer la luz lateral sobre los brazos del lago produce los colores más intensos, aunque implica bajar con la última luz.
 
 Es una salida ideal para familias con niños, para el día de llegada o para combinar con el resto del Circuito Chico en bicicleta. No hay agua en el recorrido y en verano la subida final puede dar calor: llevar botella. El parque es municipal y de acceso gratuito; los senderos cierran al anochecer.`,
-    gpxTrack: [
-      { lat: -41.0330, lon: -71.5710, ele: 825 },
-      { lat: -41.0345, lon: -71.5740, ele: 830 },
-      { lat: -41.0360, lon: -71.5765, ele: 840 },
-      { lat: -41.0372, lon: -71.5785, ele: 855 },
-      { lat: -41.0382, lon: -71.5800, ele: 890 },
-      { lat: -41.0390, lon: -71.5810, ele: 940 },
-      { lat: -41.0396, lon: -71.5816, ele: 1000 },
-      { lat: -41.0400, lon: -71.5820, ele: 1050 },
-    ],
+    // Track removed: previous coordinates rendered over the Nahuel Huapi water
+    // (Llao Llao peninsula) on the Mapas map. Kept the trail card; needs
+    // re-surveyed points.
+    gpxTrack: [],
     namedWaypoints: [
       {
         lat: -41.0330,
