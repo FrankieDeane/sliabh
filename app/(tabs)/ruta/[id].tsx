@@ -20,7 +20,7 @@ import {
   DIFFICULTY_LABEL,
   DIFFICULTY_COLOR,
 } from '../../../src/data/argentinaTrails';
-import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS } from '../../../src/data/barilocheTreks';
+import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS, BARILOCHE_SEGURIDAD } from '../../../src/data/barilocheTreks';
 import type { ExtendedTrail } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
@@ -1101,8 +1101,17 @@ function OverviewTab({
   onStartHike: () => void;
 }) {
   const C = useC();
+  const safetyWarning =
+    trail.safety_warning ?? (ALL_BARILOCHE_IDS.has(trail.id) ? BARILOCHE_SEGURIDAD : null);
   return (
     <View style={styles.tabContent}>
+      {safetyWarning && (
+        <View style={styles.warningCard}>
+          <Ionicons name="warning-outline" size={20} color="#f59e0b" />
+          <Text style={styles.warningText}>{t(safetyWarning.es, safetyWarning.en)}</Text>
+        </View>
+      )}
+
       <DownloadRow trail={trail as any} t={t} />
 
       {/* Start Hike button */}
@@ -1878,6 +1887,17 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingTop: 20, paddingBottom: 24, gap: 14 },
   tabContent: { gap: 14 },
+  warningCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.55)',
+    backgroundColor: 'rgba(245,158,11,0.12)',
+    padding: 16,
+  },
+  warningText: { flex: 1, fontSize: 13.5, lineHeight: 20, color: '#f59e0b', fontWeight: '600' },
 
   // Section card
   sectionCard: {
