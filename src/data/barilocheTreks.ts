@@ -58,6 +58,12 @@ export const BARILOCHE_EMERGENCIAS = {
   en: 'Emergencies — Bariloche Civil Protection: 103 or +54 294 442-8276. Satellite messaging: comisiondeauxiliocab@gmail.com',
 };
 
+/** Security advisory for the Bariloche region — vehicles left at trailheads */
+export const BARILOCHE_SEGURIDAD = {
+  es: 'Seguridad: en la región de Bariloche, dejar el auto estacionado sobre la ruta o en los accesos a los senderos también genera situaciones de riesgo (robos). Cuando sea posible, llegá al inicio del sendero con un transporte o servicio de traslado en lugar de dejar el vehículo sin vigilancia. Verificá siempre las condiciones y la situación de seguridad antes de emprender una aventura de trekking.',
+  en: 'Safety: in the Bariloche region, leaving your car parked along the road or at trailhead access points also creates risky situations (thefts). Whenever possible, reach the trailhead with a transport or shuttle service instead of leaving your vehicle unattended. Always check conditions and the security situation before setting out on a trekking adventure.',
+};
+
 // ---------------------------------------------------------------------------
 // Helper type for duration (re-used from ArgentinaTrail structure)
 // ---------------------------------------------------------------------------

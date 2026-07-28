@@ -26,6 +26,8 @@ export interface ArgentinaTrail {
   best_season: string;
   description: string;
   trailhead: string;
+  /** Optional bilingual safety/security notice shown prominently in the trail detail */
+  safety_warning?: { es: string; en: string };
   mapOverlayUrl?: string;
   pdfUrl?: string;
   gpxTrack?: Array<{ lat: number; lon: number; name?: string; ele?: number }>;
@@ -465,6 +467,10 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     description:
       'El área de escalada más importante de Córdoba. Paredes de granito de hasta 300 m con vías de todos los grados. El acceso al camping base toma ~2 h de caminata.',
     trailhead: 'La Cumbre / Estancia Los Gigantes (Córdoba)',
+    safety_warning: {
+      es: 'Seguridad: en el último tiempo se registraron numerosos robos a turistas que dejaron el auto en el estacionamiento de acceso. Lo ideal es concurrir al lugar con un transporte o servicio de traslado que te deje y te retire, en lugar de dejar el vehículo sin vigilancia. Chequeá siempre las condiciones y la situación de seguridad antes de emprender una aventura de trekking.',
+      en: 'Safety: there have recently been numerous thefts targeting tourists who left their car in the access parking lot. It is best to reach the area with a transport or shuttle service that drops you off and picks you up, rather than leaving your vehicle unattended. Always check conditions and the security situation before setting out on a trekking adventure.',
+    },
   },
   {
     id: 'cerro-la-ventana',

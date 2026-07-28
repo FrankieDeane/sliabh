@@ -14,7 +14,7 @@ import { useLangStore } from '../../src/utils/../store/langStore';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported, estimateAreaSizeMb } from '../../src/utils/offlineTiles';
 import { downloadGpx } from '../../src/utils/gpx';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
-import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
+import { BARILOCHE_TRAILS, BARILOCHE_SEGURIDAD } from '../../src/data/barilocheTreks';
 import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
 import { fetchWikiImage } from '../../src/utils/wikiImage';
 
@@ -25,6 +25,10 @@ const MAP_TRAIL_PAYLOAD = buildMapTrailPayload([
 ] as any);
 
 type DlState = 'idle' | 'downloading' | 'done';
+
+// Security advisory reused across the Los Gigantes map cards
+const LOS_GIGANTES_SEGURIDAD =
+  ARGENTINA_TRAILS.find((t) => t.id === 'los-gigantes-cordoba')?.safety_warning;
 
 const NATIONAL_PARKS = [
   {
@@ -65,6 +69,7 @@ const NATIONAL_PARKS = [
     coords: { lat: -41.1, lon: -71.5 },
     unesco: false,
     trailId: 'refugio-frey-bariloche',
+    warning: BARILOCHE_SEGURIDAD,
   },
   {
     id: 'lanin',
@@ -390,6 +395,7 @@ const NATIONAL_PARKS = [
     coords: { lat: -41.0817, lon: -71.5133 },
     unesco: false,
     trailId: 'cerro-lopez-bariloche',
+    warning: BARILOCHE_SEGURIDAD,
   },
   {
     id: 'cerro-tronador-bariloche',
@@ -403,6 +409,7 @@ const NATIONAL_PARKS = [
     coords: { lat: -41.2535, lon: -71.7755 },
     unesco: false,
     trailId: 'cerro-tronador-bariloche',
+    warning: BARILOCHE_SEGURIDAD,
   },
   // ── Sierras Centrales ─────────────────────────────────────────────────────
   {
@@ -430,6 +437,7 @@ const NATIONAL_PARKS = [
     coords: { lat: -31.3682, lon: -64.7397 },
     unesco: false,
     trailId: 'los-gigantes-cordoba',
+    warning: LOS_GIGANTES_SEGURIDAD,
   },
   // ── Buenos Aires ──────────────────────────────────────────────────────────
   {
@@ -532,6 +540,7 @@ const NATIONAL_PARKS = [
     coords: { lat: -31.4, lon: -64.6 },
     unesco: false,
     trailId: 'los-gigantes-cordoba',
+    warning: LOS_GIGANTES_SEGURIDAD,
   },
 
   // ── Litoral ──────────────────────────────────────────────────────────────
@@ -915,6 +924,15 @@ function DownloadCard({
         <Text style={[dlS.highlights, { color: c.muted }]} numberOfLines={isNarrow ? 1 : 2}>{park.highlights}</Text>
         <Text style={[dlS.meta, { color: c.muted }]}>{park.province} · {park.region}</Text>
 
+        {(park as any).warning && (
+          <View style={dlS.warning}>
+            <Ionicons name="warning-outline" size={14} color="#f59e0b" style={{ marginTop: 1 }} />
+            <Text style={dlS.warningTxt}>
+              {t((park as any).warning.es, (park as any).warning.en)}
+            </Text>
+          </View>
+        )}
+
         {/* Actions: view map, GPX for GPS apps, save offline, More Info */}
         <View style={dlS.btnRow}>
           <TouchableOpacity style={[dlS.btn, dlS.btnView]} onPress={handleViewMap} activeOpacity={0.8}>
@@ -1005,6 +1023,18 @@ const dlS = StyleSheet.create({
 
   btnTxt: { fontSize: 13, fontWeight: '600' },
   btnTxtWhite: { fontSize: 13, fontWeight: '600', color: '#fff' },
+  warning: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(245,158,11,0.5)',
+    backgroundColor: 'rgba(245,158,11,0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  warningTxt: { flex: 1, fontSize: 11.5, lineHeight: 16, color: '#f59e0b', fontWeight: '600' },
 });
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
