@@ -177,3 +177,40 @@ create policy "Results are public"
   using (true);
 
 create index if not exists poll_votes_poll_idx on public.poll_votes (poll_id);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- poll_leads: name/last name/email captured alongside a poll_votes vote.
+-- Kept as a SEPARATE table from poll_votes (which stays anonymous and
+-- publicly readable for the results bar chart) because this one holds PII —
+-- it must never be publicly selectable via the anon key. No select policy is
+-- defined below, so RLS blocks all reads for anon/authenticated roles; only
+-- the project owner (Supabase Dashboard / service role) can read it.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.poll_leads (
+  id          uuid primary key default gen_random_uuid(),
+  poll_id     text not null,
+  option_id   text not null,
+  voter_key   text not null,
+  first_name  text not null,
+  last_name   text not null,
+  email       text not null,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.poll_leads enable row level security;
+
+drop policy if exists "Anyone can submit their info" on public.poll_leads;
+create policy "Anyone can submit their info"
+  on public.poll_leads for insert
+  with check (
+    length(poll_id) between 1 and 100
+    and length(option_id) between 1 and 100
+    and length(voter_key) between 8 and 100
+    and length(first_name) between 1 and 100
+    and length(last_name) between 1 and 100
+    and email like '%_@_%.__%' and length(email) between 5 and 200
+  );
+
+-- Deliberately no select policy: PII stays unreadable via the public anon key.
+
+create index if not exists poll_leads_poll_idx on public.poll_leads (poll_id, created_at desc);
