@@ -24,6 +24,33 @@ create policy "Users manage their own profile"
   on public.profiles for all
   using (auth.uid() = id) with check (auth.uid() = id);
 
+-- Auto-create/update the profiles row when an auth user is confirmed, so
+-- profile creation doesn't depend on the client-side upsertProfile() call
+-- succeeding (see upsertProfile in src/services/supabase.ts — it's
+-- best-effort and swallows failures so it never blocks login).
+create or replace function public.handle_confirmed_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.email_confirmed_at is not null then
+    insert into public.profiles (id, display_name, updated_at)
+    values (new.id, nullif(trim(new.raw_user_meta_data->>'display_name'), ''), now())
+    on conflict (id) do update
+      set display_name = coalesce(excluded.display_name, public.profiles.display_name),
+          updated_at = now();
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_confirmed on auth.users;
+create trigger on_auth_user_confirmed
+  after insert or update of email_confirmed_at on auth.users
+  for each row execute function public.handle_confirmed_user();
+
 -- ──────────────────────────────────────────────────────────────────────────
 -- trail_contributions: new routes, POIs, edits, alerts, notes (moderated)
 -- ──────────────────────────────────────────────────────────────────────────

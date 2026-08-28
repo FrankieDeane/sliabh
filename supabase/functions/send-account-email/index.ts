@@ -90,6 +90,10 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'type debe ser "welcome" o "goodbye"' }, 400);
     }
 
+    if (!RESEND_API_KEY) {
+      return json({ error: 'RESEND_API_KEY no configurada' }, 500);
+    }
+
     const name =
       (user.user_metadata?.display_name as string | undefined)?.trim() ||
       (type === 'goodbye' ? 'montañista' : 'montañista');

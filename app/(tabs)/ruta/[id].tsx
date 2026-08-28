@@ -45,6 +45,7 @@ const HikeMap = Platform.OS === 'web'
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
+import { WebFooter } from '../../../src/components/layout/WebFooter';
 
 // Base Argentina trails plus the richer Bariloche treks. Bariloche entries add
 // optional detail fields (long_description, namedWaypoints, logistics, …); the
@@ -658,6 +659,8 @@ export default function TrailDetailScreen() {
           )}
           <View style={{ height: 60 }} />
         </View>
+
+        {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
       <HikeMode
         visible={isHiking}
