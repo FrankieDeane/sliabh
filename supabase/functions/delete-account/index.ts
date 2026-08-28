@@ -39,6 +39,10 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'No autenticado' }, 401);
     }
 
+    if (!SERVICE_ROLE_KEY) {
+      return json({ error: 'SUPABASE_SERVICE_ROLE_KEY no configurada' }, 500);
+    }
+
     // Best-effort goodbye email — fired while the caller's session is still
     // valid. A failure here must not block account deletion.
     try {
