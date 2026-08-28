@@ -10,9 +10,9 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "name": "Sliabh",
+      "name": "Sliabh — Senderismo y trekking en Argentina",
       "shortName": "Sliabh",
-      "description": "Explora la montaña con IA offline. Rutas, mapas y planificación para Patagonia y más.",
+      "description": "Sliabh: la plataforma de senderismo para explorar los Parques Nacionales de Argentina. Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia.",
       "lang": "es",
       "themeColor": "#16a34a",
       "backgroundColor": "#060d1b"

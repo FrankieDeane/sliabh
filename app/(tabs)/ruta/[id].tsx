@@ -45,6 +45,7 @@ const HikeMap = Platform.OS === 'web'
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
+import { SeoHead } from '../../../src/components/ui/SeoHead';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
 
 // Base Argentina trails plus the richer Bariloche treks. Bariloche entries add
@@ -553,9 +554,48 @@ export default function TrailDetailScreen() {
   const gearCategories = getGearList(trail.difficulty, trail.activity, lang);
   const logisticsLines = getLogisticsContent(trail, lang);
 
+  const seoTitle = `${trail.name} — ${trail.province} | Sliabh`;
+  const seoImage = trail.photo_uri.startsWith('http')
+    ? trail.photo_uri
+    : `https://sliabh.netlify.app${trail.photo_uri}`;
+  const seoJsonLd = [
+    {
+      '@type': 'TouristAttraction',
+      name: trail.name,
+      description: trail.description,
+      url: `https://sliabh.netlify.app/ruta/${trail.id}`,
+      image: seoImage,
+      address: { '@type': 'PostalAddress', addressRegion: trail.province, addressCountry: 'AR' },
+      geo: { '@type': 'GeoCoordinates', latitude: trail.coordinates.lat, longitude: trail.coordinates.lon },
+      containedInPlace: { '@type': 'Place', name: trail.area },
+      additionalProperty: [
+        { '@type': 'PropertyValue', name: 'Dificultad', value: DIFFICULTY_LABEL[trail.difficulty] ?? trail.difficulty },
+        { '@type': 'PropertyValue', name: 'Distancia', value: `${trail.distance_km} km` },
+        { '@type': 'PropertyValue', name: 'Duración', value: `${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}` },
+        { '@type': 'PropertyValue', name: 'Mejor época', value: trail.best_season },
+      ],
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.netlify.app/' },
+        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.netlify.app/rutas' },
+        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.netlify.app/ruta/${trail.id}` },
+      ],
+    },
+  ];
+
   return (
     <TrailThemeCtx.Provider value={C}>
     <View style={[styles.root, { backgroundColor: C.bg }]}>
+      <SeoHead
+        title={seoTitle}
+        description={trail.description}
+        path={`/ruta/${trail.id}`}
+        image={seoImage}
+        jsonLd={seoJsonLd}
+      />
+
       {/* Floating back button — always visible above scroll */}
       <TouchableOpacity
         style={[styles.backBtn, { top: insets.top + 10 }]}

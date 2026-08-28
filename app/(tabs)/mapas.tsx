@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 import { SenderoCorrection } from '../../src/components/contribute/SenderoCorrection';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
@@ -1205,6 +1206,12 @@ export default function MapasScreen() {
   // ── Web: iframe map + offline downloads ──────────────────────────────────
   return (
     <ScrollView style={[s.root, { backgroundColor: c.bg }]} showsVerticalScrollIndicator={false}>
+      <SeoHead
+        title="Mapas offline de Argentina — Sliabh"
+        description="Descargá mapas offline de los Parques Nacionales de Argentina para navegar con GPS sin señal. Mapas interactivos con rutas, senderos y puntos de interés."
+        path="/mapas"
+      />
+
       <View style={[s.mapHeader, { borderBottomColor: c.border, backgroundColor: c.surface }]}>
         <View style={s.mapHeaderInner}>
           <View>

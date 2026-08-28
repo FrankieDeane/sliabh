@@ -4,7 +4,16 @@ import type { PropsWithChildren } from 'react';
 
 /**
  * Custom HTML template for the static web export (Expo Router).
- * This replaces the default shell — head tags here ship to production.
+ *
+ * NOT CURRENTLY LIVE: web.output is "single" (see app.json / netlify.toml),
+ * a client-only SPA export, and Expo Router only runs +html.tsx for
+ * "static"/"server" output — so none of the SEO <head> content below
+ * (title, description, OG, Twitter, JSON-LD) reaches production today.
+ * The PWA bits still work because app/_layout.tsx injects them at runtime
+ * separately. The live equivalent of this file's SEO tags is
+ * src/components/ui/SiteHead.tsx, mounted in the root layout — keep the two
+ * in sync, or better, make SiteHead the only source of truth. This file
+ * would become live again if output ever switches to "static".
  */
 export default function Root({ children }: PropsWithChildren) {
   return (

@@ -217,3 +217,32 @@ export async function submitTrailReport(trailId: string, condition: TrailConditi
   if (!user) throw new Error('No autenticado');
   return supabase.from('trail_reports').insert({ trail_id: trailId, condition, note, user_id: user.id });
 }
+
+// ── Quick poll (anonymous, web) ──────────────────────────────────────
+
+/** Postgres unique_violation — thrown when this browser already voted. */
+const UNIQUE_VIOLATION = '23505';
+
+/**
+ * Casts one anonymous vote for a quick-poll option. `voterKey` is a random id
+ * the caller generates and persists in localStorage so the same browser can't
+ * vote twice — enforced server-side by a unique(poll_id, voter_key) index.
+ * A repeat vote from the same voterKey is treated as a no-op, not an error.
+ */
+export async function submitPollVote(pollId: string, optionId: string, voterKey: string) {
+  const { error } = await supabase
+    .from('poll_votes')
+    .insert({ poll_id: pollId, option_id: optionId, voter_key: voterKey });
+  if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
+}
+
+/** Vote counts per option for a poll, plus the total. */
+export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
+  const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);
+  if (error || !data) return { counts: {}, total: 0 };
+  const counts: Record<string, number> = {};
+  for (const row of data as { option_id: string }[]) {
+    counts[row.option_id] = (counts[row.option_id] ?? 0) + 1;
+  }
+  return { counts, total: data.length };
+}

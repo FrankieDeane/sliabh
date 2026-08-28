@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useResponsive } from '../../src/hooks/useResponsive';
 import { ARGENTINA_TRAILS, ArgentinaTrail } from '../../src/data/argentinaTrails';
@@ -529,6 +530,12 @@ export default function PlanificarScreen() {
 
   return (
     <KeyboardAvoidingView style={[s.root, { backgroundColor: c.bg }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <SeoHead
+        title="Planificador de rutas — Sliabh"
+        description="Planificá tu próxima expedición de montaña en Argentina: elegí una ruta, revisá logística y descargá el GPX antes de salir."
+        path="/planificar"
+      />
+
       {content}
 
       <RoutePicker

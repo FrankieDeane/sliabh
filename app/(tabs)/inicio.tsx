@@ -18,6 +18,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
@@ -268,6 +269,12 @@ export default function InicioScreen() {
         contentContainerStyle={styles.scrollContent}
         {...(Platform.OS === 'web' ? ({ 'data-page-content': true } as any) : {})}
       >
+        <SeoHead
+          title="Sliabh — Senderismo y trekking en Argentina | Rutas, mapas 3D y GPS offline"
+          description="Sliabh: la plataforma de senderismo para explorar los Parques Nacionales de Argentina. Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia. El Chaltén, Bariloche, Tierra del Fuego y más."
+          path="/inicio"
+        />
+
         {/* ── HERO ── */}
         <View
           style={[styles.heroWrapper, Platform.OS === 'web' ? ({ minHeight: '100vh' } as any) : { height: heroHeight }]}
