@@ -24,6 +24,7 @@ import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
 const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTINA_TRAILS)];
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
 
 // All trails with a GPX track, pushed to the 3D map iframe for rendering
@@ -309,6 +310,12 @@ export default function RutasScreen() {
   if (isSplit) {
     return (
       <View style={[styles.container, { backgroundColor: c.bg, flexDirection: 'row' }]}>
+        <SeoHead
+          title="Rutas y senderos en Argentina — Sliabh"
+          description="Explorá todas las rutas de trekking y montaña de Sliabh: filtrá por región, dificultad y actividad. Distancia, desnivel, mapas y GPX descargable para cada sendero de Argentina."
+          path="/rutas"
+        />
+
         {/* Left panel: filters + trail list */}
         <View
           style={[
@@ -347,6 +354,12 @@ export default function RutasScreen() {
   // ── Mobile / narrow layout ──
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
+      <SeoHead
+        title="Rutas y senderos en Argentina — Sliabh"
+        description="Explorá todas las rutas de trekking y montaña de Sliabh: filtrá por región, dificultad y actividad. Distancia, desnivel, mapas y GPX descargable para cada sendero de Argentina."
+        path="/rutas"
+      />
+
       {/* Mobile map toggle button */}
       {Platform.OS === 'web' && (
         <View style={[styles.mobileMapToggleBar, { borderBottomColor: c.border, backgroundColor: c.bg }]}>

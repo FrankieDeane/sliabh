@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 
 const MAX_CONTENT = 860;
 
@@ -340,6 +341,12 @@ export default function SupervivenciaScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: c.bg }]}>
+      <SeoHead
+        title="Guías de supervivencia de montaña — Sliabh"
+        description="Guías de emergencia y supervivencia para montaña: hipotermia, orientación, cruce de ríos, clima y más. Disponibles sin conexión a internet."
+        path="/supervivencia"
+      />
+
       <ScrollView
         style={styles.scroll}
         showsVerticalScrollIndicator={false}

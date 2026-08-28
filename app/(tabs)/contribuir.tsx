@@ -20,6 +20,7 @@ import { useNetwork } from '../../src/hooks/useNetwork';
 import { useContribStore } from '../../src/store/contributionStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 import type { ContribType } from '../../src/store/contributionStore';
 
 const MAX_CONTENT = 900;
@@ -167,6 +168,12 @@ export default function ContribuirScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
+      <SeoHead
+        title="Contribuir — Sliabh"
+        description="Sumá nuevas rutas, correcciones de senderos, puntos de interés y alertas a la comunidad de Sliabh. Ayudá a mantener actualizado el mapa de montaña de Argentina."
+        path="/contribuir"
+      />
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
 
         {/* ── HERO ── */}

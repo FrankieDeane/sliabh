@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SeoHead } from '../../src/components/ui/SeoHead';
 
 const MAX_CONTENT = 800;
 
@@ -606,12 +607,33 @@ export default function FaqScreen() {
 
   const totalQuestions = FAQ_DATA.reduce((acc, cat) => acc + cat.items.length, 0);
 
+  // FAQPage schema (Spanish, matching the site's canonical lang) — one flat
+  // list of every Q&A across categories, straight from the same data the
+  // page renders, so it can never drift out of sync with what's on screen.
+  const faqJsonLd = {
+    '@type': 'FAQPage',
+    mainEntity: FAQ_DATA.flatMap((cat) =>
+      cat.items.map((item) => ({
+        '@type': 'Question',
+        name: item.q.es,
+        acceptedAnswer: { '@type': 'Answer', text: item.a.es },
+      })),
+    ),
+  };
+
   return (
     <ScrollView
       style={[fS.root, { backgroundColor: c.bg }]}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 64 }}
     >
+      <SeoHead
+        title="Preguntas frecuentes — Sliabh"
+        description="Todo sobre Sliabh: qué es, si funciona sin conexión, mapas offline, cuentas, seguridad en montaña y más."
+        path="/faq"
+        jsonLd={faqJsonLd}
+      />
+
       {/* Header */}
       <View style={[fS.header, { borderBottomColor: c.border, backgroundColor: c.surface, paddingHorizontal: sidePad }]}>
         <Text style={[fS.eyebrow, { color: c.muted }]}>

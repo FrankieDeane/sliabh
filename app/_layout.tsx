@@ -8,6 +8,7 @@ import { Platform, View, Text, TouchableOpacity } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
 import { CookieBanner } from '../src/components/ui/CookieBanner';
 import { QuickPoll } from '../src/components/ui/QuickPoll';
+import { SiteHead } from '../src/components/ui/SiteHead';
 import { injectWebStyles } from '../src/utils/webStyles';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
@@ -132,6 +133,7 @@ export default function RootLayout() {
     return (
       <AppErrorBoundary>
         <View style={{ flex: 1, flexDirection: 'column' }}>
+          <SiteHead />
           <NetworkWatcher />
           <StatusBar style={isDark ? 'light' : 'dark'} />
           <WebHeader />
