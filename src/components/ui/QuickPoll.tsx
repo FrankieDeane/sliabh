@@ -73,15 +73,39 @@ export function QuickPoll() {
     if (alreadyVoted) setVoted(alreadyVoted);
     if (leadAlreadyDone) setLeadDone(true);
 
-    // Wait for the cookie banner to be resolved (or absent) before adding a
-    // second floating widget, and give visitors a moment to land first.
-    const timer = setTimeout(() => {
+    function reveal() {
       let consentGiven = true;
       try { consentGiven = !!localStorage.getItem(CONSENT_KEY); } catch {}
       if (consentGiven) setVisible(true);
-    }, 4000);
+    }
+
+    // On narrow screens the floating card competes with the page for space,
+    // so instead of dropping it on top of the content after a fixed delay,
+    // wait until the visitor has scrolled down to the footer. Fall back to
+    // the timer if the footer can't be found or IntersectionObserver isn't
+    // available, so the poll still shows up eventually.
+    if (isNarrow) {
+      const footer = typeof document !== 'undefined' ? document.getElementById('site-footer') : null;
+      if (footer && typeof IntersectionObserver !== 'undefined') {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              reveal();
+              observer.disconnect();
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px' },
+        );
+        observer.observe(footer);
+        return () => observer.disconnect();
+      }
+    }
+
+    // Wait for the cookie banner to be resolved (or absent) before adding a
+    // second floating widget, and give visitors a moment to land first.
+    const timer = setTimeout(reveal, 4000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isNarrow]);
 
   useEffect(() => {
     // Only the "already finished on a previous visit" case belongs here — a
@@ -170,17 +194,17 @@ export function QuickPoll() {
           <Text style={[styles.question, { color: c.text }]}>
             {t('¿Qué te gustaría ver primero en Sliabh?', 'What would you like to see next on Sliabh?')}
           </Text>
-          <View style={styles.options}>
+          <View style={[styles.options, isNarrow && styles.optionsNarrow]}>
             {OPTIONS.map((opt) => (
               <TouchableOpacity
                 key={opt.id}
-                style={[styles.optionBtn, { borderColor: c.border }]}
+                style={[styles.optionBtn, isNarrow && styles.optionBtnNarrow, { borderColor: c.border }]}
                 onPress={() => vote(opt.id)}
                 activeOpacity={0.75}
                 disabled={pending}
               >
                 <Ionicons name={opt.icon} size={15} color="#22c55e" />
-                <Text style={[styles.optionTxt, { color: c.text }]}>{t(opt.es, opt.en)}</Text>
+                <Text style={[styles.optionTxt, { color: c.text }]} numberOfLines={2}>{t(opt.es, opt.en)}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -287,15 +311,19 @@ const styles = StyleSheet.create({
     shadowRadius: 30,
   },
   cardWide: { right: 20, width: 300 },
-  cardNarrow: { left: 12, right: 12 },
+  cardNarrow: { left: 12, right: 12, padding: 12, maxHeight: '70%' as any, overflow: 'scroll' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
   eyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 1.5 },
   question: { fontSize: 14, fontWeight: '700', lineHeight: 19, marginBottom: 12 },
   options: { gap: 8 },
+  // Two columns on narrow screens instead of a stacked list — same options,
+  // roughly half the vertical footprint so the card doesn't eat the screen.
+  optionsNarrow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   optionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 9,
     borderWidth: 1, borderRadius: 10, paddingVertical: 9, paddingHorizontal: 12,
   },
+  optionBtnNarrow: { flexBasis: '48%', paddingVertical: 8, paddingHorizontal: 8 },
   optionTxt: { fontSize: 13, fontWeight: '600', flexShrink: 1 },
   leadSub: { fontSize: 11, lineHeight: 16, marginTop: -6, marginBottom: 12 },
   leadForm: { gap: 8 },
