@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
-import { isSupabaseConfigured, submitPollVote, fetchPollResults } from '../../services/supabase';
+import { isSupabaseConfigured, submitPollVote, submitPollLead, fetchPollResults } from '../../services/supabase';
 
 // Bump the id (v2, v3, …) to retire this question and start a fresh poll —
 // old votes stay in the table, untouched, under the old poll_id.
 const POLL_ID = 'quick-poll-next-feature-v1';
 const DISMISSED_KEY = `sliabh-poll-dismissed-${POLL_ID}`;
 const VOTED_KEY = `sliabh-poll-voted-${POLL_ID}`;
+const LEAD_KEY = `sliabh-poll-lead-${POLL_ID}`;
 const VOTER_KEY = 'sliabh-poll-voter';
 const CONSENT_KEY = 'sliabh-cookie-consent'; // shown after the cookie banner is handled
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const OPTIONS = [
   { id: 'mas-rutas', es: 'Más rutas y regiones', en: 'More trails & regions', icon: 'trail-sign-outline' as const },
@@ -44,22 +47,31 @@ export function QuickPoll() {
 
   const [visible, setVisible] = useState(false);
   const [voted, setVoted] = useState<string | null>(null);
+  const [leadDone, setLeadDone] = useState(false);
   const [pending, setPending] = useState(false);
   const [results, setResults] = useState<{ counts: Record<string, number>; total: number } | null>(null);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [leadError, setLeadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || !isSupabaseConfigured()) return;
 
     let dismissed = false;
     let alreadyVoted: string | null = null;
+    let leadAlreadyDone = false;
     try {
       dismissed = localStorage.getItem(DISMISSED_KEY) === '1';
       alreadyVoted = localStorage.getItem(VOTED_KEY);
+      leadAlreadyDone = localStorage.getItem(LEAD_KEY) === '1';
     } catch {
       // localStorage unavailable — treat as not dismissed / not voted
     }
     if (dismissed) return;
     if (alreadyVoted) setVoted(alreadyVoted);
+    if (leadAlreadyDone) setLeadDone(true);
 
     // Wait for the cookie banner to be resolved (or absent) before adding a
     // second floating widget, and give visitors a moment to land first.
@@ -72,10 +84,10 @@ export function QuickPoll() {
   }, []);
 
   useEffect(() => {
-    // Only the "already voted on a previous visit" case belongs here — a
-    // fresh vote fetches its own results after the insert resolves (below),
-    // so this must not re-run just because `voted` changes.
-    if (!visible || !voted || results) return;
+    // Only the "already finished on a previous visit" case belongs here — a
+    // fresh submission fetches its own results after the insert resolves
+    // (below), so this must not re-run just because state changes.
+    if (!visible || !voted || !leadDone || results) return;
     fetchPollResults(POLL_ID).then(setResults);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
@@ -92,9 +104,36 @@ export function QuickPoll() {
     try { localStorage.setItem(VOTED_KEY, optionId); } catch {}
     try {
       await submitPollVote(POLL_ID, optionId, getVoterKey());
+    } catch {
+      // Best-effort — the local "voted" state already reflects the choice,
+      // and the lead form (which matters more here) still gets its own shot.
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function submitLead() {
+    if (pending || !voted) return;
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+    const em = email.trim();
+    if (!fn || !ln) {
+      setLeadError(t('Completá nombre y apellido.', 'Enter your first and last name.'));
+      return;
+    }
+    if (!EMAIL_RE.test(em)) {
+      setLeadError(t('Ingresá un email válido.', 'Enter a valid email.'));
+      return;
+    }
+    setLeadError(null);
+    setPending(true);
+    try {
+      await submitPollLead(POLL_ID, voted, getVoterKey(), { firstName: fn, lastName: ln, email: em });
+      try { localStorage.setItem(LEAD_KEY, '1'); } catch {}
+      setLeadDone(true);
       setResults(await fetchPollResults(POLL_ID));
     } catch {
-      // Best-effort — the local "voted" state already reflects the choice.
+      setLeadError(t('No se pudo enviar. Probá de nuevo.', "Couldn't submit. Please try again."));
     } finally {
       setPending(false);
     }
@@ -103,8 +142,10 @@ export function QuickPoll() {
   if (!visible) return null;
 
   const c = isDark
-    ? { bg: '#0f1724', border: '#1e2d42', text: '#f0f9ff', muted: '#94a3b8', track: '#1e2d42' }
-    : { bg: '#ffffff', border: '#e2e8f0', text: '#0f172a', muted: '#64748b', track: '#f1f5f9' };
+    ? { bg: '#0f1724', border: '#1e2d42', text: '#f0f9ff', muted: '#94a3b8', track: '#1e2d42', inputBg: '#0a121f' }
+    : { bg: '#ffffff', border: '#e2e8f0', text: '#0f172a', muted: '#64748b', track: '#f1f5f9', inputBg: '#f8fafc' };
+
+  const step: 'question' | 'lead' | 'results' = !voted ? 'question' : !leadDone ? 'lead' : 'results';
 
   return (
     <View
@@ -124,50 +165,109 @@ export function QuickPoll() {
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.question, { color: c.text }]}>
-        {t('¿Qué te gustaría ver primero en Sliabh?', 'What would you like to see next on Sliabh?')}
-      </Text>
+      {step === 'question' && (
+        <>
+          <Text style={[styles.question, { color: c.text }]}>
+            {t('¿Qué te gustaría ver primero en Sliabh?', 'What would you like to see next on Sliabh?')}
+          </Text>
+          <View style={styles.options}>
+            {OPTIONS.map((opt) => (
+              <TouchableOpacity
+                key={opt.id}
+                style={[styles.optionBtn, { borderColor: c.border }]}
+                onPress={() => vote(opt.id)}
+                activeOpacity={0.75}
+                disabled={pending}
+              >
+                <Ionicons name={opt.icon} size={15} color="#22c55e" />
+                <Text style={[styles.optionTxt, { color: c.text }]}>{t(opt.es, opt.en)}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      )}
 
-      {!voted ? (
-        <View style={styles.options}>
-          {OPTIONS.map((opt) => (
+      {step === 'lead' && (
+        <>
+          <Text style={[styles.question, { color: c.text }]}>
+            {t('¡Gracias! Dejanos tus datos', 'Thanks! Leave us your details')}
+          </Text>
+          <Text style={[styles.leadSub, { color: c.muted }]}>
+            {t(
+              'Para avisarte cuando salga esta novedad. Nunca compartimos tu info.',
+              "So we can let you know when it ships. We never share your info.",
+            )}
+          </Text>
+          <View style={styles.leadForm}>
+            <TextInput
+              value={firstName}
+              onChangeText={setFirstName}
+              placeholder={t('Nombre', 'First name')}
+              placeholderTextColor={c.muted}
+              style={[styles.input, { borderColor: c.border, backgroundColor: c.inputBg, color: c.text }]}
+              editable={!pending}
+            />
+            <TextInput
+              value={lastName}
+              onChangeText={setLastName}
+              placeholder={t('Apellido', 'Last name')}
+              placeholderTextColor={c.muted}
+              style={[styles.input, { borderColor: c.border, backgroundColor: c.inputBg, color: c.text }]}
+              editable={!pending}
+            />
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              placeholderTextColor={c.muted}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={[styles.input, { borderColor: c.border, backgroundColor: c.inputBg, color: c.text }]}
+              editable={!pending}
+            />
+            {leadError && <Text style={styles.leadError}>{leadError}</Text>}
             <TouchableOpacity
-              key={opt.id}
-              style={[styles.optionBtn, { borderColor: c.border }]}
-              onPress={() => vote(opt.id)}
-              activeOpacity={0.75}
+              style={[styles.submitBtn, pending && { opacity: 0.6 }]}
+              onPress={submitLead}
+              activeOpacity={0.85}
               disabled={pending}
             >
-              <Ionicons name={opt.icon} size={15} color="#22c55e" />
-              <Text style={[styles.optionTxt, { color: c.text }]}>{t(opt.es, opt.en)}</Text>
+              <Text style={styles.submitBtnTxt}>{t('Enviar', 'Submit')}</Text>
             </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <View style={styles.results}>
-          {OPTIONS.map((opt) => {
-            const count = results?.counts[opt.id] ?? (opt.id === voted ? 1 : 0);
-            const total = Math.max(results?.total ?? 1, 1);
-            const pct = Math.round((count / total) * 100);
-            const mine = opt.id === voted;
-            return (
-              <View key={opt.id} style={styles.resultRow}>
-                <View style={styles.resultLabelRow}>
-                  <Text style={[styles.resultTxt, { color: mine ? '#22c55e' : c.text }]} numberOfLines={1}>
-                    {mine ? '✓ ' : ''}{t(opt.es, opt.en)}
-                  </Text>
-                  <Text style={[styles.resultPct, { color: c.muted }]}>{pct}%</Text>
-                </View>
-                <View style={[styles.barTrack, { backgroundColor: c.track }]}>
-                  <View style={[styles.barFill, { width: `${pct}%` as any, backgroundColor: mine ? '#22c55e' : c.muted }]} />
-                </View>
-              </View>
-            );
-          })}
-          <Text style={[styles.thanks, { color: c.muted }]}>
-            {t('¡Gracias por tu voto!', 'Thanks for voting!')}
+          </View>
+        </>
+      )}
+
+      {step === 'results' && (
+        <>
+          <Text style={[styles.question, { color: c.text }]}>
+            {t('¿Qué te gustaría ver primero en Sliabh?', 'What would you like to see next on Sliabh?')}
           </Text>
-        </View>
+          <View style={styles.results}>
+            {OPTIONS.map((opt) => {
+              const count = results?.counts[opt.id] ?? (opt.id === voted ? 1 : 0);
+              const total = Math.max(results?.total ?? 1, 1);
+              const pct = Math.round((count / total) * 100);
+              const mine = opt.id === voted;
+              return (
+                <View key={opt.id} style={styles.resultRow}>
+                  <View style={styles.resultLabelRow}>
+                    <Text style={[styles.resultTxt, { color: mine ? '#22c55e' : c.text }]} numberOfLines={1}>
+                      {mine ? '✓ ' : ''}{t(opt.es, opt.en)}
+                    </Text>
+                    <Text style={[styles.resultPct, { color: c.muted }]}>{pct}%</Text>
+                  </View>
+                  <View style={[styles.barTrack, { backgroundColor: c.track }]}>
+                    <View style={[styles.barFill, { width: `${pct}%` as any, backgroundColor: mine ? '#22c55e' : c.muted }]} />
+                  </View>
+                </View>
+              );
+            })}
+            <Text style={[styles.thanks, { color: c.muted }]}>
+              {t('¡Gracias por tu voto!', 'Thanks for voting!')}
+            </Text>
+          </View>
+        </>
       )}
     </View>
   );
@@ -197,6 +297,18 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderRadius: 10, paddingVertical: 9, paddingHorizontal: 12,
   },
   optionTxt: { fontSize: 13, fontWeight: '600', flexShrink: 1 },
+  leadSub: { fontSize: 11, lineHeight: 16, marginTop: -6, marginBottom: 12 },
+  leadForm: { gap: 8 },
+  input: {
+    borderWidth: 1, borderRadius: 10, paddingVertical: 9, paddingHorizontal: 12,
+    fontSize: 13,
+  },
+  leadError: { fontSize: 11, color: '#ef4444', fontWeight: '600' },
+  submitBtn: {
+    backgroundColor: '#22c55e', borderRadius: 10, paddingVertical: 10,
+    alignItems: 'center', marginTop: 2,
+  },
+  submitBtnTxt: { color: '#052e16', fontSize: 13, fontWeight: '700' },
   results: { gap: 10 },
   resultRow: { gap: 5 },
   resultLabelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },

@@ -236,6 +236,30 @@ export async function submitPollVote(pollId: string, optionId: string, voterKey:
   if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
 }
 
+/**
+ * Submits the respondent's name/last name/email alongside their vote.
+ * Stored in poll_leads — a separate table from poll_votes (which stays
+ * anonymous) precisely because this one holds PII; poll_leads has no public
+ * select policy, so this data is never readable via the anon key, only from
+ * the Supabase dashboard.
+ */
+export async function submitPollLead(
+  pollId: string,
+  optionId: string,
+  voterKey: string,
+  lead: { firstName: string; lastName: string; email: string },
+) {
+  const { error } = await supabase.from('poll_leads').insert({
+    poll_id: pollId,
+    option_id: optionId,
+    voter_key: voterKey,
+    first_name: lead.firstName,
+    last_name: lead.lastName,
+    email: lead.email,
+  });
+  if (error) throw error;
+}
+
 /** Vote counts per option for a poll, plus the total. */
 export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
   const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);
