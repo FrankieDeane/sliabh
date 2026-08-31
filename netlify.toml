@@ -1,7 +1,7 @@
 # Netlify configuration for the Sliabh Expo web build.
 # `expo export -p web` produces a static SPA in the `dist` directory.
 [build]
-  command = "npx expo export -p web"
+  command = "npx expo export -p web && node scripts/inject-seo.mjs"
   publish = "dist"
   # Decide whether a build is worth running BEFORE spending build minutes.
   # exit 0 => skip build, exit 1 => run build. See netlify/ignore-build.sh:
