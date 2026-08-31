@@ -37,7 +37,10 @@ export function WebFooter() {
   const isWide = width >= 720;
 
   return (
-    <View style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.border }]}>
+    <View
+      style={[styles.footer, { backgroundColor: c.bg, borderTopColor: c.border }]}
+      nativeID="site-footer"
+    >
       <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
         <View style={[styles.top, isWide ? styles.topWide : styles.topNarrow, { flexWrap: isWide ? 'nowrap' : 'wrap' }]}>
 
