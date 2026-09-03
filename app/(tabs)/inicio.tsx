@@ -212,6 +212,70 @@ const FEATURE_CARDS = [
   },
 ];
 
+// Sliabh vs. plataformas de trekking extranjeras (AllTrails, Wikiloc, Hiiker)
+const COMPARISON_ROWS = [
+  {
+    id: 'foco',
+    labelEs: 'Enfoque',
+    labelEn: 'Focus',
+    sliabhEs: 'Rutas y refugios de Argentina, curados a mano',
+    sliabhEn: 'Argentine trails & refuges, hand-curated',
+    othersEs: 'Catálogo global, rutas mezcladas de +190 países',
+    othersEn: 'Global catalog, trails mixed from 190+ countries',
+    kind: 'partial' as const,
+  },
+  {
+    id: 'contexto',
+    labelEs: 'Contexto local',
+    labelEn: 'Local context',
+    sliabhEs: 'Guardaparques, permisos y normativa de cada Parque Nacional',
+    sliabhEn: 'Rangers, permits and regulations for each National Park',
+    othersEs: 'Sin datos oficiales locales, solo tracks de usuarios',
+    othersEn: 'No official local data, just user-submitted tracks',
+    kind: 'none' as const,
+  },
+  {
+    id: 'supervivencia',
+    labelEs: 'Supervivencia sin señal',
+    labelEn: 'Offline survival guides',
+    sliabhEs: 'Incluidas — funcionan sin conexión',
+    sliabhEn: 'Included — work fully offline',
+    othersEs: 'No ofrecen guías de emergencia',
+    othersEn: 'No emergency guides offered',
+    kind: 'none' as const,
+  },
+  {
+    id: 'mapas',
+    labelEs: 'Mapas y rutas offline',
+    labelEn: 'Offline maps & trails',
+    sliabhEs: 'Gratis, sin límites',
+    sliabhEn: 'Free, no limits',
+    othersEs: 'De pago en la mayoría (AllTrails+, Wikiloc Premium)',
+    othersEn: 'Paywalled on most (AllTrails+, Wikiloc Premium)',
+    kind: 'partial' as const,
+  },
+  {
+    id: 'anuncios',
+    labelEs: 'Publicidad',
+    labelEn: 'Advertising',
+    sliabhEs: 'Sin anuncios',
+    sliabhEn: 'No ads',
+    othersEs: 'Con publicidad en el plan gratuito',
+    othersEn: 'Ads on the free plan',
+    kind: 'none' as const,
+  },
+  {
+    id: 'precio',
+    labelEs: 'Precio',
+    labelEn: 'Price',
+    sliabhEs: 'Gratis, sostenido por la comunidad',
+    sliabhEn: 'Free, community-supported',
+    othersEs: 'Planes pagos de ~US$20 a US$50/año',
+    othersEn: 'Paid plans of ~US$20–50/year',
+    kind: 'partial' as const,
+  },
+];
+
 function SectionDivider({ sidePad, isDark }: { sidePad: number; isDark: boolean }) {
   const borderColor = isDark ? '#1e2d42' : '#e2e8f0';
   if (Platform.OS !== 'web') {
@@ -749,6 +813,89 @@ export default function InicioScreen() {
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
+        {/* ── SLIABH VS OTRAS APPS ── */}
+        <View style={[styles.section, { paddingHorizontal: sidePad }]}>
+          <Text
+            style={[styles.sectionLabel, { color: c.muted }]}
+            {...(Platform.OS === 'web' ? ({ 'data-section-label': true, 'data-eyebrow': true } as any) : {})}
+          >
+            {t('SLIABH VS EL RESTO', 'SLIABH VS THE REST')}
+          </Text>
+          <Text style={[styles.sectionSubtitle, { color: c.text }]} {...(Platform.OS === 'web' ? ({ 'data-serif': true } as any) : {})}>
+            {t('¿Por qué no usar una app genérica?', 'Why not just use a generic app?')}
+          </Text>
+          <View style={styles.compareChips}>
+            <Text style={[styles.compareChipsLede, { color: c.muted }]}>
+              {t('Comparado con', 'Compared to')}
+            </Text>
+            {['AllTrails', 'Wikiloc', 'Hiiker'].map((name) => (
+              <View key={name} style={[styles.compareChip, { borderColor: c.border, backgroundColor: c.surface }]}>
+                <Text style={[styles.compareChipTxt, { color: c.muted }]}>{name}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={[styles.compareTable, { borderColor: c.border, backgroundColor: c.surface }]}>
+            <View style={[styles.compareHeaderRow, { borderBottomColor: c.border }, isWide ? styles.compareRowWide : styles.compareRowNarrow]}>
+              {isWide && <View style={styles.compareLabelCol} />}
+              <View style={styles.compareValCol}>
+                <Text style={[styles.compareHeaderTxt, { color: '#22c55e' }]}>SLIABH</Text>
+              </View>
+              <View style={styles.compareValCol}>
+                <Text style={[styles.compareHeaderTxt, { color: c.muted }]}>
+                  {t('OTRAS APPS', 'OTHER APPS')}
+                </Text>
+              </View>
+            </View>
+
+            {COMPARISON_ROWS.map((row, i) => (
+              <View
+                key={row.id}
+                style={[
+                  styles.compareRow,
+                  isWide ? styles.compareRowWide : styles.compareRowNarrow,
+                  i < COMPARISON_ROWS.length - 1 ? { borderBottomWidth: 1, borderBottomColor: c.border } : null,
+                ]}
+              >
+                {isWide && (
+                  <View style={styles.compareLabelCol}>
+                    <Text style={[styles.compareLabelTxt, { color: c.text }]}>{t(row.labelEs, row.labelEn)}</Text>
+                  </View>
+                )}
+                {!isWide && (
+                  <Text style={[styles.compareLabelTxtNarrow, { color: c.text }]}>{t(row.labelEs, row.labelEn)}</Text>
+                )}
+                <View style={styles.compareValCol}>
+                  <View style={styles.compareCell}>
+                    <Ionicons name="checkmark-circle" size={16} color="#22c55e" style={styles.compareCellIcon} />
+                    <Text style={[styles.compareCellTxt, { color: c.text }]}>{t(row.sliabhEs, row.sliabhEn)}</Text>
+                  </View>
+                </View>
+                <View style={styles.compareValCol}>
+                  <View style={styles.compareCell}>
+                    <Ionicons
+                      name={row.kind === 'none' ? 'close-circle-outline' : 'remove-circle-outline'}
+                      size={16}
+                      color={row.kind === 'none' ? 'rgba(239,68,68,0.65)' : c.muted}
+                      style={styles.compareCellIcon}
+                    />
+                    <Text style={[styles.compareCellTxt, { color: c.muted }]}>{t(row.othersEs, row.othersEn)}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <Text style={[styles.compareFootnote, { color: c.muted }]}>
+            {t(
+              'Comparación general en base a los planes y funciones publicados por cada app (sept. 2026). Verificá siempre los detalles actualizados en el sitio oficial de cada plataforma.',
+              "General comparison based on each app's published plans and features (Sep 2026). Always check each platform's official site for current details.",
+            )}
+          </Text>
+        </View>
+
+        <SectionDivider sidePad={sidePad} isDark={isDark} />
+
         {/* ── CAFECITO / CROWDFUNDING ── */}
         <View
           style={[
@@ -1083,4 +1230,24 @@ const styles = StyleSheet.create({
   },
   cafecitoBtnFull: { alignSelf: 'stretch' },
   cafecitoBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
+
+  // Comparison — Sliabh vs otras apps
+  compareChips: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 14, marginBottom: 20 },
+  compareChipsLede: { fontSize: 12, fontWeight: '600', marginRight: 2 },
+  compareChip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
+  compareChipTxt: { fontSize: 12, fontWeight: '700' },
+  compareTable: { borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
+  compareHeaderRow: { borderBottomWidth: 1, paddingVertical: 12 },
+  compareRow: { paddingVertical: 14 },
+  compareRowWide: { flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 18, gap: 12 },
+  compareRowNarrow: { flexDirection: 'column', paddingHorizontal: 16, gap: 8 },
+  compareLabelCol: { width: 150, flexShrink: 0 },
+  compareLabelTxt: { fontSize: 13, fontWeight: '700' },
+  compareLabelTxtNarrow: { fontSize: 11, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', opacity: 0.6 },
+  compareValCol: { flex: 1, minWidth: 0 },
+  compareHeaderTxt: { fontSize: 11, fontWeight: '800', letterSpacing: 2, textAlign: 'center' },
+  compareCell: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
+  compareCellIcon: { marginTop: 1, flexShrink: 0 },
+  compareCellTxt: { fontSize: 13, lineHeight: 18, flex: 1 },
+  compareFootnote: { fontSize: 11, lineHeight: 16, marginTop: 14, fontStyle: 'italic' },
 });
