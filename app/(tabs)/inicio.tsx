@@ -18,6 +18,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
+import { SponsorsAndAbout } from '../../src/components/sponsors/SponsorsAndAbout';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
@@ -971,6 +972,7 @@ export default function InicioScreen() {
           </TouchableOpacity>
         )}
 
+        {Platform.OS === 'web' && <SponsorsAndAbout />}
         {Platform.OS === 'web' && <WebFooter />}
       </ScrollView>
     </View>
