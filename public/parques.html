@@ -463,6 +463,10 @@
             <span class="toggle-dot" style="background:#94a3b8"></span>
             <span id="baseLayerToggleLabel">Ver mapa topográfico</span>
           </button>
+          <button class="layer-toggle" id="satellitesToggle">
+            <span class="toggle-dot" style="background:#22c55e"></span>
+            <span id="satellitesToggleLabel">Ver satélites en órbita</span>
+          </button>
           <button class="layer-toggle" id="trailLayerToggle">
             <span class="toggle-dot"></span>
             <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
@@ -499,6 +503,11 @@
   <link rel="stylesheet" href="/vendor/maplibre-gl-4.7.1.css" />
   <script src="/vendor/maplibre-gl-4.7.1.js"></script>
   <script src="/vendor/jspdf-2.5.1.umd.min.js"></script>
+  <!-- SGP4 orbit propagation for the live-satellites layer (see
+       "Live orbiting satellites" below). Not vendored locally like the
+       above two — loaded from CDN, real-time satellite tracking is
+       optional/best-effort and shouldn't block the base map if it fails. -->
+  <script src="https://unpkg.com/satellite.js@5.0.0/dist/satellite.min.js"></script>
   <script>
     const parks = [
       {name:'Parque Nacional El Leoncito',region:'Centro',lat:-31.88935,lng:-69.26514,province:'San Juan',category:'Parque Nacional',year:'2002',surface:'89,706 ha',ecoregions:'Altos Andes, Monte de Sierras y Bolsones, Puna',international:'',color:'#8a6d3b'},
@@ -1232,6 +1241,8 @@
       // Apply any trails buffered before the map finished loading
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
 
+      initSatellitesLayer(map);
+
       applyFilters();
       // Show every curated route on the main map by default (both sections).
       setTimeout(() => { showTrailLayer(); showChaltenLayer(false); }, 800);
@@ -1809,6 +1820,7 @@
       relabelFilters();
       updateBaseLayerToggleLabel();
       updateParkSatToggleLabel();
+      updateSatellitesToggleLabel();
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
@@ -2386,6 +2398,175 @@ ${trkpts}
     });
     updateParkSatToggleLabel();
 
+    // ── Live orbiting satellites ─────────────────────────────────────────────
+    // Real orbital tracking (SGP4 propagation via satellite.js) of NASA/
+    // NORAD-catalogued satellites, positioned from public TLE data — no
+    // account, no key. Off by default (it's a lot of moving dots); the
+    // toggle lazy-loads the TLE set on first activation.
+    //
+    // Data: CelesTrak's "visual" group — the ~100 brightest/most-tracked
+    // satellites (ISS, Hubble, a Starlink sample, weather sats, etc.),
+    // curated by CelesTrak itself. A good-sized, relevant set rather than
+    // the full ~10,000-satellite catalog, which would be both unreadable
+    // on a map this scale and expensive to re-propagate every tick.
+    const SATELLITES_TLE_URL = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle';
+    const SATELLITES_REFRESH_MS = 5000;
+
+    let satellitesVisible = false;
+    let satrecs = null; // null = not loaded yet; [] = load failed/empty
+    let satellitesTimer = null;
+    let satellitesPopup = null;
+
+    function parseTleText(text) {
+      const lines = text.split('\n').map((l) => l.replace(/\r$/, '')).filter((l) => l.trim());
+      const out = [];
+      for (let i = 0; i + 2 < lines.length + 1; i += 3) {
+        const name = lines[i], line1 = lines[i + 1], line2 = lines[i + 2];
+        if (!name || !line1 || !line2 || line1[0] !== '1' || line2[0] !== '2') continue;
+        try {
+          const satrec = satellite.twoline2satrec(line1, line2);
+          const noradId = line1.substring(2, 7).trim();
+          out.push({ name: name.trim(), satrec, noradId });
+        } catch (e) { /* skip malformed entry */ }
+      }
+      return out;
+    }
+
+    async function loadSatelliteTles() {
+      if (satrecs !== null) return satrecs; // already loaded (or failed)
+      try {
+        const res = await fetch(SATELLITES_TLE_URL);
+        if (!res.ok) throw new Error('bad status ' + res.status);
+        satrecs = parseTleText(await res.text());
+      } catch (e) {
+        console.warn('[parques.html] satellite TLE fetch failed:', e);
+        satrecs = [];
+      }
+      return satrecs;
+    }
+
+    // classify by altitude, standard orbital-regime thresholds (km)
+    function orbitClass(altKm) {
+      if (altKm < 2000) return 'LEO';
+      if (altKm < 35786) return 'MEO';
+      if (altKm < 35786 + 200) return 'GEO';
+      return 'HEO';
+    }
+
+    function computeSatelliteFeatures() {
+      if (!satrecs || !satrecs.length) return [];
+      const now = new Date();
+      const gmst = satellite.gstime(now);
+      const features = [];
+      for (const s of satrecs) {
+        let pv;
+        try { pv = satellite.propagate(s.satrec, now); } catch (e) { continue; }
+        if (!pv || !pv.position) continue; // decayed / propagation failure
+        const geo = satellite.eciToGeodetic(pv.position, gmst);
+        const lat = satellite.degreesLat(geo.latitude);
+        const lon = satellite.degreesLong(geo.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+        const altKm = geo.height;
+        const speedKmS = pv.velocity
+          ? Math.hypot(pv.velocity.x, pv.velocity.y, pv.velocity.z)
+          : null;
+        const periodMin = s.satrec.no ? (2 * Math.PI) / s.satrec.no : null;
+        features.push({
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [lon, lat] },
+          properties: {
+            name: s.name,
+            noradId: s.noradId,
+            altKm: Math.round(altKm),
+            speedKmS: speedKmS ? Math.round(speedKmS * 100) / 100 : null,
+            periodMin: periodMin ? Math.round(periodMin * 10) / 10 : null,
+            orbitClass: orbitClass(altKm),
+          },
+        });
+      }
+      return features;
+    }
+
+    function tickSatellites() {
+      const src = map.getSource('satellites');
+      if (!src) return;
+      src.setData({ type: 'FeatureCollection', features: computeSatelliteFeatures() });
+    }
+
+    function startSatellitesTimer() {
+      loadSatelliteTles().then(() => {
+        tickSatellites();
+        if (satellitesTimer) clearInterval(satellitesTimer);
+        satellitesTimer = setInterval(tickSatellites, SATELLITES_REFRESH_MS);
+      });
+    }
+
+    function stopSatellitesTimer() {
+      if (satellitesTimer) { clearInterval(satellitesTimer); satellitesTimer = null; }
+    }
+
+    function initSatellitesLayer(glMap) {
+      if (typeof satellite === 'undefined') {
+        console.warn('[parques.html] satellite.js failed to load — live satellites layer disabled.');
+        return;
+      }
+      glMap.addSource('satellites', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      glMap.addLayer({
+        id: 'satellites-dots',
+        type: 'circle',
+        source: 'satellites',
+        layout: { visibility: 'none' },
+        paint: {
+          'circle-radius': 3.5,
+          'circle-color': '#22c55e',
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-opacity': 0.6,
+          'circle-opacity': 0.9,
+        },
+      });
+      glMap.on('mouseenter', 'satellites-dots', () => { glMap.getCanvas().style.cursor = 'pointer'; });
+      glMap.on('mouseleave', 'satellites-dots', () => { glMap.getCanvas().style.cursor = ''; });
+      glMap.on('click', 'satellites-dots', (e) => {
+        const f = e.features && e.features[0];
+        if (!f) return;
+        const p = f.properties;
+        if (satellitesPopup) satellitesPopup.remove();
+        satellitesPopup = new maplibregl.Popup({ offset: 10 })
+          .setLngLat(f.geometry.coordinates)
+          .setHTML(
+            '<div class="trail-popup"><h4>🛰️ ' + p.name + '</h4>'
+            + '<div class="stats">'
+            + '<span>' + T('Altitud', 'Altitude') + ': ' + p.altKm + ' km</span>'
+            + '<span>' + T('Órbita', 'Orbit') + ': ' + p.orbitClass + '</span>'
+            + (p.periodMin ? '<span>' + T('Período', 'Period') + ': ' + p.periodMin + ' min</span>' : '')
+            + (p.speedKmS ? '<span>' + T('Velocidad', 'Speed') + ': ' + p.speedKmS + ' km/s</span>' : '')
+            + '<span>NORAD ID: ' + p.noradId + '</span>'
+            + '</div>'
+            + '<a class="btn-gpx" href="https://www.n2yo.com/satellite/?s=' + p.noradId + '" target="_blank" rel="noopener">'
+            + T('Ver en N2YO', 'Track on N2YO') + '</a>'
+            + '</div>',
+          )
+          .addTo(glMap);
+      });
+    }
+
+    const satellitesToggleBtn = document.getElementById('satellitesToggle');
+    const satellitesToggleLabel = document.getElementById('satellitesToggleLabel');
+    function updateSatellitesToggleLabel() {
+      satellitesToggleBtn.classList.toggle('active', satellitesVisible);
+      satellitesToggleLabel.textContent = satellitesVisible
+        ? T('Ocultar satélites en órbita', 'Hide orbiting satellites')
+        : T('Ver satélites en órbita', 'View orbiting satellites');
+    }
+    satellitesToggleBtn.addEventListener('click', () => {
+      satellitesVisible = !satellitesVisible;
+      if (mapLoaded) map.setLayoutProperty('satellites-dots', 'visibility', satellitesVisible ? 'visible' : 'none');
+      if (satellitesVisible) startSatellitesTimer(); else stopSatellitesTimer();
+      updateSatellitesToggleLabel();
+    });
+    updateSatellitesToggleLabel();
+
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
     const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
@@ -2772,6 +2953,7 @@ ${trkpts}
         relabelFilters();
         updateBaseLayerToggleLabel();
         updateParkSatToggleLabel();
+        updateSatellitesToggleLabel();
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();
