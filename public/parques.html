@@ -1233,10 +1233,11 @@
       map.on('mouseenter', 'osm-trails-line', function () { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'osm-trails-line', function () { map.getCanvas().style.cursor = ''; });
 
-      // The dense live-OSM overlay stays off the main map (it lives on the
-      // right detail map). The curated routes are shown on the main map in
-      // both sections so every route is visible here too.
-      if (MAP_CTX !== 'mapas') osmTrailsInit(map);
+      // Dense live-OSM hiking-trail overlay (the same data shown on the
+      // right detail map when a park is selected) — now on by default in
+      // both sections, so the general/Mapas overview shows real circuits
+      // too, not just the curated route lines.
+      osmTrailsInit(map);
 
       // Apply any trails buffered before the map finished loading
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
