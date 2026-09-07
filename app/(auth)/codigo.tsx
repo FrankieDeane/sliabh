@@ -23,8 +23,8 @@ export default function CodigoScreen() {
   const inputClass = `border rounded-xl px-4 py-3 mb-4 ${isDark ? 'bg-stone-800 border-stone-600 text-stone-100' : 'bg-white border-stone-300 text-stone-900'}`;
 
   const handleVerifyCode = async () => {
-    if (code.length !== 6) {
-      showAlert('Error', 'El código debe tener 6 dígitos.');
+    if (code.length !== 8) {
+      showAlert('Error', 'El código debe tener 8 dígitos.');
       return;
     }
     setLoading(true);
@@ -80,17 +80,17 @@ export default function CodigoScreen() {
           <Text className="text-4xl mb-3">📩</Text>
           <Text className={`text-2xl font-bold mb-2 ${textPrimary}`}>Revisa tu correo</Text>
           <Text className={`text-sm mb-8 leading-5 ${textMuted}`}>
-            Hemos enviado un código de 6 dígitos a{'\n'}
+            Hemos enviado un código de 8 dígitos a{'\n'}
             <Text className={`font-semibold ${textPrimary}`}>{email}</Text>
           </Text>
           <Text className={`text-sm font-medium mb-1 ${textPrimary}`}>Código de verificación</Text>
           <TextInput
             value={code}
-            onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 6))}
-            placeholder="000000"
+            onChangeText={(t) => setCode(t.replace(/\D/g, '').slice(0, 8))}
+            placeholder="00000000"
             placeholderTextColor={isDark ? '#6b7280' : '#9ca3af'}
             keyboardType="number-pad"
-            maxLength={6}
+            maxLength={8}
             className={`${inputClass} text-center text-2xl tracking-widest`}
           />
           <Button label="Verificar código" onPress={handleVerifyCode} loading={loading} fullWidth />
