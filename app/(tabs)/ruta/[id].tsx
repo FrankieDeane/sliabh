@@ -44,6 +44,7 @@ const HikeMap = Platform.OS === 'web'
   : require('../../../src/components/map/MapLibreEsri.native').MapLibreEsri;
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
+import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 import { SeoHead } from '../../../src/components/ui/SeoHead';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
@@ -1214,6 +1215,9 @@ function OverviewTab({
             </Text>
           ))}
       </SectionCard>
+
+      {/* Active-fire proximity alert (NASA FIRMS satellite data, shown once configured) */}
+      <FireRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
 
       {/* Live community condition reports (shown once Supabase is configured) */}
       <TrailReports trailId={trail.id} colors={C} />
