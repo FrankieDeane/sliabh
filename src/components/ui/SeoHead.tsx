@@ -2,7 +2,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
 
-const SITE_URL = 'https://sliabh.netlify.app';
+const SITE_URL = 'https://sliabh.com.ar';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 interface SeoHeadProps {

@@ -1,6 +1,6 @@
 import { Platform, Share, Linking } from 'react-native';
 
-export const SITE_URL = 'https://sliabh.netlify.app/';
+export const SITE_URL = 'https://sliabh.com.ar/';
 
 /** URL of the page currently on screen (web); falls back to the site root. */
 export function currentPageUrl(): string {

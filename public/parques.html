@@ -267,6 +267,24 @@
       flex-shrink: 0;
     }
     #closeSplit:hover { background: rgba(220,38,38,.22); border-color:#ef4444; color:#ef4444; }
+    .park-sat-toggle {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      z-index: 11;
+      background: rgba(15,23,36,.85);
+      border: 1px solid rgba(34,197,94,.4);
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: #22c55e;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .park-sat-toggle:hover { border-color: #22c55e; }
     .kicker {
       margin: 0;
       font-size: 12px;
@@ -467,6 +485,7 @@
       <div id="rightPane">
         <div id="park3dMap"></div>
         <div id="parkInfoOverlay"></div>
+        <button id="parkSatToggle" class="park-sat-toggle" type="button">Topo</button>
       </div>
 
     </section>
@@ -634,6 +653,9 @@
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
     let mapLoaded = false;
+    // Shared with the right-pane per-park 3D map's satellite/topo toggle
+    // (that map lives further down, rebuilt per park selection).
+    let parkMapSatellite = true;
 
     // Embedding context: 'mapas' keeps the left map clean (parks only) and
     // shows trails on the right detail map; 'rutas' shows trails on this map.
@@ -1451,7 +1473,9 @@
         const center  = park.trailCenter || [park.lng, park.lat];
         const zoom    = park.trailZoom   || 9.5;
 
-        // ── Satellite base style (Esri World Imagery, free, no key) ──────────
+        // ── Satellite + topo base style (Esri, free, no key) ──────────────────
+        // Both layers ship in the style; parkSatToggle just flips visibility
+        // (see updateParkSatVisibility below), same pattern as baseLayerToggle.
         const satStyle = {
           version: 8,
           sources: {
@@ -1460,8 +1484,16 @@
               tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
               tileSize: 256, maxzoom: 18, attribution: '© Esri',
             },
+            topo: {
+              type: 'raster',
+              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+              tileSize: 256, maxzoom: 18, attribution: '© Esri',
+            },
           },
-          layers: [{ id: 'sat', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.9 } }],
+          layers: [
+            { id: 'sat', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.9 } },
+            { id: 'topo', type: 'raster', source: 'topo', layout: { visibility: parkMapSatellite ? 'none' : 'visible' } },
+          ],
         };
 
         // ── Bearing helper ───────────────────────────────────────────────────
@@ -1776,6 +1808,7 @@
       applyStaticLang();
       relabelFilters();
       updateBaseLayerToggleLabel();
+      updateParkSatToggleLabel();
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
@@ -2334,6 +2367,25 @@ ${trkpts}
     baseLayerToggleBtn.addEventListener('click', () => setBaseLayer(!baseLayerSatellite));
     updateBaseLayerToggleLabel();
 
+    // ── Right-pane (per-park 3D) base layer toggle ──────────────────────────
+    // That map is destroyed and rebuilt from scratch on every park selection
+    // (see the "Satellite 3D cinematic map" block above), so parkMapSatellite
+    // is read at build time to seed the new map's initial layer visibility,
+    // and applied live via setLayoutProperty when the map already exists.
+    const parkSatToggleBtn = document.getElementById('parkSatToggle');
+    function updateParkSatToggleLabel() {
+      parkSatToggleBtn.textContent = parkMapSatellite ? T('Topo', 'Topo') : T('Satélite', 'Satellite');
+    }
+    parkSatToggleBtn.addEventListener('click', () => {
+      parkMapSatellite = !parkMapSatellite;
+      if (window._parkGlMap) {
+        window._parkGlMap.setLayoutProperty('sat', 'visibility', parkMapSatellite ? 'visible' : 'none');
+        window._parkGlMap.setLayoutProperty('topo', 'visibility', parkMapSatellite ? 'none' : 'visible');
+      }
+      updateParkSatToggleLabel();
+    });
+    updateParkSatToggleLabel();
+
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
     const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
@@ -2719,6 +2771,7 @@ ${trkpts}
         applyStaticLang();
         relabelFilters();
         updateBaseLayerToggleLabel();
+        updateParkSatToggleLabel();
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();

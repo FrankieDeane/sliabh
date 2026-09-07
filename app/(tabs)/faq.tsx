@@ -43,8 +43,8 @@ const FAQ_DATA: Array<{
           en: 'What platforms is Sliabh available on?',
         },
         a: {
-          es: 'Sliabh funciona como aplicación web (sliabh.netlify.app), y como aplicación móvil nativa para iOS y Android. Todas las versiones comparten el mismo contenido y se actualizan simultáneamente.',
-          en: 'Sliabh works as a web app (sliabh.netlify.app) and as a native mobile app for iOS and Android. All versions share the same content and are updated simultaneously.',
+          es: 'Sliabh funciona como aplicación web (sliabh.com.ar), y como aplicación móvil nativa para iOS y Android. Todas las versiones comparten el mismo contenido y se actualizan simultáneamente.',
+          en: 'Sliabh works as a web app (sliabh.com.ar) and as a native mobile app for iOS and Android. All versions share the same content and are updated simultaneously.',
         },
       },
       {
@@ -558,8 +558,8 @@ const FAQ_DATA: Array<{
           en: 'Can I use Sliabh from my computer?',
         },
         a: {
-          es: 'Sí. La versión web (sliabh.netlify.app) funciona perfectamente en computadoras de escritorio y laptops. Desde el navegador tenés acceso a todas las funciones: mapas, descargas GPX, rutas y guías de supervivencia.',
-          en: 'Yes. The web version (sliabh.netlify.app) works perfectly on desktop computers and laptops. From the browser you have access to all features: maps, GPX downloads, routes and survival guides.',
+          es: 'Sí. La versión web (sliabh.com.ar) funciona perfectamente en computadoras de escritorio y laptops. Desde el navegador tenés acceso a todas las funciones: mapas, descargas GPX, rutas y guías de supervivencia.',
+          en: 'Yes. The web version (sliabh.com.ar) works perfectly on desktop computers and laptops. From the browser you have access to all features: maps, GPX downloads, routes and survival guides.',
         },
       },
     ],

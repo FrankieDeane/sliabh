@@ -27,11 +27,11 @@ function welcomeHtml(name: string): { subject: string; html: string } {
     html: shell(`
       <h1 style="${H1}">¡Hola ${name}, bienvenido/a a Sliabh! 🎉</h1>
       <p style="${P}">Tu cuenta está lista. Explorá los 39 Parques Nacionales de Argentina, descargá mapas offline, planificá rutas y aportá a la comunidad de montañistas.</p>
-      <div style="text-align:center;margin:8px 0 24px;"><a href="https://sliabh.netlify.app" style="${BTN}">Explorar Sliabh</a></div>
+      <div style="text-align:center;margin:8px 0 24px;"><a href="https://sliabh.com.ar" style="${BTN}">Explorar Sliabh</a></div>
       <div style="${HR}"></div>
       <h1 style="${H1}">Hi ${name}, welcome to Sliabh! 🎉</h1>
       <p style="${P}">Your account is ready. Explore Argentina's 39 National Parks, download offline maps, plan routes and contribute to the hikers' community.</p>
-      <div style="text-align:center;"><a href="https://sliabh.netlify.app" style="${BTN}">Explore Sliabh</a></div>
+      <div style="text-align:center;"><a href="https://sliabh.com.ar" style="${BTN}">Explore Sliabh</a></div>
     `),
   };
 }

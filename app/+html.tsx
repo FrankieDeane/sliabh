@@ -46,17 +46,17 @@ export default function Root({ children }: PropsWithChildren) {
         />
         <meta name="robots" content="index, follow, max-image-preview:large" />
         <meta name="author" content="Sliabh" />
-        <link rel="canonical" href="https://sliabh.netlify.app/" />
+        <link rel="canonical" href="https://sliabh.com.ar/" />
 
         {/* Open Graph */}
         <meta property="og:site_name" content="Sliabh" />
         <meta property="og:locale" content="es_AR" />
         <meta property="og:locale:alternate" content="en_US" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sliabh.netlify.app/" />
+        <meta property="og:url" content="https://sliabh.com.ar/" />
         <meta property="og:title" content="Sliabh — Senderismo y trekking en Argentina" />
         <meta property="og:description" content="Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia para los Parques Nacionales de Argentina." />
-        <meta property="og:image" content="https://sliabh.netlify.app/og-image.jpg" />
+        <meta property="og:image" content="https://sliabh.com.ar/og-image.jpg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Senderismo en la Patagonia argentina" />
@@ -65,7 +65,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Sliabh — Senderismo y trekking en Argentina" />
         <meta name="twitter:description" content="Rutas, mapas 3D, GPS offline y planificación para los Parques Nacionales de Argentina." />
-        <meta name="twitter:image" content="https://sliabh.netlify.app/og-image.jpg" />
+        <meta name="twitter:image" content="https://sliabh.com.ar/og-image.jpg" />
 
         {/* Structured data (schema.org) for rich results */}
         <script
@@ -76,23 +76,23 @@ export default function Root({ children }: PropsWithChildren) {
               '@graph': [
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://sliabh.netlify.app/#website',
-                  url: 'https://sliabh.netlify.app/',
+                  '@id': 'https://sliabh.com.ar/#website',
+                  url: 'https://sliabh.com.ar/',
                   name: 'Sliabh',
                   description: 'Plataforma de senderismo y trekking para los Parques Nacionales de Argentina.',
                   inLanguage: 'es-AR',
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://sliabh.netlify.app/rutas?q={search_term_string}',
+                    target: 'https://sliabh.com.ar/rutas?q={search_term_string}',
                     'query-input': 'required name=search_term_string',
                   },
                 },
                 {
                   '@type': 'Organization',
-                  '@id': 'https://sliabh.netlify.app/#organization',
+                  '@id': 'https://sliabh.com.ar/#organization',
                   name: 'Sliabh',
-                  url: 'https://sliabh.netlify.app/',
-                  logo: 'https://sliabh.netlify.app/SLIABH_Logo_Transparent.png',
+                  url: 'https://sliabh.com.ar/',
+                  logo: 'https://sliabh.com.ar/SLIABH_Logo_Transparent.png',
                   description: 'Rutas, mapas 3D, GPS offline y planificación para explorar la montaña en Argentina.',
                 },
               ],

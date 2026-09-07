@@ -909,6 +909,7 @@ export default function InicioScreen() {
               source={{ uri: CAFECITO_IMG_URI }}
               style={styles.cafecitoImg}
               resizeMode="cover"
+              alt=""
             />
             <View style={{ flex: 1 }}>
               <Text style={[styles.cafecitoTitle, { color: c.text }]}>

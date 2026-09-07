@@ -41,4 +41,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://sliabh.netlify.app/sitemap.xml
+Sitemap: https://sliabh.com.ar/sitemap.xml

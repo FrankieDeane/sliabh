@@ -506,6 +506,11 @@ export default function TrailDetailScreen() {
     );
   }
 
+  // English readers get the real translation where it exists (all 60 trails,
+  // as of the bilingual SEO work) — never a silent fall-through to Spanish
+  // prose under an English toggle.
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
+
   const diffColor = DIFFICULTY_COLOR[trail.difficulty] ?? {
     bg: 'rgba(100,116,139,0.18)',
     text: C.muted,
@@ -559,13 +564,13 @@ export default function TrailDetailScreen() {
   const seoTitle = `${trail.name} — ${trail.province} | Sliabh`;
   const seoImage = trail.photo_uri.startsWith('http')
     ? trail.photo_uri
-    : `https://sliabh.netlify.app${trail.photo_uri}`;
+    : `https://sliabh.com.ar${trail.photo_uri}`;
   const seoJsonLd = [
     {
       '@type': 'TouristAttraction',
       name: trail.name,
-      description: trail.description,
-      url: `https://sliabh.netlify.app/ruta/${trail.id}`,
+      description: trailDescription,
+      url: `https://sliabh.com.ar/ruta/${trail.id}`,
       image: seoImage,
       address: { '@type': 'PostalAddress', addressRegion: trail.province, addressCountry: 'AR' },
       geo: { '@type': 'GeoCoordinates', latitude: trail.coordinates.lat, longitude: trail.coordinates.lon },
@@ -580,9 +585,9 @@ export default function TrailDetailScreen() {
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.netlify.app/' },
-        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.netlify.app/rutas' },
-        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.netlify.app/ruta/${trail.id}` },
+        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.com.ar/' },
+        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.com.ar/rutas' },
+        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.com.ar/ruta/${trail.id}` },
       ],
     },
   ];
@@ -592,7 +597,7 @@ export default function TrailDetailScreen() {
     <View style={[styles.root, { backgroundColor: C.bg }]}>
       <SeoHead
         title={seoTitle}
-        description={trail.description}
+        description={trailDescription}
         path={`/ruta/${trail.id}`}
         image={seoImage}
         jsonLd={seoJsonLd}
@@ -1007,8 +1012,10 @@ function DownloadRow({
 }) {
   const C = useC();
   const { width } = useWindowDimensions();
+  const { lang } = useLangStore();
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
   const narrow = width < 420;
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
 
   async function handleGpx() {
     const gpxPoints = (trail as any).gpxTrack
@@ -1016,7 +1023,7 @@ function DownloadRow({
       : [{ lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead }];
 
     if (Platform.OS === 'web') {
-      const ok = downloadGpx(trail.name, gpxPoints, trail.description);
+      const ok = downloadGpx(trail.name, gpxPoints, trailDescription);
       if (ok) {
         setGpxState('done');
         setTimeout(() => setGpxState('idle'), 2500);
@@ -1024,7 +1031,7 @@ function DownloadRow({
     } else {
       try {
         const { FileSystem } = await import('expo-file-system') as any;
-        const content = buildGpx(trail.name, gpxPoints, trail.description);
+        const content = buildGpx(trail.name, gpxPoints, trailDescription);
         const filename = `${trail.id.replace(/[^a-z0-9-]/gi, '-')}.gpx`;
         const uri = `${FileSystem.documentDirectory}${filename}`;
         await FileSystem.writeAsStringAsync(uri, content, { encoding: 'utf8' });
@@ -1043,16 +1050,6 @@ function DownloadRow({
       }
     }
   }
-
-  function handlePdf(url: string) {
-    if (Platform.OS === 'web') {
-      if (typeof window !== 'undefined') window.open(url, '_blank');
-    } else {
-      Linking.openURL(url);
-    }
-  }
-
-  const pdfDirectUrl = ((trail as any).pdfUrl as string | undefined) || '';
 
   return (
     <View
@@ -1082,18 +1079,6 @@ function DownloadRow({
           />
           <Text style={dlRowS.btnTxtBlue}>
             {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dlRowS.btn, pdfDirectUrl ? dlRowS.btnGreen : dlRowS.btnDisabled, narrow && dlRowS.btnFull]}
-          onPress={() => pdfDirectUrl ? handlePdf(pdfDirectUrl) : undefined}
-          activeOpacity={pdfDirectUrl ? 0.8 : 1}
-          disabled={!pdfDirectUrl}
-        >
-          <Ionicons name="document-text-outline" size={15} color={pdfDirectUrl ? '#86efac' : '#475569'} />
-          <Text style={pdfDirectUrl ? dlRowS.btnTxtGreen : dlRowS.btnTxtDisabled}>
-            {pdfDirectUrl ? t('Mapa PDF', 'Map PDF') : t('PDF pronto', 'PDF soon')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -1127,11 +1112,7 @@ const dlRowS = StyleSheet.create({
   },
   btnFull: { flex: 1 },
   btnBlue: { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' },
-  btnGreen: { backgroundColor: '#14532d', borderColor: '#22c55e' },
-  btnDisabled: { backgroundColor: '#1a2030', borderColor: '#2d3748' },
   btnTxtBlue: { fontSize: 13, fontWeight: '700', color: '#93c5fd' },
-  btnTxtGreen: { fontSize: 13, fontWeight: '700', color: '#86efac' },
-  btnTxtDisabled: { fontSize: 13, fontWeight: '700', color: '#475569' },
 });
 
 function OverviewTab({
@@ -1148,6 +1129,7 @@ function OverviewTab({
   const C = useC();
   const safetyWarning =
     trail.safety_warning ?? (ALL_BARILOCHE_IDS.has(trail.id) ? BARILOCHE_SEGURIDAD : null);
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
   return (
     <View style={styles.tabContent}>
       {safetyWarning && (
@@ -1208,7 +1190,7 @@ function OverviewTab({
 
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
-        <Text style={[styles.bodyText, { color: C.text }]}>{trail.description}</Text>
+        <Text style={[styles.bodyText, { color: C.text }]}>{trailDescription}</Text>
         {!!trail.long_description &&
           trail.long_description.split('\n\n').map((para, i) => (
             <Text key={i} style={[styles.bodyText, { color: C.text, marginTop: 12 }]}>
