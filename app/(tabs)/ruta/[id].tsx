@@ -45,6 +45,7 @@ const HikeMap = Platform.OS === 'web'
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
+import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 import { SeoHead } from '../../../src/components/ui/SeoHead';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
@@ -1219,6 +1220,9 @@ function OverviewTab({
       {/* Active-fire proximity alert (NASA FIRMS satellite data, shown once configured) */}
       <FireRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
 
+      {/* Recent nearby earthquake alert (USGS, no key needed) */}
+      <EarthquakeRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
+
       {/* Live community condition reports (shown once Supabase is configured) */}
       <TrailReports trailId={trail.id} colors={C} />
 
@@ -1578,6 +1582,7 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
   const [userPos, setUserPos] = useState<{ lat: number; lon: number } | null>(null);
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
+  const [satelliteView, setSatelliteView] = useState(false);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
@@ -1687,12 +1692,35 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
             center={mapCenter}
             zoom={13}
             height="100%"
-            layer="esri-topo"
+            layer={satelliteView ? 'esri-satellite' : 'esri-topo'}
             showPolyline={false}
             showHikingRoute={false}
             userPosition={userPos}
             onLocationUpdate={updatePosition}
           />
+          <TouchableOpacity
+            onPress={() => setSatelliteView((v) => !v)}
+            activeOpacity={0.85}
+            style={{
+              position: 'absolute',
+              top: 14,
+              right: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 6,
+              backgroundColor: 'rgba(15,23,42,0.85)',
+              borderWidth: 1,
+              borderColor: 'rgba(255,255,255,0.2)',
+              borderRadius: 20,
+              paddingVertical: 8,
+              paddingHorizontal: 14,
+            }}
+          >
+            <Ionicons name={satelliteView ? 'map-outline' : 'globe-outline'} size={16} color="#fff" />
+            <Text style={{ color: '#fff', fontSize: 12.5, fontWeight: '700' }}>
+              {satelliteView ? t('Mapa', 'Map') : t('Satélite', 'Satellite')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Stats HUD */}
