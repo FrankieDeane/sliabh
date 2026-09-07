@@ -511,12 +511,24 @@ export default function TrailMap3DCinematic({
             style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
             <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
           </TouchableOpacity>
-          {/* Satélite / Topo toggle */}
-          <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
-            style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
-            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{satellite ? 'TOPO' : 'SATÉLITE'}</Text>
-          </TouchableOpacity>
         </View>
+      )}
+
+      {/* Satélite / Topo toggle — bottom-left, visible as soon as the map is
+          up (loading or interactive), not gated behind the ~30s cinematic
+          intro like the rest of the interactive-only controls. */}
+      {phase !== 'loading' && (
+        <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
+          style={{
+            position: 'absolute', bottom: 12, left: 12,
+            backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8,
+            paddingHorizontal: 12, paddingVertical: 6,
+            borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)',
+          }}>
+          <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
+            {satellite ? 'VER TOPO' : 'VER SATÉLITE'}
+          </Text>
+        </TouchableOpacity>
       )}
 
       {/* SAT/TOPO badge */}
