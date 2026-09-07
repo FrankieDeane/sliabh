@@ -6,13 +6,6 @@ import { useLangStore } from '../../store/langStore';
 import { isSupabaseConfigured, submitSponsorLead } from '../../services/supabase';
 import { LOGO_URI } from '../../constants/logo';
 
-// Frankie's LinkedIn profile photo. NOTE: this is a signed LinkedIn CDN URL
-// with an expiry baked in (~2026-09-24, per the `e=` query param) — it WILL
-// break after that date. Replace with a permanent hosted URL, or a local
-// asset committed to the repo, before then.
-const FOUNDER_PHOTO_URI: string | null =
-  'https://media.licdn.com/dms/image/v2/D4D03AQEiBuZWJQDd5g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1727996963047?e=1790208000&v=beta&t=LfJSvPicAACSN4IasRB24yy-RqAV6JyoW6lYPkJO2Xw';
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
@@ -45,37 +38,27 @@ function AboutUs({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => st
       <View style={[styles.about, isNarrow && styles.aboutNarrow]}>
         <View style={[styles.avatarCol, isNarrow && styles.avatarColNarrow]}>
           <View style={[styles.avatarFrame, { borderColor: c.border, backgroundColor: c.surface2 }]}>
-            {FOUNDER_PHOTO_URI ? (
-              <Image source={{ uri: FOUNDER_PHOTO_URI }} style={styles.avatarImg} resizeMode="cover" />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Ionicons name="person-outline" size={40} color={c.muted} />
-                <Text style={[styles.avatarPlaceholderTxt, { color: c.muted }]}>
-                  {t('Tu foto va acá', 'Your photo goes here')}
-                </Text>
-              </View>
-            )}
+            <Image source={{ uri: LOGO_URI }} style={styles.logoOnly} resizeMode="contain" alt="Sliabh" />
           </View>
-          <Image source={{ uri: LOGO_URI }} style={styles.logoBelow} resizeMode="contain" alt="Sliabh" />
         </View>
 
         <View style={styles.aboutBody}>
           <Text style={[styles.eyebrow, { color: c.accent }]}>{t('SOBRE NOSOTROS', 'ABOUT US')}</Text>
           <Text style={[styles.aboutTitle, { color: c.text }]}>{t('Somos Sliabh', 'We are Sliabh')}</Text>
           <Text style={[styles.aboutRole, { color: c.muted }]}>
-            {t('Frankie Deane — Fundador & Digital Specialist', 'Frankie Deane — Founder & Digital Specialist')}
+            {t('Un equipo argentino de trekking y tecnología', 'An Argentine trekking & technology team')}
           </Text>
 
           <Text style={[styles.aboutP, { color: c.text }]}>
             {t(
-              'Soy Frankie, especialista en marketing digital y datos, y arranqué Sliabh porque no encontraba una forma honesta de planificar un trekking en Argentina: información dispersa, desactualizada, o pensada para vender un tour antes que para llevarte a la montaña con seguridad.',
-              "I'm Frankie, a digital marketing and data specialist, and I started Sliabh because I couldn't find an honest way to plan a trek in Argentina: scattered, outdated information, or content built to sell a tour rather than get you safely onto the mountain.",
+              'Armamos Sliabh porque no encontrábamos una forma honesta de planificar un trekking en Argentina: información dispersa, desactualizada, o pensada para vender un tour antes que para llevarte a la montaña con seguridad.',
+              "We built Sliabh because we couldn't find an honest way to plan a trek in Argentina: scattered, outdated information, or content built to sell a tour rather than get you safely onto the mountain.",
             )}
           </Text>
           <Text style={[styles.aboutP, { color: c.text }]}>
             {t(
-              'Sliabh —"montaña" en gaélico— es mi forma de unir dos cosas que me importan: la tecnología bien usada, y la naturaleza como algo que hay que conocer para querer cuidar.',
-              'Sliabh — "mountain" in Gaelic — is my way of bringing together two things I care about: technology used well, and nature as something you have to know before you want to protect it.',
+              'Sliabh —"montaña" en gaélico— es nuestra forma de unir dos cosas que nos importan: la tecnología bien usada, y la naturaleza como algo que hay que conocer para querer cuidar.',
+              'Sliabh — "mountain" in Gaelic — is our way of bringing together two things we care about: technology used well, and nature as something you have to know before you want to protect it.',
             )}
           </Text>
 
@@ -281,10 +264,7 @@ const styles = StyleSheet.create({
     width: '100%', aspectRatio: 4 / 5, borderRadius: 18, borderWidth: 1, overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center',
   },
-  avatarImg: { width: '100%', height: '100%' },
-  avatarPlaceholder: { alignItems: 'center', gap: 10, padding: 24 },
-  avatarPlaceholderTxt: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5, textTransform: 'uppercase' },
-  logoBelow: { width: 56, height: 56, borderRadius: 12 },
+  logoOnly: { width: '55%', height: '55%' },
   aboutBody: { flex: 1, minWidth: 0 },
   aboutTitle: { fontSize: 32, fontWeight: '800', marginBottom: 4 },
   aboutRole: { fontSize: 14.5, marginBottom: 20 },
