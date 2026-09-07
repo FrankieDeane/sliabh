@@ -1211,7 +1211,7 @@ function OverviewTab({
           ))}
       </SectionCard>
 
-      {/* Active-fire proximity alert (NASA FIRMS satellite data, shown once configured) */}
+      {/* Active-fire proximity alert (NASA EONET, no key needed) */}
       <FireRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
 
       {/* Recent nearby earthquake alert (USGS, no key needed) */}
