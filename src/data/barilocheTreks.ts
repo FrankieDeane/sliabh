@@ -1569,6 +1569,183 @@ El paseo se combina naturalmente con el sendero costero a Playa Muñoz, que part
     camping_allowed: false,
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Refugio Frey por el Filo del Catedral (circuito con telesilla)
+  // -------------------------------------------------------------------------
+  {
+    id: 'refugio-frey-filo-catedral',
+    name: 'Refugio Frey por el Filo del Catedral',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 13,
+    elevation_gain_m: 150,
+    max_altitude_m: 1940,
+    duration: { min: 5, max: 7, unit: 'horas' },
+    coordinates: { lat: -41.1610, lon: -71.4817 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&q=80&fit=crop&auto=format',
+    tags: ['filo', 'telesilla', 'refugio', 'agujas graníticas', 'circuito', 'alta montaña'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Circuito que combina el telesilla del Cerro Catedral con una travesía a pie por el filo del cerro hasta el Refugio Frey, bajando después por el sendero clásico del arroyo Van Titter hasta la base. Terreno rocoso y expuesto en la cresta; solo con buen tiempo.',
+    description_en:
+      'A loop that combines the Cerro Catedral chairlift with a hike along the ridge of the mountain down to Refugio Frey, returning via the classic Arroyo Van Titter trail to the base. Rocky, exposed terrain on the ridge; good weather only.',
+    trailhead: 'Refugio Lynch, cima de los telesillas de Cerro Catedral (Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `Este circuito es la forma más rápida — y más aérea — de llegar al Refugio Frey: en vez de subir a pie desde la base, se toman los telesillas Séxtuple y Lynch de Catedral Alta Patagonia hasta cerca de los 1800 m, y desde ahí se sigue a pie por el filo del cerro hacia el sur. Los telesillas operan en un horario limitado (normalmente de 9 a 17 h) y solo en temporada, así que conviene confirmar el funcionamiento antes de subir.
+
+Desde Refugio Lynch el sendero gana altura por una cresta rocosa e irregular, marcada con pintura roja, hasta el punto más alto del circuito (~1940 m) con vistas directas al valle del arroyo Rucaco. Es un tramo de media a alta dificultad: terreno suelto, bloques grandes y exposición al viento, sin vegetación que lo resguarde. En una bifurcación señalizada hay que doblar a la izquierda para continuar hacia Frey — el desvío contrario baja de nuevo hacia la base por otra vía.
+
+Pasada la bifurcación el sendero pierde altura hasta la Laguna Schmoll, el escalón superior del circo de Frey, y de ahí baja a la Laguna Toncek, donde aparece el Refugio Frey (1700 m) rodeado de las agujas graníticas que hicieron famosa a la zona entre escaladores de todo el mundo. Es un buen lugar para parar a comer algo caliente antes del tramo final.
+
+Desde el refugio, la bajada se hace por el sendero clásico del arroyo Van Titter — el mismo que sube quien va directo a Frey desde la base — hasta el estacionamiento de Cerro Catedral. En total, contando el tramo del filo y el descenso por Van Titter, son unas 3 a 3 horas y media caminando desde Lynch hasta Frey, más otras 2 a 3 horas de bajada hasta la base.`,
+    gpxTrack: [
+      { lat: -41.1610, lon: -71.4817, ele: 1800 },
+      { lat: -41.1660, lon: -71.4795, ele: 1870 },
+      { lat: -41.1710, lon: -71.4775, ele: 1940 },
+      { lat: -41.1770, lon: -71.4755, ele: 1880 },
+      { lat: -41.1830, lon: -71.4735, ele: 1800 },
+      { lat: -41.1890, lon: -71.4790, ele: 1750 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
+      { lat: -41.1990, lon: -71.4739, ele: 1680 },
+      { lat: -41.1980, lon: -71.4733, ele: 1620 },
+      { lat: -41.1963, lon: -71.4705, ele: 1500 },
+      { lat: -41.1950, lon: -71.4670, ele: 1420 },
+      { lat: -41.1930, lon: -71.4635, ele: 1340 },
+      { lat: -41.1905, lon: -71.4585, ele: 1230 },
+      { lat: -41.1872, lon: -71.4523, ele: 1100 },
+      { lat: -41.1855, lon: -71.4499, ele: 1050 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1610,
+        lon: -71.4817,
+        name: 'Refugio Lynch',
+        description: 'Punto de partida, arriba de los telesillas Séxtuple y Lynch de Catedral Alta Patagonia. Confirmar horario de funcionamiento antes de subir.',
+      },
+      {
+        lat: -41.1710,
+        lon: -71.4775,
+        name: 'Filo del Catedral (~1940 m)',
+        description: 'Punto más alto del circuito. Cresta rocosa marcada con pintura roja, con vista al valle del arroyo Rucaco. Terreno irregular, sin reparo del viento.',
+      },
+      {
+        lat: -41.1830,
+        lon: -71.4735,
+        name: 'Bifurcación del filo',
+        description: 'Doblar a la izquierda para continuar hacia Refugio Frey; el desvío de la derecha vuelve hacia la base por otra vía.',
+      },
+      {
+        lat: -41.1890,
+        lon: -71.4790,
+        name: 'Laguna Schmoll',
+        description: 'Escalón superior del circo de Frey, por encima de la Laguna Toncek. Vistas directas a las agujas graníticas.',
+      },
+      {
+        lat: -41.1972,
+        lon: -71.4830,
+        name: 'Refugio Frey / Laguna Toncek',
+        description: 'Refugio del CAB a 1700 m con comidas calientes. Desde acá el circuito baja por el sendero clásico del arroyo Van Titter hasta la base.',
+      },
+      {
+        lat: -41.1855,
+        lon: -71.4499,
+        name: 'Base Cerro Catedral',
+        description: 'Cierre del circuito, mismo estacionamiento que el sendero clásico a Frey.',
+      },
+    ],
+    parking: 'Estacionamiento pago en la base de Cerro Catedral (Villa Catedral). Además del estacionamiento, hay que comprar el pase de telesilla en Catedral Alta Patagonia para llegar a Refugio Lynch.',
+    access_notes: 'Desde Bariloche tomar la Ruta 82 (Av. de los Pioneros) hacia el oeste por 18 km hasta Villa Catedral. Los telesillas funcionan en temporada y con horario limitado (habitualmente 9 a 17 h) — confirmar en Catedral Alta Patagonia antes de ir, porque si no operan hay que subir toda la ruta a pie desde la base.',
+    water_sources: 'Escaso en el tramo del filo; agua disponible recién en la Laguna Schmoll y la Laguna Toncek. Luego, arroyo Van Titter en la bajada hacia la base.',
+    camping_allowed: true,
+    refugio: 'Refugio Frey (CAB)',
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cumbre Catedral Norte
+  // -------------------------------------------------------------------------
+  {
+    id: 'catedral-norte-cumbre',
+    name: 'Cumbre Catedral Norte',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 16,
+    elevation_gain_m: 1350,
+    max_altitude_m: 2141,
+    duration: { min: 8, max: 10, unit: 'horas' },
+    coordinates: { lat: -41.1855, lon: -71.4499 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'alta montaña', 'técnico', 'exigente', 'panorámica'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso de alta montaña desde la base de Cerro Catedral hasta la Cumbre Catedral Norte (~2141 m), continuando más allá del Refugio Frey y la Laguna Schmoll por terreno de roca expuesta. Jornada larga y técnica, solo para quienes ya conocen el circuito de Frey y tienen experiencia en alta montaña.',
+    description_en:
+      'A high-mountain ascent from the base of Cerro Catedral to Cumbre Catedral Norte (~2,141 m), continuing past Refugio Frey and Laguna Schmoll over exposed rocky terrain. A long, technical day, only for those already familiar with the Frey circuit and experienced in high-mountain travel.',
+    trailhead: 'Base Cerro Catedral (Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `La Cumbre Catedral Norte es la continuación natural, para quienes ya conocen el circuito de Frey, del recorrido más clásico de Bariloche. Comparte los primeros 10 kilómetros con el sendero al Refugio Frey: el mismo bosque de coihues, el valle del arroyo Van Titter y la Cancha de Fútbol, hasta llegar al refugio a orillas de la Laguna Toncek (1700 m). Muchos dividen la salida en dos días, pernoctando en Frey antes de encarar el tramo alto.
+
+Pasado el refugio, el sendero sube a la Laguna Schmoll y desde ahí abandona definitivamente el circo de agujas graníticas para trepar por la cresta hacia el macizo del Catedral propiamente dicho. El terreno cambia por completo: roca expuesta, pendientes pronunciadas y tramos de scramble donde conviene tener las manos libres. La ausencia casi total de vegetación en esta altura deja al caminante expuesto al viento patagónico, que en el filo puede ser intenso incluso en días de buen pronóstico en la ciudad.
+
+La Cumbre Catedral Norte (aprox. 2141 m — las fuentes varían según se mida esta cumbre secundaria o el macizo principal del Catedral) corona el recorrido con un panorama que incluye el lago Nahuel Huapi, el cordón del Tronador al oeste y, en días despejados, gran parte de la cordillera fronteriza. No hay agua disponible pasada la Laguna Schmoll, así que hay que cargar lo necesario para todo el tramo final y el regreso.
+
+El descenso es por la misma ruta. Por la longitud total de la jornada y la exposición del tramo alto, conviene salir muy temprano, llevar equipo de abrigo aunque el día arranque despejado, y evaluar las condiciones en Schmoll antes de continuar — con viento fuerte o mal tiempo, el circuito de Frey ya es en sí mismo una excelente salida y no hace falta forzar la cumbre.`,
+    gpxTrack: [
+      { lat: -41.1855, lon: -71.4499, ele: 1050 },
+      { lat: -41.1918, lon: -71.4610, ele: 1290 },
+      { lat: -41.1950, lon: -71.4670, ele: 1420 },
+      { lat: -41.1975, lon: -71.4727, ele: 1580 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
+      { lat: -41.1890, lon: -71.4790, ele: 1750 },
+      { lat: -41.1780, lon: -71.4760, ele: 1950 },
+      { lat: -41.1650, lon: -71.4740, ele: 2141 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1855,
+        lon: -71.4499,
+        name: 'Base Cerro Catedral',
+        description: 'Punto de partida, comparte los primeros 10 km con el sendero clásico al Refugio Frey.',
+      },
+      {
+        lat: -41.1972,
+        lon: -71.4830,
+        name: 'Refugio Frey / Laguna Toncek',
+        description: 'Punto de paso obligado a 1700 m. Muchos pernoctan acá para dividir la subida en dos días.',
+      },
+      {
+        lat: -41.1890,
+        lon: -71.4790,
+        name: 'Laguna Schmoll',
+        description: 'Última fuente de agua confiable. A partir de acá el sendero deja el circo de Frey y sube por roca expuesta hacia la cumbre.',
+      },
+      {
+        lat: -41.1650,
+        lon: -71.4740,
+        name: 'Cumbre Catedral Norte (~2141 m)',
+        description: 'Cumbre secundaria del macizo del Catedral. Terreno de roca expuesta y viento fuerte; requiere experiencia en alta montaña y buen tiempo.',
+      },
+    ],
+    parking: 'Estacionamiento pago en la base de Cerro Catedral (Villa Catedral).',
+    access_notes: 'Desde Bariloche tomar la Ruta 82 (Av. de los Pioneros) hacia el oeste por 18 km hasta Villa Catedral. Salir muy temprano por la longitud total de la jornada.',
+    water_sources: 'Arroyo Van Titter y Laguna Toncek/Schmoll en el tramo bajo y medio. Sin agua disponible en el tramo final de roca hacia la cumbre — cargar todo lo necesario desde Schmoll.',
+    camping_allowed: true,
+    refugio: 'Refugio Frey (CAB)',
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
