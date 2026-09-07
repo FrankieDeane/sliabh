@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Button } from '../../src/components/ui/Button';
@@ -15,6 +16,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
 import { signIn } from '../../src/services/supabase';
 import { showAlert, normalizeEmail, isValidEmail } from '../../src/utils/alert';
+import { LOGO_URI } from '../../src/constants/logo';
 
 function translateError(message: string): string {
   const lower = message.toLowerCase();
@@ -118,7 +120,11 @@ export default function LoginScreen() {
 
           {/* Logo */}
           <View className="items-center mb-8">
-            <Text className="text-6xl mb-3">🏔️</Text>
+            <Image
+              source={{ uri: LOGO_URI }}
+              style={{ width: 96, height: 96, marginBottom: 12 }}
+              resizeMode="contain"
+            />
             <Text className={`text-3xl font-bold ${textPrimary}`}>Sliabh</Text>
             <Text className={`text-sm mt-1 ${textMuted}`}>Explora sin límites</Text>
           </View>
