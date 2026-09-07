@@ -467,6 +467,10 @@
             <span class="toggle-dot" style="background:#22c55e"></span>
             <span id="satellitesToggleLabel">Ver satélites en órbita</span>
           </button>
+          <button class="layer-toggle" id="poiToggle">
+            <span class="toggle-dot" style="background:#f59e0b"></span>
+            <span id="poiToggleLabel">Ver puntos de interés</span>
+          </button>
           <button class="layer-toggle" id="trailLayerToggle">
             <span class="toggle-dot"></span>
             <span id="trailToggleLabel">Senderos de Bariloche</span>
@@ -1243,6 +1247,7 @@
       if (pendingAppTrails) { applyAppTrails(pendingAppTrails); pendingAppTrails = null; }
 
       initSatellitesLayer(map);
+      initPoiLayer(map);
 
       applyFilters();
       // Show every curated route on the main map by default (both sections).
@@ -1822,6 +1827,7 @@
       updateBaseLayerToggleLabel();
       updateParkSatToggleLabel();
       updateSatellitesToggleLabel();
+      updatePoiToggleLabel();
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
@@ -2568,6 +2574,94 @@ ${trkpts}
     });
     updateSatellitesToggleLabel();
 
+    // ── Points of interest layer (refugios, miradores, lagunas, etc.) ────────
+    // Data comes from public/poi-data.json, generated at build time from the
+    // same namedWaypoints already shown on each trail's own page (see
+    // scripts/gen-poi-data.mjs) — single source of truth, no hand-duplicated
+    // list to fall out of sync.
+    let poiVisible = false;
+    let poiLoaded = false;
+    let poiPopup = null;
+
+    function initPoiLayer(glMap) {
+      glMap.addSource('poi-points', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+        cluster: true, clusterMaxZoom: 9, clusterRadius: 45,
+      });
+      glMap.addLayer({
+        id: 'poi-clusters', type: 'circle', source: 'poi-points',
+        filter: ['has', 'point_count'],
+        layout: { visibility: 'none' },
+        paint: { 'circle-color': 'rgba(245,158,11,0.9)', 'circle-radius': 18,
+                 'circle-stroke-width': 2.5, 'circle-stroke-color': 'rgba(253,230,138,0.95)' },
+      });
+      glMap.addLayer({
+        id: 'poi-cluster-count', type: 'symbol', source: 'poi-points',
+        filter: ['has', 'point_count'],
+        layout: { visibility: 'none', 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12,
+                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'] },
+        paint: { 'text-color': '#1c1206' },
+      });
+      glMap.addLayer({
+        id: 'poi-unclustered', type: 'circle', source: 'poi-points',
+        filter: ['!', ['has', 'point_count']],
+        layout: { visibility: 'none' },
+        paint: { 'circle-radius': 6, 'circle-color': '#f59e0b',
+                 'circle-stroke-width': 2, 'circle-stroke-color': 'rgba(253,230,138,0.95)' },
+      });
+      glMap.on('mouseenter', 'poi-unclustered', () => { glMap.getCanvas().style.cursor = 'pointer'; });
+      glMap.on('mouseleave', 'poi-unclustered', () => { glMap.getCanvas().style.cursor = ''; });
+      glMap.on('click', 'poi-clusters', (e) => {
+        const features = glMap.queryRenderedFeatures(e.point, { layers: ['poi-clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        glMap.getSource('poi-points').getClusterExpansionZoom(clusterId).then((zoom) => {
+          glMap.flyTo({ center: features[0].geometry.coordinates, zoom });
+        });
+      });
+      glMap.on('click', 'poi-unclustered', (e) => {
+        const f = e.features && e.features[0];
+        if (!f) return;
+        const p = f.properties;
+        if (poiPopup) poiPopup.remove();
+        poiPopup = new maplibregl.Popup({ offset: 10, maxWidth: '280px' })
+          .setLngLat(f.geometry.coordinates)
+          .setHTML(
+            '<div class="trail-popup"><h4>📍 ' + p.name + '</h4>'
+            + '<p style="margin:0 0 8px;font-size:12.5px;color:#334155;line-height:1.5;">' + p.description + '</p>'
+            + '<a class="btn-pdf" href="/ruta/' + p.trailId + '" target="_top">'
+            + T('Ver ficha: ', 'View trail: ') + p.trailName + '</a>'
+            + '</div>',
+          )
+          .addTo(glMap);
+      });
+    }
+
+    function loadPoiData() {
+      if (poiLoaded) return Promise.resolve();
+      return fetch('/poi-data.json')
+        .then((r) => r.json())
+        .then((data) => { map.getSource('poi-points').setData(data); poiLoaded = true; })
+        .catch((e) => console.warn('[parques.html] POI data fetch failed:', e));
+    }
+
+    const poiToggleBtn = document.getElementById('poiToggle');
+    const poiToggleLabel = document.getElementById('poiToggleLabel');
+    const POI_LAYERS = ['poi-clusters', 'poi-cluster-count', 'poi-unclustered'];
+    function updatePoiToggleLabel() {
+      poiToggleBtn.classList.toggle('active', poiVisible);
+      poiToggleLabel.textContent = poiVisible
+        ? T('Ocultar puntos de interés', 'Hide points of interest')
+        : T('Ver puntos de interés', 'View points of interest');
+    }
+    poiToggleBtn.addEventListener('click', () => {
+      poiVisible = !poiVisible;
+      if (poiVisible) loadPoiData();
+      if (mapLoaded) POI_LAYERS.forEach((id) => map.setLayoutProperty(id, 'visibility', poiVisible ? 'visible' : 'none'));
+      updatePoiToggleLabel();
+    });
+    updatePoiToggleLabel();
+
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
     const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
@@ -2955,6 +3049,7 @@ ${trkpts}
         updateBaseLayerToggleLabel();
         updateParkSatToggleLabel();
         updateSatellitesToggleLabel();
+        updatePoiToggleLabel();
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();
