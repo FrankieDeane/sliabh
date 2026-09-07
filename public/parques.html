@@ -441,6 +441,10 @@
             <span><i class="dot" style="background:#22c55e"></i> <span data-i18n="legCha">Senderos El Chaltén</span></span>
 
           </div>
+          <button class="layer-toggle" id="baseLayerToggle" style="margin-top:0">
+            <span class="toggle-dot" style="background:#94a3b8"></span>
+            <span id="baseLayerToggleLabel">Ver mapa topográfico</span>
+          </button>
           <button class="layer-toggle" id="trailLayerToggle">
             <span class="toggle-dot"></span>
             <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
@@ -628,6 +632,7 @@
 
     // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
     let mapLoaded = false;
 
     // Embedding context: 'mapas' keeps the left map clean (parks only) and
@@ -675,8 +680,17 @@
                 tileSize: 256,
                 attribution: '&copy; Esri, Maxar, Earthstar Geographics',
               },
+              'esri-topo': {
+                type: 'raster',
+                tiles: [ESRI_TOPO],
+                tileSize: 256,
+                attribution: '&copy; Esri',
+              },
             },
-            layers: [{ id: 'esri-layer', type: 'raster', source: 'esri' }],
+            layers: [
+              { id: 'esri-layer', type: 'raster', source: 'esri' },
+              { id: 'esri-topo-layer', type: 'raster', source: 'esri-topo', layout: { visibility: 'none' } },
+            ],
           },
           center: [-65.4, -39.8],
           zoom: 4,
@@ -1761,6 +1775,7 @@
       document.querySelectorAll('#langToggle button').forEach(x => x.classList.toggle('active', x === b));
       applyStaticLang();
       relabelFilters();
+      updateBaseLayerToggleLabel();
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
@@ -2296,6 +2311,29 @@ ${trkpts}
         .catch(function () {});
     }
 
+    // ── Base map layer toggle (satellite <-> topographic) ──────────────────────
+    let baseLayerSatellite = true;
+    const baseLayerToggleBtn = document.getElementById('baseLayerToggle');
+    const baseLayerToggleLabel = document.getElementById('baseLayerToggleLabel');
+
+    function updateBaseLayerToggleLabel() {
+      baseLayerToggleLabel.textContent = baseLayerSatellite
+        ? T('Ver mapa topográfico', 'View topographic map')
+        : T('Ver mapa satelital', 'View satellite map');
+    }
+
+    function setBaseLayer(satellite) {
+      baseLayerSatellite = satellite;
+      if (mapLoaded) {
+        map.setLayoutProperty('esri-layer', 'visibility', satellite ? 'visible' : 'none');
+        map.setLayoutProperty('esri-topo-layer', 'visibility', satellite ? 'none' : 'visible');
+      }
+      updateBaseLayerToggleLabel();
+    }
+
+    baseLayerToggleBtn.addEventListener('click', () => setBaseLayer(!baseLayerSatellite));
+    updateBaseLayerToggleLabel();
+
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
     const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
@@ -2680,6 +2718,7 @@ ${trkpts}
         });
         applyStaticLang();
         relabelFilters();
+        updateBaseLayerToggleLabel();
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();
