@@ -1051,16 +1051,6 @@ function DownloadRow({
     }
   }
 
-  function handlePdf(url: string) {
-    if (Platform.OS === 'web') {
-      if (typeof window !== 'undefined') window.open(url, '_blank');
-    } else {
-      Linking.openURL(url);
-    }
-  }
-
-  const pdfDirectUrl = ((trail as any).pdfUrl as string | undefined) || '';
-
   return (
     <View
       style={[
@@ -1089,18 +1079,6 @@ function DownloadRow({
           />
           <Text style={dlRowS.btnTxtBlue}>
             {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[dlRowS.btn, pdfDirectUrl ? dlRowS.btnGreen : dlRowS.btnDisabled, narrow && dlRowS.btnFull]}
-          onPress={() => pdfDirectUrl ? handlePdf(pdfDirectUrl) : undefined}
-          activeOpacity={pdfDirectUrl ? 0.8 : 1}
-          disabled={!pdfDirectUrl}
-        >
-          <Ionicons name="document-text-outline" size={15} color={pdfDirectUrl ? '#86efac' : '#475569'} />
-          <Text style={pdfDirectUrl ? dlRowS.btnTxtGreen : dlRowS.btnTxtDisabled}>
-            {pdfDirectUrl ? t('Mapa PDF', 'Map PDF') : t('PDF pronto', 'PDF soon')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -1134,11 +1112,7 @@ const dlRowS = StyleSheet.create({
   },
   btnFull: { flex: 1 },
   btnBlue: { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' },
-  btnGreen: { backgroundColor: '#14532d', borderColor: '#22c55e' },
-  btnDisabled: { backgroundColor: '#1a2030', borderColor: '#2d3748' },
   btnTxtBlue: { fontSize: 13, fontWeight: '700', color: '#93c5fd' },
-  btnTxtGreen: { fontSize: 13, fontWeight: '700', color: '#86efac' },
-  btnTxtDisabled: { fontSize: 13, fontWeight: '700', color: '#475569' },
 });
 
 function OverviewTab({

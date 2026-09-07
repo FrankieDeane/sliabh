@@ -35,6 +35,7 @@ export default function TrailMap3D({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const [is3D, setIs3D] = useState(true);
+  const [satellite, setSatellite] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,22 +87,32 @@ export default function TrailMap3D({
         if (!containerRef.current || mapRef.current) return;
         const ml = (window as any).maplibregl;
 
-        // Satellite imagery + terrain — same look as the Mapas 3D section.
-        // Esri World Imagery is free and needs no API key.
-        const style = mapTilerKey
-          ? `https://api.maptiler.com/maps/hybrid/style.json?key=${mapTilerKey}`
-          : {
-              version: 8,
-              sources: {
-                satellite: {
-                  type: 'raster',
-                  tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-                  tileSize: 256,
-                  attribution: 'Esri, Maxar, Earthstar Geographics',
-                },
-              },
-              layers: [{ id: 'satellite', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.95 } }],
-            };
+        // Satellite + topographic base layers, same look as the Mapas 3D
+        // section — Esri World Imagery / World Topo, free, no API key.
+        // Both layers ship in the style; the Satélite/Topo button just
+        // flips their visibility (see toggleBaseLayer below), same
+        // approach as the Rutas/Mapas overview map.
+        const style = {
+          version: 8,
+          sources: {
+            satellite: {
+              type: 'raster',
+              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+              tileSize: 256,
+              attribution: 'Esri, Maxar, Earthstar Geographics',
+            },
+            topo: {
+              type: 'raster',
+              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+              tileSize: 256,
+              attribution: 'Esri',
+            },
+          },
+          layers: [
+            { id: 'satellite', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.95 } },
+            { id: 'topo', type: 'raster', source: 'topo', layout: { visibility: 'none' } },
+          ],
+        };
 
         const map = new ml.Map({
           container: containerRef.current,
@@ -217,6 +228,16 @@ export default function TrailMap3D({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Toggle base layer between satellite imagery and topographic map
+  function toggleSatellite() {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !satellite;
+    setSatellite(next);
+    map.setLayoutProperty('satellite', 'visibility', next ? 'visible' : 'none');
+    map.setLayoutProperty('topo', 'visibility', next ? 'none' : 'visible');
+  }
+
   // Toggle pitch between 3D and flat 2D without remounting the map
   function toggle3D() {
     const map = mapRef.current;
@@ -280,6 +301,25 @@ export default function TrailMap3D({
         >
           <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
             {is3D ? '2D' : '3D'}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Satélite / Topo toggle */}
+      {loaded && (
+        <TouchableOpacity
+          onPress={toggleSatellite}
+          activeOpacity={0.8}
+          style={{
+            position: 'absolute', top: 12, left: 12,
+            flexDirection: 'row', alignItems: 'center', gap: 6,
+            backgroundColor: 'rgba(15,23,36,0.85)',
+            borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6,
+            borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)',
+          }}
+        >
+          <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
+            {satellite ? 'TOPO' : 'SATÉLITE'}
           </Text>
         </TouchableOpacity>
       )}
