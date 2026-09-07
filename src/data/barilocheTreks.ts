@@ -97,6 +97,8 @@ export const BARILOCHE_TRAILS: ExtendedTrail[] = [
     best_season: 'Nov – Abr',
     description:
       'Trekking desde la base de Cerro Catedral hasta el Refugio Frey (1700 m) a orillas de la Laguna Toncek. Uno de los destinos más icónicos de Bariloche, frecuentado por escaladores de todo el mundo. Unos 10 km y 4 horas por tramo.',
+    description_en:
+      'A trek from the base of Cerro Catedral to Refugio Frey (1,700 m) on the shore of Laguna Toncek. One of the most iconic destinations near Bariloche, popular with climbers from around the world. About 10 km and 4 hours each way.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El sendero al Refugio Frey es sin duda el trek más emblemático del entorno de Bariloche. La ruta parte del estacionamiento de la base de Cerro Catedral (1050 m) y penetra de inmediato en un denso bosque de coihues y ñires que ofrece sombra y humedad en los primeros kilómetros. El camino asciende de manera constante cruzando algunos arroyos tributarios y atravesando claros con vistas ocasionales a los cerros circundantes, hasta llegar al sector conocido como la Cancha de Fútbol, una pampa alta de suelo arenoso donde los escaladores sueltan sus mochilas para organizar sus cordadas.
@@ -189,6 +191,8 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
     best_season: 'Dic – Mar',
     description:
       'Ascenso por la Picada Vieja al Refugio López (1620 m) y de allí al Pico Turista (2088 m), el punto más alto del macizo. Vistas 360° del lago Nahuel Huapi, el Tronador y la estepa patagónica. Tramo final con algo de scramble.',
+    description_en:
+      'A climb up the Picada Vieja to Refugio López (1,620 m) and from there to Pico Turista (2,088 m), the highest point of the massif. 360° views of Lago Nahuel Huapi, Tronador, and the Patagonian steppe. The final stretch involves some scrambling.',
     trailhead: 'Arroyo López, Ruta 79 — Circuito Chico (Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El macizo del Cerro López ofrece una de las panorámicas más completas de la región de los lagos, con acceso directo desde el Circuito Chico. El sendero clásico —la Picada Vieja— parte junto al arroyo López sobre la Ruta 79 y se adentra en un coihuar maduro donde la humedad ambiental y los líquenes colgantes crean un ambiente de bosque templado austral casi onírico. Durante la primera hora el camino es cómodo y bien marcado, con algunos sectores de raíces expuestas que conviene pisar con cuidado. La picada cruza en dos ocasiones el camino vehicular que también sube al refugio.
@@ -281,6 +285,8 @@ El descenso por la misma ruta requiere especial atención en el tramo de scrambl
     best_season: 'Dic – Mar',
     description:
       'Del corazón de Pampa Linda al Ventisquero Negro —el glaciar cubierto de sedimento oscuro del Tronador— y al mirador de la Garganta del Diablo, un circo de cascadas que caen desde los glaciares colgantes. Se puede caminar desde Pampa Linda o llegar en vehículo al final del camino y hacer solo la senda corta.',
+    description_en:
+      'From the heart of Pampa Linda to the Ventisquero Negro — Tronador\'s glacier, dark with sediment — and on to the Garganta del Diablo lookout, an amphitheater of waterfalls dropping from the hanging glaciers. You can walk from Pampa Linda, or drive to the end of the road and do only the short trail.',
     trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El Ventisquero Negro es uno de los glaciares más singulares de la Patagonia andina: el hielo que desciende del Tronador incorpora tanto sedimento y detrito rocoso que su frente es de un color oscuro casi total, y desprende bloques sobre una laguna proglaciar de tono lechoso. La ruta parte de Pampa Linda, el puesto de guardaparques y hostería en el corazón del parque, donde la pradera abierta y el rugido lejano de los derrumbes de hielo —el "trueno" que da nombre al Tronador— anticipan la escala del lugar.
@@ -362,6 +368,8 @@ El regreso es por la misma ruta. Importante: el camino de acceso a Pampa Linda y
     best_season: 'Dic – Abr',
     description:
       'Clásico ascenso por el valle del arroyo Goye desde Colonia Suiza hasta la Laguna Negra y el Refugio Italia — Manfredo Segre (1650 m), al pie del Cerro Negro. Exigente por su longitud; muchos lo hacen con noche en el refugio.',
+    description_en:
+      'A classic climb up the Arroyo Goye valley from Colonia Suiza to Laguna Negra and Refugio Italia — Manfredo Segre (1,650 m), at the foot of Cerro Negro. Demanding for its length; many hikers stay overnight at the refugio.',
     trailhead: 'Colonia Suiza — puente del arroyo Goye',
     source: 'barilochetrekking.com',
     long_description: `La Laguna Negra es uno de los grandes clásicos del trekking barilochense y su refugio —el Italia, bautizado Manfredo Segre— uno de los más queridos del Club Andino Bariloche. La ruta parte de Colonia Suiza, cruza el arroyo Goye junto a la tranquera de ingreso señalizada y remonta el valle del Goye hacia el sur, primero por una vieja huella vehicular entre pinares y luego por sendero de bosque nativo de coihues que se va cerrando a medida que el valle se estrecha.
@@ -450,6 +458,8 @@ El Refugio Italia — Manfredo Segre (1650 m) ofrece comidas, literas y zona de 
     best_season: 'Todo el año',
     description:
       'Ascenso al mirador del Cerro Campanario (1049 m), votado por National Geographic como uno de los mejores miradores del mundo. Siete lagos visibles desde la cima.',
+    description_en:
+      'A climb to the Cerro Campanario lookout (1,049 m), named by National Geographic as one of the best viewpoints in the world. Seven lakes visible from the summit.',
     trailhead: 'Sobre Ruta 77 km 17.5, acceso peatonal junto a la estación del telesilla',
     source: 'barilochetrekking.com',
     long_description: `El Cerro Campanario es el mirador por excelencia de la región de Bariloche y ha sido reconocido internacionalmente como uno de los mejores puntos de observación paisajística del mundo. Su singularidad radica en que desde un solo punto a apenas 1049 metros de altitud es posible ver simultáneamente siete cuerpos de agua de distintos tamaños y colores, cada uno rodeado por bosques y montañas que varían de tono con las estaciones. En otoño, la paleta de colores naranja, amarillo y rojo de los coihues y ñires lo convierte en una postal ineludible.
@@ -519,6 +529,8 @@ Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro 
     best_season: 'Oct – May',
     description:
       'Ascenso al Cerro Otto (1405 m) directamente desde Bariloche, sin necesidad de vehículo. Unos 620 m de desnivel desde la ciudad. Vista 360° del distrito lacustre y las montañas circundantes.',
+    description_en:
+      'A climb to Cerro Otto (1,405 m) starting directly from Bariloche, no vehicle needed. About 620 m of elevation gain from the city. A 360° view of the lake district and surrounding mountains.',
     trailhead: 'Av. de los Pioneros km 1, salida oeste de Bariloche',
     source: 'barilochetrekking.com',
     long_description: `El Cerro Otto tiene la ventaja única de ser accesible a pie directamente desde el centro de Bariloche, lo que lo convierte en la caminata urbana por excelencia de la ciudad de la montaña. El sendero parte desde la Avenida de los Pioneros, en la salida oeste de la ciudad, y asciende por pistas forestales y senderos de tierra a través de bosques de coihue y pino ponderosa que los primeros colonos plantaron en las laderas durante la primera mitad del siglo XX.
@@ -594,6 +606,8 @@ El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) 
     best_season: 'Todo el año',
     description:
       'Excursión lacustre-pedestre: navegación desde Puerto Pañuelo por el Brazo Blest y ascenso por la escalera de 600 escalones a la Cascada Los Cántaros y su lago, en plena selva valdiviana con alerces milenarios.',
+    description_en:
+      'A boat-and-foot excursion: a boat crossing from Puerto Pañuelo across Brazo Blest, then a climb up 600 steps to Cascada Los Cántaros and its lake, deep in Valdivian rainforest with thousand-year-old alerces.',
     trailhead: 'Puerto Blest / Puerto Cántaros (acceso en catamarán desde Puerto Pañuelo)',
     source: 'barilochetrekking.com',
     long_description: `Los Cántaros es la excursión que muestra la cara más húmeda y exuberante del Parque Nacional Nahuel Huapi: la selva valdiviana. El acceso es en sí parte del atractivo, porque no hay camino terrestre: se navega en catamarán desde Puerto Pañuelo (junto al Hotel Llao Llao) por el Brazo Blest del lago Nahuel Huapi, un fiordo de aguas profundas flanqueado por paredes de bosque que cae directamente al agua. La navegación toma alrededor de una hora por tramo.
@@ -670,6 +684,8 @@ El regreso es por la misma escalera hasta el muelle. La excursión se combina ha
     best_season: 'Dic – Mar',
     description:
       'Caminata suave desde Pampa Linda por el valle del río Manso superior hasta la Laguna de los Témpanos, la laguna proglaciar al pie del Ventisquero Negro donde flotan bloques de hielo oscuro desprendidos del glaciar. También accesible en vehículo: el mirador está junto al camino.',
+    description_en:
+      'A gentle walk from Pampa Linda along the upper Río Manso valley to Laguna de los Témpanos, the proglacial lake at the foot of the Ventisquero Negro where dark ice blocks calved from the glacier float. Also reachable by vehicle: the lookout sits right by the road.',
     trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `La Laguna de los Témpanos es el cuerpo de agua que se formó al pie del Ventisquero Negro por el retroceso del glaciar en las últimas décadas, y ofrece uno de los espectáculos más singulares del parque: bloques de hielo oscuro —teñidos por el sedimento que el glaciar arrastra— flotando a la deriva en aguas de tono lechoso. Cada temporada la laguna cambia de forma con los desprendimientos del frente del hielo.
@@ -739,6 +755,8 @@ Quienes van en vehículo pueden detenerse directamente en el mirador, que está 
     best_season: 'Nov – Abr',
     description:
       'Ascenso al Cerro Challhuaco (2094 m) desde el Refugio Neumeyer, en el Valle del Challhuaco. Sendero bien marcado por bosque de lengas con panorama del Nahuel Huapi, el Tronador y la estepa al este.',
+    description_en:
+      'A climb to Cerro Challhuaco (2,094 m) from Refugio Neumeyer, in the Challhuaco valley. A well-marked trail through lenga forest with views of Nahuel Huapi, Tronador, and the steppe to the east.',
     trailhead: 'Refugio Neumeyer, Valle del Challhuaco (19 km de Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El Valle del Challhuaco es el rincón más tranquilo del entorno inmediato de Bariloche: un valle de bosque de lengas a solo 19 km del centro, con el Refugio Neumeyer (1250 m) como base de operaciones. El ascenso al Cerro Challhuaco es el clásico del valle y una de las mejores relaciones esfuerzo-recompensa de la zona, con un sendero bien marcado de principio a fin.
@@ -818,6 +836,8 @@ Desde la cumbre del Challhuaco (2094 m) el panorama abarca el lago Nahuel Huapi 
     best_season: 'Dic – Mar',
     description:
       'Clásica travesía de dos o tres días por la alta montaña de Bariloche: Catedral → Refugio Frey → filo por Laguna Schmoll → valle del Rucaco → Brecha Negra → Refugio Jakob → bajada a Tambo Báez. Solo con buen tiempo y experiencia.',
+    description_en:
+      'A classic two- or three-day high-mountain traverse near Bariloche: Catedral → Refugio Frey → the ridge past Laguna Schmoll → the Rucaco valley → Brecha Negra → Refugio Jakob → descent to Tambo Báez. Good weather and experience required.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `La Travesía Frey–Jakob es la excursión de dos días de referencia absoluta de Bariloche y una de las rutas de montaña más completas de la Patagonia andina. Combina bosque, laguna glaciar, pasos de altura expuestos y el camaradería única de las noches en refugio de alta montaña. No en vano es el sueño cumplido de todo amante del trekking que visita la región.
@@ -925,6 +945,8 @@ Del otro lado de la Brecha, la bajada conduce al Refugio Jakob (oficialmente Ref
     best_season: 'Oct – May',
     description:
       'Circuito tranquilo por la Colonia Suiza con ascenso parcial a las lomas boscosas y vistas al lago Moreno. Incluye patrimonio cultural de los colonos suizos del siglo XIX.',
+    description_en:
+      'An easy loop through Colonia Suiza with a partial climb onto the wooded hills and views of Lago Moreno. Includes the cultural heritage of the 19th-century Swiss colonists.',
     trailhead: 'Colonia Suiza, sobre la Ruta 79',
     source: 'barilochetrekking.com',
     long_description: `La Colonia Suiza es uno de los asentamientos más singulares de la Patagonia andina. Fundada a finales del siglo XIX por inmigrantes helvéticos que llegaron a poblar estas tierras por convocatoria del gobierno argentino, conserva hasta hoy una arquitectura y una gastronomía que recuerdan a los valles alpinos de origen. El circuito de trekking que parte desde el centro de la colonia es una combinación única de senderismo en bosque nativo y descubrimiento de patrimonio cultural vivo.
@@ -1014,6 +1036,8 @@ El regreso al pueblo coincide habitualmente con la hora del curanto, el tradicio
     best_season: 'Oct – Abr',
     description:
       'Sendero costero por la orilla oeste del lago Gutiérrez, desde la seccional de guardaparques de Villa Los Coihues hasta Playa Muñoz, a través de bosque nativo con playas aptas para baño. Mucho menos concurrido que otras rutas de Bariloche.',
+    description_en:
+      'A coastal trail along the west shore of Lago Gutiérrez, from the ranger station at Villa Los Coihues to Playa Muñoz, through native forest with swimmable beaches. Far less crowded than other Bariloche routes.',
     trailhead: 'Seccional de Guardaparques Lago Gutiérrez, Villa Los Coihues',
     source: 'barilochetrekking.com',
     long_description: `El lago Gutiérrez es el lago más cercano a Bariloche, apenas 10 km al sur de la ciudad, y su orilla oeste está recorrida por un sendero costero que es quizás el mejor secreto de la región para quienes buscan un trekking tranquilo en un entorno natural prístino sin multitudes. Mientras las rutas del Catedral se llenan de caminantes, la orilla del Gutiérrez permanece silenciosa incluso en pleno enero.
@@ -1097,6 +1121,8 @@ La Playa Muñoz, al final del tramo de ida (~7 km, 1:30-2 h), es una playa de pi
     best_season: 'Todo el año',
     description:
       'Ascenso corto al Cerro San Martín (1275 m), conocido localmente como La Vieja, frente al macizo del Catedral. Excelente mirador del lago Gutiérrez con poco esfuerzo, ideal para medio día.',
+    description_en:
+      'A short climb to Cerro San Martín (1,275 m), known locally as La Vieja, facing the Catedral massif. An excellent lookout over Lago Gutiérrez for little effort — ideal for a half day.',
     trailhead: 'Camino a Villa Catedral (Ruta 82), desvío señalizado',
     source: 'barilochetrekking.com',
     long_description: `El Cerro San Martín —que los barilochenses llaman La Vieja— es la cumbre baja que se levanta frente al macizo del Catedral, sobre la cabecera norte del lago Gutiérrez. Es una de las mejores relaciones esfuerzo-vista de todo el entorno de Bariloche: con apenas 280 metros de desnivel y 7 km ida y vuelta se obtiene un balcón privilegiado sobre el lago Gutiérrez, el cordón del Catedral y el cerro Ventana.
@@ -1168,6 +1194,8 @@ Por su corta duración y baja exigencia es una salida ideal para familias, para 
     best_season: 'Dic – Mar',
     description:
       'Larga caminata por el valle del arroyo Casa de Piedra desde Tambo Báez hasta el Refugio San Martín (Jakob, 1600 m), a orillas de la laguna Jakob. Unos 13-14 km por tramo; muchos lo hacen con noche en el refugio.',
+    description_en:
+      'A long hike along the Arroyo Casa de Piedra valley from Tambo Báez to Refugio San Martín (Jakob, 1,600 m), on the shore of Laguna Jakob. About 13–14 km each way; many hikers stay overnight at the refugio.',
     trailhead: 'Tambo Báez, Ruta 79 (camino a Colonia Suiza)',
     source: 'barilochetrekking.com',
     long_description: `El Refugio San Martín, universalmente conocido como Refugio Jakob, es uno de los refugios más remotos del Club Andino Bariloche en el entorno inmediato de la ciudad, y su valle de acceso —el del arroyo Casa de Piedra— uno de los más hermosos. La ruta clásica parte de Tambo Báez, un establecimiento privado sobre la Ruta 79 poco antes de Colonia Suiza donde se abona un ingreso simbólico, y remonta el valle en unos 13-14 kilómetros de ida con un desnivel total moderado pero una longitud que exige buen estado físico.
@@ -1250,6 +1278,8 @@ El Refugio Jakob (1600 m), reconstruido y reinaugurado en años recientes, ofrec
     best_season: 'Dic – Abr',
     description:
       'Sendero desde Pampa Linda a la Laguna Ilón por la Mirada del Doctor: subida sostenida al principio y un largo tramo llano entre lengas, con el balcón sobre el lago Mascardi como premio intermedio. Refugio y zona de acampe en la laguna.',
+    description_en:
+      'A trail from Pampa Linda to Laguna Ilón via Mirada del Doctor: a sustained climb at first, then a long flat stretch through lenga forest, with the balcony over Lago Mascardi as a reward along the way. Refugio and camping area at the lagoon.',
     trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `La Laguna Ilón es uno de los destinos más armoniosos del sector Tronador: una laguna de montaña rodeada de lengas y pastizales de altura, con un refugio pequeño y una zona de acampe que la convierten en base ideal para explorar el corazón del parque. La ruta desde Pampa Linda toma 4 a 5 horas de ida y concentra su esfuerzo al principio: una subida sostenida en zigzag que gana la mayor parte de los 550 metros de desnivel.
@@ -1336,6 +1366,8 @@ En la laguna funcionan en temporada un refugio pequeño y una zona de acampe. Pe
     best_season: 'Dic – Mar',
     description:
       'Ascenso desde Pampa Linda al Refugio Otto Meiling (2000 m), sobre el filo entre los glaciares Castaño Overa y Alerce del Tronador. Unos 13-14 km y 1000-1050 m de desnivel por tramo; la mayoría pernocta en el refugio.',
+    description_en:
+      'A climb from Pampa Linda to Refugio Otto Meiling (2,000 m), on the ridge between the Castaño Overa and Alerce glaciers of Tronador. About 13–14 km and 1,000–1,050 m of elevation gain each way; most hikers stay overnight at the refugio.',
     trailhead: 'Pampa Linda (90 km al sudoeste de Bariloche)',
     source: 'barilochetrekking.com',
     long_description: `El Otto Meiling es el refugio de alta montaña por excelencia del Tronador y una de las excursiones más espectaculares de toda la Patagonia norte: se duerme a 2000 metros, sobre un filo rocoso encajado entre dos glaciares, con el macizo de tres cumbres rugiendo desprendimientos de hielo a lo largo de toda la noche. Es también la base histórica para los cursos de hielo y las ascensiones al Pico Argentino del Tronador.
@@ -1419,6 +1451,8 @@ El Refugio Otto Meiling (2000 m, CAB) ofrece comidas, literas y una terraza natu
     best_season: 'Todo el año',
     description:
       'El mirador más famoso del Circuito Chico: caminata fácil por el Parque Municipal Llao Llao hasta el cerrito Llao Llao (1050 m), con panorámica del Brazo de la Tristeza, la Isla Victoria y los cerros López y Capilla.',
+    description_en:
+      'The most famous lookout on the Circuito Chico: an easy walk through Parque Municipal Llao Llao to the Llao Llao hilltop (1,050 m), with panoramic views of Brazo de la Tristeza, Isla Victoria, and Cerro López and Cerro Capilla.',
     trailhead: 'Portada del Parque Municipal Llao Llao, Ruta 77 (cartel de madera)',
     source: 'barilochetrekking.com',
     long_description: `El Cerro Llao Llao es probablemente la caminata corta más popular de Bariloche, y con razón: por un sendero fácil de bosque se llega en una hora a un mirador de postal, con el lago Nahuel Huapi ramificándose en brazos azules entre penínsulas boscosas y los cerros López, Capilla y Millaqueo cerrando el horizonte. Para muchos visitantes es la primera —y más recordada— foto de la Patagonia andina.
@@ -1489,6 +1523,8 @@ Es una salida ideal para familias con niños, para el día de llegada o para com
     best_season: 'Todo el año',
     description:
       'Paseo corto y autoguiado desde la seccional de guardaparques del lago Gutiérrez: la Cascada de los Duendes sobre el arroyo Pescadero y, con un desvío de 1 km, el mirador del lago. Ideal con niños.',
+    description_en:
+      'A short, self-guided walk from the Lago Gutiérrez ranger station: Cascada de los Duendes on the Arroyo Pescadero and, with a 1 km detour, the lake lookout. Great with kids.',
     trailhead: 'Seccional de Guardaparques Lago Gutiérrez, Villa Los Coihues',
     source: 'barilochetrekking.com',
     long_description: `La Cascada de los Duendes es la caminata iniciática de Bariloche: corta, segura, señalizada y con premio garantizado. Parte de la seccional de guardaparques del lago Gutiérrez, en Villa Los Coihues, y en unos 600 metros de sendero ancho y casi llano llega a la cascada sobre el arroyo Pescadero, una caída modesta pero encantadora que salta entre bloques cubiertos de musgo en plena penumbra del bosque.

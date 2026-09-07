@@ -506,6 +506,11 @@ export default function TrailDetailScreen() {
     );
   }
 
+  // English readers get the real translation where it exists (all 60 trails,
+  // as of the bilingual SEO work) — never a silent fall-through to Spanish
+  // prose under an English toggle.
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
+
   const diffColor = DIFFICULTY_COLOR[trail.difficulty] ?? {
     bg: 'rgba(100,116,139,0.18)',
     text: C.muted,
@@ -564,7 +569,7 @@ export default function TrailDetailScreen() {
     {
       '@type': 'TouristAttraction',
       name: trail.name,
-      description: trail.description,
+      description: trailDescription,
       url: `https://sliabh.com.ar/ruta/${trail.id}`,
       image: seoImage,
       address: { '@type': 'PostalAddress', addressRegion: trail.province, addressCountry: 'AR' },
@@ -592,7 +597,7 @@ export default function TrailDetailScreen() {
     <View style={[styles.root, { backgroundColor: C.bg }]}>
       <SeoHead
         title={seoTitle}
-        description={trail.description}
+        description={trailDescription}
         path={`/ruta/${trail.id}`}
         image={seoImage}
         jsonLd={seoJsonLd}
@@ -1007,8 +1012,10 @@ function DownloadRow({
 }) {
   const C = useC();
   const { width } = useWindowDimensions();
+  const { lang } = useLangStore();
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
   const narrow = width < 420;
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
 
   async function handleGpx() {
     const gpxPoints = (trail as any).gpxTrack
@@ -1016,7 +1023,7 @@ function DownloadRow({
       : [{ lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead }];
 
     if (Platform.OS === 'web') {
-      const ok = downloadGpx(trail.name, gpxPoints, trail.description);
+      const ok = downloadGpx(trail.name, gpxPoints, trailDescription);
       if (ok) {
         setGpxState('done');
         setTimeout(() => setGpxState('idle'), 2500);
@@ -1024,7 +1031,7 @@ function DownloadRow({
     } else {
       try {
         const { FileSystem } = await import('expo-file-system') as any;
-        const content = buildGpx(trail.name, gpxPoints, trail.description);
+        const content = buildGpx(trail.name, gpxPoints, trailDescription);
         const filename = `${trail.id.replace(/[^a-z0-9-]/gi, '-')}.gpx`;
         const uri = `${FileSystem.documentDirectory}${filename}`;
         await FileSystem.writeAsStringAsync(uri, content, { encoding: 'utf8' });
@@ -1148,6 +1155,7 @@ function OverviewTab({
   const C = useC();
   const safetyWarning =
     trail.safety_warning ?? (ALL_BARILOCHE_IDS.has(trail.id) ? BARILOCHE_SEGURIDAD : null);
+  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
   return (
     <View style={styles.tabContent}>
       {safetyWarning && (
@@ -1208,7 +1216,7 @@ function OverviewTab({
 
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
-        <Text style={[styles.bodyText, { color: C.text }]}>{trail.description}</Text>
+        <Text style={[styles.bodyText, { color: C.text }]}>{trailDescription}</Text>
         {!!trail.long_description &&
           trail.long_description.split('\n\n').map((para, i) => (
             <Text key={i} style={[styles.bodyText, { color: C.text, marginTop: 12 }]}>

@@ -25,6 +25,9 @@ export interface ArgentinaTrail {
   permits_required: boolean;
   best_season: string;
   description: string;
+  /** English translation of `description`, used for the /en bilingual pages
+   *  (SEO meta tags, JSON-LD, and the in-app body text when lang === 'en'). */
+  description_en?: string;
   trailhead: string;
   /** Optional bilingual safety/security notice shown prominently in the trail detail */
   safety_warning?: { es: string; en: string };
@@ -53,6 +56,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Dic – Feb',
     description:
       'La cima más alta del hemisferio occidental (6961 m). La Ruta Normal sube por el noroeste desde Plaza de Mulas. Requiere aclimatación progresiva y permiso del parque.',
+    description_en:
+      'The highest summit in the Western Hemisphere (6,961 m). The Normal Route climbs from the northwest starting at Plaza de Mulas. Requires progressive acclimatization and a park permit.',
     trailhead: 'Horcones (Uspallata, Mendoza)',
     gpxTrack: [
       { lat: -32.8319, lon: -69.9911, ele: 2950, name: 'Entrada Parque Provincial Aconcagua — Horcones' },
@@ -89,6 +94,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'El sendero más famoso de la Patagonia argentina. Sale del final de Av. San Martín y sube progresivamente hasta la Laguna de los Tres (1.177 msnm) con vista directa al Fitz Roy (3.405 m). El tramo final sube +400 m en 1 km.',
+    description_en:
+      'The most famous trail in Argentine Patagonia. Starts at the end of Av. San Martín and climbs steadily to Laguna de los Tres (1,177 masl) with a direct view of Fitz Roy (3,405 m). The final stretch gains +400 m over 1 km.',
     trailhead: 'Final Av. San Martín, El Chaltén (49°20\'13"S / 72°53\'44"W)',
     gpxTrack: [
       { lat: -49.3369, lon: -72.8956, ele: 421, name: 'Trailhead — Final Av. San Martín' },
@@ -129,6 +136,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Trekking clásico hacia el oeste hasta la Laguna Torre con vista frontal al Cerro Torre (3.128 m) y sus icebergs. Terreno parejo con suave ganancia de altura. El Mirador Maestri (+1 h opcional) ofrece la mejor perspectiva del macizo.',
+    description_en:
+      'A classic trek west to Laguna Torre with a front-on view of Cerro Torre (3,128 m) and its icebergs. Even terrain with a gentle elevation gain. Mirador Maestri (+1 h optional) offers the best perspective of the massif.',
     trailhead: 'Av. Llao Llao s/n, El Chaltén (49°20\'S / 72°53\'41"W)',
     gpxTrack: [
       { lat: -49.3333, lon: -72.8947, ele: 421, name: 'Trailhead — Av. Llao Llao / Camping La Torcida' },
@@ -165,6 +174,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Sendero al sur de El Chaltén que asciende hasta la Cima del Pliegue Tumbado (1.528 msnm) con una vista de 360° incomparable: Fitz Roy, Cerro Torre, Cerro Adela y Lago Viedma. Sale de la Administración del Parque cruzando el puente de la RP23.',
+    description_en:
+      'A trail south of El Chaltén climbing to the summit of Loma del Pliegue Tumbado (1,528 masl) with an unmatched 360° view: Fitz Roy, Cerro Torre, Cerro Adela, and Lago Viedma. Starts at the Park Administration, crossing the RP23 bridge.',
     trailhead: 'Administración Parque Nacional Los Glaciares / RP23, El Chaltén',
     gpxTrack: [
       { lat: -49.3430, lon: -72.8850, ele: 350, name: 'Administración PN / RP23' },
@@ -198,6 +209,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Ideal como primer sendero de El Chaltén o día de aclimatación. Comparte inicio con la senda Fitz Roy; al km 3,5 se toma la bifurcación derecha subiendo hasta la Laguna Capri (840 msnm) que refleja el Fitz Roy en días sin viento.',
+    description_en:
+      'Ideal as a first trail in El Chaltén or an acclimatization day. Shares its start with the Fitz Roy trail; at km 3.5 take the right fork up to Laguna Capri (840 masl), which mirrors Fitz Roy on windless days.',
     trailhead: 'Final Av. San Martín, El Chaltén (49°20\'13"S / 72°53\'44"W)',
     gpxTrack: [
       { lat: -49.3369, lon: -72.8956, ele: 421, name: 'Trailhead — Final Av. San Martín' },
@@ -232,6 +245,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Sendero conector que une el sendero Torre (km 7) con el sendero Fitz Roy (km 7), pasando por Laguna Madre y Laguna Hija. Permite hacer el Gran Circuito combinado en un solo día largo (~25 km total).',
+    description_en:
+      'A connector trail linking the Torre trail (km 7) with the Fitz Roy trail (km 7), passing Laguna Madre and Laguna Hija. Lets you combine both into the Gran Circuito in a single long day (~25 km total).',
     trailhead: 'Km 7 Sendero Laguna Torre (49°19\'S / 72°59\'W)',
     gpxTrack: [
       { lat: -49.3130, lon: -72.9960, ele: 558, name: 'Inicio — Sendero Torre (km 7)' },
@@ -266,6 +281,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Oct – Mar',
     description:
       'Circuito corto al sur de El Chaltén desde el Portal Los Cóndores con vistas aéreas sobre el pueblo, el Río de las Vueltas y los valles patagónicos. Ideal al llegar o para el atardecer.',
+    description_en:
+      'A short loop south of El Chaltén from Portal Los Cóndores with aerial views over town, the Río de las Vueltas, and the Patagonian valleys. Great on arrival or at sunset.',
     trailhead: 'Portal Los Cóndores, sur de El Chaltén (mismo acceso que Pliegue Tumbado)',
     gpxTrack: [
       { lat: -49.3420, lon: -72.8880, ele: 350, name: 'Portal Los Cóndores — Inicio' },
@@ -301,6 +318,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Oct – Mar',
     description:
       'Corto sendero a 2,5 km al norte de El Chaltén por la RP23 (caminable o en auto) que lleva a la cascada Chorrillo del Salto de 20 m de caída. Punto clásico de primer día o para quien llega cansado del viaje.',
+    description_en:
+      'A short trail 2.5 km north of El Chaltén on RP23 (walkable or drivable) leading to the 20 m Chorrillo del Salto waterfall. A classic first-day stop, or for anyone arriving tired from the trip.',
     trailhead: 'RP23, 2,5 km al norte de El Chaltén (acceso en auto o caminando)',
     gpxTrack: [
       { lat: -49.3100, lon: -72.8870, ele: 450, name: 'Estacionamiento / acceso RP23' },
@@ -330,6 +349,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Abr',
     description:
       'Trekking desde la base de Cerro Catedral hasta el Refugio Frey (1700 m) a orillas de la Laguna Toncek. Uno de los puntos de escalada en roca más concurridos de la Patagonia. Unos 10 km y 4 horas por tramo.',
+    description_en:
+      'A trek from the base of Cerro Catedral to Refugio Frey (1,700 m) on the shore of Laguna Toncek. One of the busiest rock-climbing spots in Patagonia. About 10 km and 4 hours each way.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
   },
   {
@@ -353,6 +374,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Dic – Mar',
     description:
       'Ascenso por la Picada Vieja al Refugio López (1620 m) y opcionalmente al Pico Turista (2088 m), el punto más alto del macizo. Vistas panorámicas del lago Nahuel Huapi y la cordillera patagónica.',
+    description_en:
+      'A climb up the Picada Vieja to Refugio López (1,620 m) and optionally on to Pico Turista (2,088 m), the highest point of the massif. Panoramic views of Lago Nahuel Huapi and the Patagonian range.',
     trailhead: 'Arroyo López, Ruta 79 — Circuito Chico (Bariloche)',
   },
   {
@@ -376,6 +399,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Dic – Mar',
     description:
       'Desde Pampa Linda al Ventisquero Negro —el glaciar de hielo oscuro del monte Tronador (3491 m)— y al mirador de la Garganta del Diablo. También accesible en vehículo hasta el final del camino, con senda corta de 1,4 km.',
+    description_en:
+      'From Pampa Linda to the Ventisquero Negro — Monte Tronador\'s (3,491 m) dark-ice glacier — and on to the Garganta del Diablo lookout. Also reachable by vehicle to the end of the road, with a short 1.4 km trail from there.',
     trailhead: 'Pampa Linda (90 km de Bariloche)',
   },
   {
@@ -398,6 +423,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Dic – Mar',
     description:
       'Volcán inactivo y una de las cumbres más bellas de la Patagonia. La vía normal asciende por el flanco norte usando piolet y crampones en los tramos de hielo.',
+    description_en:
+      'A dormant volcano and one of the most beautiful summits in Patagonia. The normal route climbs the north face, using ice axe and crampons on the glaciated sections.',
     trailhead: 'Tromen (Neuquén) o Pucón (Chile)',
   },
   {
@@ -421,6 +448,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Feb (evento anual)',
     description:
       'Circuito de la carrera de montaña "Lanín Extremo" (distancia 13K), a orillas del Lago Huechulafquen, a los pies del Volcán Lanín. Recorre bosques nativos y senderos con fuertes desniveles: altitud mínima 895 msnm, máxima 1502 msnm.',
+    description_en:
+      'The course of the "Lanín Extremo" mountain race (13K distance), on the shore of Lago Huechulafquen at the foot of Volcán Lanín. Runs through native forest and trails with steep grades: minimum altitude 895 masl, maximum 1,502 masl.',
     trailhead: 'Desembocadura del Arroyo Raquithué, Lago Huechulafquen',
   },
   {
@@ -444,6 +473,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Mar – Nov',
     description:
       'El punto más alto de la provincia de Córdoba (2790 m). Trekking de 2 días por pastizales de altura con vistas a las Sierras Grandes. Clásico para quienes empiezan en alta montaña.',
+    description_en:
+      'The highest point in Córdoba province (2,790 m). A 2-day trek through high-altitude grasslands with views of the Sierras Grandes. A classic first step into high-mountain trekking.',
     trailhead: 'Villa Alpina o Luyaba (Córdoba)',
   },
   {
@@ -466,6 +497,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Abr – Oct',
     description:
       'El área de escalada más importante de Córdoba. Paredes de granito de hasta 300 m con vías de todos los grados. El acceso al camping base toma ~2 h de caminata.',
+    description_en:
+      'Córdoba\'s most important climbing area. Granite walls up to 300 m tall with routes of every grade. Reaching the base camp takes about 2 hours on foot.',
     trailhead: 'La Cumbre / Estancia Los Gigantes (Córdoba)',
     safety_warning: {
       es: 'Seguridad: en el último tiempo se registraron numerosos robos a turistas que dejaron el auto en el estacionamiento de acceso. Lo ideal es concurrir al lugar con un transporte o servicio de traslado que te deje y te retire, en lugar de dejar el vehículo sin vigilancia. Chequeá siempre las condiciones y la situación de seguridad antes de emprender una aventura de trekking.',
@@ -492,6 +525,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Todo el año',
     description:
       'Ascenso a la famosa "ventana" natural en la cumbre del cerro. El permiso diario se gestiona en el centro de visitantes. El tramo final requiere manos para trepar la roca.',
+    description_en:
+      'A climb to the famous natural "window" at the summit. The daily permit is issued at the visitor center. The final stretch requires hands to scramble over rock.',
     trailhead: 'Centro de Visitantes Tornquist (Buenos Aires)',
   },
   {
@@ -514,6 +549,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Abr – Oct',
     description:
       'Recorrido a pie por la quebrada Patrimonio de la Humanidad. Conecta Tilcara, Purmamarca (Cerro de los 7 Colores) y Humahuaca. Ideal para aclimatación a la Puna.',
+    description_en:
+      'A walking route through the UNESCO World Heritage quebrada. Connects Tilcara, Purmamarca (Cerro de los 7 Colores), and Humahuaca. Ideal for acclimatizing to the Puna.',
     trailhead: 'Purmamarca / Tilcara (Jujuy)',
   },
   {
@@ -537,6 +574,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Sendero tranquilo hasta el Lago del Desierto, al norte de El Chaltén. Bosque de lenga y ñire, posibles avistamientos de huemules y vistas al Volcán Rees. Ideal para familias.',
+    description_en:
+      'A gentle trail to Lago del Desierto, north of El Chaltén. Lenga and ñire forest, possible huemul sightings, and views of Volcán Rees. Great for families.',
     trailhead: 'El Chaltén (37 km al norte)',
   },
   {
@@ -557,6 +596,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Circuito lacustre y terrestre por el Parque Nacional Los Alerces, Patrimonio de la Humanidad. Bosques de alerces de 2000 años, lagos azules glaciares y cascadas vírgenes en la Patagonia andina.',
+    description_en:
+      'A lake-and-land circuit through Los Alerces National Park, a UNESCO World Heritage Site. 2,000-year-old alerce forests, glacial blue lakes, and untouched waterfalls in Andean Patagonia.',
     trailhead: 'Villa Futalaufquen (Chubut)',
   },
   {
@@ -577,6 +618,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Trekking hasta la frontera con Chile bordeando el Lago Puelo. Microclima único que permite vegetación valdiviana con arrayanes, cipreses y maitenes. El lago tiene uno de los colores más intensos de la Patagonia.',
+    description_en:
+      'A trek to the Chilean border along the shore of Lago Puelo. A unique microclimate supports Valdivian vegetation — arrayanes, cypress, and maitenes. The lake has one of the most intense colors in Patagonia.',
     trailhead: 'El Bolsón (Chubut)',
   },
   {
@@ -597,6 +640,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Ascenso al mirador principal del Parque Nacional Patagonia con vistas al lago Cochrane y la estepa infinita. El parque protege ecosistemas únicos de estepa patagónica y guanaco silvestre. Vientos fuertes son frecuentes.',
+    description_en:
+      'A climb to the main lookout of Parque Nacional Patagonia, with views of Lago Cochrane and the endless steppe. The park protects unique Patagonian-steppe ecosystems and wild guanaco. Strong winds are common.',
     trailhead: 'Villa O\'Higgins o Cochrane (Santa Cruz)',
   },
   {
@@ -618,6 +663,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Feb',
     description:
       'Una de las travesías más remotas y salvajes del mundo. Desde Cabo San Pablo se recorre la costa atlántica virgen de la Península Mitre hacia el oeste, cruzando ríos sin puentes, extensas turberas, bosque subantártico y costas batidas por el Atlántico. Sin sendero marcado, sin infraestructura, sin cobertura de celular. Se requiere navegación GPS, experiencia en campo traviesa, autosuficiencia total y capacidad para cruzar ríos en caudal. El punto final en Bahía Aguirre puede evacuarse en kayak o barco previo coordinación.',
+    description_en:
+      'One of the most remote and wild treks in the world. From Cabo San Pablo, it follows the wild Atlantic coast of Península Mitre westward, crossing bridgeless rivers, extensive peat bogs, subantarctic forest, and Atlantic-battered coastline. No marked trail, no infrastructure, no cell coverage. Requires GPS navigation, cross-country experience, full self-sufficiency, and the ability to ford rivers in flood. The endpoint at Bahía Aguirre can be evacuated by kayak or boat with prior coordination.',
     trailhead: 'Estancia Harberton / acceso oeste — Tierra del Fuego',
     mapOverlayUrl: 'https://www.openstreetmap.org/#map=10/-54.9000/-67.0000',
     gpxTrack: [
@@ -676,6 +723,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Sendero circular que sube por bosque de lenga y ñire hasta la Laguna Esmeralda, una laguna glaciar de aguas turquesas rodeada de montañas. Con frecuencia hay nieve en el trayecto superior. Uno de los favoritos de Ushuaia.',
+    description_en:
+      'A loop trail climbing through lenga and ñire forest to Laguna Esmeralda, a turquoise glacial lake ringed by mountains. Snow is common on the upper stretch. One of Ushuaia\'s favorites.',
     trailhead: 'Ruta J (camino a Valle Andorra), Ushuaia',
     gpxTrack: [
       { lat: -54.721948, lon: -68.121951, name: 'Trailhead — Ruta J' },
@@ -707,6 +756,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Corto sendero que lleva a la tranquila Laguna Negra dentro del parque. Ideal para familias, con bosque subantártico y fauna típica del Canal Beagle.',
+    description_en:
+      'A short trail to the quiet Laguna Negra inside the park. Great for families, with subantarctic forest and wildlife typical of the Beagle Channel.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
     gpxTrack: [
       { lat: -54.846914, lon: -68.581049, name: 'Trailhead — PN Tierra del Fuego' },
@@ -737,6 +788,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero al Hito XXIV, el punto en la orilla del lago Acigami que marca la frontera con Chile. Bosque de lenga y vistas al lago. Uno de los símbolos del fin del mundo.',
+    description_en:
+      'A trail to Hito XXIV, the point on the shore of Lago Acigami that marks the Chilean border. Lenga forest and lake views. One of the symbols of the end of the world.',
     trailhead: 'Lago Acigami, PN Tierra del Fuego',
     gpxTrack: [
       { lat: -54.830251, lon: -68.563004, name: 'Trailhead — Lago Acigami' },
@@ -767,6 +820,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero corto a la Laguna Verde, una pequeña laguna de aguas esmeralda dentro del parque. Bosque subantártico, flora de turbera y excelente avistamiento de aves.',
+    description_en:
+      'A short trail to Laguna Verde, a small emerald-water lagoon inside the park. Subantarctic forest, peat-bog flora, and excellent birdwatching.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
     gpxTrack: [
       { lat: -54.844743, lon: -68.563620, name: 'Trailhead' },
@@ -797,6 +852,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero al mirador principal del parque con vistas panorámicas al Canal Beagle y las montañas de la Isla Navarino. Corto pero con buena elevación final.',
+    description_en:
+      'A trail to the park\'s main lookout with panoramic views of the Beagle Channel and the mountains of Isla Navarino. Short, but with a good final climb.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
     gpxTrack: [
       { lat: -54.852580, lon: -68.578705, name: 'Trailhead' },
@@ -827,6 +884,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero a la baliza costera en la orilla del Canal Beagle. Vistas directas al canal, flora de turbera y bosque subantártico. Frecuentado por birdwatchers.',
+    description_en:
+      'A trail to the coastal beacon on the shore of the Beagle Channel. Direct views of the channel, peat-bog flora, and subantarctic forest. Popular with birdwatchers.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
     gpxTrack: [
       { lat: -54.860818, lon: -68.560364, name: 'Trailhead' },
@@ -857,6 +916,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero educativo por una turbera activa en el parque. Pasarelas de madera sobre el humedal, flora carnívora y una perspectiva única del ecosistema subantártico.',
+    description_en:
+      'An educational trail through an active peat bog in the park. Wooden boardwalks over the wetland, carnivorous plants, and a unique look at the subantarctic ecosystem.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
     gpxTrack: [
       { lat: -54.851786, lon: -68.588056, name: 'Trailhead' },
@@ -887,6 +948,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero costero que recorre la orilla del Canal Beagle dentro del parque, pasando por playas de canto rodado, bosque de lenga y con vistas a la Isla Navarino. Desde Bahía Ensenada hasta Bahía Lapataia.',
+    description_en:
+      'A coastal trail along the shore of the Beagle Channel inside the park, passing pebble beaches and lenga forest with views of Isla Navarino. From Bahía Ensenada to Bahía Lapataia.',
     trailhead: 'Bahía Ensenada, PN Tierra del Fuego',
     gpxTrack: [
       { lat: -54.857130, lon: -68.520746, name: 'Bahía Ensenada — Inicio' },
@@ -917,6 +980,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero costero por la Ensenada Zaratiegui con vistas al Canal Beagle. Bosque subantártico de lenga y ñire, playas de canto rodado y avistamiento de aves marinas y lobos marinos.',
+    description_en:
+      'A coastal trail through Ensenada Zaratiegui with views of the Beagle Channel. Subantarctic lenga and ñire forest, pebble beaches, and seabird and sea lion sightings.',
     trailhead: 'Ensenada Zaratiegui, PN Tierra del Fuego',
     gpxTrack: [
       { lat: -54.831200, lon: -68.491088, name: 'Ensenada Zaratiegui — Inicio' },
@@ -947,6 +1012,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Abr',
     description: 'Sendero a lo largo del Río Pipo, uno de los ríos más pintorescos del parque. Bosque de lenga, flora típica y el famoso Tren del Fin del Mundo parte desde aquí.',
+    description_en:
+      'A trail along the Río Pipo, one of the park\'s most scenic rivers. Lenga forest, typical flora, and the famous End of the World Train departs from here.',
     trailhead: 'Estación del Fin del Mundo, PN Tierra del Fuego',
     gpxTrack: [
       { lat: -54.814959, lon: -68.479442, name: 'Estación Fin del Mundo — Inicio' },
@@ -977,6 +1044,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Travesía exigente que atraviesa la Sierra Valdivieso hacia la Laguna del Caminante, una laguna glaciar de alta montaña. Pasos técnicos, nieve frecuente y vistas excepcionales a los valles y el Canal Beagle. Requiere orientación en terreno abierto.',
+    description_en:
+      'A demanding trek across the Sierra Valdivieso to Laguna del Caminante, a high-mountain glacial lake. Technical passes, frequent snow, and exceptional views of the valleys and the Beagle Channel. Requires route-finding on open terrain.',
     trailhead: 'Valle Andorra, Ushuaia',
     gpxTrack: [
       { lat: -54.753244, lon: -68.416918, name: 'Trailhead — Valle Andorra' },
@@ -1007,6 +1076,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Sendero a las Lagunas de los Cinco Hermanos, cinco lagunas glaciares en cadena rodeadas de bosque de lenga y montañas nevadas. Uno de los trekking más pintorescos de los alrededores de Ushuaia.',
+    description_en:
+      'A trail to the Lagunas de los Cinco Hermanos, a chain of five glacial lakes ringed by lenga forest and snow-capped mountains. One of the most scenic treks near Ushuaia.',
     trailhead: 'Ushuaia (acceso por Ruta J)',
     gpxTrack: [
       { lat: -54.770919, lon: -68.199913, name: 'Trailhead — Ushuaia' },
@@ -1037,6 +1108,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Sendero a la Laguna Submarino, nombrada por su forma característica visible desde las cumbres. Bosque de lenga, turberas y vistas panorámicas a la ciudad de Ushuaia y el Canal Beagle.',
+    description_en:
+      'A trail to Laguna Submarino, named for its distinctive shape visible from the surrounding summits. Lenga forest, peat bogs, and panoramic views of Ushuaia and the Beagle Channel.',
     trailhead: 'Ushuaia (acceso por Ruta al Valle)',
     gpxTrack: [
       { lat: -54.722085, lon: -68.070324, name: 'Trailhead — Ushuaia' },
@@ -1068,6 +1141,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Nov – Mar',
     description: 'Sendero costero por la orilla del Canal Beagle en el parque más austral del mundo. Bosque de lenga, pingüinos y lobos marinos en el Canal Beagle. El tren del Fin del Mundo sale desde aquí.',
+    description_en:
+      'A coastal trail along the Beagle Channel in the southernmost park in the world. Lenga forest, penguins, and sea lions along the Beagle Channel. The End of the World Train departs from here.',
     trailhead: 'Ushuaia (Tierra del Fuego)',
     pdfUrl: '/mapa-tierra-del-fuego-costero.webp',
     gpxTrack: [
@@ -1105,6 +1180,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: false,
     best_season: 'Oct – Mar',
     description: 'Sendero costero que recorre la orilla de la Ensenada Zaratiegui dentro del Parque Nacional Tierra del Fuego. Vistas panorámicas del Canal Beagle, bosque de lenga y ñire, y playa de canto rodado. Accesible desde el acceso principal del parque, ideal para familias y como complemento de la visita a Bahía Lapataia.',
+    description_en:
+      'A coastal trail along the shore of Ensenada Zaratiegui inside Tierra del Fuego National Park. Panoramic Beagle Channel views, lenga and ñire forest, and a pebble beach. Reachable from the park\'s main entrance — ideal for families and as a complement to a visit to Bahía Lapataia.',
     trailhead: 'Ensenada Zaratiegui, PN Tierra del Fuego',
     gpxTrack: [
       { lat: -54.8466, lon: -68.4818, ele: 5,   name: 'Trailhead — Ensenada Zaratiegui' },
@@ -1137,6 +1214,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     permits_required: true,
     best_season: 'Nov – Mar',
     description: 'El circuito más austral del mundo. Atraviesa los picos dentados de la Isla Navarino al sur del Canal Beagle, con pasos de alta montaña, lagunas glaciarias y condiciones meteorológicas impredecibles. Se requiere registro en Carabineros de Chile en Puerto Williams.',
+    description_en:
+      'The southernmost trekking circuit in the world. Crosses the jagged peaks of Isla Navarino south of the Beagle Channel, with high-mountain passes, glacial lagoons, and unpredictable weather. Registration with the Chilean Carabineros in Puerto Williams is required.',
     trailhead: 'Puerto Williams, Isla Navarino (Chile)',
     gpxTrack: [
       { lat: -54.9320, lon: -67.6130, ele:  20, name: 'Puerto Williams (inicio)' },
@@ -1181,6 +1260,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Nov – Mar',
     description:
       'Circuito técnico de 4-5 días que recorre los valles y pasos alpinos de la Sierra Valdivieso, al norte de Ushuaia. Cruza el Paso de la Oveja (940 m), el Paso Valdivieso (1190 m) y el Valle Andorra. Terreno exigente con orientación en campo traviesa — experiencia en montaña recomendada.',
+    description_en:
+      'A technical 4–5 day circuit through the valleys and alpine passes of the Sierra Valdivieso, north of Ushuaia. Crosses Paso de la Oveja (940 m), Paso Valdivieso (1,190 m), and Valle Andorra. Demanding terrain with cross-country route-finding — mountain experience recommended.',
     trailhead: 'Camping Las Cotorras / Río Pipo, Ushuaia',
     gpxTrack: [
       { lat: -54.7850, lon: -68.3200, ele: 200,  name: 'Trailhead — Camping Las Cotorras / Ushuaia' },
@@ -1223,6 +1304,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Abr – Nov',
     description:
       'Sendero de baja a media dificultad que cruza arroyos y atraviesa un bosque de laureles hasta la laguna de Pozo Verde. Los primeros 3 km son accesibles en vehículo y los 9 km restantes se recorren a pie. Recorrido de día completo dentro de la selva de Yungas.',
+    description_en:
+      'A low-to-moderate difficulty trail crossing streams and cloud forest to Pozo Verde lagoon. The first 3 km are accessible by vehicle; the remaining 9 km are on foot. A full-day route through the Yungas rainforest.',
     trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
   },
   {
@@ -1244,6 +1327,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Abr – Nov',
     description:
       'Uno de los senderos pedestres más extensos del parque, de dificultad media-alta. Asciende por la selva de montaña de las Yungas hasta el Chorro de los Loros. Requiere buen estado físico y registrarse en el Centro Operativo antes de salir.',
+    description_en:
+      'One of the park\'s longest trails on foot, moderate-to-hard difficulty. Climbs through Yungas cloud forest to Chorro de los Loros. Requires good physical condition and registering at the Operations Center before setting out.',
     trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
   },
   {
@@ -1265,6 +1350,8 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     best_season: 'Abr – Nov',
     description:
       'Sendero corto y de baja dificultad que llega a la laguna de los Patitos, junto al Centro Operativo. Ideal para la observación de aves —especialmente acuáticas— y apto para familias.',
+    description_en:
+      'A short, low-difficulty trail to the Laguna de los Patitos lagoon, next to the Operations Center. Great for birdwatching — especially waterfowl — and family-friendly.',
     trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
   },
 ];

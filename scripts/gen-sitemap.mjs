@@ -24,20 +24,37 @@ const trailIds = [
 const today = new Date().toISOString().slice(0, 10);
 const routes = ['/', '/inicio', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/contribuir'];
 
+// Trail pages exist in both languages (see scripts/prerender-trails.mjs) —
+// list both URLs with reciprocal xhtml:link hreflang annotations, same
+// pattern as the <link rel="alternate"> tags baked into each page's <head>.
+function trailUrls(id) {
+  const urlEs = `${BASE}/ruta/${id}`;
+  const urlEn = `${BASE}/en/ruta/${id}`;
+  const altLinks =
+    `\n    <xhtml:link rel="alternate" hreflang="es" href="${urlEs}"/>` +
+    `\n    <xhtml:link rel="alternate" hreflang="en" href="${urlEn}"/>` +
+    `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${urlEs}"/>`;
+  return [
+    { loc: urlEs, pri: '0.7', freq: 'monthly', altLinks },
+    { loc: urlEn, pri: '0.6', freq: 'monthly', altLinks },
+  ];
+}
+
 const urls = [
-  ...routes.map((r) => ({ loc: BASE + r, pri: r === '/' || r === '/inicio' ? '1.0' : '0.8', freq: 'weekly' })),
-  ...trailIds.map((id) => ({ loc: `${BASE}/ruta/${id}`, pri: '0.7', freq: 'monthly' })),
+  ...routes.map((r) => ({ loc: BASE + r, pri: r === '/' || r === '/inicio' ? '1.0' : '0.8', freq: 'weekly', altLinks: '' })),
+  ...trailIds.flatMap(trailUrls),
 ];
 
 const xml =
-  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
   urls
     .map(
       (u) =>
-        `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`,
+        `  <url>\n    <loc>${u.loc}</loc>${u.altLinks}\n    <lastmod>${today}</lastmod>\n    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`,
     )
     .join('\n') +
   '\n</urlset>\n';
 
 fs.writeFileSync('public/sitemap.xml', xml);
-console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails)`);
+console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails × es/en + ${routes.length} core pages)`);
