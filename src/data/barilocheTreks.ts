@@ -24,6 +24,10 @@ export interface ExtendedTrail extends ArgentinaTrail {
   source: 'barilochetrekking.com';
   /** 3–4 detailed paragraphs describing the route, landscape and key moments */
   long_description: string;
+  /** English translation of long_description. Optional: most of the 18
+   *  Bariloche trails only have the Spanish long-form text so far — this
+   *  is filled in gradually, trail by trail. */
+  long_description_en?: string;
   /** Realistic waypoints tracing the trail (lat/lon/optional ele) */
   gpxTrack: Array<{ lat: number; lon: number; ele?: number }>;
   /** Key landmarks along the route */
@@ -1589,7 +1593,7 @@ El paseo se combina naturalmente con el sendero costero a Playa Muñoz, que part
     coordinates: { lat: -41.1610, lon: -71.4817 },
     photo_uri:
       'https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&q=80&fit=crop&auto=format',
-    tags: ['filo', 'telesilla', 'refugio', 'agujas graníticas', 'circuito', 'alta montaña'],
+    tags: ['filo', 'telesilla', 'refugio', 'agujas graníticas', 'circuito', 'alta montaña', 'escalada', 'panorámica', 'exigente'],
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
@@ -1604,7 +1608,18 @@ Desde Refugio Lynch el sendero gana altura por una cresta rocosa e irregular, ma
 
 Pasada la bifurcación el sendero pierde altura hasta la Laguna Schmoll, el escalón superior del circo de Frey, y de ahí baja a la Laguna Toncek, donde aparece el Refugio Frey (1700 m) rodeado de las agujas graníticas que hicieron famosa a la zona entre escaladores de todo el mundo. Es un buen lugar para parar a comer algo caliente antes del tramo final.
 
-Desde el refugio, la bajada se hace por el sendero clásico del arroyo Van Titter — el mismo que sube quien va directo a Frey desde la base — hasta el estacionamiento de Cerro Catedral. En total, contando el tramo del filo y el descenso por Van Titter, son unas 3 a 3 horas y media caminando desde Lynch hasta Frey, más otras 2 a 3 horas de bajada hasta la base.`,
+Desde el refugio, la bajada se hace por el sendero clásico del arroyo Van Titter — el mismo que sube quien va directo a Frey desde la base — hasta el estacionamiento de Cerro Catedral. En total, contando el tramo del filo y el descenso por Van Titter, son unas 3 a 3 horas y media caminando desde Lynch hasta Frey, más otras 2 a 3 horas de bajada hasta la base.
+
+Para quienes prefieren no resolver la logística del telesilla y la orientación en el filo por su cuenta, varias agencias de trekking de Bariloche ofrecen esta salida guiada como excursión de día completo — vale la pena considerarlo si es la primera vez en la zona o si el grupo no tiene experiencia previa en terreno de alta montaña expuesto.`,
+    long_description_en: `This loop is the fastest — and most exposed — way to reach Refugio Frey: instead of hiking up from the base, you ride the Séxtuple and Lynch chairlifts of Catedral Alta Patagonia up to roughly 1,800 m, then continue on foot along the mountain's ridge heading south. The chairlifts run on a limited seasonal schedule (typically 9 am to 5 pm), so it's worth confirming they're operating before heading up.
+
+From Refugio Lynch the trail climbs a rocky, uneven crest marked with red paint blazes to the highest point of the loop (~1,940 m), with direct views into the Arroyo Rucaco valley. This is a medium-to-high difficulty stretch: loose terrain, large boulders, and full wind exposure with no forest cover. At a signposted fork, keep left to continue toward Frey — the other branch drops back down to the base by a different route.
+
+Past the fork the trail loses altitude down to Laguna Schmoll, the upper step of the Frey amphitheater, then descends further to Laguna Toncek, where Refugio Frey (1,700 m) appears, ringed by the granite spires that have made the area famous among climbers worldwide. It's a good spot to stop for a hot meal before the final stretch.
+
+From the refuge, the descent follows the classic Arroyo Van Titter trail — the same one used by hikers going straight to Frey from the base — down to the Cerro Catedral parking lot. All told, between the ridge section and the Van Titter descent, it's about 3 to 3.5 hours of walking from Lynch to Frey, plus another 2 to 3 hours down to the base.
+
+If you'd rather not sort out the chairlift logistics and ridge route-finding on your own, several Bariloche trekking agencies run this as a guided full-day excursion — worth considering if it's your first time in the area or your group has no prior experience on exposed high-mountain terrain.`,
     gpxTrack: [
       { lat: -41.1610, lon: -71.4817, ele: 1800 },
       { lat: -41.1660, lon: -71.4795, ele: 1870 },
@@ -1686,8 +1701,8 @@ Desde el refugio, la bajada se hace por el sendero clásico del arroyo Van Titte
     duration: { min: 8, max: 10, unit: 'horas' },
     coordinates: { lat: -41.1855, lon: -71.4499 },
     photo_uri:
-      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
-    tags: ['cumbre', 'alta montaña', 'técnico', 'exigente', 'panorámica'],
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'alta montaña', 'técnico', 'exigente', 'panorámica', 'scramble', 'dos días', 'refugio'],
     permits_required: false,
     best_season: 'Dic – Mar',
     description:
@@ -1702,7 +1717,18 @@ Pasado el refugio, el sendero sube a la Laguna Schmoll y desde ahí abandona def
 
 La Cumbre Catedral Norte (aprox. 2141 m — las fuentes varían según se mida esta cumbre secundaria o el macizo principal del Catedral) corona el recorrido con un panorama que incluye el lago Nahuel Huapi, el cordón del Tronador al oeste y, en días despejados, gran parte de la cordillera fronteriza. No hay agua disponible pasada la Laguna Schmoll, así que hay que cargar lo necesario para todo el tramo final y el regreso.
 
-El descenso es por la misma ruta. Por la longitud total de la jornada y la exposición del tramo alto, conviene salir muy temprano, llevar equipo de abrigo aunque el día arranque despejado, y evaluar las condiciones en Schmoll antes de continuar — con viento fuerte o mal tiempo, el circuito de Frey ya es en sí mismo una excelente salida y no hace falta forzar la cumbre.`,
+El descenso es por la misma ruta. Por la longitud total de la jornada y la exposición del tramo alto, conviene salir muy temprano, llevar equipo de abrigo aunque el día arranque despejado, y evaluar las condiciones en Schmoll antes de continuar — con viento fuerte o mal tiempo, el circuito de Frey ya es en sí mismo una excelente salida y no hace falta forzar la cumbre.
+
+Por tratarse de una salida larga en terreno de alta montaña sin señalización más allá de Schmoll, conviene ir con alguien que ya conozca el filo o contratar un guía de montaña local — el Club Andino Bariloche y varias agencias de la ciudad ofrecen esta ascensión como excursión de un día completo o combinada con noche en el Refugio Frey.`,
+    long_description_en: `Cumbre Catedral Norte is the natural continuation, for those already familiar with the Frey circuit, of Bariloche's most classic route. It shares the first 10 kilometers with the trail to Refugio Frey: the same coihue forest, the Arroyo Van Titter valley, and the Cancha de Fútbol clearing, before reaching the refuge on the shore of Laguna Toncek (1,700 m). Many split the outing over two days, spending the night at Frey before tackling the upper section.
+
+Past the refuge, the trail climbs to Laguna Schmoll and from there leaves the amphitheater of granite spires behind for good, climbing the ridge toward the Catedral massif proper. The terrain changes completely: exposed rock, steep pitches, and stretches of scrambling where you'll want your hands free. The near-total absence of vegetation at this altitude leaves hikers fully exposed to the Patagonian wind, which can be intense on the ridge even on days that look calm from town.
+
+Cumbre Catedral Norte (roughly 2,141 m — sources vary depending on whether they're measuring this secondary summit or the main Catedral massif) crowns the route with a panorama that takes in Lago Nahuel Huapi, the Tronador massif to the west, and, on clear days, a good stretch of the border range. There's no water available past Laguna Schmoll, so carry everything you'll need for the final stretch and the return.
+
+The descent follows the same route. Given the total length of the day and the exposure of the upper section, it's worth setting out very early, packing warm layers even if the day starts clear, and assessing conditions at Schmoll before continuing — in strong wind or bad weather, the Frey circuit alone is already an excellent outing and there's no need to push for the summit.
+
+Because this is a long day on high-mountain terrain that's unmarked past Schmoll, it's worth going with someone who already knows the ridge or hiring a local mountain guide — Club Andino Bariloche and several agencies in town run this climb as a full-day excursion or combined with an overnight at Refugio Frey.`,
     gpxTrack: [
       { lat: -41.1855, lon: -71.4499, ele: 1050 },
       { lat: -41.1918, lon: -71.4610, ele: 1290 },

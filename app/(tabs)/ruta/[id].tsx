@@ -1130,6 +1130,12 @@ function OverviewTab({
   const safetyWarning =
     trail.safety_warning ?? (ALL_BARILOCHE_IDS.has(trail.id) ? BARILOCHE_SEGURIDAD : null);
   const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
+  // Only long_description_en exists on a couple of trails so far (most of
+  // the 18 Bariloche entries still only have the long-form text in
+  // Spanish) — falls back to the Spanish version like trailDescription.
+  const longDescriptionEn = (trail as any).long_description_en as string | undefined;
+  const longDescription =
+    lang === 'en' ? (longDescriptionEn ?? trail.long_description) : trail.long_description;
   // 19 of 60 trails have no gpxTrack (no route was ever digitized for them),
   // and TrailMap3D/TrailMap3DCinematic need at least 2 points to initialize
   // — so the whole "Vista satelital 3D" section, satellite toggle included,
@@ -1203,8 +1209,8 @@ function OverviewTab({
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
         <Text style={[styles.bodyText, { color: C.text }]}>{trailDescription}</Text>
-        {!!trail.long_description &&
-          trail.long_description.split('\n\n').map((para, i) => (
+        {!!longDescription &&
+          longDescription.split('\n\n').map((para, i) => (
             <Text key={i} style={[styles.bodyText, { color: C.text, marginTop: 12 }]}>
               {para.trim()}
             </Text>
