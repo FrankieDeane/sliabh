@@ -88,7 +88,7 @@ export default function VerificarScreen() {
 
   return (
     <View className={`flex-1 px-6 pt-16 ${bg}`}>
-      <TouchableOpacity onPress={() => router.back()} className="mb-8">
+      <TouchableOpacity onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/inicio' as any))} className="mb-8">
         <Text className={textMuted}>‹ {t('Volver', 'Back')}</Text>
       </TouchableOpacity>
 

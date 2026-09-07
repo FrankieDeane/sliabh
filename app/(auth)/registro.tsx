@@ -114,7 +114,7 @@ export default function RegistroScreen() {
         >
           {/* Back button */}
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/inicio' as any))}
             className="flex-row items-center gap-1 mb-8 self-start"
           >
             <Text className={`text-base ${linkColor}`}>‹ Volver</Text>
