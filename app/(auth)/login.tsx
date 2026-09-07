@@ -124,6 +124,7 @@ export default function LoginScreen() {
               source={{ uri: LOGO_URI }}
               style={{ width: 96, height: 96, marginBottom: 12 }}
               resizeMode="contain"
+              alt="Sliabh"
             />
             <Text className={`text-3xl font-bold ${textPrimary}`}>Sliabh</Text>
             <Text className={`text-sm mt-1 ${textMuted}`}>Explora sin límites</Text>

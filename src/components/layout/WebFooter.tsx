@@ -47,7 +47,7 @@ export function WebFooter() {
           {/* Brand column */}
           <View style={styles.brandCol}>
             <TouchableOpacity style={styles.brand} onPress={() => router.push('/(tabs)/inicio')} activeOpacity={0.8}>
-              <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" />
+              <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" alt="Sliabh" />
             </TouchableOpacity>
             <Text style={[styles.tagline, { color: c.muted }]}>
               {t(

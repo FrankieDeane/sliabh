@@ -1,5 +1,10 @@
-// Regenerates public/sitemap.xml + public/robots.txt from the trail data.
-// Run with: node scripts/gen-sitemap.mjs
+// Regenerates public/sitemap.xml from the trail data. Runs as part of the
+// Netlify build (see netlify.toml) so the sitemap never goes stale.
+//
+// Does NOT touch public/robots.txt: that file is hand-maintained (it lists
+// explicit Allow rules for AI crawlers — GPTBot, ClaudeBot, PerplexityBot,
+// etc. — that a generated file would clobber) and already has a stable
+// `Sitemap:` line pointing here. Run with: node scripts/gen-sitemap.mjs
 import fs from 'node:fs';
 
 const BASE = process.env.SITE_URL || 'https://sliabh.com.ar';
@@ -35,5 +40,4 @@ const xml =
   '\n</urlset>\n';
 
 fs.writeFileSync('public/sitemap.xml', xml);
-fs.writeFileSync('public/robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${BASE}/sitemap.xml\n`);
-console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails) · robots.txt written`);
+console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails)`);
