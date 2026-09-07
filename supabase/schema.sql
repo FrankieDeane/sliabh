@@ -214,3 +214,37 @@ create policy "Anyone can submit their info"
 -- Deliberately no select policy: PII stays unreadable via the public anon key.
 
 create index if not exists poll_leads_poll_idx on public.poll_leads (poll_id, created_at desc);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- sponsor_leads: inquiries submitted from the "Sobre nosotros / Sponsors"
+-- section. Same privacy shape as poll_leads (holds PII: name, email, phone) —
+-- no public select policy, only readable from the Supabase dashboard.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.sponsor_leads (
+  id                uuid primary key default gen_random_uuid(),
+  full_name         text not null,
+  company_website   text not null,
+  additional_link   text,
+  email             text not null,
+  phone             text,
+  message           text,
+  created_at        timestamptz not null default now()
+);
+
+alter table public.sponsor_leads enable row level security;
+
+drop policy if exists "Anyone can submit a sponsor inquiry" on public.sponsor_leads;
+create policy "Anyone can submit a sponsor inquiry"
+  on public.sponsor_leads for insert
+  with check (
+    length(full_name) between 1 and 200
+    and length(company_website) between 1 and 300
+    and (additional_link is null or length(additional_link) <= 300)
+    and email like '%_@_%.__%' and length(email) between 5 and 200
+    and (phone is null or length(phone) <= 40)
+    and (message is null or length(message) <= 4000)
+  );
+
+-- Deliberately no select policy: PII stays unreadable via the public anon key.
+
+create index if not exists sponsor_leads_created_idx on public.sponsor_leads (created_at desc);

@@ -96,6 +96,8 @@ export function WebHeader() {
     { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
     { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },
     { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const, scrollTo: null as string | null },
+    { labelEs: 'Nosotros', labelEn: 'About', href: '/(tabs)/inicio' as const, icon: 'people-outline' as const, scrollTo: 'about-us' as string | null },
+    { labelEs: 'Contactanos', labelEn: 'Contact us', href: '/(tabs)/inicio' as const, icon: 'mail-outline' as const, scrollTo: 'sponsors-form' as string | null },
   ];
 
   const c = isDark

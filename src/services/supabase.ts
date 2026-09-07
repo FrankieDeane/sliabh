@@ -260,6 +260,30 @@ export async function submitPollLead(
   if (error) throw error;
 }
 
+/**
+ * Submits a sponsor inquiry from the "Sobre nosotros / Sponsors" section.
+ * Stored in sponsor_leads — no public select policy, same as poll_leads:
+ * only readable from the Supabase dashboard, never via the anon key.
+ */
+export async function submitSponsorLead(lead: {
+  fullName: string;
+  companyWebsite: string;
+  additionalLink?: string;
+  email: string;
+  phone?: string;
+  message?: string;
+}) {
+  const { error } = await supabase.from('sponsor_leads').insert({
+    full_name: lead.fullName,
+    company_website: lead.companyWebsite,
+    additional_link: lead.additionalLink || null,
+    email: lead.email,
+    phone: lead.phone || null,
+    message: lead.message || null,
+  });
+  if (error) throw error;
+}
+
 /** Vote counts per option for a poll, plus the total. */
 export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
   const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);
