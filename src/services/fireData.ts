@@ -41,10 +41,15 @@ export async function fetchFireEvents(bbox: BoundingBox): Promise<FireEvent[]> {
   const url = `https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires&status=open&bbox=${bboxParam}`;
   try {
     const res = await fetch(url);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      // Visible in the browser console so "no banner anywhere" is
+      // diagnosable (fetch failing) vs. simply "no fires nearby right now".
+      console.warn(`[fireData] EONET returned ${res.status} for`, url);
+      return [];
+    }
     const data = await res.json();
     const events = Array.isArray(data?.events) ? data.events : [];
-    return events
+    const parsed = events
       .map((e: any): FireEvent | null => {
         const geoms = Array.isArray(e?.geometry) ? e.geometry : [];
         const last = geoms[geoms.length - 1];
@@ -59,7 +64,10 @@ export async function fetchFireEvents(bbox: BoundingBox): Promise<FireEvent[]> {
         };
       })
       .filter((e: FireEvent | null): e is FireEvent => e !== null);
-  } catch {
+    console.info(`[fireData] EONET: ${parsed.length} open wildfire event(s) in bbox`, bboxParam);
+    return parsed;
+  } catch (err) {
+    console.warn('[fireData] EONET fetch failed (network/CORS?):', err);
     return [];
   }
 }
