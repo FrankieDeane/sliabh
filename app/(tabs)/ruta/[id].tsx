@@ -1130,6 +1130,20 @@ function OverviewTab({
   const safetyWarning =
     trail.safety_warning ?? (ALL_BARILOCHE_IDS.has(trail.id) ? BARILOCHE_SEGURIDAD : null);
   const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
+  // 19 of 60 trails have no gpxTrack (no route was ever digitized for them),
+  // and TrailMap3D/TrailMap3DCinematic need at least 2 points to initialize
+  // — so the whole "Vista satelital 3D" section, satellite toggle included,
+  // silently never rendered for those pages. Fall back to two points
+  // pinned on the trail's own real trailhead coordinate (not a fabricated
+  // route) so every trail still gets a 3D map centered on a real place.
+  const realGpxTrack = (trail as any).gpxTrack;
+  const mapTrack =
+    realGpxTrack?.length >= 2
+      ? realGpxTrack
+      : [
+          { lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead },
+          { lat: trail.coordinates.lat + 0.0005, lon: trail.coordinates.lon + 0.0005 },
+        ];
   return (
     <View style={styles.tabContent}>
       {safetyWarning && (
@@ -1169,24 +1183,22 @@ function OverviewTab({
         />
       </SectionCard>
 
-      {(trail as any).gpxTrack?.length >= 2 && (
-        <SectionCard>
-          <CardLabel text={t('Vista satelital 3D', '3D Satellite View')} />
-          {TrailMap3DCinematic ? (
-            <TrailMap3DCinematic
-              track={(trail as any).gpxTrack}
-              trailName={trail.name}
-              height={420}
-            />
-          ) : (
-            <TrailMap3D
-              track={(trail as any).gpxTrack}
-              trailName={trail.name}
-              height={320}
-            />
-          )}
-        </SectionCard>
-      )}
+      <SectionCard>
+        <CardLabel text={t('Vista satelital 3D', '3D Satellite View')} />
+        {TrailMap3DCinematic ? (
+          <TrailMap3DCinematic
+            track={mapTrack}
+            trailName={trail.name}
+            height={420}
+          />
+        ) : (
+          <TrailMap3D
+            track={mapTrack}
+            trailName={trail.name}
+            height={320}
+          />
+        )}
+      </SectionCard>
 
       <SectionCard>
         <CardLabel text={t('Descripción', 'Description')} />
