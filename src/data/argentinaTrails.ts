@@ -34,6 +34,13 @@ export interface ArgentinaTrail {
   mapOverlayUrl?: string;
   pdfUrl?: string;
   gpxTrack?: Array<{ lat: number; lon: number; name?: string; ele?: number }>;
+  /** Optional 3-4 paragraph detailed description, same convention as
+   *  ExtendedTrail.long_description in barilocheTreks.ts — used here for a
+   *  handful of non-Bariloche trails that warrant more depth (e.g. Lanín). */
+  long_description?: string;
+  long_description_en?: string;
+  /** Optional key landmarks, same convention as ExtendedTrail.namedWaypoints. */
+  namedWaypoints?: Array<{ lat: number; lon: number; name: string; description: string }>;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -405,27 +412,75 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
   },
   {
     id: 'volcan-lanin',
-    name: 'Volcán Lanín — Cumbre',
+    name: 'Volcán Lanín — Vía Normal Argentina',
     province: 'Neuquén',
     area: 'Parque Nacional Lanín',
     region: 'patagonia-norte',
     activity: 'alta_montana',
     difficulty: 'dificil',
     distance_km: 18,
-    elevation_gain_m: 2800,
-    max_altitude_m: 3776,
+    elevation_gain_m: 2200,
+    max_altitude_m: 3747,
     duration: { min: 2, max: 3, unit: 'dias' },
     coordinates: { lat: -39.6356, lon: -71.4999 },
     photo_uri:
       'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
-    tags: ['volcán', 'cima', 'nieve', 'crampones'],
+    tags: ['volcán', 'cima', 'nieve', 'crampones', 'alta montaña', 'dos refugios'],
     permits_required: true,
     best_season: 'Dic – Mar',
     description:
-      'Volcán inactivo y una de las cumbres más bellas de la Patagonia. La vía normal asciende por el flanco norte usando piolet y crampones en los tramos de hielo.',
+      'Ascenso de 2 a 3 días por la Vía Normal Argentina, desde la Seccional Río Turbio del Parque Nacional Lanín. Sube por bosque de araucarias y lengas hasta el Refugio RIM (2400 m) y el Refugio CAJA (2600 m), y de ahí a la cumbre (3747 m) por la "espina de pescado" con piolet y crampones en los tramos de hielo. Grado 3 (IFAS) — se recomienda guía sin experiencia previa en alta montaña.',
     description_en:
-      'A dormant volcano and one of the most beautiful summits in Patagonia. The normal route climbs the north face, using ice axe and crampons on the glaciated sections.',
-    trailhead: 'Tromen (Neuquén) o Pucón (Chile)',
+      'A 2-3 day climb via the Normal Argentine Route, starting at the Río Turbio ranger station in Parque Nacional Lanín. Climbs through araucaria and lenga forest to Refugio RIM (2,400 m) and Refugio CAJA (2,600 m), then on to the summit (3,747 m) via the "fishbone" section, using ice axe and crampons on the glaciated stretches. Grade 3 (IFAS) — a mountain guide is recommended without prior high-altitude experience.',
+    trailhead: 'Seccional Río Turbio, Parque Nacional Lanín (Neuquén)',
+    long_description: `El Lanín es un volcán inactivo de silueta casi perfecta, visible desde gran parte del norte de la Patagonia, y su ascenso por la Vía Normal Argentina es una de las metas clásicas del montañismo argentino — exigente pero sin necesitar técnica de escalada, solo buen manejo de piolet y crampones. El acceso es por la Ruta Provincial 60 desde Junín de los Andes, bordeando el río Malleo hasta ingresar al parque, donde el paisaje esteparia cede a un bosque de araucarias camino a la Seccional Río Turbio — puesto de Gendarmería, guardaparques y centro de informes, punto de partida obligado.
+
+Desde el estacionamiento, el sendero atraviesa un bosque de lengas bien marcado hasta la base del volcán, donde estacas señalan el comienzo de la "espina de pescado" — el tramo característico de la ruta, una cresta de piedra volcánica que se remonta ganando altura de forma constante. Tras unas 4 horas se llega al Refugio RIM (2400 m), y una hora más de marcha al Refugio CAJA (2600 m), donde la mayoría pasa la noche antes del ascenso final.
+
+El día de cumbre son 6 a 7 horas de marcha lenta pero constante desde CAJA, sobre nieve y hielo en los tramos altos — acá es indispensable el piolet y los crampones, y conviene salir de madrugada para aprovechar la nieve dura y evitar el ablande de la tarde. La cumbre (3747 m) corona con una vista que en días despejados alcanza el lago Huechulafquen, el volcán Villarrica en Chile, y buena parte de la cordillera de los Andes.
+
+El descenso es por la misma vía, con especial cuidado en los tramos de nieve blanda de la tarde. Por la exposición y el desnivel total (2200 m desde el estacionamiento), es una salida solo para quienes ya tienen experiencia en alta montaña con crampones y piolet — o que suben con un guía habilitado, muy recomendable para quien lo hace por primera vez.`,
+    long_description_en: `Lanín is a dormant volcano with an almost perfect cone, visible from much of northern Patagonia, and climbing it via the Normal Argentine Route is one of Argentine mountaineering's classic objectives — demanding but not technical climbing, just solid ice-axe and crampon skills. Access is via Provincial Route 60 from Junín de los Andes, following the Río Malleo into the park, where steppe gives way to araucaria forest on the way to the Río Turbio ranger station — a Gendarmería post, park rangers, and an information center, and the mandatory starting point.
+
+From the parking area, a well-marked trail crosses lenga forest to the base of the volcano, where trail markers signal the start of the "fishbone" — the route's signature stretch, a ridge of volcanic rock climbed steadily. After about 4 hours you reach Refugio RIM (2,400 m), and one more hour to Refugio CAJA (2,600 m), where most parties spend the night before the final push.
+
+Summit day is 6 to 7 hours of slow, steady walking from CAJA, over snow and ice on the upper sections — ice axe and crampons are essential here, and it's worth starting before dawn to take advantage of firm snow before it softens in the afternoon sun. The summit (3,747 m) rewards with views that, on clear days, reach Lago Huechulafquen, Volcán Villarrica across the border in Chile, and a wide stretch of the Andes.
+
+The descent follows the same route, with extra care on the softened afternoon snow. Given the exposure and total elevation gain (2,200 m from the parking area), this is an outing only for those with prior high-mountain experience with crampons and an ice axe — or climbing with a licensed guide, strongly recommended for a first attempt.`,
+    gpxTrack: [
+      { lat: -39.6020, lon: -71.4550, ele: 1550, name: 'Seccional Río Turbio' },
+      { lat: -39.6120, lon: -71.4650, ele: 1900 },
+      { lat: -39.6256, lon: -71.4781, ele: 2400, name: 'Refugio RIM' },
+      { lat: -39.6214, lon: -71.4883, ele: 2600, name: 'Refugio CAJA' },
+      { lat: -39.6280, lon: -71.4930, ele: 3100 },
+      { lat: -39.6356, lon: -71.4999, ele: 3747, name: 'Cumbre del Lanín' },
+    ],
+    namedWaypoints: [
+      {
+        lat: -39.6020,
+        lon: -71.4550,
+        name: 'Seccional Río Turbio',
+        description: 'Punto de partida: puesto de Gendarmería, guardaparques y centro de informes del Parque Nacional Lanín. Registro obligatorio antes de subir.',
+      },
+      {
+        lat: -39.6256,
+        lon: -71.4781,
+        name: 'Refugio RIM (2400 m)',
+        description: 'Primer refugio, a unas 4 horas del estacionamiento. Cara norte del volcán.',
+      },
+      {
+        lat: -39.6214,
+        lon: -71.4883,
+        name: 'Refugio CAJA (2600 m)',
+        description: 'Segundo refugio, una hora más allá de RIM. Acá pernocta la mayoría antes del día de cumbre.',
+      },
+      {
+        lat: -39.6356,
+        lon: -71.4999,
+        name: 'Cumbre (3747 m)',
+        description: 'Punto más alto, 6-7 horas desde CAJA sobre nieve y hielo. Piolet y crampones obligatorios en el tramo final.',
+      },
+    ],
   },
   {
     id: 'lanin-extremo-13k',
