@@ -112,9 +112,6 @@ export function WebFooter() {
           <View style={{ gap: 4 }}>
             <Text style={[styles.copy, { color: c.muted }]}>
               © 2026 <Text style={{ color: '#22c55e', fontWeight: '700' }}>Sliabh Argaelic</Text> — Argentina
-              {'  '}·{'  '}
-              <Text style={{ fontStyle: 'italic' }}>{t('Una idea de', 'An idea by')} </Text>
-              <Text style={{ color: c.text, fontWeight: '600' }}>Francisco Deane</Text>
             </Text>
           </View>
           <View style={styles.copyRight}>
