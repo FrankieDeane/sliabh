@@ -469,7 +469,7 @@
           </button>
           <button class="layer-toggle" id="trailLayerToggle">
             <span class="toggle-dot"></span>
-            <span id="trailToggleLabel">Senderos de Bariloche (barilochetrekking.com)</span>
+            <span id="trailToggleLabel">Senderos de Bariloche</span>
           </button>
           <button class="layer-toggle chalten" id="chaltenLayerToggle">
             <span class="toggle-dot"></span>
@@ -2170,7 +2170,7 @@
         .map(p => `      <trkpt lat="${p.lat}" lon="${p.lon}">${p.ele != null ? `<ele>${p.ele}</ele>` : ''}</trkpt>`)
         .join('\n');
       return `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Sliabh — barilochetrekking.com"
+<gpx version="1.1" creator="Sliabh"
   xmlns="http://www.topografix.com/GPX/1/1">
   <metadata><name>${trail.name}</name><desc>${trail.description}</desc><time>${new Date().toISOString()}</time></metadata>
 ${wpts}
@@ -2575,7 +2575,7 @@ ${trkpts}
       if (trailLayerVisible) {
         toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T(`Senderos de Bariloche — VISIBLES (${barilocheTrails.length} senderos)`, `Bariloche trails — VISIBLE (${barilocheTrails.length} trails)`)}`;
       } else {
-        toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T('Senderos de Bariloche (barilochetrekking.com)', 'Bariloche trails (barilochetrekking.com)')}`;
+        toggleBtn.innerHTML = `<span class="toggle-dot"></span> ${T('Senderos de Bariloche', 'Bariloche trails')}`;
       }
     }
 
