@@ -64,12 +64,12 @@ const headTags = `
     <link rel="apple-touch-icon" href="/favicon.png" />
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8CFDD6XE4P"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PTV8BLEX0"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-8CFDD6XE4P');
+      gtag('config', 'G-5PTV8BLEX0');
     </script>
 
     <!-- SEO -->
