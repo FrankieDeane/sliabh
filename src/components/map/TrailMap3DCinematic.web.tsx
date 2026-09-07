@@ -27,6 +27,11 @@ const SATELLITE_TILES = [
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 ];
 
+/** Esri World Topo — free, no API key required */
+const TOPO_TILES = [
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+];
+
 /** Bearing (degrees) from point A → B */
 function bearing(a: GpxPoint, b: GpxPoint): number {
   const dLon = (b.lon - a.lon) * (Math.PI / 180);
@@ -59,6 +64,7 @@ export default function TrailMap3DCinematic({
   const [phase, setPhase] = useState<'loading' | 'flying' | 'interactive'>('loading');
   const phaseRef = useRef<'loading' | 'flying' | 'interactive'>('loading');
   const [is3D, setIs3D] = useState(true);
+  const [satellite, setSatellite] = useState(true);
   const [rotateMode, setRotateMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const rotateModeRef = useRef(false);
@@ -143,7 +149,9 @@ export default function TrailMap3DCinematic({
         if (!containerRef.current || mapRef.current) return;
         const ml = (window as any).maplibregl;
 
-        // ── Satellite base style ──────────────────────────────────────────
+        // ── Satellite + topo base style ─────────────────────────────────────
+        // Both layers ship in the style; the Satélite/Topo control just
+        // flips their visibility (see toggleSatellite below).
         const satelliteStyle: any = {
           version: 8,
           sources: {
@@ -156,9 +164,17 @@ export default function TrailMap3DCinematic({
               attribution: mapTilerKey ? '© MapTiler' : '© Esri',
               maxzoom: 18,
             },
+            topo: {
+              type: 'raster',
+              tiles: TOPO_TILES,
+              tileSize: 256,
+              attribution: '© Esri',
+              maxzoom: 18,
+            },
           },
           layers: [
             { id: 'satellite-bg', type: 'raster', source: 'satellite', paint: { 'raster-brightness-max': 0.9 } },
+            { id: 'topo-bg', type: 'raster', source: 'topo', layout: { visibility: 'none' } },
           ],
         };
 
@@ -431,6 +447,15 @@ export default function TrailMap3DCinematic({
     map.setTerrain(next ? { source: 'terrain-dem', exaggeration: effExaggeration } : null);
   }
 
+  function toggleSatellite() {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !satellite;
+    setSatellite(next);
+    map.setLayoutProperty('satellite-bg', 'visibility', next ? 'visible' : 'none');
+    map.setLayoutProperty('topo-bg', 'visibility', next ? 'none' : 'visible');
+  }
+
   const containerH = typeof height === 'number' ? height : 420;
 
   return (
@@ -486,13 +511,20 @@ export default function TrailMap3DCinematic({
             style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
             <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
           </TouchableOpacity>
+          {/* Satélite / Topo toggle */}
+          <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
+            style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
+            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{satellite ? 'TOPO' : 'SATÉLITE'}</Text>
+          </TouchableOpacity>
         </View>
       )}
 
-      {/* SAT badge */}
+      {/* SAT/TOPO badge */}
       {phase !== 'loading' && (
         <View style={{ position: 'absolute', top: 12, left: 12, backgroundColor: 'rgba(7,11,20,0.72)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-          <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 9, fontWeight: '700', letterSpacing: 1 }}>SAT · 3D</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 9, fontWeight: '700', letterSpacing: 1 }}>
+            {satellite ? 'SAT' : 'TOPO'} · {is3D ? '3D' : '2D'}
+          </Text>
         </View>
       )}
     </View>
