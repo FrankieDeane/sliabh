@@ -87,7 +87,7 @@ export default function RegistroScreen() {
         );
         return;
       }
-      // Code-based verification: Supabase e-mailed a 6-digit code. Send the user
+      // Code-based verification: Supabase e-mailed an 8-digit code. Send the user
       // to the verification screen, carrying the name so we can create their
       // profile once the code confirms the account.
       router.push({

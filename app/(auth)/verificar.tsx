@@ -28,8 +28,8 @@ export default function VerificarScreen() {
   }`;
 
   async function handleVerify() {
-    if (code.length !== 6) {
-      showAlert(t('Código incompleto', 'Incomplete code'), t('El código debe tener 6 dígitos.', 'The code must be 6 digits.'));
+    if (code.length !== 8) {
+      showAlert(t('Código incompleto', 'Incomplete code'), t('El código debe tener 8 dígitos.', 'The code must be 8 digits.'));
       return;
     }
     setLoading(true);
@@ -95,18 +95,18 @@ export default function VerificarScreen() {
       <Text className="text-4xl mb-3">📩</Text>
       <Text className={`text-2xl font-bold mb-2 ${textPrimary}`}>{t('Verificá tu correo', 'Verify your email')}</Text>
       <Text className={`text-sm mb-8 leading-5 ${textMuted}`}>
-        {t('Enviamos un código de 6 dígitos a', 'We sent a 6-digit code to')}{'\n'}
+        {t('Enviamos un código de 8 dígitos a', 'We sent an 8-digit code to')}{'\n'}
         <Text className={`font-semibold ${textPrimary}`}>{email}</Text>
       </Text>
 
       <Text className={`text-sm font-medium mb-1 ${textPrimary}`}>{t('Código de verificación', 'Verification code')}</Text>
       <TextInput
         value={code}
-        onChangeText={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))}
-        placeholder="000000"
+        onChangeText={(v) => setCode(v.replace(/\D/g, '').slice(0, 8))}
+        placeholder="00000000"
         placeholderTextColor={isDark ? '#6b7280' : '#9ca3af'}
         keyboardType="number-pad"
-        maxLength={6}
+        maxLength={8}
         className={`${inputClass} text-center text-2xl tracking-widest`}
       />
       <Button label={t('Verificar y entrar', 'Verify & continue')} onPress={handleVerify} loading={loading} fullWidth />
