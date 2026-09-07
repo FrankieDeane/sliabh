@@ -6,10 +6,12 @@ import { useLangStore } from '../../store/langStore';
 import { isSupabaseConfigured, submitSponsorLead } from '../../services/supabase';
 import { LOGO_URI } from '../../constants/logo';
 
-// Swap this once the real photo is available (a local asset or a hosted
-// URL) — until then the "About us" section shows a placeholder avatar
-// instead of silently shipping a fake photo.
-const FOUNDER_PHOTO_URI: string | null = null;
+// Frankie's LinkedIn profile photo. NOTE: this is a signed LinkedIn CDN URL
+// with an expiry baked in (~2026-09-24, per the `e=` query param) — it WILL
+// break after that date. Replace with a permanent hosted URL, or a local
+// asset committed to the repo, before then.
+const FOUNDER_PHOTO_URI: string | null =
+  'https://media.licdn.com/dms/image/v2/D4D03AQEiBuZWJQDd5g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1727996963047?e=1790208000&v=beta&t=LfJSvPicAACSN4IasRB24yy-RqAV6JyoW6lYPkJO2Xw';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
