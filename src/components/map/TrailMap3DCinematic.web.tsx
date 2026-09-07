@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
-import { gpxTrackToGeoJSON } from '../../utils/geojson';
+import { gpxTrackToGeoJSON, trackToSlopeSegments } from '../../utils/geojson';
 
 interface GpxPoint {
   lat: number;
@@ -65,6 +65,7 @@ export default function TrailMap3DCinematic({
   const phaseRef = useRef<'loading' | 'flying' | 'interactive'>('loading');
   const [is3D, setIs3D] = useState(true);
   const [satellite, setSatellite] = useState(true);
+  const [slopeVisible, setSlopeVisible] = useState(false);
   const [rotateMode, setRotateMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const rotateModeRef = useRef(false);
@@ -241,6 +242,29 @@ export default function TrailMap3DCinematic({
             type: 'line',
             source: 'trail',
             paint: { 'line-color': '#4ade80', 'line-width': 3, 'line-opacity': 0.95 },
+          });
+
+          // ── Slope-by-segment overlay (off by default, toggled below) ──────
+          // Colors each stretch of trail by its average grade — green (flat)
+          // through purple (very steep, 45°+) — instead of the flat trail-line.
+          map.addSource('trail-slope', { type: 'geojson', data: trackToSlopeSegments(track) });
+          map.addLayer({
+            id: 'trail-slope-line',
+            type: 'line',
+            source: 'trail-slope',
+            layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
+            paint: {
+              'line-width': 5,
+              'line-color': [
+                'interpolate', ['linear'], ['get', 'slopeDeg'],
+                0, '#22c55e',
+                15, '#84cc16',
+                25, '#eab308',
+                35, '#f97316',
+                45, '#ef4444',
+                60, '#a21caf',
+              ],
+            },
           });
 
           // ── Trail point markers ──────────────────────────────────────────
@@ -456,6 +480,16 @@ export default function TrailMap3DCinematic({
     map.setLayoutProperty('topo-bg', 'visibility', next ? 'none' : 'visible');
   }
 
+  function toggleSlope() {
+    const map = mapRef.current;
+    if (!map) return;
+    const next = !slopeVisible;
+    setSlopeVisible(next);
+    map.setLayoutProperty('trail-slope-line', 'visibility', next ? 'visible' : 'none');
+    map.setLayoutProperty('trail-line', 'visibility', next ? 'none' : 'visible');
+    map.setLayoutProperty('trail-glow', 'visibility', next ? 'none' : 'visible');
+  }
+
   const containerH = typeof height === 'number' ? height : 420;
 
   return (
@@ -518,17 +552,55 @@ export default function TrailMap3DCinematic({
           up (loading or interactive), not gated behind the ~30s cinematic
           intro like the rest of the interactive-only controls. */}
       {phase !== 'loading' && (
-        <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
-          style={{
-            position: 'absolute', bottom: 12, left: 12,
-            backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8,
-            paddingHorizontal: 12, paddingVertical: 6,
-            borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)',
-          }}>
-          <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
-            {satellite ? 'VER TOPO' : 'VER SATÉLITE'}
-          </Text>
-        </TouchableOpacity>
+        <View style={{ position: 'absolute', bottom: 12, left: 12, flexDirection: 'row', gap: 8 } as any}>
+          <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
+            style={{
+              backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8,
+              paddingHorizontal: 12, paddingVertical: 6,
+              borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)',
+            }}>
+            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
+              {satellite ? 'VER TOPO' : 'VER SATÉLITE'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Slope-by-segment toggle */}
+          <TouchableOpacity onPress={toggleSlope} activeOpacity={0.8}
+            style={{
+              backgroundColor: slopeVisible ? 'rgba(234,179,8,0.18)' : 'rgba(15,23,36,0.85)',
+              borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6,
+              borderWidth: 1, borderColor: slopeVisible ? '#eab308' : 'rgba(234,179,8,0.4)',
+            }}>
+            <Text style={{ color: '#eab308', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
+              {slopeVisible ? 'OCULTAR PENDIENTE' : 'VER PENDIENTE'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Slope color-ramp legend — only while the overlay is on */}
+      {phase !== 'loading' && slopeVisible && (
+        <View style={{
+          position: 'absolute', bottom: 48, left: 12,
+          backgroundColor: 'rgba(7,11,20,0.85)', borderRadius: 8,
+          paddingHorizontal: 10, paddingVertical: 7,
+          borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+          flexDirection: 'row', alignItems: 'center', gap: 6,
+        } as any}>
+          {[
+            { c: '#22c55e', l: '0°' },
+            { c: '#84cc16', l: '15°' },
+            { c: '#eab308', l: '25°' },
+            { c: '#f97316', l: '35°' },
+            { c: '#ef4444', l: '45°' },
+            { c: '#a21caf', l: '60°+' },
+          ].map((s) => (
+            <View key={s.c} style={{ alignItems: 'center', gap: 2 }}>
+              <View style={{ width: 14, height: 6, borderRadius: 3, backgroundColor: s.c }} />
+              <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 8 }}>{s.l}</Text>
+            </View>
+          ))}
+        </View>
       )}
 
       {/* SAT/TOPO badge */}
