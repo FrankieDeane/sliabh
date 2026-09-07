@@ -32,24 +32,24 @@ export function FireRiskBanner({ lat, lon }: { lat: number; lon: number }) {
       style={{
         flexDirection: 'row',
         alignItems: 'flex-start',
-        gap: 10,
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: 'rgba(239,68,68,0.55)',
-        backgroundColor: 'rgba(239,68,68,0.12)',
-        padding: 16,
-        marginBottom: 12,
+        gap: 14,
+        borderRadius: 18,
+        borderWidth: 2,
+        borderColor: 'rgba(239,68,68,0.65)',
+        backgroundColor: 'rgba(239,68,68,0.14)',
+        padding: 20,
+        marginBottom: 16,
       }}
     >
-      <Ionicons name="flame-outline" size={20} color="#ef4444" />
+      <Ionicons name="flame" size={30} color="#ef4444" />
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 13.5, lineHeight: 20, color: '#ef4444', fontWeight: '700' }}>
+        <Text style={{ fontSize: 17, lineHeight: 24, color: '#ef4444', fontWeight: '800' }}>
           {t(
             `Foco de calor detectado a ${distanceKm.toFixed(1)} km del sendero`,
             `Heat source detected ${distanceKm.toFixed(1)} km from the trail`,
           )}
         </Text>
-        <Text style={{ fontSize: 12, lineHeight: 17, color: 'rgba(239,68,68,0.85)', marginTop: 3 }}>
+        <Text style={{ fontSize: 14.5, lineHeight: 21, color: 'rgba(239,68,68,0.9)', marginTop: 5 }}>
           {t(
             `Detectado por satélite (NASA FIRMS) el ${hotspot.acqDate}. Verificá con la administración del parque antes de salir.`,
             `Detected by satellite (NASA FIRMS) on ${hotspot.acqDate}. Check with the park administration before heading out.`,
