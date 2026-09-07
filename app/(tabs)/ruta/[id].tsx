@@ -559,13 +559,13 @@ export default function TrailDetailScreen() {
   const seoTitle = `${trail.name} — ${trail.province} | Sliabh`;
   const seoImage = trail.photo_uri.startsWith('http')
     ? trail.photo_uri
-    : `https://sliabh.netlify.app${trail.photo_uri}`;
+    : `https://sliabh.com.ar${trail.photo_uri}`;
   const seoJsonLd = [
     {
       '@type': 'TouristAttraction',
       name: trail.name,
       description: trail.description,
-      url: `https://sliabh.netlify.app/ruta/${trail.id}`,
+      url: `https://sliabh.com.ar/ruta/${trail.id}`,
       image: seoImage,
       address: { '@type': 'PostalAddress', addressRegion: trail.province, addressCountry: 'AR' },
       geo: { '@type': 'GeoCoordinates', latitude: trail.coordinates.lat, longitude: trail.coordinates.lon },
@@ -580,9 +580,9 @@ export default function TrailDetailScreen() {
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.netlify.app/' },
-        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.netlify.app/rutas' },
-        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.netlify.app/ruta/${trail.id}` },
+        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.com.ar/' },
+        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.com.ar/rutas' },
+        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.com.ar/ruta/${trail.id}` },
       ],
     },
   ];

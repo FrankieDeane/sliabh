@@ -2,7 +2,7 @@
 // Run with: node scripts/gen-sitemap.mjs
 import fs from 'node:fs';
 
-const BASE = process.env.SITE_URL || 'https://sliabh.netlify.app';
+const BASE = process.env.SITE_URL || 'https://sliabh.com.ar';
 
 function ids(file) {
   const s = fs.readFileSync(file, 'utf8');

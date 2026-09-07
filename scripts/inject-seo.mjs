@@ -19,7 +19,7 @@
 import fs from 'node:fs';
 
 const DIST_INDEX = 'dist/index.html';
-const SITE_URL = 'https://sliabh.netlify.app';
+const SITE_URL = 'https://sliabh.com.ar';
 
 const TITLE = 'Sliabh — Senderismo y trekking en Argentina | Rutas, mapas 3D y GPS offline';
 const DESCRIPTION =

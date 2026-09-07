@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
 
-const SITE_URL = 'https://sliabh.netlify.app';
+const SITE_URL = 'https://sliabh.com.ar';
 
 /**
  * Site-wide default <head> tags (title, description, OG, Twitter, canonical,
