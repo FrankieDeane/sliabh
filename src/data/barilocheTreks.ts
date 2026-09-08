@@ -2155,6 +2155,125 @@ Desde arriba el panorama abarca el lago Moreno en primer plano, y en días despe
     camping_allowed: false,
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Mirador Bahía López
+  // -------------------------------------------------------------------------
+  {
+    id: 'mirador-bahia-lopez',
+    name: 'Mirador Bahía López — Brazo Tristeza',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Circuito Chico',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 3,
+    elevation_gain_m: 95,
+    max_altitude_m: 870,
+    duration: { min: 1, max: 1.5, unit: 'horas' },
+    coordinates: { lat: -41.0700, lon: -71.5450 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'apto familias', 'Circuito Chico', 'lago', 'fácil', 'medio día', 'panorámica'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Caminata corta y fácil desde el estacionamiento de Bahía López (km 32 del Circuito Chico) hasta un mirador sobre el Brazo Tristeza del lago Nahuel Huapi, con vista a los cerros López, Capilla y Millaqueo. 3 km ida y vuelta, 95 m de desnivel.',
+    description_en:
+      'A short, easy walk from the Bahía López parking area (km 32 of the Circuito Chico) to a viewpoint over the Brazo Tristeza arm of Lago Nahuel Huapi, with views of Cerro López, Cerro Capilla and Cerro Millaqueo. 3 km round trip, 95 m elevation gain.',
+    trailhead: 'Estacionamiento Bahía López, km 32 del Circuito Chico (junto al Hotel Alun Nehuen)',
+    source: 'barilochetrekking.com',
+    long_description: `Bahía López es una de las paradas clásicas del Circuito Chico, y la mayoría de quienes lo recorren en auto o bici se quedan solo en la playa y el mirador de la costa — pero un sendero corto que arranca junto al estacionamiento sube hasta un balcón natural sobre el Brazo Tristeza, uno de los tramos más recortados y fotogénicos del lago Nahuel Huapi.
+
+El sendero gana altura de forma suave entre bosque bajo, sin exigencia técnica, hasta un mirador que enmarca simultáneamente los cerros López, Capilla y Millaqueo sobre el espejo de agua del brazo. En cuarenta minutos de subida se consigue una de las mejores relaciones esfuerzo-vista de todo el Circuito Chico.
+
+Es una parada ideal para combinar con el resto del circuito — antes o después de Villa Tacul, el Cerro Campanario o el Cerro Llao Llao — o como caminata independiente para quien busca una salida corta con recompensa visual garantizada.`,
+    gpxTrack: [
+      { lat: -41.0700, lon: -71.5450, ele: 775 },
+      { lat: -41.0715, lon: -71.5465, ele: 810 },
+      { lat: -41.0730, lon: -71.5480, ele: 845 },
+      { lat: -41.0745, lon: -71.5490, ele: 870 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0700,
+        lon: -71.5450,
+        name: 'Estacionamiento Bahía López',
+        description: 'Km 32 del Circuito Chico, junto al Hotel Alun Nehuen. Restaurante disponible.',
+      },
+      {
+        lat: -41.0745,
+        lon: -71.5490,
+        name: 'Mirador Brazo Tristeza',
+        description: 'Vista a los cerros López, Capilla y Millaqueo sobre el Brazo Tristeza del lago Nahuel Huapi.',
+      },
+    ],
+    parking: 'Estacionamiento junto al Hotel Alun Nehuen, km 32 del Circuito Chico.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico), unos 32 km. Bus urbano línea 20 pasa por la zona.',
+    water_sources: 'Sin fuentes de agua en el recorrido. Llevar agua propia, aunque el paseo es corto.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Piedra del Habsburgo (extensión desde Cerro Otto)
+  // -------------------------------------------------------------------------
+  {
+    id: 'piedra-habsburgo',
+    name: 'Piedra del Habsburgo — Cerro Otto',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 4,
+    elevation_gain_m: 50,
+    max_altitude_m: 1420,
+    duration: { min: 1, max: 1.5, unit: 'horas' },
+    coordinates: { lat: -41.1473, lon: -71.3795 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'Cerro Otto', 'apto familias', 'fácil', 'panorámica', 'menos concurrido'],
+    permits_required: false,
+    best_season: 'Oct – May',
+    description:
+      'Extensión corta y fácil desde la confitería giratoria del Cerro Otto hasta la Piedra del Habsburgo, un mirador natural con vista panorámica al distrito de lagos. 4 km ida y vuelta desde la confitería, casi sin desnivel.',
+    description_en:
+      "A short, easy extension from the Cerro Otto revolving café to Piedra del Habsburgo, a natural viewpoint over the lake district. 4 km round trip from the café, almost no elevation gain.",
+    trailhead: 'Confitería giratoria, Cerro Otto (accesible en teleférico o caminando — ver ficha Cerro Otto)',
+    source: 'barilochetrekking.com',
+    long_description: `La Piedra del Habsburgo es la extensión natural para quien ya llegó a la confitería giratoria del Cerro Otto —caminando o en teleférico— y quiere alejarse un poco de la multitud del mirador principal. El nombre recuerda la visita de un archiduque austríaco a la zona a comienzos del siglo XX.
+
+El sendero sale de la confitería y bordea el filo del cerro hacia el oeste, por un camino ancho y de pendiente suave que prácticamente no exige esfuerzo adicional al de llegar hasta ahí. En unos 2 km se alcanza la piedra que da nombre al lugar, un afloramiento rocoso desde el que se abre una vista panorámica que incluye el lago Nahuel Huapi, el cordón del Catedral y, en días despejados, buena parte del cordón fronterizo hacia Chile.
+
+Por ser una extensión corta desde un punto ya muy visitado, es una de las mejores opciones para quien busca algo de tranquilidad sin alejarse demasiado de los servicios de la confitería — baños, gastronomía y el teleférico de bajada disponibles en el punto de partida.`,
+    gpxTrack: [
+      { lat: -41.1473, lon: -71.3795, ele: 1405 },
+      { lat: -41.1465, lon: -71.3830, ele: 1415 },
+      { lat: -41.1458, lon: -71.3865, ele: 1420 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1473,
+        lon: -71.3795,
+        name: 'Confitería giratoria (Cerro Otto)',
+        description: 'Punto de partida de la extensión. Servicios completos: baños, gastronomía, teleférico.',
+      },
+      {
+        lat: -41.1458,
+        lon: -71.3865,
+        name: 'Piedra del Habsburgo',
+        description: 'Afloramiento rocoso con vista panorámica al Nahuel Huapi, el cordón del Catedral y la frontera con Chile en días despejados.',
+      },
+    ],
+    parking: 'Ver ficha Cerro Otto para acceso — no hay estacionamiento propio, se llega desde la confitería.',
+    access_notes: 'Se accede desde la confitería giratoria del Cerro Otto, ya sea caminando desde Bariloche o en el teleférico. Ver ficha "Cerro Otto desde Bariloche" para el acceso completo.',
+    water_sources: 'Sin fuentes de agua en el tramo. La confitería en el punto de partida vende bebidas.',
+    camping_allowed: false,
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
