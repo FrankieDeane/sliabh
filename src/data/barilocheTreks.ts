@@ -21,7 +21,7 @@ import type { ArgentinaTrail } from './argentinaTrails';
 
 export interface ExtendedTrail extends ArgentinaTrail {
   /** Data provider */
-  source: 'barilochetrekking.com';
+  source: string;
   /** 3–4 detailed paragraphs describing the route, landscape and key moments */
   long_description: string;
   /** English translation of long_description. Optional: most of the 18
@@ -89,11 +89,11 @@ export const BARILOCHE_TRAILS: ExtendedTrail[] = [
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'moderado',
-    distance_km: 20,
+    distance_km: 19.9,
     elevation_gain_m: 700,
-    max_altitude_m: 1700,
+    max_altitude_m: 1749,
     duration: { min: 7, max: 9, unit: 'horas' },
-    coordinates: { lat: -41.1855, lon: -71.4499 },
+    coordinates: { lat: -41.16996, lon: -71.44227 },
     photo_uri:
       'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
     tags: ['refugio', 'laguna', 'escalada en roca', 'agujas graníticas', 'bosque nativo'],
@@ -104,7 +104,7 @@ export const BARILOCHE_TRAILS: ExtendedTrail[] = [
     description_en:
       'A trek from the base of Cerro Catedral to Refugio Frey (1,700 m) on the shore of Laguna Toncek. One of the most iconic destinations near Bariloche, popular with climbers from around the world. About 10 km and 4 hours each way.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
-    source: 'barilochetrekking.com',
+    source: 'barilochetrekking.com; track GPS verificado vía Wikiloc',
     long_description: `El sendero al Refugio Frey es sin duda el trek más emblemático del entorno de Bariloche. La ruta parte del estacionamiento de la base de Cerro Catedral (1050 m) y penetra de inmediato en un denso bosque de coihues y ñires que ofrece sombra y humedad en los primeros kilómetros. El camino asciende de manera constante cruzando algunos arroyos tributarios y atravesando claros con vistas ocasionales a los cerros circundantes, hasta llegar al sector conocido como la Cancha de Fútbol, una pampa alta de suelo arenoso donde los escaladores sueltan sus mochilas para organizar sus cordadas.
 
 A partir de la Cancha de Fútbol el terreno se vuelve más técnico. El sendero trepa entre bloques de granito, superando pasos que requieren el uso de las manos en uno o dos puntos claves. Las agujas de granito gris del Grupo Frey van apareciendo en el horizonte como dedos de piedra que perforan el cielo patagónico, y la sensación de encontrarse en un anfiteatro natural de escala monumental crece con cada metro de altitud ganado. La variedad de tonos en la roca —gris plata, óxido y blanco— cambia según el ángulo de la luz solar.
@@ -113,52 +113,48 @@ La llegada a la Laguna Toncek (1700 m) resulta siempre impactante: las aguas ver
 
 El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y detenerse a explorar las piletas de agua cristalina entre los bloques graníticos. Para los más curiosos, la subida de 20-30 minutos a la Laguna Schmoll —el escalón superior del circo, por encima de Toncek— añade una hora extra y perspectivas únicas de las paredes que han hecho famoso a Frey en toda Sudamérica.`,
     gpxTrack: [
-      { lat: -41.1855, lon: -71.4499, ele: 1050 },
-      { lat: -41.1872, lon: -71.4523, ele: 1100 },
-      { lat: -41.1890, lon: -71.4558, ele: 1175 },
-      { lat: -41.1905, lon: -71.4585, ele: 1230 },
-      { lat: -41.1918, lon: -71.4610, ele: 1290 },
-      { lat: -41.1930, lon: -71.4635, ele: 1340 },
-      { lat: -41.1940, lon: -71.4655, ele: 1380 },
-      { lat: -41.1950, lon: -71.4670, ele: 1420 },
-      { lat: -41.1957, lon: -71.4690, ele: 1460 },
-      { lat: -41.1963, lon: -71.4705, ele: 1500 },
-      { lat: -41.1970, lon: -71.4718, ele: 1540 },
-      { lat: -41.1975, lon: -71.4727, ele: 1580 },
-      { lat: -41.1980, lon: -71.4733, ele: 1620 },
-      { lat: -41.1985, lon: -71.4737, ele: 1655 },
-      { lat: -41.1990, lon: -71.4739, ele: 1680 },
-      { lat: -41.1995, lon: -71.4740, ele: 1695 },
-      { lat: -41.1972, lon: -71.4830, ele: 1700 },
+      { lat: -41.16996, lon: -71.44227, ele: 1050 },
+      { lat: -41.17607, lon: -71.44294, ele: 1109 },
+      { lat: -41.18231, lon: -71.44070, ele: 1131 },
+      { lat: -41.18906, lon: -71.43974, ele: 1161 },
+      { lat: -41.19574, lon: -71.43670, ele: 1173 },
+      { lat: -41.20241, lon: -71.43804, ele: 1168 },
+      { lat: -41.20778, lon: -71.44219, ele: 1182 },
+      { lat: -41.20940, lon: -71.44981, ele: 1175 },
+      { lat: -41.20638, lon: -71.45663, ele: 1300 },
+      { lat: -41.20304, lon: -71.46514, ele: 1368 },
+      { lat: -41.19940, lon: -71.47076, ele: 1451 },
+      { lat: -41.19704, lon: -71.47860, ele: 1585 },
+      { lat: -41.19837, lon: -71.48606, ele: 1747 },
     ],
     namedWaypoints: [
       {
-        lat: -41.1855,
-        lon: -71.4499,
+        lat: -41.16996,
+        lon: -71.44227,
         name: 'Base Cerro Catedral',
         description: 'Punto de partida con estacionamiento, baños y alquiler de equipos de esquí en temporada invernal.',
       },
       {
-        lat: -41.1918,
-        lon: -71.4610,
+        lat: -41.20778,
+        lon: -71.44219,
         name: 'Arroyo Van Titter',
         description: 'El sendero remonta el valle del arroyo Van Titter; buena fuente de agua. Cruces sobre troncos o piedras según el caudal.',
       },
       {
-        lat: -41.1950,
-        lon: -71.4670,
+        lat: -41.20304,
+        lon: -71.46514,
         name: 'Cancha de Fútbol',
         description: 'Pampa alta de granito arenoso donde convergen los senderos de escalada. Excelente lugar para descansar y admirar las agujas.',
       },
       {
-        lat: -41.1975,
-        lon: -71.4727,
+        lat: -41.19704,
+        lon: -71.47860,
         name: 'Paso técnico del granito',
         description: 'Sector de bloques donde el sendero se vuelve expuesto; se requiere el uso de manos en dos cortos tramos.',
       },
       {
-        lat: -41.1972,
-        lon: -71.4830,
+        lat: -41.19837,
+        lon: -71.48606,
         name: 'Refugio Frey / Laguna Toncek',
         description: 'Refugio del CAB a 1700 m con alojamiento, comidas y terraza sobre la Laguna Toncek. Centro neurálgico de la escalada patagónica. La Laguna Schmoll queda 20-30 min más arriba.',
       },
@@ -841,11 +837,11 @@ Desde la cumbre del Challhuaco (2094 m) el panorama abarca el lago Nahuel Huapi 
     region: 'patagonia-norte',
     activity: 'travesia',
     difficulty: 'dificil',
-    distance_km: 33,
-    elevation_gain_m: 1450,
-    max_altitude_m: 1900,
+    distance_km: 37,
+    elevation_gain_m: 2200,
+    max_altitude_m: 2027,
     duration: { min: 2, max: 3, unit: 'dias' },
-    coordinates: { lat: -41.1855, lon: -71.4499 },
+    coordinates: { lat: -41.16980, lon: -71.44252 },
     photo_uri:
       'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&q=80&fit=crop&auto=format',
     tags: ['travesía', '2 días', 'refugio', 'paso de altura', 'backcountry', 'clásico Bariloche'],
@@ -856,7 +852,7 @@ Desde la cumbre del Challhuaco (2094 m) el panorama abarca el lago Nahuel Huapi 
     description_en:
       'A classic two- or three-day high-mountain traverse near Bariloche: Catedral → Refugio Frey → the ridge past Laguna Schmoll → the Rucaco valley → Brecha Negra → Refugio Jakob → descent to Tambo Báez. Good weather and experience required.',
     trailhead: 'Base Cerro Catedral (Bariloche)',
-    source: 'barilochetrekking.com',
+    source: 'barilochetrekking.com; track GPS verificado vía Wikiloc (tramo Catedral–Jakob)',
     long_description: `La Travesía Frey–Jakob es la excursión de dos días de referencia absoluta de Bariloche y una de las rutas de montaña más completas de la Patagonia andina. Combina bosque, laguna glaciar, pasos de altura expuestos y el camaradería única de las noches en refugio de alta montaña. No en vano es el sueño cumplido de todo amante del trekking que visita la región.
 
 El primer día replica el sendero al Refugio Frey desde la base de Catedral (ver descripción separada), con llegada al refugio a orillas de la Laguna Toncek en la tarde. La noche en el refugio Frey es una experiencia en sí misma: la terraza iluminada por los últimos rayos del sol sobre las agujas de granito, el tintineo de cuerdas y mosquetones de los escaladores, y una cena caliente rodeado de montañeros de distintos países que comparten historias de vías y cumbres.
@@ -865,69 +861,58 @@ El segundo día es el más exigente y el más recompensante. Desde Frey el sende
 
 Del otro lado de la Brecha, la bajada conduce al Refugio Jakob (oficialmente Refugio San Martín, 1600 m), asomado a la laguna Jakob en un valle glaciar espectacular. Se puede pernoctar allí y bajar al día siguiente por el valle del arroyo Casa de Piedra hasta Tambo Báez (unos 14 km, sobre la Ruta 79 camino a Colonia Suiza), cerrando una de las travesías más completas de la Patagonia andina.`,
     gpxTrack: [
-      { lat: -41.1855, lon: -71.4499, ele: 1050 },
-      { lat: -41.1905, lon: -71.4585, ele: 1230 },
-      { lat: -41.1950, lon: -71.4670, ele: 1420 },
-      { lat: -41.1975, lon: -71.4727, ele: 1580 },
-      { lat: -41.1972, lon: -71.4830, ele: 1700 },
-      { lat: -41.1975, lon: -71.4790, ele: 1760 },
-      { lat: -41.1940, lon: -71.4850, ele: 1830 },
-      { lat: -41.1900, lon: -71.4900, ele: 1900 },
-      { lat: -41.1833, lon: -71.4933, ele: 1700 },
-      { lat: -41.1733, lon: -71.4967, ele: 1500 },
-      { lat: -41.1633, lon: -71.4983, ele: 1400 },
-      { lat: -41.1533, lon: -71.5000, ele: 1500 },
-      { lat: -41.1433, lon: -71.5033, ele: 1700 },
-      { lat: -41.1400, lon: -71.5050, ele: 1900 },
-      { lat: -41.1267, lon: -71.5117, ele: 1600 },
-      { lat: -41.1167, lon: -71.5200, ele: 1450 },
-      { lat: -41.1067, lon: -71.5350, ele: 1400 },
-      { lat: -41.0900, lon: -71.5500, ele: 1100 },
-      { lat: -41.0733, lon: -71.5633, ele: 900 },
-      { lat: -41.0567, lon: -71.5867, ele: 830 },
+      { lat: -41.16980, lon: -71.44252, ele: 1052 },
+      { lat: -41.18200, lon: -71.44052, ele: 1118 },
+      { lat: -41.19546, lon: -71.43678, ele: 1162 },
+      { lat: -41.20791, lon: -71.44221, ele: 1171 },
+      { lat: -41.20674, lon: -71.45620, ele: 1258 },
+      { lat: -41.20165, lon: -71.46758, ele: 1368 },
+      { lat: -41.19742, lon: -71.48067, ele: 1606 },
+      { lat: -41.19820, lon: -71.48637, ele: 1737 },
+      { lat: -41.19376, lon: -71.50021, ele: 1907 },
+      { lat: -41.18801, lon: -71.50877, ele: 1687 },
+      { lat: -41.18681, lon: -71.52457, ele: 1545 },
+      { lat: -41.18449, lon: -71.53995, ele: 1749 },
+      { lat: -41.18528, lon: -71.55521, ele: 1594 },
+      { lat: -41.18620, lon: -71.56148, ele: 1582 },
+      { lat: -41.18411, lon: -71.57553, ele: 1639 },
     ],
     namedWaypoints: [
       {
-        lat: -41.1855,
-        lon: -71.4499,
+        lat: -41.16980,
+        lon: -71.44252,
         name: 'Base Cerro Catedral (Día 1 inicio)',
         description: 'Punto de partida. Estacionamiento con servicio de guarda de vehículos por 2 días. Inicio del sendero al Refugio Frey.',
       },
       {
-        lat: -41.1972,
-        lon: -71.4830,
+        lat: -41.19820,
+        lon: -71.48637,
         name: 'Refugio Frey (1700 m) — noche 1',
         description: 'Refugio del CAB a orillas de la Laguna Toncek. Reserva obligatoria en temporada alta. Cenas y desayunos disponibles. Carpas en la orilla de la laguna.',
       },
       {
-        lat: -41.1900,
-        lon: -71.4900,
+        lat: -41.19376,
+        lon: -71.50021,
         name: 'Filo del Catedral por Laguna Schmoll (~1900 m)',
         description: 'Subida junto a la Laguna Schmoll hasta el filo. Vistas a ambos lados: agujas de Frey y valle del Rucaco. Viento frecuente.',
       },
       {
-        lat: -41.1633,
-        lon: -71.4983,
+        lat: -41.18681,
+        lon: -71.52457,
         name: 'Valle del arroyo Rucaco',
         description: 'Bajada de ~500 m por pedrero y cruce del valle entre lengas achaparradas. Buena fuente de agua.',
       },
       {
-        lat: -41.1400,
-        lon: -71.5050,
+        lat: -41.18449,
+        lon: -71.53995,
         name: 'Brecha Negra (~1900 m)',
         description: 'Portezuelo de roca oscura con pendiente fuerte y terreno suelto; en ocasiones se usan las manos. No cruzar con nieve, hielo o mal tiempo.',
       },
       {
-        lat: -41.1267,
-        lon: -71.5117,
+        lat: -41.18411,
+        lon: -71.57553,
         name: 'Refugio San Martín / Jakob (1600 m)',
         description: 'Refugio del CAB junto a la laguna Jakob. Noche 2 recomendada antes de la bajada por el valle del Casa de Piedra.',
-      },
-      {
-        lat: -41.0567,
-        lon: -71.5867,
-        name: 'Tambo Báez / Colonia Suiza (final)',
-        description: 'Fin de la bajada por el valle del arroyo Casa de Piedra, sobre la Ruta 79. Bus o taxi de regreso a Bariloche; curanto en Colonia Suiza los fines de semana.',
       },
     ],
     parking: 'Dejar el vehículo en la base de Cerro Catedral (pago por días). Al finalizar en Tambo Báez / Colonia Suiza, tomar bus o taxi de regreso.',
@@ -1869,6 +1854,106 @@ En Puerto Frías termina el sendero — la continuación hacia Puerto Blest y Pu
     water_sources: 'Arroyos y el propio río Frías a lo largo de toda la travesía. Abundante en las dos etapas.',
     camping_allowed: true,
     refugio: 'Refugio Agostino Rocca (CAB)',
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Travesía 5 Lagunas + Paso de las Nubes (4-5 días)
+  // -------------------------------------------------------------------------
+  {
+    id: 'travesia-5-lagunas-paso-nubes',
+    name: 'Travesía 5 Lagunas + Paso de las Nubes',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'travesia',
+    difficulty: 'extremo',
+    distance_km: 76,
+    elevation_gain_m: 4800,
+    max_altitude_m: 1998,
+    duration: { min: 4, max: 5, unit: 'dias' },
+    coordinates: { lat: -41.09677, lon: -71.51785 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&q=80&fit=crop&auto=format',
+    tags: ['travesía', '4-5 días', 'lagunas', 'refugios', 'backcountry', 'clásico Bariloche', 'exigente'],
+    permits_required: false,
+    best_season: 'Ene – Mar',
+    description:
+      'La gran travesía de montaña de Bariloche: 4 a 5 días encadenando cinco lagunas de altura (Negra, CAB, Cretton, Jujuy e Ilón) hasta el Paso de las Nubes. Unos 76 km y desnivel acumulado muy exigente. Solo con experiencia en travesías de varios días.',
+    description_en:
+      "Bariloche's great mountain traverse: 4 to 5 days linking five high-altitude lagoons (Negra, CAB, Cretton, Jujuy and Ilón) up to Paso de las Nubes. About 76 km with very demanding cumulative elevation change. Multi-day backcountry experience required.",
+    trailhead: 'Sector Cerro Catedral / Colonia Suiza (Bariloche) — según variante de inicio',
+    source: 'Club Andino Bariloche (Aveandina 5 Lagunas); track GPS verificado vía Wikiloc',
+    long_description: `La Travesía de las 5 Lagunas es, junto con el Circuito de los 4 Refugios, la gran travesía de varios días del entorno de Bariloche — un recorrido que encadena cinco lagunas de altura (Negra, CAB, Cretton, Jujuy e Ilón) a través de pasos de montaña, bosques de lenga y valles glaciares, hasta enlazar con el Paso de las Nubes rumbo a Pampa Linda o Puerto Frías. El Club Andino Bariloche organiza además una versión competitiva (Aveandina 5 Lagunas) sobre el mismo trazado.
+
+El recorrido combina tramos de sendero bien marcado con sectores de alta montaña más exigentes, cruces de arroyo y noches en refugios o campamentos agrestes según el itinerario elegido — habitualmente repartido en 4 a 5 jornadas. El desnivel acumulado es considerable: la ruta sube y baja de forma constante entre cada laguna, superando en varios tramos los 1900 m de altitud.
+
+Es una travesía solo para quienes ya tienen experiencia previa en salidas de varios días con mochila de trekking completo, autosuficiencia en agua y comida, y buen manejo de la orientación — el clima de montaña puede cambiar rápido en cualquiera de los pasos altos del recorrido. Conviene registrar el itinerario en la seccional de guardaparques antes de salir y llevar equipo de campamento completo aun si se planea usar refugios, ante la eventualidad de tener que acampar.`,
+    long_description_en: `The 5 Lagunas Traverse is, along with the 4 Refugios Circuit, Bariloche's other great multi-day traverse — a route linking five high-altitude lagoons (Negra, CAB, Cretton, Jujuy and Ilón) across mountain passes, lenga forest and glacial valleys, connecting with Paso de las Nubes toward Pampa Linda or Puerto Frías. Club Andino Bariloche also runs a competitive race version (Aveandina 5 Lagunas) on the same route.
+
+The route combines well-marked trail sections with more demanding high-mountain stretches, stream crossings, and nights at refugios or backcountry campsites depending on the chosen itinerary — usually spread over 4 to 5 days. Cumulative elevation change is considerable: the route climbs and descends steadily between each lagoon, topping 1,900 m in several stretches.
+
+This traverse is only for those with prior multi-day backpacking experience, full self-sufficiency in water and food, and solid navigation skills — mountain weather can turn quickly at any of the route's high passes. Register your itinerary with the ranger station before setting out, and carry full camping gear even if you plan to use refugios, in case you need to camp.`,
+    gpxTrack: [
+      { lat: -41.09677, lon: -71.51785, ele: 923 },
+      { lat: -41.11661, lon: -71.52866, ele: 1087 },
+      { lat: -41.13326, lon: -71.54642, ele: 1208 },
+      { lat: -41.14273, lon: -71.56620, ele: 1262 },
+      { lat: -41.13618, lon: -71.57584, ele: 1726 },
+      { lat: -41.13723, lon: -71.60111, ele: 1620 },
+      { lat: -41.14913, lon: -71.61929, ele: 1477 },
+      { lat: -41.15725, lon: -71.63266, ele: 1566 },
+      { lat: -41.16913, lon: -71.64314, ele: 1618 },
+      { lat: -41.17636, lon: -71.65081, ele: 1579 },
+      { lat: -41.18260, lon: -71.65785, ele: 1811 },
+      { lat: -41.18780, lon: -71.66345, ele: 1909 },
+      { lat: -41.19071, lon: -71.67171, ele: 1608 },
+      { lat: -41.19025, lon: -71.69520, ele: 1843 },
+      { lat: -41.18575, lon: -71.70306, ele: 1872 },
+      { lat: -41.18325, lon: -71.72805, ele: 1516 },
+      { lat: -41.18954, lon: -71.74113, ele: 1374 },
+      { lat: -41.17936, lon: -71.75458, ele: 1453 },
+      { lat: -41.16978, lon: -71.77091, ele: 1544 },
+      { lat: -41.15850, lon: -71.78344, ele: 1303 },
+      { lat: -41.15651, lon: -71.79879, ele: 1410 },
+      { lat: -41.14810, lon: -71.80542, ele: 1079 },
+      { lat: -41.13549, lon: -71.79733, ele: 879 },
+      { lat: -41.11546, lon: -71.80154, ele: 824 },
+      { lat: -41.09577, lon: -71.80778, ele: 813 },
+      { lat: -41.07961, lon: -71.80726, ele: 787 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.09677,
+        lon: -71.51785,
+        name: 'Inicio de la travesía',
+        description: 'Punto de partida del recorrido registrado, sector Cerro Catedral. Registrar itinerario en la seccional de guardaparques antes de salir.',
+      },
+      {
+        lat: -41.18780,
+        lon: -71.66345,
+        name: 'Sector de altura — cadena de lagunas',
+        description: 'Tramo más alto del recorrido (cerca de 1900 m), enlazando varias de las cinco lagunas de la travesía.',
+      },
+      {
+        lat: -41.15651,
+        lon: -71.79879,
+        name: 'Hacia el Paso de las Nubes',
+        description: 'El recorrido desciende hacia el oeste, enlazando con la zona del Paso de las Nubes rumbo a Pampa Linda o Puerto Frías.',
+      },
+      {
+        lat: -41.07961,
+        lon: -71.80726,
+        name: 'Fin de la travesía',
+        description: 'Punto final del recorrido registrado, sector oeste cerca de Puerto Frías.',
+      },
+    ],
+    parking: 'Según punto de inicio elegido — consultar con la seccional de guardaparques la logística de traslado entre inicio y fin, en extremos distintos del parque.',
+    access_notes: 'Travesía de punto a punto: requiere coordinar traslado entre el inicio (sector Catedral/Colonia Suiza) y el final (Paso de las Nubes / Pampa Linda / Puerto Frías). Consultar transporte y navegación con antelación.',
+    water_sources: 'Abundante en arroyos y en las propias lagunas a lo largo de todo el recorrido.',
+    camping_allowed: true,
+    refugio: 'Varios según itinerario (Italia, y otros del Club Andino Bariloche)',
     round_trip: false,
   },
 
