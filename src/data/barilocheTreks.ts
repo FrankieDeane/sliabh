@@ -2274,6 +2274,74 @@ Por ser una extensión corta desde un punto ya muy visitado, es una de las mejor
     camping_allowed: false,
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Cerro Ventana
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-ventana',
+    name: 'Cerro Ventana',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Lago Gutiérrez',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 9,
+    elevation_gain_m: 1000,
+    max_altitude_m: 1910,
+    duration: { min: 5, max: 6, unit: 'horas' },
+    coordinates: { lat: -41.1800, lon: -71.4000 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'scramble', 'lago Gutiérrez', 'exigente', 'menos concurrido', 'formación rocosa'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente al Cerro Ventana (1910 m), al sur de Bariloche junto al lago Gutiérrez, famoso por la "ventana" natural tallada en la roca cerca de la cumbre. 9 km ida y vuelta, 1000 m de desnivel, con tramos de scramble.',
+    description_en:
+      'A demanding climb to Cerro Ventana (1,910 m), south of Bariloche by Lago Gutiérrez, known for the natural rock "window" near the summit. 9 km round trip, 1,000 m elevation gain, with scrambling sections.',
+    trailhead: 'Cruce Ruta 40 y calle Quisco, junto al lago Gutiérrez (sur de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Cerro Ventana debe su nombre a una formación rocosa poco común: un vano tallado por la erosión en una pared de roca cerca de la cumbre, lo bastante grande como para atravesarlo caminando y enmarcar el paisaje del lago Gutiérrez de fondo. Es una de las cumbres menos transitadas del entorno inmediato de Bariloche pese a su fácil acceso desde la Ruta 40 — quizás por el desnivel exigente concentrado en apenas 4,5 km de ida.
+
+El sendero arranca prácticamente desde la ruta, junto al cruce con la calle Quisco que baja al lago Gutiérrez, y gana altura de manera sostenida desde el primer tramo. El bosque bajo da paso pronto a laderas más abiertas, y en el tercio final el terreno se vuelve de roca con pasos de scramble donde conviene tener las manos libres — la ventana aparece poco antes de la cumbre principal (1910 m), con antecumbres norte y sur visibles desde ahí para quien quiera prolongar la salida.
+
+La vista desde la cumbre abarca el lago Gutiérrez en primer plano y buena parte del cordón montañoso al sur de Bariloche. Por el desnivel concentrado y los tramos de roca expuesta, conviene salir temprano — el ascenso solo lleva 3 a 4 horas, pero con calor del mediodía patagónico el sendero puede sentirse bastante más exigente.`,
+    gpxTrack: [
+      { lat: -41.1800, lon: -71.4000, ele: 900 },
+      { lat: -41.1820, lon: -71.4030, ele: 1100 },
+      { lat: -41.1845, lon: -71.4055, ele: 1350 },
+      { lat: -41.1870, lon: -71.4075, ele: 1600 },
+      { lat: -41.1890, lon: -71.4090, ele: 1800 },
+      { lat: -41.1905, lon: -71.4100, ele: 1910 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1800,
+        lon: -71.4000,
+        name: 'Cruce Ruta 40 / calle Quisco',
+        description: 'Punto de partida, junto al lago Gutiérrez al sur de Bariloche.',
+      },
+      {
+        lat: -41.1890,
+        lon: -71.4090,
+        name: 'La Ventana',
+        description: 'Formación rocosa que da nombre al cerro — un vano natural tallado por la erosión, poco antes de la cumbre.',
+      },
+      {
+        lat: -41.1905,
+        lon: -71.4100,
+        name: 'Cumbre Cerro Ventana (1910 m)',
+        description: 'Vista al lago Gutiérrez y al cordón montañoso al sur de Bariloche. Antecumbres norte y sur cercanas.',
+      },
+    ],
+    parking: 'Espacio informal junto al cruce de Ruta 40 y calle Quisco.',
+    access_notes: 'Desde Bariloche por Ruta 40 sur hasta el cruce con calle Quisco, junto al lago Gutiérrez. Acceso directo desde la ruta, sin necesidad de transporte adicional.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Cargar toda el agua necesaria desde el inicio.',
+    camping_allowed: false,
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
