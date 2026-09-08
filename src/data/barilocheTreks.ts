@@ -1957,6 +1957,73 @@ Es una salida solo para grupos con buena condición física y experiencia previa
     refugio: 'Refugio Frey / Jakob / Manfredo Segre / López (todos CAB)',
     round_trip: false,
   },
+
+  // -------------------------------------------------------------------------
+  // Villa Tacul — Puente Romano y Mirador
+  // -------------------------------------------------------------------------
+  {
+    id: 'villa-tacul-puente-romano',
+    name: 'Villa Tacul — Puente Romano y Mirador',
+    province: 'Río Negro',
+    area: 'Parque Municipal Llao Llao',
+    subarea: 'Llao Llao',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 6,
+    elevation_gain_m: 60,
+    max_altitude_m: 800,
+    duration: { min: 1.5, max: 2, unit: 'horas' },
+    coordinates: { lat: -41.0400, lon: -71.5820 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'apto familias', 'Circuito Chico', 'lago', 'fácil', 'medio día', 'menos exigente'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Caminata fácil y corta desde el Parque Municipal Llao Llao, cruzando el Puente Romano hasta el Mirador de la bahía Tacul y la playa de Villa Tacul, sobre el lago Nahuel Huapi. Casi sin desnivel — ideal para ir con niños o de medio día.',
+    description_en:
+      'An easy, short walk from the Llao Llao Municipal Park, crossing the Puente Romano (Roman Bridge) to the Tacul bay viewpoint and the Villa Tacul beach, on Lago Nahuel Huapi. Almost no elevation gain — great for kids or a half day.',
+    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `Comparte el inicio con el sendero al Cerro Llao Llao (ver ficha separada) desde la casa de guardaparques del Parque Municipal, pero en vez de tomar la subida se sigue por el sendero más llano hacia el oeste, atravesando un bosque bajo de coihues y arrayanes hasta el llamado Puente Romano, una pasarela de troncos sobre un pequeño curso de agua que le da nombre al tramo.
+
+Después del puente el sendero llega a un mirador con vista abierta a la bahía Tacul, uno de los rincones más fotografiados del Circuito Chico por el contraste entre el agua turquesa del Nahuel Huapi y los bosques que bajan hasta la orilla. Desde ahí, quien quiera seguir puede bajar hasta la playa de piedras de Villa Tacul, a un kilómetro más.
+
+Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señalizada, y con opción de acortar en el mirador o extenderse hasta la playa. Buena alternativa para un día de descanso entre salidas más exigentes, o para quien recién llega a Bariloche y quiere una primera caminata sin complicaciones.`,
+    gpxTrack: [
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+      { lat: -41.0410, lon: -71.5880, ele: 780 },
+      { lat: -41.0425, lon: -71.5940, ele: 790 },
+      { lat: -41.0440, lon: -71.6000, ele: 800 },
+      { lat: -41.0460, lon: -71.6050, ele: 780 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0400,
+        lon: -71.5820,
+        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
+        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao.',
+      },
+      {
+        lat: -41.0425,
+        lon: -71.5940,
+        name: 'Puente Romano',
+        description: 'Pasarela de troncos que le da nombre al sendero.',
+      },
+      {
+        lat: -41.0460,
+        lon: -71.6050,
+        name: 'Mirador Bahía Tacul / Villa Tacul',
+        description: 'Vista abierta a la bahía. Un kilómetro más adelante, la playa de piedras de Villa Tacul sobre el lago Nahuel Huapi.',
+      },
+    ],
+    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia, aunque el paseo es corto.',
+    camping_allowed: false,
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
