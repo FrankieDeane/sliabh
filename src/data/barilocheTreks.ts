@@ -1772,6 +1772,576 @@ Because this is a long day on high-mountain terrain that's unmarked past Schmoll
     refugio: 'Refugio Frey (CAB)',
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Paso de las Nubes (Pampa Linda — Puerto Frías)
+  // -------------------------------------------------------------------------
+  {
+    id: 'paso-de-las-nubes',
+    name: 'Paso de las Nubes — Pampa Linda a Puerto Frías',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Pampa Linda',
+    region: 'patagonia-norte',
+    activity: 'travesia',
+    difficulty: 'moderado',
+    distance_km: 26,
+    elevation_gain_m: 700,
+    max_altitude_m: 1432,
+    duration: { min: 2, max: 2, unit: 'dias' },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['travesía', '2 días', 'refugio', 'bosque', 'clásico Bariloche', 'combinable con navegación'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Travesía de dos días entre Pampa Linda y Puerto Frías, cruzando el Paso de las Nubes por el Refugio Agostino Rocca (1432 m). 26 km en total, desnivel moderado. Puerto Frías conecta por navegación con Puerto Blest — coordinar el cruce con antelación.',
+    description_en:
+      'A two-day traverse between Pampa Linda and Puerto Frías, crossing Paso de las Nubes via Refugio Agostino Rocca (1,432 m). 26 km total, moderate elevation gain. Puerto Frías connects by boat to Puerto Blest — arrange the crossing in advance.',
+    trailhead: 'Pampa Linda (90 km de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Paso de las Nubes es una de las travesías más clásicas y accesibles de dos días en Nahuel Huapi, y una de las pocas que combina trekking con navegación: se sube por tierra desde Pampa Linda y se puede cerrar el circuito bajando en lancha desde Puerto Blest hasta Puerto Pañuelo. El sendero es, en toda su extensión, un camino de tierra por bosque y valle — el cruce de lagos queda reservado a la navegación, no al trekking.
+
+La primera etapa, de Pampa Linda al Refugio Agostino Rocca, son 12 km con 680 m de desnivel por un sendero bien marcado que remonta el valle entre bosques de coihues y lengas, con vistas ocasionales al macizo del Tronador quedando atrás. El refugio (1432 m), con capacidad para 80 personas en 10 habitaciones, está en el punto más alto de la travesía — el propio Paso de las Nubes — y es donde conviene pasar la noche.
+
+La segunda etapa desciende hacia Puerto Frías bordeando el curso de agua que da nombre al valle. Alrededor del kilómetro 9 de este tramo hay un puente colgante que cruza el río Frías; de ahí quedan unos 3 km más bordeando la orilla izquierda hasta llegar al muelle de Puerto Frías, sobre el lago del mismo nombre.
+
+En Puerto Frías termina el sendero — la continuación hacia Puerto Blest y Puerto Pañuelo es en lancha, ya que el lago Frías separa ambos puntos. Quien no coordine la navegación debe volver sobre sus pasos por el mismo sendero. Recientemente se habilitó hacer la excursión sin guía obligatorio, aunque los operadores de la zona siguen recomendando ir acompañado por la logística de la navegación y por tratarse de un valle poco transitado.`,
+    gpxTrack: [
+      { lat: -41.2535, lon: -71.7755, ele: 752 },
+      { lat: -41.2288, lon: -71.7831, ele: 922 },
+      { lat: -41.2041, lon: -71.7907, ele: 1090 },
+      { lat: -41.1793, lon: -71.7983, ele: 1260 },
+      { lat: -41.1546, lon: -71.8059, ele: 1432 },
+      { lat: -41.1420, lon: -71.8140, ele: 1230 },
+      { lat: -41.1290, lon: -71.8220, ele: 1020 },
+      { lat: -41.1195, lon: -71.8343, ele: 900 },
+      { lat: -41.1050, lon: -71.8450, ele: 800 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda',
+        description: 'Punto de partida, mismo acceso que el sendero al Refugio Otto Meiling. Hostería y área de acampe.',
+      },
+      {
+        lat: -41.1546,
+        lon: -71.8059,
+        name: 'Refugio Agostino Rocca — Paso de las Nubes (1432 m)',
+        description: 'Punto más alto de la travesía y noche de por medio recomendada. Capacidad para 80 personas.',
+      },
+      {
+        lat: -41.1195,
+        lon: -71.8343,
+        name: 'Puente colgante sobre el río Frías',
+        description: 'Cruce del río a unos 9 km de bajada desde el refugio. Quedan ~3 km bordeando la orilla hasta Puerto Frías.',
+      },
+      {
+        lat: -41.1050,
+        lon: -71.8450,
+        name: 'Puerto Frías',
+        description: 'Fin del sendero, sobre el lago Frías. La continuación a Puerto Blest y Puerto Pañuelo es en lancha — coordinar con antelación o volver por el mismo camino.',
+      },
+    ],
+    parking: 'Estacionamiento en Pampa Linda (90 km de Bariloche por Ruta 258 y Ruta 40).',
+    access_notes: 'Desde Bariloche por la Ruta 258 (Circuito Chico / Ruta de los 7 Lagos hacia Pampa Linda), unos 90 km. Para cerrar el circuito por agua desde Puerto Frías es necesario coordinar la navegación con una empresa autorizada — no siempre hay servicio diario.',
+    water_sources: 'Arroyos y el propio río Frías a lo largo de toda la travesía. Abundante en las dos etapas.',
+    camping_allowed: true,
+    refugio: 'Refugio Agostino Rocca (CAB)',
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Circuito de los 4 Refugios (4 días)
+  // -------------------------------------------------------------------------
+  {
+    id: 'circuito-4-refugios',
+    name: 'Circuito de los 4 Refugios (4 días)',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'travesia',
+    difficulty: 'dificil',
+    distance_km: 46,
+    elevation_gain_m: 3200,
+    max_altitude_m: 1900,
+    duration: { min: 4, max: 4, unit: 'dias' },
+    coordinates: { lat: -41.1855, lon: -71.4499 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['travesía', '4 días', 'refugio', 'paso de altura', 'backcountry', 'clásico Bariloche', 'exigente'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'La gran travesía de Bariloche: 4 días y 46 km uniendo los refugios Frey, San Martín (Jakob), Manfredo Segre (Laguna Negra) y López, cruzando más de 7 filos y valles entre Villa Catedral y Colonia Suiza. Exigente, solo con buen tiempo y experiencia previa en alta montaña.',
+    description_en:
+      "Bariloche's great traverse: 4 days and 46 km linking Refugio Frey, San Martín (Jakob), Manfredo Segre (Laguna Negra) and López, crossing more than 7 ridges and valleys between Villa Catedral and Colonia Suiza. Demanding — good weather and prior high-mountain experience required.",
+    trailhead: 'Base Cerro Catedral (Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Circuito de los 4 Refugios es la travesía de referencia de Bariloche para quien ya conoce el Frey–Jakob y quiere ir un paso más allá: cuatro días, cuatro refugios del Club Andino Bariloche, y más de siete filos y valles cruzados entre Villa Catedral y Colonia Suiza.
+
+Los primeros dos días replican la Travesía Frey–Jakob (ver ficha separada): Catedral → Refugio Frey por la Cancha de Fútbol, noche en Frey, y al día siguiente el filo del Catedral por Laguna Schmoll, la bajada al valle del Rucaco y la Brecha Negra hasta el Refugio San Martín (Jakob), a orillas de su laguna homónima.
+
+El tercer día es el más técnico de todo el circuito: desde Jakob se asciende hacia los cerros Schweitzer y de los Inocentes, y de ahí al Cerro Navidad — el punto más exigente de la travesía, con terreno expuesto y orientación que requiere experiencia — antes de bajar al Refugio Manfredo Segre, a orillas de la Laguna Negra.
+
+El cuarto y último día sube por pedrero hacia el arroyo Goye y cruza otro campo de piedras hasta el filo del Cerro López, para bajar al Refugio López y de ahí a la base en Colonia Suiza, donde termina la travesía — con el infaltable curanto de fin de semana como recompensa para quien llega a tiempo.
+
+Es una salida solo para grupos con buena condición física y experiencia previa en terreno de alta montaña: el tercer día en particular no tiene señalización sistemática y el clima patagónico puede cambiar rápido en los filos expuestos. Con mal tiempo, cualquiera de los tramos por separado (Frey–Jakob, o el circuito a Laguna Negra desde Colonia Suiza) es una alternativa más corta y igualmente completa.`,
+    gpxTrack: [
+      { lat: -41.1855, lon: -71.4499, ele: 1050 },
+      { lat: -41.1950, lon: -71.4670, ele: 1420 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
+      { lat: -41.1900, lon: -71.4900, ele: 1900 },
+      { lat: -41.1633, lon: -71.4983, ele: 1400 },
+      { lat: -41.1400, lon: -71.5050, ele: 1900 },
+      { lat: -41.1267, lon: -71.5117, ele: 1600 },
+      { lat: -41.1200, lon: -71.5400, ele: 1750 },
+      { lat: -41.1150, lon: -71.5800, ele: 1900 },
+      { lat: -41.1085, lon: -71.6242, ele: 1650 },
+      { lat: -41.1000, lon: -71.5900, ele: 1800 },
+      { lat: -41.0960, lon: -71.5500, ele: 1750 },
+      { lat: -41.0928, lon: -71.5275, ele: 1620 },
+      { lat: -41.0817, lon: -71.5133, ele: 776 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1855,
+        lon: -71.4499,
+        name: 'Base Cerro Catedral (Día 1)',
+        description: 'Punto de partida. Estacionamiento con guarda de vehículos por varios días.',
+      },
+      {
+        lat: -41.1972,
+        lon: -71.4830,
+        name: 'Refugio Frey — noche 1',
+        description: 'A orillas de la Laguna Toncek, entre las agujas graníticas.',
+      },
+      {
+        lat: -41.1267,
+        lon: -71.5117,
+        name: 'Refugio San Martín / Jakob — noche 2',
+        description: 'Cruzando la Brecha Negra desde Frey. A orillas de la Laguna Jakob.',
+      },
+      {
+        lat: -41.1150,
+        lon: -71.5800,
+        name: 'Cerro Navidad (tramo más exigente)',
+        description: 'Vía los cerros Schweitzer y de los Inocentes. Terreno expuesto, orientación no siempre señalizada.',
+      },
+      {
+        lat: -41.1085,
+        lon: -71.6242,
+        name: 'Refugio Manfredo Segre — Laguna Negra — noche 3',
+        description: 'Descenso desde el Cerro Navidad. A orillas de la Laguna Negra.',
+      },
+      {
+        lat: -41.0928,
+        lon: -71.5275,
+        name: 'Refugio López',
+        description: 'Vía pedrero hasta el arroyo Goye y el filo del Cerro López. Último tramo antes del descenso final.',
+      },
+      {
+        lat: -41.0817,
+        lon: -71.5133,
+        name: 'Colonia Suiza (final)',
+        description: 'Cierre de la travesía. Curanto los fines de semana. Bus o taxi de regreso a Bariloche.',
+      },
+    ],
+    parking: 'Dejar el vehículo en la base de Cerro Catedral (pago por varios días). Al finalizar en Colonia Suiza, tomar bus o taxi de regreso.',
+    access_notes: 'Inicio en Cerro Catedral (Ruta 82, 18 km desde Bariloche). Fin en Colonia Suiza, sobre la Ruta 79 (bus línea 10/20 de regreso al centro). Logística de dos puntos distintos — planificar con antelación.',
+    water_sources: 'Abundante en la mayoría de los tramos: lagunas Toncek, Schmoll, Jakob y Negra, y los arroyos Rucaco y Goye. Cargar reserva extra en el tramo técnico del tercer día.',
+    camping_allowed: true,
+    refugio: 'Refugio Frey / Jakob / Manfredo Segre / López (todos CAB)',
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Villa Tacul — Puente Romano y Mirador
+  // -------------------------------------------------------------------------
+  {
+    id: 'villa-tacul-puente-romano',
+    name: 'Villa Tacul — Puente Romano y Mirador',
+    province: 'Río Negro',
+    area: 'Parque Municipal Llao Llao',
+    subarea: 'Llao Llao',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 6,
+    elevation_gain_m: 60,
+    max_altitude_m: 800,
+    duration: { min: 1.5, max: 2, unit: 'horas' },
+    coordinates: { lat: -41.0400, lon: -71.5820 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'apto familias', 'Circuito Chico', 'lago', 'fácil', 'medio día', 'menos exigente'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Caminata fácil y corta desde el Parque Municipal Llao Llao, cruzando el Puente Romano hasta el Mirador de la bahía Tacul y la playa de Villa Tacul, sobre el lago Nahuel Huapi. Casi sin desnivel — ideal para ir con niños o de medio día.',
+    description_en:
+      'An easy, short walk from the Llao Llao Municipal Park, crossing the Puente Romano (Roman Bridge) to the Tacul bay viewpoint and the Villa Tacul beach, on Lago Nahuel Huapi. Almost no elevation gain — great for kids or a half day.',
+    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `Comparte el inicio con el sendero al Cerro Llao Llao (ver ficha separada) desde la casa de guardaparques del Parque Municipal, pero en vez de tomar la subida se sigue por el sendero más llano hacia el oeste, atravesando un bosque bajo de coihues y arrayanes hasta el llamado Puente Romano, una pasarela de troncos sobre un pequeño curso de agua que le da nombre al tramo.
+
+Después del puente el sendero llega a un mirador con vista abierta a la bahía Tacul, uno de los rincones más fotografiados del Circuito Chico por el contraste entre el agua turquesa del Nahuel Huapi y los bosques que bajan hasta la orilla. Desde ahí, quien quiera seguir puede bajar hasta la playa de piedras de Villa Tacul, a un kilómetro más.
+
+Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señalizada, y con opción de acortar en el mirador o extenderse hasta la playa. Buena alternativa para un día de descanso entre salidas más exigentes, o para quien recién llega a Bariloche y quiere una primera caminata sin complicaciones.`,
+    gpxTrack: [
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+      { lat: -41.0410, lon: -71.5880, ele: 780 },
+      { lat: -41.0425, lon: -71.5940, ele: 790 },
+      { lat: -41.0440, lon: -71.6000, ele: 800 },
+      { lat: -41.0460, lon: -71.6050, ele: 780 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0400,
+        lon: -71.5820,
+        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
+        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao.',
+      },
+      {
+        lat: -41.0425,
+        lon: -71.5940,
+        name: 'Puente Romano',
+        description: 'Pasarela de troncos que le da nombre al sendero.',
+      },
+      {
+        lat: -41.0460,
+        lon: -71.6050,
+        name: 'Mirador Bahía Tacul / Villa Tacul',
+        description: 'Vista abierta a la bahía. Un kilómetro más adelante, la playa de piedras de Villa Tacul sobre el lago Nahuel Huapi.',
+      },
+    ],
+    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia, aunque el paseo es corto.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Sendero de los Arrayanes
+  // -------------------------------------------------------------------------
+  {
+    id: 'sendero-arrayanes-llao-llao',
+    name: 'Sendero de los Arrayanes',
+    province: 'Río Negro',
+    area: 'Parque Municipal Llao Llao',
+    subarea: 'Llao Llao',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 6.3,
+    elevation_gain_m: 50,
+    max_altitude_m: 800,
+    duration: { min: 1.5, max: 2.5, unit: 'horas' },
+    coordinates: { lat: -41.0400, lon: -71.5820 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['bosque nativo', 'arrayanes', 'apto familias', 'Circuito Chico', 'fácil', 'interpretativo'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Circuito interpretativo de 6,3 km por el Parque Municipal Llao Llao, entre un bosque de arrayanes centenarios de corteza canela característica. Se puede combinar con los senderos al Puente Romano, Lago Escondido y Villa Tacul, que comparten trazado en varios tramos.',
+    description_en:
+      'A 6.3 km interpretive loop through the Llao Llao Municipal Park, among centuries-old arrayán trees with their distinctive cinnamon-colored bark. Can be combined with the Puente Romano, Lago Escondido and Villa Tacul trails, which share sections of the route.',
+    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El bosque de arrayanes del Parque Municipal Llao Llao es uno de los más accesibles de la región — no hace falta cruzar a la isla Victoria ni al Parque Nacional Los Arrayanes de Villa La Angostura para ver esta especie curiosa, con su corteza lisa de color canela y su copa que en enero se llena de flores blancas.
+
+El sendero es un circuito bien señalizado que combina tramos con los senderos al Puente Romano, la Villa Tacul y el Lago Escondido, todos dentro del mismo parque municipal — quien quiera puede combinar dos o tres de estos recorridos en una sola salida, ya que comparten buena parte del trazado inicial desde la casa de guardaparques.
+
+Es un paseo casi llano, apto para cualquier edad y nivel físico, con carteles interpretativos sobre la flora nativa a lo largo del camino. Ideal para un día de lluvia liviana bajo el techo del bosque, o para complementar una salida más corta cuando el tiempo no acompaña para las alturas.`,
+    gpxTrack: [
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+      { lat: -41.0385, lon: -71.5860, ele: 785 },
+      { lat: -41.0395, lon: -71.5900, ele: 800 },
+      { lat: -41.0420, lon: -71.5890, ele: 790 },
+      { lat: -41.0410, lon: -71.5850, ele: 775 },
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0400,
+        lon: -71.5820,
+        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
+        description: 'Punto de partida y llegada del circuito. Cartelería con mapa de todos los senderos del parque.',
+      },
+      {
+        lat: -41.0395,
+        lon: -71.5900,
+        name: 'Bosque de arrayanes',
+        description: 'Sector con los ejemplares más grandes, corteza canela característica. Floración blanca en enero.',
+      },
+    ],
+    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Goye desde Colonia Suiza
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-goye-colonia-suiza',
+    name: 'Cerro Goye desde Colonia Suiza',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Colonia Suiza',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 13,
+    elevation_gain_m: 810,
+    max_altitude_m: 1640,
+    duration: { min: 7, max: 9, unit: 'horas' },
+    coordinates: { lat: -41.0956, lon: -71.5450 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'panorama', 'lago Moreno', 'exigente', 'Colonia Suiza', 'menos concurrido'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente desde Colonia Suiza al Cerro Goye (1640 m), con desvío opcional al Cerro Bellavista. Vistas al lago Moreno y a buena parte del cordón montañoso al sur de Bariloche. 13 km, 810 m de desnivel, jornada completa.',
+    description_en:
+      'A demanding climb from Colonia Suiza to Cerro Goye (1,640 m), with an optional detour to Cerro Bellavista. Views of Lago Moreno and much of the mountain range south of Bariloche. 13 km, 810 m elevation gain, a full day out.',
+    trailhead: 'Colonia Suiza (arroyo Goye), Bariloche',
+    source: 'barilochetrekking.com',
+    long_description: `El Cerro Goye es una de las cumbres menos transitadas del entorno de Bariloche pese a su cercanía a Colonia Suiza, probablemente porque su desnivel exigente lo deja fuera del radar de quienes buscan una salida de medio día. Para quien sí busca una jornada completa con menos gente en el sendero, es una de las mejores opciones de la zona.
+
+El ascenso sube por un valle orientado al sur bajo bosque de lengas, ganando altura de forma constante. A mitad de camino se encuentra el desvío al Cerro Bellavista — una alternativa más corta para quien no quiera completar la jornada completa hasta Goye — antes de que el sendero deje el bosque y trepe por un filo expuesto hacia las dos cumbres del macizo: la principal, a 1640 m, y una secundaria, apenas más baja, a 1550 m.
+
+Desde arriba el panorama abarca el lago Moreno en primer plano, y en días despejados buena parte del cordón que separa el valle de Bariloche del área de El Bolsón más al sur. Por tratarse de un filo expuesto sin reparo del viento, conviene evaluar las condiciones antes de encarar el tramo final — con viento fuerte, el desvío a Bellavista es una alternativa razonable y bastante más corta.`,
+    gpxTrack: [
+      { lat: -41.0956, lon: -71.5450, ele: 830 },
+      { lat: -41.1010, lon: -71.5470, ele: 950 },
+      { lat: -41.1070, lon: -71.5490, ele: 1100 },
+      { lat: -41.1120, lon: -71.5500, ele: 1280 },
+      { lat: -41.1160, lon: -71.5510, ele: 1450 },
+      { lat: -41.1190, lon: -71.5520, ele: 1550 },
+      { lat: -41.1210, lon: -71.5530, ele: 1640 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0956,
+        lon: -71.5450,
+        name: 'Colonia Suiza (arroyo Goye)',
+        description: 'Punto de partida. Curanto los fines de semana en temporada.',
+      },
+      {
+        lat: -41.1160,
+        lon: -71.5510,
+        name: 'Desvío a Cerro Bellavista',
+        description: 'Alternativa más corta para quien no complete la jornada completa hasta Goye.',
+      },
+      {
+        lat: -41.1210,
+        lon: -71.5530,
+        name: 'Cerro Goye (1640 m)',
+        description: 'Cumbre principal, filo expuesto sin reparo del viento. Vista al lago Moreno. Cumbre secundaria a 1550 m cerca.',
+      },
+    ],
+    parking: 'Estacionamiento en Colonia Suiza (gratuito, junto a las casas de comida).',
+    access_notes: 'Desde Bariloche por Ruta 79 hasta Colonia Suiza, unos 25 km. Bus línea 10/20 desde el centro.',
+    water_sources: 'Arroyo Goye en el tramo bajo. Sin agua confiable pasado el bosque — cargar suficiente para toda la jornada.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Mirador Bahía López
+  // -------------------------------------------------------------------------
+  {
+    id: 'mirador-bahia-lopez',
+    name: 'Mirador Bahía López — Brazo Tristeza',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Circuito Chico',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 3,
+    elevation_gain_m: 95,
+    max_altitude_m: 870,
+    duration: { min: 1, max: 1.5, unit: 'horas' },
+    coordinates: { lat: -41.0700, lon: -71.5450 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'apto familias', 'Circuito Chico', 'lago', 'fácil', 'medio día', 'panorámica'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Caminata corta y fácil desde el estacionamiento de Bahía López (km 32 del Circuito Chico) hasta un mirador sobre el Brazo Tristeza del lago Nahuel Huapi, con vista a los cerros López, Capilla y Millaqueo. 3 km ida y vuelta, 95 m de desnivel.',
+    description_en:
+      'A short, easy walk from the Bahía López parking area (km 32 of the Circuito Chico) to a viewpoint over the Brazo Tristeza arm of Lago Nahuel Huapi, with views of Cerro López, Cerro Capilla and Cerro Millaqueo. 3 km round trip, 95 m elevation gain.',
+    trailhead: 'Estacionamiento Bahía López, km 32 del Circuito Chico (junto al Hotel Alun Nehuen)',
+    source: 'barilochetrekking.com',
+    long_description: `Bahía López es una de las paradas clásicas del Circuito Chico, y la mayoría de quienes lo recorren en auto o bici se quedan solo en la playa y el mirador de la costa — pero un sendero corto que arranca junto al estacionamiento sube hasta un balcón natural sobre el Brazo Tristeza, uno de los tramos más recortados y fotogénicos del lago Nahuel Huapi.
+
+El sendero gana altura de forma suave entre bosque bajo, sin exigencia técnica, hasta un mirador que enmarca simultáneamente los cerros López, Capilla y Millaqueo sobre el espejo de agua del brazo. En cuarenta minutos de subida se consigue una de las mejores relaciones esfuerzo-vista de todo el Circuito Chico.
+
+Es una parada ideal para combinar con el resto del circuito — antes o después de Villa Tacul, el Cerro Campanario o el Cerro Llao Llao — o como caminata independiente para quien busca una salida corta con recompensa visual garantizada.`,
+    gpxTrack: [
+      { lat: -41.0700, lon: -71.5450, ele: 775 },
+      { lat: -41.0715, lon: -71.5465, ele: 810 },
+      { lat: -41.0730, lon: -71.5480, ele: 845 },
+      { lat: -41.0745, lon: -71.5490, ele: 870 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0700,
+        lon: -71.5450,
+        name: 'Estacionamiento Bahía López',
+        description: 'Km 32 del Circuito Chico, junto al Hotel Alun Nehuen. Restaurante disponible.',
+      },
+      {
+        lat: -41.0745,
+        lon: -71.5490,
+        name: 'Mirador Brazo Tristeza',
+        description: 'Vista a los cerros López, Capilla y Millaqueo sobre el Brazo Tristeza del lago Nahuel Huapi.',
+      },
+    ],
+    parking: 'Estacionamiento junto al Hotel Alun Nehuen, km 32 del Circuito Chico.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico), unos 32 km. Bus urbano línea 20 pasa por la zona.',
+    water_sources: 'Sin fuentes de agua en el recorrido. Llevar agua propia, aunque el paseo es corto.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Piedra del Habsburgo (extensión desde Cerro Otto)
+  // -------------------------------------------------------------------------
+  {
+    id: 'piedra-habsburgo',
+    name: 'Piedra del Habsburgo — Cerro Otto',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 4,
+    elevation_gain_m: 50,
+    max_altitude_m: 1420,
+    duration: { min: 1, max: 1.5, unit: 'horas' },
+    coordinates: { lat: -41.1473, lon: -71.3795 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&q=80&fit=crop&auto=format',
+    tags: ['mirador', 'Cerro Otto', 'apto familias', 'fácil', 'panorámica', 'menos concurrido'],
+    permits_required: false,
+    best_season: 'Oct – May',
+    description:
+      'Extensión corta y fácil desde la confitería giratoria del Cerro Otto hasta la Piedra del Habsburgo, un mirador natural con vista panorámica al distrito de lagos. 4 km ida y vuelta desde la confitería, casi sin desnivel.',
+    description_en:
+      "A short, easy extension from the Cerro Otto revolving café to Piedra del Habsburgo, a natural viewpoint over the lake district. 4 km round trip from the café, almost no elevation gain.",
+    trailhead: 'Confitería giratoria, Cerro Otto (accesible en teleférico o caminando — ver ficha Cerro Otto)',
+    source: 'barilochetrekking.com',
+    long_description: `La Piedra del Habsburgo es la extensión natural para quien ya llegó a la confitería giratoria del Cerro Otto —caminando o en teleférico— y quiere alejarse un poco de la multitud del mirador principal. El nombre recuerda la visita de un archiduque austríaco a la zona a comienzos del siglo XX.
+
+El sendero sale de la confitería y bordea el filo del cerro hacia el oeste, por un camino ancho y de pendiente suave que prácticamente no exige esfuerzo adicional al de llegar hasta ahí. En unos 2 km se alcanza la piedra que da nombre al lugar, un afloramiento rocoso desde el que se abre una vista panorámica que incluye el lago Nahuel Huapi, el cordón del Catedral y, en días despejados, buena parte del cordón fronterizo hacia Chile.
+
+Por ser una extensión corta desde un punto ya muy visitado, es una de las mejores opciones para quien busca algo de tranquilidad sin alejarse demasiado de los servicios de la confitería — baños, gastronomía y el teleférico de bajada disponibles en el punto de partida.`,
+    gpxTrack: [
+      { lat: -41.1473, lon: -71.3795, ele: 1405 },
+      { lat: -41.1465, lon: -71.3830, ele: 1415 },
+      { lat: -41.1458, lon: -71.3865, ele: 1420 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1473,
+        lon: -71.3795,
+        name: 'Confitería giratoria (Cerro Otto)',
+        description: 'Punto de partida de la extensión. Servicios completos: baños, gastronomía, teleférico.',
+      },
+      {
+        lat: -41.1458,
+        lon: -71.3865,
+        name: 'Piedra del Habsburgo',
+        description: 'Afloramiento rocoso con vista panorámica al Nahuel Huapi, el cordón del Catedral y la frontera con Chile en días despejados.',
+      },
+    ],
+    parking: 'Ver ficha Cerro Otto para acceso — no hay estacionamiento propio, se llega desde la confitería.',
+    access_notes: 'Se accede desde la confitería giratoria del Cerro Otto, ya sea caminando desde Bariloche o en el teleférico. Ver ficha "Cerro Otto desde Bariloche" para el acceso completo.',
+    water_sources: 'Sin fuentes de agua en el tramo. La confitería en el punto de partida vende bebidas.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Ventana
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-ventana',
+    name: 'Cerro Ventana',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Lago Gutiérrez',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 9,
+    elevation_gain_m: 1000,
+    max_altitude_m: 1910,
+    duration: { min: 5, max: 6, unit: 'horas' },
+    coordinates: { lat: -41.1800, lon: -71.4000 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'scramble', 'lago Gutiérrez', 'exigente', 'menos concurrido', 'formación rocosa'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente al Cerro Ventana (1910 m), al sur de Bariloche junto al lago Gutiérrez, famoso por la "ventana" natural tallada en la roca cerca de la cumbre. 9 km ida y vuelta, 1000 m de desnivel, con tramos de scramble.',
+    description_en:
+      'A demanding climb to Cerro Ventana (1,910 m), south of Bariloche by Lago Gutiérrez, known for the natural rock "window" near the summit. 9 km round trip, 1,000 m elevation gain, with scrambling sections.',
+    trailhead: 'Cruce Ruta 40 y calle Quisco, junto al lago Gutiérrez (sur de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Cerro Ventana debe su nombre a una formación rocosa poco común: un vano tallado por la erosión en una pared de roca cerca de la cumbre, lo bastante grande como para atravesarlo caminando y enmarcar el paisaje del lago Gutiérrez de fondo. Es una de las cumbres menos transitadas del entorno inmediato de Bariloche pese a su fácil acceso desde la Ruta 40 — quizás por el desnivel exigente concentrado en apenas 4,5 km de ida.
+
+El sendero arranca prácticamente desde la ruta, junto al cruce con la calle Quisco que baja al lago Gutiérrez, y gana altura de manera sostenida desde el primer tramo. El bosque bajo da paso pronto a laderas más abiertas, y en el tercio final el terreno se vuelve de roca con pasos de scramble donde conviene tener las manos libres — la ventana aparece poco antes de la cumbre principal (1910 m), con antecumbres norte y sur visibles desde ahí para quien quiera prolongar la salida.
+
+La vista desde la cumbre abarca el lago Gutiérrez en primer plano y buena parte del cordón montañoso al sur de Bariloche. Por el desnivel concentrado y los tramos de roca expuesta, conviene salir temprano — el ascenso solo lleva 3 a 4 horas, pero con calor del mediodía patagónico el sendero puede sentirse bastante más exigente.`,
+    gpxTrack: [
+      { lat: -41.1800, lon: -71.4000, ele: 900 },
+      { lat: -41.1820, lon: -71.4030, ele: 1100 },
+      { lat: -41.1845, lon: -71.4055, ele: 1350 },
+      { lat: -41.1870, lon: -71.4075, ele: 1600 },
+      { lat: -41.1890, lon: -71.4090, ele: 1800 },
+      { lat: -41.1905, lon: -71.4100, ele: 1910 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1800,
+        lon: -71.4000,
+        name: 'Cruce Ruta 40 / calle Quisco',
+        description: 'Punto de partida, junto al lago Gutiérrez al sur de Bariloche.',
+      },
+      {
+        lat: -41.1890,
+        lon: -71.4090,
+        name: 'La Ventana',
+        description: 'Formación rocosa que da nombre al cerro — un vano natural tallado por la erosión, poco antes de la cumbre.',
+      },
+      {
+        lat: -41.1905,
+        lon: -71.4100,
+        name: 'Cumbre Cerro Ventana (1910 m)',
+        description: 'Vista al lago Gutiérrez y al cordón montañoso al sur de Bariloche. Antecumbres norte y sur cercanas.',
+      },
+    ],
+    parking: 'Espacio informal junto al cruce de Ruta 40 y calle Quisco.',
+    access_notes: 'Desde Bariloche por Ruta 40 sur hasta el cruce con calle Quisco, junto al lago Gutiérrez. Acceso directo desde la ruta, sin necesidad de transporte adicional.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Cargar toda el agua necesaria desde el inicio.',
+    camping_allowed: false,
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
