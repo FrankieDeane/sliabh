@@ -309,7 +309,10 @@ export default function RutasScreen() {
   // ── Desktop split layout ──
   if (isSplit) {
     return (
-      <View style={[styles.container, { backgroundColor: c.bg, flexDirection: 'row' }]}>
+      <View
+        style={[styles.container, { backgroundColor: c.bg, flexDirection: 'row' }]}
+        {...({ 'data-rutas-split': true } as any)}
+      >
         <SeoHead
           title="Rutas y senderos en Argentina — Sliabh"
           description="Explorá todas las rutas de trekking y montaña de Sliabh: filtrá por región, dificultad y actividad. Distancia, desnivel, mapas y GPX descargable para cada sendero de Argentina."
@@ -322,6 +325,7 @@ export default function RutasScreen() {
             styles.splitLeft,
             { borderRightWidth: 1, borderRightColor: c.border, backgroundColor: c.bg },
           ]}
+          {...({ 'data-rutas-list-panel': true } as any)}
         >
           {/* Left header */}
           <View style={[styles.splitHeader, { borderBottomColor: c.border }]}>
@@ -346,7 +350,7 @@ export default function RutasScreen() {
         </View>
 
         {/* Right panel: single 3D terrain map of the selected trail */}
-        <View style={{ flex: 1 }}>{map3dPanel}</View>
+        <View style={{ flex: 1 }} {...({ 'data-rutas-map-panel': true } as any)}>{map3dPanel}</View>
       </View>
     );
   }
