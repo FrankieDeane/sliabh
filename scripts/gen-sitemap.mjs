@@ -40,8 +40,21 @@ function trailUrls(id) {
   ];
 }
 
+// English homepage (see scripts/prerender-home.mjs) — reciprocal hreflang
+// with the Spanish "/" entry, same pattern as trailUrls() below.
+const homeAltLinks =
+  `\n    <xhtml:link rel="alternate" hreflang="es" href="${BASE}/"/>` +
+  `\n    <xhtml:link rel="alternate" hreflang="en" href="${BASE}/en"/>` +
+  `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE}/"/>`;
+
 const urls = [
-  ...routes.map((r) => ({ loc: BASE + r, pri: r === '/' || r === '/inicio' ? '1.0' : '0.8', freq: 'weekly', altLinks: '' })),
+  ...routes.map((r) => ({
+    loc: BASE + r,
+    pri: r === '/' || r === '/inicio' ? '1.0' : '0.8',
+    freq: 'weekly',
+    altLinks: r === '/' ? homeAltLinks : '',
+  })),
+  { loc: `${BASE}/en`, pri: '0.9', freq: 'weekly', altLinks: homeAltLinks },
   ...trailIds.flatMap(trailUrls),
 ];
 
@@ -57,4 +70,4 @@ const xml =
   '\n</urlset>\n';
 
 fs.writeFileSync('public/sitemap.xml', xml);
-console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails × es/en + ${routes.length} core pages)`);
+console.log(`sitemap.xml: ${urls.length} URLs (${trailIds.length} trails × es/en + ${routes.length} core pages + /en homepage)`);

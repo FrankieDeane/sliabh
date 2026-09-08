@@ -6,6 +6,7 @@ import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
 import { Platform, View, Text, TouchableOpacity } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
+import { PromoBanner } from '../src/components/ui/PromoBanner';
 import { CookieBanner } from '../src/components/ui/CookieBanner';
 import { QuickPoll } from '../src/components/ui/QuickPoll';
 import { SiteHead } from '../src/components/ui/SiteHead';
@@ -137,6 +138,7 @@ export default function RootLayout() {
           <NetworkWatcher />
           <StatusBar style={isDark ? 'light' : 'dark'} />
           <WebHeader />
+          <PromoBanner />
           <View style={{ flex: 1 }}>
             <Stack
               screenOptions={{

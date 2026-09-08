@@ -77,6 +77,9 @@ const headTags = `
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Sliabh" />
     <link rel="canonical" href="${SITE_URL}/" />
+    <link rel="alternate" hreflang="es" href="${SITE_URL}/" />
+    <link rel="alternate" hreflang="en" href="${SITE_URL}/en" />
+    <link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />
 
     <!-- Open Graph -->
     <meta property="og:site_name" content="Sliabh" />
