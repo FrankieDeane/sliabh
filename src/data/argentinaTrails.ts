@@ -518,7 +518,7 @@ Access is via Trompul, a locality about 20 minutes from San Martín de los Andes
 From the top the panorama is one of the most complete in the area: the Lanín, Villarrica and Choshuenco volcano chain to the north and west, and on clear days Cerro Tronador stands out to the south. The descent follows the same trail.`,
     gpxTrack: [
       { lat: -40.1331, lon: -71.4167, ele: 1038 },
-      { lat: -40.1290, lon: -71.4100, ele: 1838 },
+      { lat: -40.1106, lon: -71.3800, ele: 1838 },
     ],
     namedWaypoints: [
       {
@@ -528,8 +528,8 @@ From the top the panorama is one of the most complete in the area: the Lanín, V
         description: 'Paraje de partida, unos 20 minutos de San Martín de los Andes por el camino al Paso Hua Hum.',
       },
       {
-        lat: -40.1290,
-        lon: -71.4100,
+        lat: -40.1106,
+        lon: -71.3800,
         name: 'Cumbre Cerro Colorado (1838 m)',
         description: 'Roca volcánica de color rojizo. Vista al cordón Lanín-Villarrica-Choshuenco y, en días claros, al Tronador.',
       },
@@ -571,7 +571,7 @@ The elevation gain is moderate for the distance, and the trail is well marked, m
 The area operates as a hunting reserve outside the summer season (December to March), which restricts access — check trail conditions with the ranger station before heading out.`,
     gpxTrack: [
       { lat: -39.2400, lon: -71.1900, ele: 1228 },
-      { lat: -39.2200, lon: -71.1850, ele: 1684 },
+      { lat: -39.1959, lon: -71.1790, ele: 1684 },
     ],
     namedWaypoints: [
       {
@@ -581,8 +581,8 @@ The area operates as a hunting reserve outside the summer season (December to Ma
         description: 'Punto de partida junto al lago Rucachoroy, unos 27 km de Aluminé.',
       },
       {
-        lat: -39.2200,
-        lon: -71.1850,
+        lat: -39.1959,
+        lon: -71.1790,
         name: 'Laguna Verde',
         description: 'Laguna pequeña rodeada por completo de bosque de araucarias, al norte del lago Rucachoroy.',
       },
