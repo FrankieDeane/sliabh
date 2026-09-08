@@ -483,6 +483,112 @@ The descent follows the same route, with extra care on the softened afternoon sn
     ],
   },
   {
+    id: 'cerro-colorado-trompul',
+    name: 'Cerro Colorado desde Trompul',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Trompul',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 8,
+    elevation_gain_m: 800,
+    max_altitude_m: 1838,
+    duration: { min: 4.5, max: 5, unit: 'horas' },
+    coordinates: { lat: -40.1331, lon: -71.4167 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'volcán antiguo', 'panorámica', 'exigente', 'San Martín de los Andes'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso corto pero exigente al Cerro Colorado (antiguo volcán) desde la localidad de Trompul, cerca de San Martín de los Andes. 800 m de desnivel concentrados en pocos kilómetros. Desde la cumbre se ve el cordón de volcanes Lanín, Villarrica y Choshuenco, y el cerro Tronador al sur.',
+    description_en:
+      'A short but demanding climb up Cerro Colorado (an old volcano) from the Trompul area, near San Martín de los Andes. 800 m of elevation gain packed into a few kilometers. The summit looks out over the Lanín, Villarrica and Choshuenco volcanoes, and Cerro Tronador to the south.',
+    trailhead: 'Trompul, unos 20 min de San Martín de los Andes camino al Paso Hua Hum',
+    long_description: `El Cerro Colorado debe su nombre al color rojizo de la roca volcánica que aflora en su cumbre — resto de un antiguo cono eruptivo que hoy es una de las cumbres accesibles más panorámicas del entorno de San Martín de los Andes. Pese a su altura modesta, el desnivel concentrado en poca distancia lo vuelve una salida exigente, más cercana a un ascenso de montaña que a una caminata.
+
+El acceso es por Trompul, un paraje a unos 20 minutos de San Martín de los Andes camino al Paso Hua Hum (frontera con Chile). Desde ahí el sendero gana altura de forma sostenida por bosque hasta dejar la vegetación y trepar por laderas más abiertas de roca volcánica hacia la cumbre.
+
+Desde arriba el panorama es uno de los más completos de la zona: el cordón de volcanes Lanín, Villarrica y Choshuenco hacia el norte y oeste, y en días claros el cerro Tronador se distingue hacia el sur. El descenso es por el mismo sendero.`,
+    long_description_en: `Cerro Colorado takes its name from the reddish volcanic rock exposed at its summit — the remains of an old eruptive cone that today is one of the most panoramic accessible peaks around San Martín de los Andes. Despite its modest height, the elevation gain packed into a short distance makes it a demanding outing, closer to a mountain climb than a walk.
+
+Access is via Trompul, a locality about 20 minutes from San Martín de los Andes on the way to Paso Hua Hum (the border crossing to Chile). From there the trail climbs steadily through forest before leaving the tree line and scrambling up more open volcanic-rock slopes to the summit.
+
+From the top the panorama is one of the most complete in the area: the Lanín, Villarrica and Choshuenco volcano chain to the north and west, and on clear days Cerro Tronador stands out to the south. The descent follows the same trail.`,
+    gpxTrack: [
+      { lat: -40.1331, lon: -71.4167, ele: 1038 },
+      { lat: -40.1290, lon: -71.4100, ele: 1838 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -40.1331,
+        lon: -71.4167,
+        name: 'Trompul',
+        description: 'Paraje de partida, unos 20 minutos de San Martín de los Andes por el camino al Paso Hua Hum.',
+      },
+      {
+        lat: -40.1290,
+        lon: -71.4100,
+        name: 'Cumbre Cerro Colorado (1838 m)',
+        description: 'Roca volcánica de color rojizo. Vista al cordón Lanín-Villarrica-Choshuenco y, en días claros, al Tronador.',
+      },
+    ],
+  },
+  {
+    id: 'laguna-verde-rucachoroy',
+    name: 'Laguna Verde desde Lago Rucachoroy',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Zona Norte',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 10,
+    elevation_gain_m: 456,
+    max_altitude_m: 1684,
+    duration: { min: 4, max: 5, unit: 'horas' },
+    coordinates: { lat: -39.2400, lon: -71.1900 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['araucarias', 'laguna', 'apto familias', 'fácil', 'zona norte', 'Aluminé'],
+    permits_required: false,
+    best_season: 'Dic – Mar (acceso restringido fuera de temporada por reserva de caza)',
+    description:
+      'Caminata de ida y vuelta desde el lago Rucachoroy hasta la Laguna Verde, al norte, rodeada por completo de bosque de araucarias. 10 km ida y vuelta, 456 m de desnivel, apta para salir con niños.',
+    description_en:
+      'An out-and-back walk from Lago Rucachoroy north to Laguna Verde, entirely ringed by araucaria forest. 10 km round trip, 456 m elevation gain, family-friendly.',
+    trailhead: 'Seccional Rucachoroy, Parque Nacional Lanín (Zona Norte), unos 27 km de Aluminé',
+    long_description: `El lago Rucachoroy ("casa de loros" en mapuche) es la puerta de entrada a uno de los bosques de araucarias más densos del sector norte del Parque Nacional Lanín, a unos 27 km de Aluminé por camino de ripio. Desde la seccional de guardaparques junto al lago (1228 m), un sendero se interna hacia el norte totalmente rodeado de araucarias hasta la Laguna Verde, un espejo de agua pequeño y tranquilo enmarcado por el bosque.
+
+El desnivel es moderado para la distancia, y el sendero está bien marcado, por lo que es una de las opciones más accesibles de la zona norte del parque para salir con chicos o para quien busca una caminata de medio día sin la exigencia de las travesías de varios días que también parten de esta zona.
+
+La zona funciona como reserva de caza fuera de la temporada de verano (diciembre a marzo), lo que restringe el acceso — conviene confirmar el estado del sendero con la seccional de guardaparques antes de salir.`,
+    long_description_en: `Lago Rucachoroy ("parrot's house" in Mapuche) is the gateway to one of the densest araucaria forests in the northern sector of Parque Nacional Lanín, about 27 km from Aluminé on a gravel road. From the ranger station by the lake (1,228 m), a trail heads north entirely through araucaria forest to Laguna Verde, a small, quiet lagoon framed by the forest.
+
+The elevation gain is moderate for the distance, and the trail is well marked, making it one of the more accessible options in the park's northern zone for a family outing or a half-day walk, without the demands of the multi-day traverses that also start from this area.
+
+The area operates as a hunting reserve outside the summer season (December to March), which restricts access — check trail conditions with the ranger station before heading out.`,
+    gpxTrack: [
+      { lat: -39.2400, lon: -71.1900, ele: 1228 },
+      { lat: -39.2200, lon: -71.1850, ele: 1684 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -39.2400,
+        lon: -71.1900,
+        name: 'Seccional Rucachoroy (1228 m)',
+        description: 'Punto de partida junto al lago Rucachoroy, unos 27 km de Aluminé.',
+      },
+      {
+        lat: -39.2200,
+        lon: -71.1850,
+        name: 'Laguna Verde',
+        description: 'Laguna pequeña rodeada por completo de bosque de araucarias, al norte del lago Rucachoroy.',
+      },
+    ],
+  },
+  {
     id: 'lanin-extremo-13k',
     name: 'Lanín Extremo — 13K',
     province: 'Neuquén',
