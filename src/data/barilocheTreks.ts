@@ -2024,6 +2024,137 @@ Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señal
     camping_allowed: false,
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Sendero de los Arrayanes
+  // -------------------------------------------------------------------------
+  {
+    id: 'sendero-arrayanes-llao-llao',
+    name: 'Sendero de los Arrayanes',
+    province: 'Río Negro',
+    area: 'Parque Municipal Llao Llao',
+    subarea: 'Llao Llao',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 6.3,
+    elevation_gain_m: 50,
+    max_altitude_m: 800,
+    duration: { min: 1.5, max: 2.5, unit: 'horas' },
+    coordinates: { lat: -41.0400, lon: -71.5820 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['bosque nativo', 'arrayanes', 'apto familias', 'Circuito Chico', 'fácil', 'interpretativo'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Circuito interpretativo de 6,3 km por el Parque Municipal Llao Llao, entre un bosque de arrayanes centenarios de corteza canela característica. Se puede combinar con los senderos al Puente Romano, Lago Escondido y Villa Tacul, que comparten trazado en varios tramos.',
+    description_en:
+      'A 6.3 km interpretive loop through the Llao Llao Municipal Park, among centuries-old arrayán trees with their distinctive cinnamon-colored bark. Can be combined with the Puente Romano, Lago Escondido and Villa Tacul trails, which share sections of the route.',
+    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El bosque de arrayanes del Parque Municipal Llao Llao es uno de los más accesibles de la región — no hace falta cruzar a la isla Victoria ni al Parque Nacional Los Arrayanes de Villa La Angostura para ver esta especie curiosa, con su corteza lisa de color canela y su copa que en enero se llena de flores blancas.
+
+El sendero es un circuito bien señalizado que combina tramos con los senderos al Puente Romano, la Villa Tacul y el Lago Escondido, todos dentro del mismo parque municipal — quien quiera puede combinar dos o tres de estos recorridos en una sola salida, ya que comparten buena parte del trazado inicial desde la casa de guardaparques.
+
+Es un paseo casi llano, apto para cualquier edad y nivel físico, con carteles interpretativos sobre la flora nativa a lo largo del camino. Ideal para un día de lluvia liviana bajo el techo del bosque, o para complementar una salida más corta cuando el tiempo no acompaña para las alturas.`,
+    gpxTrack: [
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+      { lat: -41.0385, lon: -71.5860, ele: 785 },
+      { lat: -41.0395, lon: -71.5900, ele: 800 },
+      { lat: -41.0420, lon: -71.5890, ele: 790 },
+      { lat: -41.0410, lon: -71.5850, ele: 775 },
+      { lat: -41.0400, lon: -71.5820, ele: 770 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0400,
+        lon: -71.5820,
+        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
+        description: 'Punto de partida y llegada del circuito. Cartelería con mapa de todos los senderos del parque.',
+      },
+      {
+        lat: -41.0395,
+        lon: -71.5900,
+        name: 'Bosque de arrayanes',
+        description: 'Sector con los ejemplares más grandes, corteza canela característica. Floración blanca en enero.',
+      },
+    ],
+    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
+    water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Goye desde Colonia Suiza
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-goye-colonia-suiza',
+    name: 'Cerro Goye desde Colonia Suiza',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Colonia Suiza',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 13,
+    elevation_gain_m: 810,
+    max_altitude_m: 1640,
+    duration: { min: 7, max: 9, unit: 'horas' },
+    coordinates: { lat: -41.0956, lon: -71.5450 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'panorama', 'lago Moreno', 'exigente', 'Colonia Suiza', 'menos concurrido'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente desde Colonia Suiza al Cerro Goye (1640 m), con desvío opcional al Cerro Bellavista. Vistas al lago Moreno y a buena parte del cordón montañoso al sur de Bariloche. 13 km, 810 m de desnivel, jornada completa.',
+    description_en:
+      'A demanding climb from Colonia Suiza to Cerro Goye (1,640 m), with an optional detour to Cerro Bellavista. Views of Lago Moreno and much of the mountain range south of Bariloche. 13 km, 810 m elevation gain, a full day out.',
+    trailhead: 'Colonia Suiza (arroyo Goye), Bariloche',
+    source: 'barilochetrekking.com',
+    long_description: `El Cerro Goye es una de las cumbres menos transitadas del entorno de Bariloche pese a su cercanía a Colonia Suiza, probablemente porque su desnivel exigente lo deja fuera del radar de quienes buscan una salida de medio día. Para quien sí busca una jornada completa con menos gente en el sendero, es una de las mejores opciones de la zona.
+
+El ascenso sube por un valle orientado al sur bajo bosque de lengas, ganando altura de forma constante. A mitad de camino se encuentra el desvío al Cerro Bellavista — una alternativa más corta para quien no quiera completar la jornada completa hasta Goye — antes de que el sendero deje el bosque y trepe por un filo expuesto hacia las dos cumbres del macizo: la principal, a 1640 m, y una secundaria, apenas más baja, a 1550 m.
+
+Desde arriba el panorama abarca el lago Moreno en primer plano, y en días despejados buena parte del cordón que separa el valle de Bariloche del área de El Bolsón más al sur. Por tratarse de un filo expuesto sin reparo del viento, conviene evaluar las condiciones antes de encarar el tramo final — con viento fuerte, el desvío a Bellavista es una alternativa razonable y bastante más corta.`,
+    gpxTrack: [
+      { lat: -41.0956, lon: -71.5450, ele: 830 },
+      { lat: -41.1010, lon: -71.5470, ele: 950 },
+      { lat: -41.1070, lon: -71.5490, ele: 1100 },
+      { lat: -41.1120, lon: -71.5500, ele: 1280 },
+      { lat: -41.1160, lon: -71.5510, ele: 1450 },
+      { lat: -41.1190, lon: -71.5520, ele: 1550 },
+      { lat: -41.1210, lon: -71.5530, ele: 1640 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.0956,
+        lon: -71.5450,
+        name: 'Colonia Suiza (arroyo Goye)',
+        description: 'Punto de partida. Curanto los fines de semana en temporada.',
+      },
+      {
+        lat: -41.1160,
+        lon: -71.5510,
+        name: 'Desvío a Cerro Bellavista',
+        description: 'Alternativa más corta para quien no complete la jornada completa hasta Goye.',
+      },
+      {
+        lat: -41.1210,
+        lon: -71.5530,
+        name: 'Cerro Goye (1640 m)',
+        description: 'Cumbre principal, filo expuesto sin reparo del viento. Vista al lago Moreno. Cumbre secundaria a 1550 m cerca.',
+      },
+    ],
+    parking: 'Estacionamiento en Colonia Suiza (gratuito, junto a las casas de comida).',
+    access_notes: 'Desde Bariloche por Ruta 79 hasta Colonia Suiza, unos 25 km. Bus línea 10/20 desde el centro.',
+    water_sources: 'Arroyo Goye en el tramo bajo. Sin agua confiable pasado el bosque — cargar suficiente para toda la jornada.',
+    camping_allowed: false,
+    round_trip: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
