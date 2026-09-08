@@ -491,6 +491,13 @@ export default function TrailMap3DCinematic({
   }
 
   const containerH = typeof height === 'number' ? height : 420;
+  // Shorter labels + tighter paddings on phones — the four control buttons
+  // (rotate, 2D/3D, sat/topo, pendiente) pack into two bottom corners, and
+  // the full-word labels ("VER SATÉLITE", "OCULTAR PENDIENTE") were wide
+  // enough on narrow screens to butt up against or overlap each other.
+  const btnPadH = smallScreen ? 8 : 12;
+  const btnPadV = smallScreen ? 5 : 6;
+  const btnFontSize = smallScreen ? 10 : 11;
 
   return (
     <View style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
@@ -514,8 +521,8 @@ export default function TrailMap3DCinematic({
       {/* Flythrough overlay — trail name + skip button */}
       {phase === 'flying' && (
         <View style={{ position: 'absolute', bottom: 16, left: 0, right: 0, alignItems: 'center', pointerEvents: 'box-none' } as any}>
-          <View style={{ backgroundColor: 'rgba(7,11,20,0.72)', borderRadius: 12, paddingHorizontal: 18, paddingVertical: 10, borderWidth: 1, borderColor: 'rgba(34,197,94,0.25)', alignItems: 'center', gap: 8 }}>
-            <Text style={{ color: '#f0f9ff', fontSize: 13, fontWeight: '700', letterSpacing: 0.5 }}>{trailName}</Text>
+          <View style={{ backgroundColor: 'rgba(7,11,20,0.72)', borderRadius: 12, paddingHorizontal: 18, paddingVertical: 10, borderWidth: 1, borderColor: 'rgba(34,197,94,0.25)', alignItems: 'center', gap: 8, maxWidth: '92%' }}>
+            <Text style={{ color: '#f0f9ff', fontSize: 13, fontWeight: '700', letterSpacing: 0.5, textAlign: 'center' }} numberOfLines={2}>{trailName}</Text>
             <TouchableOpacity onPress={() => skipToInteractive()} activeOpacity={0.7}
               style={{ backgroundColor: 'rgba(34,197,94,0.15)', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
               <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>SALTAR INTRO</Text>
@@ -526,41 +533,49 @@ export default function TrailMap3DCinematic({
 
       {/* Interactive controls row — bottom-right */}
       {phase === 'interactive' && (
-        <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', gap: 8 } as any}>
+        <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 6, maxWidth: '58%' } as any}>
           {/* Rotate 360° toggle */}
           <TouchableOpacity onPress={toggleRotate} activeOpacity={0.8}
             style={{
               backgroundColor: rotateMode ? 'rgba(34,197,94,0.25)' : 'rgba(15,23,36,0.85)',
-              borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6,
+              borderRadius: 8, paddingHorizontal: btnPadH, paddingVertical: btnPadV,
               borderWidth: 1, borderColor: rotateMode ? '#22c55e' : 'rgba(34,197,94,0.4)',
               flexDirection: 'row', alignItems: 'center', gap: 5,
             }}>
             <Text style={{ color: '#22c55e', fontSize: 13 }}>↻</Text>
-            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.6 }}>
-              {rotateMode ? 'GIRANDO' : 'GIRAR'}
-            </Text>
+            {!smallScreen && (
+              <Text style={{ color: '#22c55e', fontSize: btnFontSize, fontWeight: '700', letterSpacing: 0.6 }}>
+                {rotateMode ? 'GIRANDO' : 'GIRAR'}
+              </Text>
+            )}
           </TouchableOpacity>
           {/* 2D / 3D toggle */}
           <TouchableOpacity onPress={toggle3D} activeOpacity={0.8}
-            style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
-            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
+            style={{ backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8, paddingHorizontal: btnPadH, paddingVertical: btnPadV, borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)' }}>
+            <Text style={{ color: '#22c55e', fontSize: btnFontSize, fontWeight: '700', letterSpacing: 0.8 }}>{is3D ? '2D' : '3D'}</Text>
           </TouchableOpacity>
         </View>
       )}
 
       {/* Satélite / Topo toggle — bottom-left, visible as soon as the map is
           up (loading or interactive), not gated behind the ~30s cinematic
-          intro like the rest of the interactive-only controls. */}
+          intro like the rest of the interactive-only controls. On phones the
+          full-word labels ("VER SATÉLITE", "OCULTAR PENDIENTE") are swapped
+          for short ones so both buttons fit without overlapping the
+          bottom-right controls or spilling past the container's clipped
+          edge (this View's parent has overflow:'hidden'). */}
       {phase !== 'loading' && (
-        <View style={{ position: 'absolute', bottom: 12, left: 12, flexDirection: 'row', gap: 8 } as any}>
+        <View style={{ position: 'absolute', bottom: 12, left: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 6, maxWidth: '58%' } as any}>
           <TouchableOpacity onPress={toggleSatellite} activeOpacity={0.8}
             style={{
               backgroundColor: 'rgba(15,23,36,0.85)', borderRadius: 8,
-              paddingHorizontal: 12, paddingVertical: 6,
+              paddingHorizontal: btnPadH, paddingVertical: btnPadV,
               borderWidth: 1, borderColor: 'rgba(34,197,94,0.4)',
             }}>
-            <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
-              {satellite ? 'VER TOPO' : 'VER SATÉLITE'}
+            <Text style={{ color: '#22c55e', fontSize: btnFontSize, fontWeight: '700', letterSpacing: 0.8 }}>
+              {smallScreen
+                ? (satellite ? 'TOPO' : 'SAT')
+                : (satellite ? 'VER TOPO' : 'VER SATÉLITE')}
             </Text>
           </TouchableOpacity>
 
@@ -568,11 +583,13 @@ export default function TrailMap3DCinematic({
           <TouchableOpacity onPress={toggleSlope} activeOpacity={0.8}
             style={{
               backgroundColor: slopeVisible ? 'rgba(234,179,8,0.18)' : 'rgba(15,23,36,0.85)',
-              borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6,
+              borderRadius: 8, paddingHorizontal: btnPadH, paddingVertical: btnPadV,
               borderWidth: 1, borderColor: slopeVisible ? '#eab308' : 'rgba(234,179,8,0.4)',
             }}>
-            <Text style={{ color: '#eab308', fontSize: 11, fontWeight: '700', letterSpacing: 0.8 }}>
-              {slopeVisible ? 'OCULTAR PENDIENTE' : 'VER PENDIENTE'}
+            <Text style={{ color: '#eab308', fontSize: btnFontSize, fontWeight: '700', letterSpacing: 0.8 }}>
+              {smallScreen
+                ? (slopeVisible ? 'OCULTAR' : 'PENDIENTE')
+                : (slopeVisible ? 'OCULTAR PENDIENTE' : 'VER PENDIENTE')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -581,11 +598,12 @@ export default function TrailMap3DCinematic({
       {/* Slope color-ramp legend — only while the overlay is on */}
       {phase !== 'loading' && slopeVisible && (
         <View style={{
-          position: 'absolute', bottom: 48, left: 12,
+          position: 'absolute', bottom: smallScreen ? 78 : 48, left: 12, right: 12,
           backgroundColor: 'rgba(7,11,20,0.85)', borderRadius: 8,
           paddingHorizontal: 10, paddingVertical: 7,
           borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-          flexDirection: 'row', alignItems: 'center', gap: 6,
+          flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center',
+          justifyContent: 'center', gap: 6, alignSelf: 'center', maxWidth: 320,
         } as any}>
           {[
             { c: '#22c55e', l: '0°' },

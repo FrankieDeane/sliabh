@@ -2,58 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://sliabh.com.ar/</loc>
-    <lastmod>2026-09-07</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/"/>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/inicio</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/rutas</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/mapas</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/planificar</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/faq</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/supervivencia</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/contribuir</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/ruta/aconcagua-ruta-normal</loc>
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/aconcagua-ruta-normal"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/aconcagua-ruta-normal"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/aconcagua-ruta-normal"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -62,7 +74,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/aconcagua-ruta-normal"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/aconcagua-ruta-normal"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/aconcagua-ruta-normal"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -71,7 +83,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/fitz-roy-laguna-tres"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/fitz-roy-laguna-tres"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/fitz-roy-laguna-tres"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -80,7 +92,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/fitz-roy-laguna-tres"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/fitz-roy-laguna-tres"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/fitz-roy-laguna-tres"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -89,7 +101,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-torre-base"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-torre-base"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-torre-base"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -98,7 +110,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-torre-base"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-torre-base"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-torre-base"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -107,7 +119,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/pliegue-tumbado-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/pliegue-tumbado-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/pliegue-tumbado-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -116,7 +128,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/pliegue-tumbado-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/pliegue-tumbado-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/pliegue-tumbado-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -125,7 +137,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-capri-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-capri-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-capri-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -134,7 +146,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-capri-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-capri-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-capri-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -143,7 +155,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/madre-e-hija-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/madre-e-hija-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/madre-e-hija-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -152,7 +164,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/madre-e-hija-chalten"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/madre-e-hija-chalten"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/madre-e-hija-chalten"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -161,7 +173,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/miradores-condores-aguilas"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/miradores-condores-aguilas"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/miradores-condores-aguilas"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -170,7 +182,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/miradores-condores-aguilas"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/miradores-condores-aguilas"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/miradores-condores-aguilas"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -179,7 +191,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/chorrillo-del-salto"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/chorrillo-del-salto"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/chorrillo-del-salto"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -188,7 +200,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/chorrillo-del-salto"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/chorrillo-del-salto"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/chorrillo-del-salto"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -197,7 +209,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -206,7 +218,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -215,7 +227,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-lopez-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-lopez-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-lopez-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -224,7 +236,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-lopez-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-lopez-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-lopez-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -233,7 +245,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-tronador-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-tronador-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-tronador-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -242,7 +254,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-tronador-bariloche"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-tronador-bariloche"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-tronador-bariloche"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -251,7 +263,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/volcan-lanin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/volcan-lanin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/volcan-lanin"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -260,7 +272,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/volcan-lanin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/volcan-lanin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/volcan-lanin"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -269,7 +281,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lanin-extremo-13k"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lanin-extremo-13k"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lanin-extremo-13k"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -278,7 +290,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lanin-extremo-13k"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lanin-extremo-13k"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lanin-extremo-13k"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -287,7 +299,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-champaqui"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-champaqui"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-champaqui"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -296,7 +308,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-champaqui"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-champaqui"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-champaqui"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -305,7 +317,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/los-gigantes-cordoba"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/los-gigantes-cordoba"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/los-gigantes-cordoba"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -314,7 +326,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/los-gigantes-cordoba"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/los-gigantes-cordoba"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/los-gigantes-cordoba"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -323,7 +335,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-la-ventana"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-la-ventana"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-la-ventana"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -332,7 +344,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-la-ventana"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-la-ventana"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-la-ventana"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -341,7 +353,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/quebrada-humahuaca-trek"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/quebrada-humahuaca-trek"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/quebrada-humahuaca-trek"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -350,7 +362,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/quebrada-humahuaca-trek"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/quebrada-humahuaca-trek"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/quebrada-humahuaca-trek"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -359,7 +371,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-desierto-patagonia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-desierto-patagonia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-desierto-patagonia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -368,7 +380,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-desierto-patagonia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-desierto-patagonia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-desierto-patagonia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -377,7 +389,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/alerces-cascada-arrayanes"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/alerces-cascada-arrayanes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/alerces-cascada-arrayanes"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -386,7 +398,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/alerces-cascada-arrayanes"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/alerces-cascada-arrayanes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/alerces-cascada-arrayanes"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -395,7 +407,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-puelo-los-hitos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-puelo-los-hitos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-puelo-los-hitos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -404,7 +416,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-puelo-los-hitos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-puelo-los-hitos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-puelo-los-hitos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -413,7 +425,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/pn-patagonia-ascension"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/pn-patagonia-ascension"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/pn-patagonia-ascension"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -422,7 +434,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/pn-patagonia-ascension"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/pn-patagonia-ascension"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/pn-patagonia-ascension"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -431,7 +443,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/bahia-mitre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/bahia-mitre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/bahia-mitre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -440,7 +452,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/bahia-mitre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/bahia-mitre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/bahia-mitre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -449,7 +461,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-esmeralda-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-esmeralda-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-esmeralda-ushuaia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -458,7 +470,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-esmeralda-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-esmeralda-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-esmeralda-ushuaia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -467,7 +479,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-negra-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-negra-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-negra-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -476,7 +488,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-negra-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-negra-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-negra-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -485,7 +497,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/hito-xxiv-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/hito-xxiv-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/hito-xxiv-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -494,7 +506,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/hito-xxiv-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/hito-xxiv-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/hito-xxiv-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -503,7 +515,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-verde-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-verde-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-verde-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -512,7 +524,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-verde-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-verde-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-verde-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -521,7 +533,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/mirador-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/mirador-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/mirador-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -530,7 +542,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/mirador-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/mirador-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/mirador-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -539,7 +551,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/baliza-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/baliza-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/baliza-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -548,7 +560,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/baliza-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/baliza-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/baliza-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -557,7 +569,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/turbal-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/turbal-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/turbal-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -566,7 +578,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/turbal-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/turbal-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/turbal-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -575,7 +587,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/senda-costera-lapataia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/senda-costera-lapataia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/senda-costera-lapataia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -584,7 +596,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/senda-costera-lapataia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/senda-costera-lapataia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/senda-costera-lapataia"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -593,7 +605,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/ensenada-zaratiegui-osm"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/ensenada-zaratiegui-osm"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/ensenada-zaratiegui-osm"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -602,7 +614,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/ensenada-zaratiegui-osm"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/ensenada-zaratiegui-osm"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/ensenada-zaratiegui-osm"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -611,7 +623,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/rio-pipo-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/rio-pipo-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/rio-pipo-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -620,7 +632,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/rio-pipo-tdf"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/rio-pipo-tdf"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/rio-pipo-tdf"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -629,7 +641,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-del-caminante"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-del-caminante"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-del-caminante"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -638,7 +650,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-del-caminante"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-del-caminante"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-del-caminante"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -647,7 +659,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-5-hermanos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-5-hermanos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-5-hermanos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -656,7 +668,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-5-hermanos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-5-hermanos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-5-hermanos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -665,7 +677,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-submarino"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-submarino"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-submarino"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -674,7 +686,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-submarino"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-submarino"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-submarino"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -683,7 +695,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/tierra-del-fuego-costera"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/tierra-del-fuego-costera"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/tierra-del-fuego-costera"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -692,7 +704,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/tierra-del-fuego-costera"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/tierra-del-fuego-costera"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/tierra-del-fuego-costera"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -701,7 +713,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/senda-costera-zaratiegui"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/senda-costera-zaratiegui"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/senda-costera-zaratiegui"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -710,7 +722,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/senda-costera-zaratiegui"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/senda-costera-zaratiegui"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/senda-costera-zaratiegui"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -719,7 +731,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/dientes-circuit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/dientes-circuit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/dientes-circuit"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -728,7 +740,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/dientes-circuit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/dientes-circuit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/dientes-circuit"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -737,7 +749,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/sierra-valdivieso-circuit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/sierra-valdivieso-circuit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/sierra-valdivieso-circuit"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -746,7 +758,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/sierra-valdivieso-circuit"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/sierra-valdivieso-circuit"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/sierra-valdivieso-circuit"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -755,7 +767,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-pozo-verde"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-pozo-verde"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-pozo-verde"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -764,7 +776,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-pozo-verde"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-pozo-verde"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-pozo-verde"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -773,7 +785,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-chorro-de-los-loros"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-chorro-de-los-loros"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-chorro-de-los-loros"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -782,7 +794,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-chorro-de-los-loros"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-chorro-de-los-loros"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-chorro-de-los-loros"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -791,7 +803,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-laguna-los-patitos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-laguna-los-patitos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-laguna-los-patitos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -800,7 +812,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/el-rey-laguna-los-patitos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/el-rey-laguna-los-patitos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/el-rey-laguna-los-patitos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -809,7 +821,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-catedral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-catedral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-catedral"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -818,7 +830,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-catedral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-catedral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-catedral"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -827,7 +839,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-lopez-cumbre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-lopez-cumbre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-lopez-cumbre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -836,7 +848,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-lopez-cumbre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-lopez-cumbre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-lopez-cumbre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -845,7 +857,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/tronador-glaciar-negro"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/tronador-glaciar-negro"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/tronador-glaciar-negro"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -854,7 +866,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/tronador-glaciar-negro"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/tronador-glaciar-negro"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/tronador-glaciar-negro"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -863,7 +875,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-negra-catedral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-negra-catedral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-negra-catedral"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -872,7 +884,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-negra-catedral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-negra-catedral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-negra-catedral"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -881,7 +893,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-campanario"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-campanario"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-campanario"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -890,7 +902,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-campanario"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-campanario"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-campanario"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -899,7 +911,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-otto-cumbre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-otto-cumbre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-otto-cumbre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -908,7 +920,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-otto-cumbre"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-otto-cumbre"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-otto-cumbre"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -917,7 +929,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cascada-cantaros"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cascada-cantaros"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cascada-cantaros"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -926,7 +938,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cascada-cantaros"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cascada-cantaros"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cascada-cantaros"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -935,7 +947,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-tempanos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-tempanos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-tempanos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -944,7 +956,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-tempanos"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-tempanos"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-tempanos"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -953,7 +965,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-challhuaco"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-challhuaco"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-challhuaco"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -962,7 +974,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-challhuaco"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-challhuaco"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-challhuaco"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -971,7 +983,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/travesia-frey-jakob"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/travesia-frey-jakob"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/travesia-frey-jakob"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -980,7 +992,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/travesia-frey-jakob"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/travesia-frey-jakob"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/travesia-frey-jakob"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -989,7 +1001,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/colonia-suiza-circuito"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/colonia-suiza-circuito"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/colonia-suiza-circuito"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -998,7 +1010,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/colonia-suiza-circuito"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/colonia-suiza-circuito"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/colonia-suiza-circuito"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1007,7 +1019,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-gutierrez-costera"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-gutierrez-costera"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-gutierrez-costera"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1016,7 +1028,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/lago-gutierrez-costera"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/lago-gutierrez-costera"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/lago-gutierrez-costera"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1025,7 +1037,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-san-martin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-san-martin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-san-martin"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1034,7 +1046,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-san-martin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-san-martin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-san-martin"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1043,7 +1055,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-jakob"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-jakob"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-jakob"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1052,7 +1064,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-jakob"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-jakob"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-jakob"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1061,7 +1073,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-ilon"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-ilon"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-ilon"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1070,7 +1082,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/laguna-ilon"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/laguna-ilon"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/laguna-ilon"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1079,7 +1091,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-otto-meiling"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-otto-meiling"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-otto-meiling"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1088,7 +1100,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-otto-meiling"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-otto-meiling"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-otto-meiling"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1097,7 +1109,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-llao-llao"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1106,7 +1118,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-llao-llao"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1115,7 +1127,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cascada-duendes"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cascada-duendes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cascada-duendes"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1124,7 +1136,187 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cascada-duendes"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cascada-duendes"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cascada-duendes"/>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/refugio-frey-filo-catedral</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-filo-catedral"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-filo-catedral"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-filo-catedral"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/refugio-frey-filo-catedral</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/refugio-frey-filo-catedral"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/refugio-frey-filo-catedral"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/refugio-frey-filo-catedral"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/catedral-norte-cumbre</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/catedral-norte-cumbre"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/catedral-norte-cumbre"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/catedral-norte-cumbre"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/catedral-norte-cumbre</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/catedral-norte-cumbre"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/catedral-norte-cumbre"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/catedral-norte-cumbre"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/paso-de-las-nubes</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/paso-de-las-nubes"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/paso-de-las-nubes"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/paso-de-las-nubes"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/paso-de-las-nubes</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/paso-de-las-nubes"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/paso-de-las-nubes"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/paso-de-las-nubes"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/circuito-4-refugios</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/circuito-4-refugios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/circuito-4-refugios"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/circuito-4-refugios"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/circuito-4-refugios</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/circuito-4-refugios"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/circuito-4-refugios"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/circuito-4-refugios"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/villa-tacul-puente-romano</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/villa-tacul-puente-romano"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/villa-tacul-puente-romano"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/villa-tacul-puente-romano"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/villa-tacul-puente-romano</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/villa-tacul-puente-romano"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/villa-tacul-puente-romano"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/villa-tacul-puente-romano"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/sendero-arrayanes-llao-llao</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/sendero-arrayanes-llao-llao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/sendero-arrayanes-llao-llao"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/sendero-arrayanes-llao-llao"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/sendero-arrayanes-llao-llao</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/sendero-arrayanes-llao-llao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/sendero-arrayanes-llao-llao"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/sendero-arrayanes-llao-llao"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/cerro-goye-colonia-suiza</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-goye-colonia-suiza"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-goye-colonia-suiza"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-goye-colonia-suiza"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/cerro-goye-colonia-suiza</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-goye-colonia-suiza"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-goye-colonia-suiza"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-goye-colonia-suiza"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/mirador-bahia-lopez</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/mirador-bahia-lopez"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/mirador-bahia-lopez"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/mirador-bahia-lopez"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/mirador-bahia-lopez</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/mirador-bahia-lopez"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/mirador-bahia-lopez"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/mirador-bahia-lopez"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/piedra-habsburgo</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/piedra-habsburgo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/piedra-habsburgo"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/piedra-habsburgo"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/piedra-habsburgo</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/piedra-habsburgo"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/piedra-habsburgo"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/piedra-habsburgo"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/ruta/cerro-ventana</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-ventana"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-ventana"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-ventana"/>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/ruta/cerro-ventana</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/ruta/cerro-ventana"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/ruta/cerro-ventana"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/ruta/cerro-ventana"/>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

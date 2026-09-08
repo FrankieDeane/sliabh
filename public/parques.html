@@ -358,9 +358,22 @@
       .section-head { padding-bottom: 8px; }
       .filters { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
       .filters::-webkit-scrollbar { display: none; }
-      /* Hide legend + layer-toggle to reclaim vertical space */
+      /* Hide legend to reclaim vertical space; layer toggles stay but move
+         into a compact horizontal scroll strip (same pattern as .filters)
+         instead of vanishing — mobile users still need satellites/POI/trail
+         layers, they just can't afford a 6-row vertical stack of full-width
+         buttons under the map. */
       .legend { display: none; }
-      .layer-toggle { display: none; }
+      .layer-toggle-row {
+        display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        margin-top: 8px; padding-bottom: 4px;
+      }
+      .layer-toggle-row::-webkit-scrollbar { display: none; }
+      .layer-toggle-row .layer-toggle {
+        display: inline-flex; flex-shrink: 0; white-space: nowrap;
+        margin-top: 0; padding: 7px 12px; font-size: 11.5px;
+      }
+      .layer-toggle-row .layer-toggle .toggle-dot { width: 7px; height: 7px; }
       /* Split: no handle. On mobile show ONLY the right pane (cinematic
          satellite 3D map) full-height instead of stacking both maps —
          the left pane's static overview map is redundant here and just
@@ -459,30 +472,32 @@
             <span><i class="dot" style="background:#22c55e"></i> <span data-i18n="legCha">Senderos El Chaltén</span></span>
 
           </div>
-          <button class="layer-toggle" id="baseLayerToggle" style="margin-top:0">
-            <span class="toggle-dot" style="background:#94a3b8"></span>
-            <span id="baseLayerToggleLabel">Ver mapa topográfico</span>
-          </button>
-          <button class="layer-toggle" id="satellitesToggle">
-            <span class="toggle-dot" style="background:#22c55e"></span>
-            <span id="satellitesToggleLabel">Ver satélites en órbita</span>
-          </button>
-          <button class="layer-toggle" id="poiToggle">
-            <span class="toggle-dot" style="background:#f59e0b"></span>
-            <span id="poiToggleLabel">Ver puntos de interés</span>
-          </button>
-          <button class="layer-toggle" id="trailLayerToggle">
-            <span class="toggle-dot"></span>
-            <span id="trailToggleLabel">Senderos de Bariloche</span>
-          </button>
-          <button class="layer-toggle chalten" id="chaltenLayerToggle">
-            <span class="toggle-dot"></span>
-            <span id="chaltenToggleLabel">Senderos El Chaltén (15 senderos)</span>
-          </button>
-          <button class="layer-toggle chalten" id="appTrailLayerToggle" style="display:none">
-            <span class="toggle-dot"></span>
-            <span id="appTrailToggleLabel">Más senderos de Argentina</span>
-          </button>
+          <div class="layer-toggle-row" id="layerToggleRow">
+            <button class="layer-toggle" id="baseLayerToggle" style="margin-top:0">
+              <span class="toggle-dot" style="background:#94a3b8"></span>
+              <span id="baseLayerToggleLabel">Ver mapa topográfico</span>
+            </button>
+            <button class="layer-toggle" id="satellitesToggle">
+              <span class="toggle-dot" style="background:#22c55e"></span>
+              <span id="satellitesToggleLabel">Ver satélites en órbita</span>
+            </button>
+            <button class="layer-toggle" id="poiToggle">
+              <span class="toggle-dot" style="background:#f59e0b"></span>
+              <span id="poiToggleLabel">Ver puntos de interés</span>
+            </button>
+            <button class="layer-toggle" id="trailLayerToggle">
+              <span class="toggle-dot"></span>
+              <span id="trailToggleLabel">Senderos de Bariloche</span>
+            </button>
+            <button class="layer-toggle chalten" id="chaltenLayerToggle">
+              <span class="toggle-dot"></span>
+              <span id="chaltenToggleLabel">Senderos El Chaltén (15 senderos)</span>
+            </button>
+            <button class="layer-toggle chalten" id="appTrailLayerToggle" style="display:none">
+              <span class="toggle-dot"></span>
+              <span id="appTrailToggleLabel">Más senderos de Argentina</span>
+            </button>
+          </div>
         </div>
       </div>
 
