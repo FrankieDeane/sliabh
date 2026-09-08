@@ -43,6 +43,12 @@ export interface ArgentinaTrail {
   namedWaypoints?: Array<{ lat: number; lon: number; name: string; description: string }>;
   /** Optional attribution for the data, same convention as ExtendedTrail.source. */
   source?: string;
+  /** Optional logistics fields, same convention as ExtendedTrail in barilocheTreks.ts. */
+  parking?: string;
+  access_notes?: string;
+  water_sources?: string;
+  camping_allowed?: boolean;
+  round_trip?: boolean;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -420,11 +426,11 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     region: 'patagonia-norte',
     activity: 'alta_montana',
     difficulty: 'dificil',
-    distance_km: 18,
-    elevation_gain_m: 2200,
+    distance_km: 22.5,
+    elevation_gain_m: 2597,
     max_altitude_m: 3747,
     duration: { min: 2, max: 3, unit: 'dias' },
-    coordinates: { lat: -39.6356, lon: -71.4999 },
+    coordinates: { lat: -39.58973, lon: -71.43007 },
     photo_uri:
       'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
     tags: ['volcán', 'cima', 'nieve', 'crampones', 'alta montaña', 'dos refugios'],
@@ -435,6 +441,7 @@ export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
     description_en:
       'A 2-3 day climb via the Normal Argentine Route, starting at the Río Turbio ranger station in Parque Nacional Lanín. Climbs through araucaria and lenga forest to Refugio RIM (2,400 m) and Refugio CAJA (2,600 m), then on to the summit (3,747 m) via the "fishbone" section, using ice axe and crampons on the glaciated stretches. Grade 3 (IFAS) — a mountain guide is recommended without prior high-altitude experience.',
     trailhead: 'Seccional Río Turbio, Parque Nacional Lanín (Neuquén)',
+    source: 'Andeshandbook; PN Lanín; Cultura de Montaña; track GPS verificado vía Wikiloc',
     long_description: `El Lanín es un volcán inactivo de silueta casi perfecta, visible desde gran parte del norte de la Patagonia, y su ascenso por la Vía Normal Argentina es una de las metas clásicas del montañismo argentino — exigente pero sin necesitar técnica de escalada, solo buen manejo de piolet y crampones. El acceso es por la Ruta Provincial 60 desde Junín de los Andes, bordeando el río Malleo hasta ingresar al parque, donde el paisaje esteparia cede a un bosque de araucarias camino a la Seccional Río Turbio — puesto de Gendarmería, guardaparques y centro de informes, punto de partida obligado.
 
 Desde el estacionamiento, el sendero atraviesa un bosque de lengas bien marcado hasta la base del volcán, donde estacas señalan el comienzo de la "espina de pescado" — el tramo característico de la ruta, una cresta de piedra volcánica que se remonta ganando altura de forma constante. Tras unas 4 horas se llega al Refugio RIM (2400 m), y una hora más de marcha al Refugio CAJA (2600 m), donde la mayoría pasa la noche antes del ascenso final.
@@ -450,39 +457,259 @@ Summit day is 6 to 7 hours of slow, steady walking from CAJA, over snow and ice 
 
 The descent follows the same route, with extra care on the softened afternoon snow. Given the exposure and total elevation gain (2,200 m from the parking area), this is an outing only for those with prior high-mountain experience with crampons and an ice axe — or climbing with a licensed guide, strongly recommended for a first attempt.`,
     gpxTrack: [
-      { lat: -39.6020, lon: -71.4550, ele: 1550, name: 'Seccional Río Turbio' },
-      { lat: -39.6120, lon: -71.4650, ele: 1900 },
-      { lat: -39.6256, lon: -71.4781, ele: 2400, name: 'Refugio RIM' },
-      { lat: -39.6214, lon: -71.4883, ele: 2600, name: 'Refugio CAJA' },
-      { lat: -39.6280, lon: -71.4930, ele: 3100 },
-      { lat: -39.6356, lon: -71.4999, ele: 3747, name: 'Cumbre del Lanín' },
+      { lat: -39.58973, lon: -71.43007, ele: 1150, name: 'Seccional Río Turbio' },
+      { lat: -39.59589, lon: -71.43781, ele: 1211 },
+      { lat: -39.60087, lon: -71.44709, ele: 1283 },
+      { lat: -39.60469, lon: -71.45767, ele: 1405 },
+      { lat: -39.61218, lon: -71.46528, ele: 1625 },
+      { lat: -39.61273, lon: -71.47312, ele: 1869 },
+      { lat: -39.61736, lon: -71.48284, ele: 2302 },
+      { lat: -39.62038, lon: -71.48604, ele: 2473, name: 'Refugio RIM' },
+      { lat: -39.62265, lon: -71.49044, ele: 2671, name: 'Refugio CAJA' },
+      { lat: -39.62710, lon: -71.49762, ele: 3027 },
+      { lat: -39.63050, lon: -71.50036, ele: 3228 },
+      { lat: -39.63423, lon: -71.50139, ele: 3499 },
+      { lat: -39.63742, lon: -71.50263, ele: 3747, name: 'Cumbre del Lanín' },
     ],
     namedWaypoints: [
       {
-        lat: -39.6020,
-        lon: -71.4550,
+        lat: -39.58973,
+        lon: -71.43007,
         name: 'Seccional Río Turbio',
         description: 'Punto de partida: puesto de Gendarmería, guardaparques y centro de informes del Parque Nacional Lanín. Registro obligatorio antes de subir.',
       },
       {
-        lat: -39.6256,
-        lon: -71.4781,
-        name: 'Refugio RIM (2400 m)',
+        lat: -39.62038,
+        lon: -71.48604,
+        name: 'Refugio RIM (~2400 m)',
         description: 'Primer refugio, a unas 4 horas del estacionamiento. Cara norte del volcán.',
       },
       {
-        lat: -39.6214,
-        lon: -71.4883,
-        name: 'Refugio CAJA (2600 m)',
+        lat: -39.62265,
+        lon: -71.49044,
+        name: 'Refugio CAJA (~2600 m)',
         description: 'Segundo refugio, una hora más allá de RIM. Acá pernocta la mayoría antes del día de cumbre.',
       },
       {
-        lat: -39.6356,
-        lon: -71.4999,
+        lat: -39.63742,
+        lon: -71.50263,
         name: 'Cumbre (3747 m)',
         description: 'Punto más alto, 6-7 horas desde CAJA sobre nieve y hielo. Piolet y crampones obligatorios en el tramo final.',
       },
     ],
+  },
+  {
+    id: 'cerro-colo-huincul',
+    name: 'Cerro Colo Huincul',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Lago Curruhué',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 13.2,
+    elevation_gain_m: 1084,
+    max_altitude_m: 2167,
+    duration: { min: 6.5, max: 7, unit: 'horas' },
+    coordinates: { lat: -39.90763, lon: -71.33369 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'exigente', 'lago Curruhué', 'panorámica', 'menos concurrido'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente al Cerro Colo Huincul (2167 m), frente a la entrada del camping del lago Curruhué Chico. Ida y vuelta de 6,5 a 7 horas. Desde la cumbre se ven los lagos Curruhué Chico, Curruhué Grande, Lolog y Huechulafquen, el volcán Lanín y el Villarrica en Chile.',
+    description_en:
+      'A demanding climb up Cerro Colo Huincul (2,167 m), across from the entrance to the Lago Curruhué Chico campground. A 6.5-7 hour round trip. The summit looks out over Lagos Curruhué Chico, Curruhué Grande, Lolog and Huechulafquen, Volcán Lanín, and Volcán Villarrica in Chile.',
+    trailhead: 'Frente al camping de Lago Curruhué Chico, Parque Nacional Lanín',
+    source: 'Andeshandbook; track GPS verificado vía Wikiloc',
+    long_description: `El Cerro Colo Huincul se levanta frente al lago Curruhué Chico y ofrece uno de los panoramas más completos de la zona sur del Parque Nacional Lanín, pese a ser una de las cumbres menos transitadas — probablemente por el desnivel concentrado en poco menos de 7 km de subida.
+
+El sendero arranca frente a la entrada del camping de Curruhué Chico y gana altura de forma sostenida por bosque andino-patagónico antes de abrirse a laderas más despejadas hacia la cumbre. Es una subida exigente, pero sin dificultad técnica más allá del propio desnivel.
+
+Desde la cumbre (2167 m) el panorama abarca simultáneamente los lagos Curruhué Chico, Curruhué Grande, Lolog y una porción del Huechulafquen, con el volcán Lanín dominando el horizonte y, en días despejados, el Villarrica asomando del lado chileno. Es una de las mejores vistas panorámicas de la zona sur del parque, sin la multitud de otras cumbres más conocidas.`,
+    long_description_en: `Cerro Colo Huincul rises across from Lago Curruhué Chico and offers one of the most complete panoramas in the southern sector of Parque Nacional Lanín, despite being one of its least-traveled summits — likely because the elevation gain is packed into just under 7 km of climbing.
+
+The trail starts across from the Curruhué Chico campground entrance and climbs steadily through Andean-Patagonian forest before opening onto more exposed slopes toward the summit. It's a demanding climb, but without technical difficulty beyond the elevation gain itself.
+
+From the summit (2,167 m) the panorama takes in Lagos Curruhué Chico, Curruhué Grande, Lolog and a stretch of Huechulafquen all at once, with Volcán Lanín dominating the horizon and, on clear days, Villarrica visible on the Chilean side. One of the best panoramic views in the park's southern sector, without the crowds of its better-known summits.`,
+    gpxTrack: [
+      { lat: -39.90763, lon: -71.33369, ele: 1083 },
+      { lat: -39.91152, lon: -71.33654, ele: 1124 },
+      { lat: -39.91547, lon: -71.33802, ele: 1199 },
+      { lat: -39.91969, lon: -71.34049, ele: 1282 },
+      { lat: -39.92348, lon: -71.34054, ele: 1458 },
+      { lat: -39.92789, lon: -71.33809, ele: 1687 },
+      { lat: -39.93243, lon: -71.33904, ele: 1719 },
+      { lat: -39.93714, lon: -71.34001, ele: 1812 },
+      { lat: -39.94146, lon: -71.34030, ele: 1861 },
+      { lat: -39.94428, lon: -71.34407, ele: 1993 },
+      { lat: -39.94804, lon: -71.34693, ele: 2135 },
+      { lat: -39.94950, lon: -71.35049, ele: 2167 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -39.90763,
+        lon: -71.33369,
+        name: 'Camping Lago Curruhué Chico',
+        description: 'Punto de partida frente a la entrada del camping.',
+      },
+      {
+        lat: -39.94950,
+        lon: -71.35049,
+        name: 'Cumbre Cerro Colo Huincul (2167 m)',
+        description: 'Vista a los lagos Curruhué Chico, Curruhué Grande, Lolog y Huechulafquen, el volcán Lanín y el Villarrica en Chile.',
+      },
+    ],
+    parking: 'Espacio informal frente a la entrada del camping de Lago Curruhué Chico.',
+    access_notes: 'Desde Junín de los Andes por la Ruta 62 hacia el paso Carirriñe/Termas de Lahuen Co hasta el lago Curruhué Chico. Registro de trekking recomendado en el sitio del parque antes de salir. No se recomienda hacerlo en solitario.',
+    water_sources: 'Arroyos en el tramo bajo. Sin fuentes confiables en los tramos altos — cargar toda el agua necesaria.',
+    camping_allowed: false,
+    round_trip: true,
+  },
+  {
+    id: 'puerto-arturo-auquinco-lolog',
+    name: 'Puerto Arturo — Auquinco (Lago Lolog)',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Lago Lolog',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 25.5,
+    elevation_gain_m: 665,
+    max_altitude_m: 1100,
+    duration: { min: 7, max: 9, unit: 'horas' },
+    coordinates: { lat: -40.01657, lon: -71.37464 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['lago', 'bosque de colihue', 'araucarias', 'Huella Andina', 'fauna'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Tramo de la Huella Andina por la costa norte del lago Lolog, de Puerto Arturo a Puerto Auquinco. Bosque denso de caña colihue, araucarias y un puente colgante sobre el río Auquinco. 25,5 km ida y vuelta, desnivel moderado.',
+    description_en:
+      "A stretch of the Huella Andina long-distance trail along the northern shore of Lago Lolog, from Puerto Arturo to Puerto Auquinco. Dense colihue cane forest, araucarias, and a suspension bridge over the Río Auquinco. 25.5 km round trip, moderate elevation gain.",
+    trailhead: 'Puerto Arturo, Lago Lolog (Parque Nacional Lanín)',
+    source: 'Wikiexplora; track GPS verificado vía Wikiloc',
+    long_description: `Puerto Arturo, sobre la costa del lago Lolog, es la seccional de guardaparques y el camping desde donde arranca este tramo de la Huella Andina — el sendero de largo recorrido que conecta varios parques nacionales patagónicos. El registro para el tramo se hace en la propia seccional.
+
+El sendero bordea la costa norte del lago Lolog, bien marcado, ascendiendo hasta unos 1100 m a través de un bosque denso de caña colihue, intercalado con ejemplares de araucaria, uno de los árboles emblemáticos del Parque Nacional Lanín. Es habitual cruzarse con huellas de ciervo colorado y jabalí en el valle.
+
+El recorrido continúa hasta un cruce donde una pasarela colgante permite cruzar el río Auquinco, cerca de Puerto Auquinco, en el otro extremo del lago. Es una caminata larga pero de desnivel moderado, ideal para quien busca una jornada completa de bosque patagónico sin la exigencia técnica de una cumbre.`,
+    long_description_en: `Puerto Arturo, on the shore of Lago Lolog, is the ranger station and campground where this stretch of the Huella Andina begins — the long-distance trail connecting several Patagonian national parks. Registration for the stretch is done at the ranger station itself.
+
+The trail follows the northern shore of Lago Lolog, well marked, climbing to about 1,100 m through a dense colihue cane forest interspersed with araucaria trees, one of Parque Nacional Lanín's emblematic species. It's common to come across red deer and wild boar tracks in the valley.
+
+The route continues to a crossing where a suspension bridge crosses the Río Auquinco, near Puerto Auquinco at the other end of the lake. It's a long walk but with moderate elevation gain, ideal for those looking for a full day in Patagonian forest without the technical demands of a summit.`,
+    gpxTrack: [
+      { lat: -40.01657, lon: -71.37464, ele: 908 },
+      { lat: -40.01280, lon: -71.38138, ele: 988 },
+      { lat: -40.01640, lon: -71.39031, ele: 1045 },
+      { lat: -40.02047, lon: -71.39884, ele: 947 },
+      { lat: -40.01985, lon: -71.40846, ele: 1023 },
+      { lat: -40.02189, lon: -71.41645, ele: 900 },
+      { lat: -40.02112, lon: -71.42533, ele: 907 },
+      { lat: -40.02014, lon: -71.43685, ele: 920 },
+      { lat: -40.01599, lon: -71.44672, ele: 987 },
+      { lat: -40.01582, lon: -71.45811, ele: 932 },
+      { lat: -40.01485, lon: -71.46901, ele: 905 },
+      { lat: -40.01774, lon: -71.47197, ele: 902 },
+      { lat: -40.02408, lon: -71.47952, ele: 898 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -40.01657,
+        lon: -71.37464,
+        name: 'Puerto Arturo',
+        description: 'Seccional de guardaparques y camping sobre el lago Lolog. Registro obligatorio del tramo de la Huella Andina.',
+      },
+      {
+        lat: -40.02408,
+        lon: -71.47952,
+        name: 'Puerto Auquinco',
+        description: 'Extremo del recorrido, cerca del cruce con pasarela colgante sobre el río Auquinco.',
+      },
+    ],
+    parking: 'Estacionamiento en Puerto Arturo, sobre el camino que bordea el lago Lolog.',
+    access_notes: 'Desde San Martín de los Andes por el camino al lago Lolog hasta Puerto Arturo. Registro del tramo de la Huella Andina en la seccional de guardaparques.',
+    water_sources: 'Arroyos y el río Auquinco en el tramo final. El lago Lolog acompaña buena parte del recorrido.',
+    camping_allowed: true,
+    round_trip: true,
+  },
+  {
+    id: 'laguna-rosales-san-martin',
+    name: 'Laguna Rosales — San Martín de los Andes',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'San Martín de los Andes',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 11.2,
+    elevation_gain_m: 60,
+    max_altitude_m: 996,
+    duration: { min: 3, max: 4, unit: 'horas' },
+    coordinates: { lat: -40.11282, lon: -71.30889 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['laguna', 'aves', 'apto familias', 'Huella Andina', 'cerca de la ciudad'],
+    permits_required: false,
+    best_season: 'todo el año',
+    description:
+      'Caminata de punto a punto por la Huella Andina, de la Laguna Rosales hasta el centro de San Martín de los Andes. Bosque nativo, humedales y una laguna pequeña rodeada de juncos, hábitat de numerosas aves. Casi sin desnivel, ideal para toda la familia.',
+    description_en:
+      "A point-to-point walk on the Huella Andina trail, from Laguna Rosales into downtown San Martín de los Andes. Native forest, wetlands, and a small reed-fringed lagoon that's home to numerous bird species. Almost no elevation gain, great for the whole family.",
+    trailhead: 'Laguna Rosales, barrio Rosales (Ruta Provincial 62), unos 7 km de San Martín de los Andes',
+    source: 'Wikiexplora; track GPS verificado vía Wikiloc',
+    long_description: `La Laguna Rosales es uno de los paseos más accesibles del entorno inmediato de San Martín de los Andes, a solo 7 km del centro por la Ruta Provincial 62. Es una laguna pequeña rodeada de juncos que funciona como hábitat de numerosas especies de aves regionales, con cartelería interpretativa a lo largo del sendero que facilita identificarlas.
+
+Desde la tranquera de acceso en el barrio Rosales hay apenas 3,5 km hasta la laguna —un paseo corto y fácil de ida y vuelta—, pero quien quiera una caminata más larga puede continuar por la Huella Andina hasta el centro de San Martín de los Andes, sumando bosque nativo, humedales y sectores más abiertos hasta completar unos 11 km de punto a punto.
+
+Es un recorrido de desnivel mínimo, transitable todo el año, y una de las mejores opciones para quien busca conocer la naturaleza inmediata de San Martín de los Andes sin necesidad de trasladarse lejos de la ciudad.`,
+    long_description_en: `Laguna Rosales is one of the most accessible outings in the immediate surroundings of San Martín de los Andes, just 7 km from downtown via Provincial Route 62. It's a small reed-fringed lagoon serving as habitat for numerous regional bird species, with interpretive signage along the trail to help identify them.
+
+From the access gate in the Rosales neighborhood it's just 3.5 km to the lagoon — a short, easy round trip — but those wanting a longer walk can continue on the Huella Andina all the way into downtown San Martín de los Andes, adding native forest, wetlands and more open stretches to complete about 11 km point-to-point.
+
+It's a walk with minimal elevation gain, doable year-round, and one of the best options for experiencing San Martín de los Andes's immediate nature without traveling far from town.`,
+    gpxTrack: [
+      { lat: -40.11282, lon: -71.30889, ele: 927 },
+      { lat: -40.11440, lon: -71.31674, ele: 947 },
+      { lat: -40.11428, lon: -71.32340, ele: 970 },
+      { lat: -40.11106, lon: -71.32967, ele: 981 },
+      { lat: -40.11263, lon: -71.33614, ele: 994 },
+      { lat: -40.11442, lon: -71.34267, ele: 985 },
+      { lat: -40.11893, lon: -71.34421, ele: 979 },
+      { lat: -40.12258, lon: -71.34386, ele: 913 },
+      { lat: -40.12753, lon: -71.34310, ele: 877 },
+      { lat: -40.13250, lon: -71.34162, ele: 853 },
+      { lat: -40.13700, lon: -71.33699, ele: 846 },
+      { lat: -40.14155, lon: -71.34009, ele: 850 },
+      { lat: -40.14486, lon: -71.34539, ele: 845 },
+      { lat: -40.14646, lon: -71.34085, ele: 773 },
+      { lat: -40.15134, lon: -71.34122, ele: 676 },
+      { lat: -40.15463, lon: -71.34400, ele: 656 },
+      { lat: -40.15674, lon: -71.35028, ele: 654 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -40.11282,
+        lon: -71.30889,
+        name: 'Laguna Rosales',
+        description: 'Laguna pequeña rodeada de juncos, hábitat de numerosas aves. Cartelería interpretativa.',
+      },
+      {
+        lat: -40.15674,
+        lon: -71.35028,
+        name: 'San Martín de los Andes (centro)',
+        description: 'Fin del recorrido por la Huella Andina, en el centro de la ciudad.',
+      },
+    ],
+    parking: 'Tranquera de acceso en el barrio Rosales, sobre la Ruta Provincial 62 (para quien solo visita la laguna, ida y vuelta).',
+    access_notes: 'Desde San Martín de los Andes por la Ruta Provincial 62 hasta el barrio Rosales, unos 7 km. Quien complete el recorrido hasta el centro llega caminando de regreso a la ciudad.',
+    water_sources: 'Sin fuentes de agua confiables — llevar agua propia.',
+    camping_allowed: false,
+    round_trip: false,
   },
   {
     id: 'cerro-colorado-trompul',
