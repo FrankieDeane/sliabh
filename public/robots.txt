@@ -41,4 +41,40 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
+# Block known bulk-scraping / SEO-mirroring crawlers. These add no value to
+# Sliabh (they don't send readers or citations) and are the tools most
+# commonly used to copy site data wholesale. This is advisory (robots.txt is
+# not a technical barrier) but it puts these crawlers on notice — see the
+# "Términos de Uso" section in the site footer for the legal terms this
+# backs up.
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: SerpstatBot
+Disallow: /
+
+User-agent: MegaIndex.ru
+Disallow: /
+
+User-agent: ScrapyBot
+Disallow: /
+
 Sitemap: https://sliabh.com.ar/sitemap.xml

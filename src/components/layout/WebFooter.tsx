@@ -25,6 +25,7 @@ export function WebFooter() {
   const { t } = useLangStore();
   const isDark = theme === 'dark';
   const [legalOpen, setLegalOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [cookieOpen, setCookieOpen] = useState(false);
   const { width } = useWindowDimensions();
 
@@ -161,6 +162,29 @@ export function WebFooter() {
               {t(
                 'Sliabh es una plataforma de información para actividades en la naturaleza. Los datos de senderos, mapas, distancias y tiempos estimados son orientativos y pueden no reflejar las condiciones actuales del terreno. Las actividades al aire libre conllevan riesgos inherentes. El usuario es responsable de su propia seguridad, preparación y decisiones en el campo.\n\nLa información es de elaboración propia, contrastada contra fuentes públicas y oficiales (SIB/APN, OpenStreetMap, IGN Argentina, organismos de turismo y áreas protegidas) y puede contener errores u omisiones. Sliabh no garantiza la exactitud, completitud ni vigencia de los datos. Los mapas sin conexión son de referencia y no reemplazan el juicio del excursionista ni equipamiento de navegación profesional.\n\nSliabh no es un organismo oficial ni está afiliado a la Administración de Parques Nacionales de Argentina.\n\nContenido y datos de usuarios: parte de la información de la plataforma (rutas, comentarios, fotos, tracks u otro contenido) puede ser cargada o compartida por los propios usuarios. Sliabh no verifica ni se responsabiliza por la exactitud, legalidad o vigencia de ese contenido, ni por cualquier exposición, uso indebido o divulgación del mismo. Cada usuario es responsable del contenido que publica y de resguardar su propia información. Si detectás contenido inexacto, inapropiado o que viole derechos de terceros, contactanos para su revisión.',
                 'Sliabh is an informational platform for outdoor activities. Trail data, maps, distances and estimated times are indicative and may not reflect current terrain conditions. Outdoor activities carry inherent risks. Users are solely responsible for their own safety, preparation and decisions in the field.\n\nInformation is independently prepared and cross-checked against public and official sources (SIB/APN, OpenStreetMap, IGN Argentina, tourism and protected-area authorities) and may contain errors or omissions. Sliabh makes no warranty as to accuracy, completeness or currency of data. Offline maps are for reference only and do not replace hiker judgement or professional navigation equipment.\n\nSliabh is not an official body and is not affiliated with the Administración de Parques Nacionales de Argentina.\n\nUser-submitted content and data: some information on the platform (routes, comments, photos, tracks or other content) may be uploaded or shared by users themselves. Sliabh does not verify and is not responsible for the accuracy, legality or currency of that content, nor for any exposure, misuse or disclosure of it. Each user is responsible for the content they publish and for safeguarding their own information. If you find content that is inaccurate, inappropriate, or infringes third-party rights, please contact us for review.',
+              )}
+            </Text>
+          </View>
+        )}
+
+        {/* Terms of use / anti-scraping accordion */}
+        <TouchableOpacity
+          style={[styles.legalToggle, { borderTopColor: c.border }]}
+          onPress={() => setTermsOpen((o) => !o)}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.legalToggleTxt, { color: c.muted }]}>
+            {t('Términos de Uso', 'Terms of Use')}
+          </Text>
+          <Ionicons name={termsOpen ? 'chevron-up' : 'chevron-down'} size={13} color={c.muted} />
+        </TouchableOpacity>
+
+        {termsOpen && (
+          <View style={[styles.legalBox, { backgroundColor: c.surface, borderColor: c.border }]}>
+            <Text style={[styles.legalTxt, { color: c.muted }]}>
+              {t(
+                'Todo el contenido de Sliabh (textos, descripciones de senderos, tracks GPS, datos de distancia/desnivel/tiempos, mapas, ilustraciones y código) es propiedad de Sliabh Argaelic o se usa bajo autorización, y está protegido por la Ley 11.723 de Propiedad Intelectual y normativa internacional aplicable.\n\nSe permite el uso personal y no comercial de esta información para planificar tus propias salidas. Queda expresamente prohibido, sin autorización previa y por escrito:\n• Extraer, copiar o reproducir de forma masiva o automatizada (scraping, crawling, minería de datos, uso de bots o scripts) el contenido o la base de datos de Sliabh, total o parcialmente.\n• Redistribuir, republicar, vender o incorporar los datos de Sliabh en otro sitio, app o producto, con o sin fines de lucro.\n• Eludir, desactivar o interferir con cualquier medida técnica destinada a proteger el sitio (límites de acceso, encabezados de seguridad, robots.txt, etc.).\n\nEl incumplimiento habilita a Sliabh a bloquear el acceso y a iniciar las acciones legales correspondientes. Si querés usar datos de Sliabh en un proyecto, medio o investigación, escribinos — en general lo autorizamos citando la fuente.',
+                'All content on Sliabh (text, trail descriptions, GPS tracks, distance/elevation/duration data, maps, illustrations and code) is owned by Sliabh Argaelic or used under license, and is protected by Argentine Law 11,723 (Intellectual Property) and applicable international law.\n\nPersonal, non-commercial use of this information to plan your own outings is permitted. The following are expressly prohibited without prior written authorization:\n• Extracting, copying or reproducing the content or database in bulk or by automated means (scraping, crawling, data mining, bots or scripts), in whole or in part.\n• Redistributing, republishing, selling, or incorporating Sliabh\'s data into another site, app or product, for profit or not.\n• Circumventing, disabling or interfering with any technical measure meant to protect the site (access limits, security headers, robots.txt, etc.).\n\nBreach of these terms entitles Sliabh to block access and pursue legal action. If you\'d like to use Sliabh data for a project, publication or research, reach out — we generally allow it with attribution.',
               )}
             </Text>
           </View>

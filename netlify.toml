@@ -29,6 +29,17 @@
   path = "/*"
   function = "block-previews"
 
+# Security headers, sent on every response. Kept conservative (no CSP yet —
+# the app pulls scripts/tiles from several CDNs and a wrong CSP would break
+# maps in production; add one later after a careful per-origin audit).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=(), payment=()"
+
 # expo-router with output:"single" emits a single-page app, so every route
 # must fall back to index.html for client-side routing to work.
 [[redirects]]
