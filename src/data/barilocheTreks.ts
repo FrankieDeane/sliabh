@@ -168,6 +168,87 @@ El regreso por el mismo sendero permite apreciar el paisaje con luz diferente y 
   },
 
   // -------------------------------------------------------------------------
+  // Refugio Frey vía Picada Eslovena
+  // -------------------------------------------------------------------------
+  {
+    id: 'refugio-frey-picada-eslovena',
+    name: 'Refugio Frey — Picada Eslovena',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 20.4,
+    elevation_gain_m: 939,
+    max_altitude_m: 1765,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -41.17839, lon: -71.41419 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80&fit=crop&auto=format',
+    tags: ['refugio', 'laguna', 'menos concurrido', 'ruta alternativa', 'agujas graníticas'],
+    permits_required: false,
+    best_season: 'Nov – Abr',
+    description:
+      'Acceso alternativo al Refugio Frey desde la seccional del lago Gutiérrez, cerca de Villa Los Coihues — más tranquilo y menos transitado que la subida clásica desde Cerro Catedral. Se puede combinar como circuito, subiendo por una vía y bajando por la otra.',
+    description_en:
+      'An alternative approach to Refugio Frey from the Lago Gutiérrez ranger station, near Villa Los Coihues — quieter and less crowded than the classic climb from Cerro Catedral. Can be combined into a loop, going up one way and down the other.',
+    trailhead: 'Seccional Lago Gutiérrez, cerca de Villa Los Coihues (Bariloche)',
+    source: 'track GPS verificado vía Wikiloc',
+    long_description: `La Picada Eslovena es la vía de acceso menos transitada al Refugio Frey, y por eso la preferida de quienes buscan algo de tranquilidad en un destino que en temporada alta puede llenarse de gente por la vía clásica de Cerro Catedral. El sendero arranca en la seccional de guardaparques del lago Gutiérrez, cerca de Villa Los Coihues, a la que se llega en el colectivo línea 50 desde el centro de Bariloche.
+
+Desde la seccional, el camino de ripio bordea el lago un tramo antes de que el sendero se interne en el bosque y comience a ganar altura de forma sostenida. El desnivel es similar al de la vía clásica, pero repartido de otra manera y con menos gente en el camino — una experiencia más solitaria de bosque y montaña hasta converger con el circo de Frey.
+
+Muchos la usan como parte de un circuito: suben por Cerro Catedral (vía Cancha de Fútbol) y bajan por la Picada Eslovena hacia Villa Los Coihues, o viceversa — la bajada por esta vía suele tomar bastante menos tiempo que la subida clásica. Requiere coordinar el regreso desde un punto distinto al de partida si se hace como travesía de un solo sentido.`,
+    long_description_en: `Picada Eslovena is the least-traveled approach to Refugio Frey, which makes it the preferred option for those looking for some quiet at a destination that can get crowded via the classic Cerro Catedral route in high season. The trail starts at the Lago Gutiérrez ranger station, near Villa Los Coihues, reached by the number 50 bus from downtown Bariloche.
+
+From the ranger station, a gravel road skirts the lake for a stretch before the trail heads into the forest and starts climbing steadily. The elevation gain is similar to the classic route, but distributed differently and with far fewer people on the trail — a more solitary walk through forest and mountain until it converges with the Frey cirque.
+
+Many hikers use it as part of a loop: up via Cerro Catedral (through the Cancha de Fútbol) and down via Picada Eslovena toward Villa Los Coihues, or the reverse — the descent this way is usually noticeably faster than the classic route. Coordinating a return from a different point than the start is needed if done as a one-way traverse.`,
+    gpxTrack: [
+      { lat: -41.17839, lon: -71.41419, ele: 825 },
+      { lat: -41.18370, lon: -71.41541, ele: 856 },
+      { lat: -41.19008, lon: -71.41894, ele: 960 },
+      { lat: -41.19677, lon: -71.42278, ele: 960 },
+      { lat: -41.20191, lon: -71.42884, ele: 992 },
+      { lat: -41.20772, lon: -71.43388, ele: 993 },
+      { lat: -41.21075, lon: -71.44047, ele: 1036 },
+      { lat: -41.20976, lon: -71.44928, ele: 1148 },
+      { lat: -41.20667, lon: -71.45614, ele: 1288 },
+      { lat: -41.20446, lon: -71.46377, ele: 1355 },
+      { lat: -41.19998, lon: -71.47010, ele: 1450 },
+      { lat: -41.19706, lon: -71.47812, ele: 1568 },
+      { lat: -41.19828, lon: -71.48634, ele: 1764 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.17839,
+        lon: -71.41419,
+        name: 'Seccional Lago Gutiérrez',
+        description: 'Punto de partida cerca de Villa Los Coihues. Acceso en colectivo línea 50 desde el centro de Bariloche.',
+      },
+      {
+        lat: -41.21075,
+        lon: -71.44047,
+        name: 'Bosque alto',
+        description: 'El sendero deja el camino de ripio junto al lago y gana altura de forma sostenida por el bosque.',
+      },
+      {
+        lat: -41.19828,
+        lon: -71.48634,
+        name: 'Refugio Frey / Laguna Toncek',
+        description: 'Convergencia con el circo de Frey y la vía clásica desde Cerro Catedral. Refugio del CAB a orillas de la Laguna Toncek.',
+      },
+    ],
+    parking: 'Sin estacionamiento propio — acceso en colectivo línea 50 hasta Villa Los Coihues, o combinando con el auto dejado en Cerro Catedral si se hace como circuito.',
+    access_notes: 'Seccional de guardaparques del lago Gutiérrez, cerca de Villa Los Coihues. Colectivo línea 50 (Autobuses Bariloche) desde el centro, luego unos 3 km caminando por camino de ripio bordeando el lago hasta la seccional.',
+    water_sources: 'Lago Gutiérrez en el tramo inicial, arroyos en el bosque, y la Laguna Toncek en el refugio.',
+    camping_allowed: true,
+    refugio: 'Refugio Frey (CAB)',
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
   // 2. Cerro López vía Refugio López
   // -------------------------------------------------------------------------
   {
