@@ -1772,6 +1772,191 @@ Because this is a long day on high-mountain terrain that's unmarked past Schmoll
     refugio: 'Refugio Frey (CAB)',
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Paso de las Nubes (Pampa Linda — Puerto Frías)
+  // -------------------------------------------------------------------------
+  {
+    id: 'paso-de-las-nubes',
+    name: 'Paso de las Nubes — Pampa Linda a Puerto Frías',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Pampa Linda',
+    region: 'patagonia-norte',
+    activity: 'travesia',
+    difficulty: 'moderado',
+    distance_km: 26,
+    elevation_gain_m: 700,
+    max_altitude_m: 1432,
+    duration: { min: 2, max: 2, unit: 'dias' },
+    coordinates: { lat: -41.2535, lon: -71.7755 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['travesía', '2 días', 'refugio', 'bosque', 'clásico Bariloche', 'combinable con navegación'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Travesía de dos días entre Pampa Linda y Puerto Frías, cruzando el Paso de las Nubes por el Refugio Agostino Rocca (1432 m). 26 km en total, desnivel moderado. Puerto Frías conecta por navegación con Puerto Blest — coordinar el cruce con antelación.',
+    description_en:
+      'A two-day traverse between Pampa Linda and Puerto Frías, crossing Paso de las Nubes via Refugio Agostino Rocca (1,432 m). 26 km total, moderate elevation gain. Puerto Frías connects by boat to Puerto Blest — arrange the crossing in advance.',
+    trailhead: 'Pampa Linda (90 km de Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Paso de las Nubes es una de las travesías más clásicas y accesibles de dos días en Nahuel Huapi, y una de las pocas que combina trekking con navegación: se sube por tierra desde Pampa Linda y se puede cerrar el circuito bajando en lancha desde Puerto Blest hasta Puerto Pañuelo. El sendero es, en toda su extensión, un camino de tierra por bosque y valle — el cruce de lagos queda reservado a la navegación, no al trekking.
+
+La primera etapa, de Pampa Linda al Refugio Agostino Rocca, son 12 km con 680 m de desnivel por un sendero bien marcado que remonta el valle entre bosques de coihues y lengas, con vistas ocasionales al macizo del Tronador quedando atrás. El refugio (1432 m), con capacidad para 80 personas en 10 habitaciones, está en el punto más alto de la travesía — el propio Paso de las Nubes — y es donde conviene pasar la noche.
+
+La segunda etapa desciende hacia Puerto Frías bordeando el curso de agua que da nombre al valle. Alrededor del kilómetro 9 de este tramo hay un puente colgante que cruza el río Frías; de ahí quedan unos 3 km más bordeando la orilla izquierda hasta llegar al muelle de Puerto Frías, sobre el lago del mismo nombre.
+
+En Puerto Frías termina el sendero — la continuación hacia Puerto Blest y Puerto Pañuelo es en lancha, ya que el lago Frías separa ambos puntos. Quien no coordine la navegación debe volver sobre sus pasos por el mismo sendero. Recientemente se habilitó hacer la excursión sin guía obligatorio, aunque los operadores de la zona siguen recomendando ir acompañado por la logística de la navegación y por tratarse de un valle poco transitado.`,
+    gpxTrack: [
+      { lat: -41.2535, lon: -71.7755, ele: 752 },
+      { lat: -41.2288, lon: -71.7831, ele: 922 },
+      { lat: -41.2041, lon: -71.7907, ele: 1090 },
+      { lat: -41.1793, lon: -71.7983, ele: 1260 },
+      { lat: -41.1546, lon: -71.8059, ele: 1432 },
+      { lat: -41.1420, lon: -71.8140, ele: 1230 },
+      { lat: -41.1290, lon: -71.8220, ele: 1020 },
+      { lat: -41.1195, lon: -71.8343, ele: 900 },
+      { lat: -41.1050, lon: -71.8450, ele: 800 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.2535,
+        lon: -71.7755,
+        name: 'Pampa Linda',
+        description: 'Punto de partida, mismo acceso que el sendero al Refugio Otto Meiling. Hostería y área de acampe.',
+      },
+      {
+        lat: -41.1546,
+        lon: -71.8059,
+        name: 'Refugio Agostino Rocca — Paso de las Nubes (1432 m)',
+        description: 'Punto más alto de la travesía y noche de por medio recomendada. Capacidad para 80 personas.',
+      },
+      {
+        lat: -41.1195,
+        lon: -71.8343,
+        name: 'Puente colgante sobre el río Frías',
+        description: 'Cruce del río a unos 9 km de bajada desde el refugio. Quedan ~3 km bordeando la orilla hasta Puerto Frías.',
+      },
+      {
+        lat: -41.1050,
+        lon: -71.8450,
+        name: 'Puerto Frías',
+        description: 'Fin del sendero, sobre el lago Frías. La continuación a Puerto Blest y Puerto Pañuelo es en lancha — coordinar con antelación o volver por el mismo camino.',
+      },
+    ],
+    parking: 'Estacionamiento en Pampa Linda (90 km de Bariloche por Ruta 258 y Ruta 40).',
+    access_notes: 'Desde Bariloche por la Ruta 258 (Circuito Chico / Ruta de los 7 Lagos hacia Pampa Linda), unos 90 km. Para cerrar el circuito por agua desde Puerto Frías es necesario coordinar la navegación con una empresa autorizada — no siempre hay servicio diario.',
+    water_sources: 'Arroyos y el propio río Frías a lo largo de toda la travesía. Abundante en las dos etapas.',
+    camping_allowed: true,
+    refugio: 'Refugio Agostino Rocca (CAB)',
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Circuito de los 4 Refugios (4 días)
+  // -------------------------------------------------------------------------
+  {
+    id: 'circuito-4-refugios',
+    name: 'Circuito de los 4 Refugios (4 días)',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'travesia',
+    difficulty: 'dificil',
+    distance_km: 46,
+    elevation_gain_m: 3200,
+    max_altitude_m: 1900,
+    duration: { min: 4, max: 4, unit: 'dias' },
+    coordinates: { lat: -41.1855, lon: -71.4499 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['travesía', '4 días', 'refugio', 'paso de altura', 'backcountry', 'clásico Bariloche', 'exigente'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'La gran travesía de Bariloche: 4 días y 46 km uniendo los refugios Frey, San Martín (Jakob), Manfredo Segre (Laguna Negra) y López, cruzando más de 7 filos y valles entre Villa Catedral y Colonia Suiza. Exigente, solo con buen tiempo y experiencia previa en alta montaña.',
+    description_en:
+      "Bariloche's great traverse: 4 days and 46 km linking Refugio Frey, San Martín (Jakob), Manfredo Segre (Laguna Negra) and López, crossing more than 7 ridges and valleys between Villa Catedral and Colonia Suiza. Demanding — good weather and prior high-mountain experience required.",
+    trailhead: 'Base Cerro Catedral (Bariloche)',
+    source: 'barilochetrekking.com',
+    long_description: `El Circuito de los 4 Refugios es la travesía de referencia de Bariloche para quien ya conoce el Frey–Jakob y quiere ir un paso más allá: cuatro días, cuatro refugios del Club Andino Bariloche, y más de siete filos y valles cruzados entre Villa Catedral y Colonia Suiza.
+
+Los primeros dos días replican la Travesía Frey–Jakob (ver ficha separada): Catedral → Refugio Frey por la Cancha de Fútbol, noche en Frey, y al día siguiente el filo del Catedral por Laguna Schmoll, la bajada al valle del Rucaco y la Brecha Negra hasta el Refugio San Martín (Jakob), a orillas de su laguna homónima.
+
+El tercer día es el más técnico de todo el circuito: desde Jakob se asciende hacia los cerros Schweitzer y de los Inocentes, y de ahí al Cerro Navidad — el punto más exigente de la travesía, con terreno expuesto y orientación que requiere experiencia — antes de bajar al Refugio Manfredo Segre, a orillas de la Laguna Negra.
+
+El cuarto y último día sube por pedrero hacia el arroyo Goye y cruza otro campo de piedras hasta el filo del Cerro López, para bajar al Refugio López y de ahí a la base en Colonia Suiza, donde termina la travesía — con el infaltable curanto de fin de semana como recompensa para quien llega a tiempo.
+
+Es una salida solo para grupos con buena condición física y experiencia previa en terreno de alta montaña: el tercer día en particular no tiene señalización sistemática y el clima patagónico puede cambiar rápido en los filos expuestos. Con mal tiempo, cualquiera de los tramos por separado (Frey–Jakob, o el circuito a Laguna Negra desde Colonia Suiza) es una alternativa más corta y igualmente completa.`,
+    gpxTrack: [
+      { lat: -41.1855, lon: -71.4499, ele: 1050 },
+      { lat: -41.1950, lon: -71.4670, ele: 1420 },
+      { lat: -41.1972, lon: -71.4830, ele: 1700 },
+      { lat: -41.1900, lon: -71.4900, ele: 1900 },
+      { lat: -41.1633, lon: -71.4983, ele: 1400 },
+      { lat: -41.1400, lon: -71.5050, ele: 1900 },
+      { lat: -41.1267, lon: -71.5117, ele: 1600 },
+      { lat: -41.1200, lon: -71.5400, ele: 1750 },
+      { lat: -41.1150, lon: -71.5800, ele: 1900 },
+      { lat: -41.1085, lon: -71.6242, ele: 1650 },
+      { lat: -41.1000, lon: -71.5900, ele: 1800 },
+      { lat: -41.0960, lon: -71.5500, ele: 1750 },
+      { lat: -41.0928, lon: -71.5275, ele: 1620 },
+      { lat: -41.0817, lon: -71.5133, ele: 776 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -41.1855,
+        lon: -71.4499,
+        name: 'Base Cerro Catedral (Día 1)',
+        description: 'Punto de partida. Estacionamiento con guarda de vehículos por varios días.',
+      },
+      {
+        lat: -41.1972,
+        lon: -71.4830,
+        name: 'Refugio Frey — noche 1',
+        description: 'A orillas de la Laguna Toncek, entre las agujas graníticas.',
+      },
+      {
+        lat: -41.1267,
+        lon: -71.5117,
+        name: 'Refugio San Martín / Jakob — noche 2',
+        description: 'Cruzando la Brecha Negra desde Frey. A orillas de la Laguna Jakob.',
+      },
+      {
+        lat: -41.1150,
+        lon: -71.5800,
+        name: 'Cerro Navidad (tramo más exigente)',
+        description: 'Vía los cerros Schweitzer y de los Inocentes. Terreno expuesto, orientación no siempre señalizada.',
+      },
+      {
+        lat: -41.1085,
+        lon: -71.6242,
+        name: 'Refugio Manfredo Segre — Laguna Negra — noche 3',
+        description: 'Descenso desde el Cerro Navidad. A orillas de la Laguna Negra.',
+      },
+      {
+        lat: -41.0928,
+        lon: -71.5275,
+        name: 'Refugio López',
+        description: 'Vía pedrero hasta el arroyo Goye y el filo del Cerro López. Último tramo antes del descenso final.',
+      },
+      {
+        lat: -41.0817,
+        lon: -71.5133,
+        name: 'Colonia Suiza (final)',
+        description: 'Cierre de la travesía. Curanto los fines de semana. Bus o taxi de regreso a Bariloche.',
+      },
+    ],
+    parking: 'Dejar el vehículo en la base de Cerro Catedral (pago por varios días). Al finalizar en Colonia Suiza, tomar bus o taxi de regreso.',
+    access_notes: 'Inicio en Cerro Catedral (Ruta 82, 18 km desde Bariloche). Fin en Colonia Suiza, sobre la Ruta 79 (bus línea 10/20 de regreso al centro). Logística de dos puntos distintos — planificar con antelación.',
+    water_sources: 'Abundante en la mayoría de los tramos: lagunas Toncek, Schmoll, Jakob y Negra, y los arroyos Rucaco y Goye. Cargar reserva extra en el tramo técnico del tercer día.',
+    camping_allowed: true,
+    refugio: 'Refugio Frey / Jakob / Manfredo Segre / López (todos CAB)',
+    round_trip: false,
+  },
 ];
 
 // ---------------------------------------------------------------------------
