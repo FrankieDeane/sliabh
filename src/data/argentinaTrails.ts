@@ -1903,6 +1903,25 @@ export const TRAIL_REGIONS = [
 
 export type TrailRegion = (typeof TRAIL_REGIONS)[number];
 
+/** English labels for TRAIL_REGIONS — the region strings themselves stay in
+ *  Spanish (they're also the filterByRegion() keys and the ?region= URL
+ *  param value), this is only for what's shown in the filter chip. Use
+ *  `regionLabel(r, lang)` to display. */
+export const TRAIL_REGION_LABEL_EN: Record<TrailRegion, string> = {
+  Todas: 'All',
+  'Patagonia Sur': 'Southern Patagonia',
+  'Patagonia Norte': 'Northern Patagonia',
+  Cuyo: 'Cuyo',
+  Norte: 'North',
+  'Sierras Centrales': 'Central Sierras',
+  Litoral: 'Litoral',
+  'Buenos Aires': 'Buenos Aires',
+};
+
+export function regionLabel(region: TrailRegion, lang: 'es' | 'en'): string {
+  return lang === 'en' ? TRAIL_REGION_LABEL_EN[region] : region;
+}
+
 export function filterByRegion(trails: ArgentinaTrail[], region: TrailRegion): ArgentinaTrail[] {
   if (region === 'Todas') return trails;
   const map: Record<TrailRegion, string[]> = {

@@ -17,6 +17,7 @@ import {
   ARGENTINA_TRAILS,
   TRAIL_REGIONS,
   filterByRegion,
+  regionLabel,
   type TrailRegion,
 } from '../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS } from '../../src/data/barilocheTreks';
@@ -53,7 +54,7 @@ export default function RutasScreen() {
     setRegion(r);
     router.setParams({ region: r });
   }
-  const { t } = useLangStore();
+  const { t, lang } = useLangStore();
 
   // Split layout state
   const isSplit = Platform.OS === 'web' && width >= SPLIT_BREAKPOINT;
@@ -182,7 +183,7 @@ export default function RutasScreen() {
             ]}
           >
             <Text style={[styles.chipText, { color: active ? '#fff' : c.muted }]}>
-              {r}
+              {regionLabel(r, lang)}
             </Text>
           </TouchableOpacity>
         );
@@ -212,7 +213,7 @@ export default function RutasScreen() {
             ]}
           >
             <Text style={[styles.chipText, { color: active ? '#fff' : c.muted }]}>
-              {r}
+              {regionLabel(r, lang)}
             </Text>
           </TouchableOpacity>
         );
