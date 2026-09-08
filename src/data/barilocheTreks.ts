@@ -2012,35 +2012,20 @@ Después del puente el sendero llega a un mirador con vista abierta a la bahía 
 Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señalizada, y con opción de acortar en el mirador o extenderse hasta la playa. Buena alternativa para un día de descanso entre salidas más exigentes, o para quien recién llega a Bariloche y quiere una primera caminata sin complicaciones.`,
     gpxTrack: [
       { lat: -41.0330, lon: -71.5710, ele: 825 },
-      { lat: -41.0360, lon: -71.5765, ele: 870 },
-      { lat: -41.0390, lon: -71.5850, ele: 800 },
-      { lat: -41.0430, lon: -71.5950, ele: 780 },
-      { lat: -41.0460, lon: -71.6020, ele: 770 },
+      { lat: -41.0406, lon: -71.5658, ele: 786 },
     ],
     namedWaypoints: [
       {
         lat: -41.0330,
         lon: -71.5710,
         name: 'Portada Parque Municipal Llao Llao',
-        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao. Cartel de madera sobre la Ruta 77.',
+        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao. Cartel de madera sobre la Ruta 77. En el camino se cruza el Puente Romano, una pasarela de troncos que le da nombre al tramo.',
       },
       {
-        lat: -41.0360,
-        lon: -71.5765,
-        name: 'Desvío hacia Villa Tacul',
-        description: 'Bifurcación señalizada: el sendero al Cerro Llao Llao sigue de frente, este continúa más llano hacia el oeste.',
-      },
-      {
-        lat: -41.0390,
-        lon: -71.5850,
-        name: 'Puente Romano',
-        description: 'Pasarela de troncos que le da nombre al sendero.',
-      },
-      {
-        lat: -41.0460,
-        lon: -71.6020,
+        lat: -41.0406,
+        lon: -71.5658,
         name: 'Mirador Bahía Tacul / Villa Tacul',
-        description: 'Vista abierta a la bahía. Un kilómetro más adelante, la playa de piedras de Villa Tacul sobre el lago Nahuel Huapi.',
+        description: 'Vista abierta a la bahía y playa de piedras de Villa Tacul, sobre el lago Nahuel Huapi (786 m).',
       },
     ],
     parking: 'Banquina junto a la portada del parque sobre la Ruta 77.',
@@ -2085,10 +2070,7 @@ El sendero es un circuito bien señalizado que combina tramos con los senderos a
 Es un paseo casi llano, apto para cualquier edad y nivel físico, con carteles interpretativos sobre la flora nativa a lo largo del camino. Ideal para un día de lluvia liviana bajo el techo del bosque, o para complementar una salida más corta cuando el tiempo no acompaña para las alturas.`,
     gpxTrack: [
       { lat: -41.0330, lon: -71.5710, ele: 825 },
-      { lat: -41.0355, lon: -71.5780, ele: 850 },
-      { lat: -41.0390, lon: -71.5850, ele: 800 },
-      { lat: -41.0405, lon: -71.5810, ele: 790 },
-      { lat: -41.0370, lon: -71.5750, ele: 810 },
+      { lat: -41.0345, lon: -71.5745, ele: 830 },
       { lat: -41.0330, lon: -71.5710, ele: 825 },
     ],
     namedWaypoints: [
@@ -2099,8 +2081,8 @@ Es un paseo casi llano, apto para cualquier edad y nivel físico, con carteles i
         description: 'Punto de partida y llegada del circuito. Cartelería con mapa de todos los senderos del parque.',
       },
       {
-        lat: -41.0390,
-        lon: -71.5850,
+        lat: -41.0345,
+        lon: -71.5745,
         name: 'Bosque de arrayanes',
         description: 'Sector con los ejemplares más grandes, corteza canela característica. Floración blanca en enero.',
       },
