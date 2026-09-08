@@ -181,12 +181,12 @@ function SponsorForm({ c, t, isNarrow }: { c: any; t: (es: string, en: string) =
           <>
             <Text style={[styles.formTitle, { color: c.text }]}>{t('Contanos sobre tu marca', 'Tell us about your brand')}</Text>
             <View style={[styles.formGrid, isNarrow && styles.formGridNarrow]}>
-              <Field c={c} label={t('Nombre completo', 'Full name')} value={fullName} onChangeText={setFullName} placeholder="Juan Pérez" editable={!pending} />
-              <Field c={c} label={t('Sitio web de la empresa', 'Company website')} value={companyWebsite} onChangeText={setCompanyWebsite} placeholder="https://tuempresa.com" editable={!pending} />
-              <Field c={c} label={t('Email', 'Email')} value={email} onChangeText={setEmail} placeholder="juan@tuempresa.com" keyboardType="email-address" autoCapitalize="none" editable={!pending} />
-              <Field c={c} label={t('Teléfono', 'Phone')} value={phone} onChangeText={setPhone} placeholder="+54 9 11 1234-5678" keyboardType="phone-pad" editable={!pending} />
-              <Field c={c} label={t('Link adicional (redes, catálogo, etc.)', 'Additional link (social, catalog, etc.)')} value={additionalLink} onChangeText={setAdditionalLink} placeholder="https://instagram.com/tuempresa" full editable={!pending} />
-              <Field c={c} label={t('Mensaje', 'Message')} value={message} onChangeText={setMessage} placeholder={t('Contanos qué tenés en mente...', "Tell us what you have in mind...")} multiline full editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Nombre completo', 'Full name')} value={fullName} onChangeText={setFullName} placeholder="Juan Pérez" editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Sitio web de la empresa', 'Company website')} value={companyWebsite} onChangeText={setCompanyWebsite} placeholder="https://tuempresa.com" editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Email', 'Email')} value={email} onChangeText={setEmail} placeholder="juan@tuempresa.com" keyboardType="email-address" autoCapitalize="none" editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Teléfono', 'Phone')} value={phone} onChangeText={setPhone} placeholder="+54 9 11 1234-5678" keyboardType="phone-pad" editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Link adicional (redes, catálogo, etc.)', 'Additional link (social, catalog, etc.)')} value={additionalLink} onChangeText={setAdditionalLink} placeholder="https://instagram.com/tuempresa" full editable={!pending} />
+              <Field c={c} isNarrow={isNarrow} label={t('Mensaje', 'Message')} value={message} onChangeText={setMessage} placeholder={t('Contanos qué tenés en mente...', "Tell us what you have in mind...")} multiline full editable={!pending} />
             </View>
             {error && <Text style={[styles.errorTxt]}>{error}</Text>}
             <View style={[styles.submitRow, isNarrow && styles.submitRowNarrow]}>
@@ -224,13 +224,13 @@ function Benefit({ c, icon, title, body }: { c: any; icon: keyof typeof Ionicons
 }
 
 function Field({
-  c, label, value, onChangeText, placeholder, full, multiline, keyboardType, autoCapitalize, editable,
+  c, label, value, onChangeText, placeholder, full, multiline, keyboardType, autoCapitalize, editable, isNarrow,
 }: {
   c: any; label: string; value: string; onChangeText: (v: string) => void; placeholder: string;
-  full?: boolean; multiline?: boolean; keyboardType?: any; autoCapitalize?: any; editable?: boolean;
+  full?: boolean; multiline?: boolean; keyboardType?: any; autoCapitalize?: any; editable?: boolean; isNarrow?: boolean;
 }) {
   return (
-    <View style={[styles.field, full && styles.fieldFull]}>
+    <View style={[styles.field, (full || isNarrow) && styles.fieldFull]}>
       <Text style={[styles.fieldLabel, { color: c.muted }]}>{label}</Text>
       <TextInput
         value={value}
