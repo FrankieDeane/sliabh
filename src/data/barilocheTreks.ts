@@ -473,9 +473,15 @@ El sendero peatonal, alternativa libre al telesilla de pago que también sube a 
 La cima dispone de una confitería con vistas de 270 grados y una terraza al aire libre desde donde los guías fotográficos suelen detallar los puntos de referencia: el lago Nahuel Huapi al norte, el lago Moreno al este, el lago Perito Moreno y el lago Escondido al sur, y las cumbres del Cerro López y el Cerro Tronador al oeste. La combinación de escala y belleza hace que muchos visitantes se queden más tiempo del previsto, simplemente mirando.
 
 Aunque es una de las caminatas más cortas y accesibles de la región, el Cerro Campanario no decepciona incluso al trekker experimentado. La recomendación es subir caminando y bajar en telesilla, o subir temprano para evitar la aglomeración de grupos de turismo que llegan en los ómnibus de excursión a partir de las 10:00 h.`,
-    // Track removed: previous coordinates rendered over Lago Nahuel Huapi /
-    // Moreno on the Mapas map. Kept the trail card; needs re-surveyed points.
-    gpxTrack: [],
+    // Rebuilt from the trail's own namedWaypoints below (all confirmed
+    // on land — the previous version had a differently-sourced line that
+    // clipped Lago Nahuel Huapi/Moreno and was removed for that reason).
+    gpxTrack: [
+      { lat: -41.0708, lon: -71.4749, ele: 789 },
+      { lat: -41.0722, lon: -71.4756, ele: 880 },
+      { lat: -41.0736, lon: -71.4763, ele: 970 },
+      { lat: -41.0745, lon: -71.4768, ele: 1049 },
+    ],
     namedWaypoints: [
       {
         lat: -41.0708,
@@ -544,9 +550,16 @@ Durante el ascenso el bosque se va abriendo en claros que permiten las primeras 
 La parte alta del sendero, por encima de los 1200 metros, sale del bosque y cruza pasturas abigas con arbustos de neneo y mata negra. Desde aquí la vista se amplía en todas las direcciones: al norte el lago Nahuel Huapi se extiende hasta el horizonte con sus penínsulas y bahías; al este la estepa patagónica comienza a dominar el paisaje; al sur el lago Gutiérrez refleja el Cerro Catedral; y al oeste los nevados de la cordillera cierran el panorama. En la cima una gran rotonda de piedra con la confitería giratoria La Galería ofrece un abrazo de 360 grados al paisaje, aunque muchos prefieren las terrazas exteriores al edificio.
 
 El descenso puede hacerse por la misma ruta o tomando el teleférico (opcional) hasta la base y luego un remís de regreso al centro. Aquellos con energía pueden combinar el Otto con la Laguna de los Duendes, una pequeña laguna ubicada 45 minutos al sudeste de la cima.`,
-    // Track removed: previous coordinates rendered over Lago Nahuel Huapi on
-    // the Mapas map. Kept the trail card; needs re-surveyed points.
-    gpxTrack: [],
+    // Rebuilt from the trail's own namedWaypoints below (all confirmed
+    // on land — the previous version had a differently-sourced line that
+    // clipped Lago Nahuel Huapi and was removed for that reason).
+    gpxTrack: [
+      { lat: -41.1410, lon: -71.3300, ele: 785 },
+      { lat: -41.1433, lon: -71.3435, ele: 950 },
+      { lat: -41.1451, lon: -71.3575, ele: 1150 },
+      { lat: -41.1469, lon: -71.3750, ele: 1350 },
+      { lat: -41.1473, lon: -71.3795, ele: 1405 },
+    ],
     namedWaypoints: [
       {
         lat: -41.1410,
@@ -1466,10 +1479,16 @@ El recorrido arranca en la portada del Parque Municipal Llao Llao, señalizada c
 Arriba hay tres miradores que se complementan: hacia el oeste el Brazo de la Tristeza y la Isla Victoria; hacia el norte el hotel Llao Llao con Puerto Pañuelo y el cerro Campanario detrás; hacia el sudoeste el cordón del López. Al atardecer la luz lateral sobre los brazos del lago produce los colores más intensos, aunque implica bajar con la última luz.
 
 Es una salida ideal para familias con niños, para el día de llegada o para combinar con el resto del Circuito Chico en bicicleta. No hay agua en el recorrido y en verano la subida final puede dar calor: llevar botella. El parque es municipal y de acceso gratuito; los senderos cierran al anochecer.`,
-    // Track removed: previous coordinates rendered over the Nahuel Huapi water
-    // (Llao Llao peninsula) on the Mapas map. Kept the trail card; needs
-    // re-surveyed points.
-    gpxTrack: [],
+    // Rebuilt from the trail's own namedWaypoints below (all confirmed
+    // on land — the previous version had a differently-sourced line that
+    // clipped Nahuel Huapi water off the Llao Llao peninsula and was
+    // removed for that reason).
+    gpxTrack: [
+      { lat: -41.0330, lon: -71.5710, ele: 825 },
+      { lat: -41.0360, lon: -71.5765, ele: 870 },
+      { lat: -41.0390, lon: -71.5810, ele: 960 },
+      { lat: -41.0400, lon: -71.5820, ele: 1050 },
+    ],
     namedWaypoints: [
       {
         lat: -41.0330,
@@ -1974,7 +1993,7 @@ Es una salida solo para grupos con buena condición física y experiencia previa
     elevation_gain_m: 60,
     max_altitude_m: 800,
     duration: { min: 1.5, max: 2, unit: 'horas' },
-    coordinates: { lat: -41.0400, lon: -71.5820 },
+    coordinates: { lat: -41.0330, lon: -71.5710 },
     photo_uri:
       'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
     tags: ['mirador', 'apto familias', 'Circuito Chico', 'lago', 'fácil', 'medio día', 'menos exigente'],
@@ -1984,41 +2003,47 @@ Es una salida solo para grupos con buena condición física y experiencia previa
       'Caminata fácil y corta desde el Parque Municipal Llao Llao, cruzando el Puente Romano hasta el Mirador de la bahía Tacul y la playa de Villa Tacul, sobre el lago Nahuel Huapi. Casi sin desnivel — ideal para ir con niños o de medio día.',
     description_en:
       'An easy, short walk from the Llao Llao Municipal Park, crossing the Puente Romano (Roman Bridge) to the Tacul bay viewpoint and the Villa Tacul beach, on Lago Nahuel Huapi. Almost no elevation gain — great for kids or a half day.',
-    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    trailhead: 'Portada Parque Municipal Llao Llao, Ruta 77',
     source: 'barilochetrekking.com',
-    long_description: `Comparte el inicio con el sendero al Cerro Llao Llao (ver ficha separada) desde la casa de guardaparques del Parque Municipal, pero en vez de tomar la subida se sigue por el sendero más llano hacia el oeste, atravesando un bosque bajo de coihues y arrayanes hasta el llamado Puente Romano, una pasarela de troncos sobre un pequeño curso de agua que le da nombre al tramo.
+    long_description: `Comparte el inicio con el sendero al Cerro Llao Llao (ver ficha separada) desde la portada del Parque Municipal, pero en el desvío señalizado poco después de la entrada se sigue por el sendero más llano hacia el oeste, atravesando un bosque bajo de coihues y arrayanes hasta el llamado Puente Romano, una pasarela de troncos sobre un pequeño curso de agua que le da nombre al tramo.
 
 Después del puente el sendero llega a un mirador con vista abierta a la bahía Tacul, uno de los rincones más fotografiados del Circuito Chico por el contraste entre el agua turquesa del Nahuel Huapi y los bosques que bajan hasta la orilla. Desde ahí, quien quiera seguir puede bajar hasta la playa de piedras de Villa Tacul, a un kilómetro más.
 
 Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señalizada, y con opción de acortar en el mirador o extenderse hasta la playa. Buena alternativa para un día de descanso entre salidas más exigentes, o para quien recién llega a Bariloche y quiere una primera caminata sin complicaciones.`,
     gpxTrack: [
-      { lat: -41.0400, lon: -71.5820, ele: 770 },
-      { lat: -41.0410, lon: -71.5880, ele: 780 },
-      { lat: -41.0425, lon: -71.5940, ele: 790 },
-      { lat: -41.0440, lon: -71.6000, ele: 800 },
-      { lat: -41.0460, lon: -71.6050, ele: 780 },
+      { lat: -41.0330, lon: -71.5710, ele: 825 },
+      { lat: -41.0360, lon: -71.5765, ele: 870 },
+      { lat: -41.0390, lon: -71.5850, ele: 800 },
+      { lat: -41.0430, lon: -71.5950, ele: 780 },
+      { lat: -41.0460, lon: -71.6020, ele: 770 },
     ],
     namedWaypoints: [
       {
-        lat: -41.0400,
-        lon: -71.5820,
-        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
-        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao.',
+        lat: -41.0330,
+        lon: -71.5710,
+        name: 'Portada Parque Municipal Llao Llao',
+        description: 'Punto de partida, mismo acceso que el sendero al Cerro Llao Llao. Cartel de madera sobre la Ruta 77.',
       },
       {
-        lat: -41.0425,
-        lon: -71.5940,
+        lat: -41.0360,
+        lon: -71.5765,
+        name: 'Desvío hacia Villa Tacul',
+        description: 'Bifurcación señalizada: el sendero al Cerro Llao Llao sigue de frente, este continúa más llano hacia el oeste.',
+      },
+      {
+        lat: -41.0390,
+        lon: -71.5850,
         name: 'Puente Romano',
         description: 'Pasarela de troncos que le da nombre al sendero.',
       },
       {
         lat: -41.0460,
-        lon: -71.6050,
+        lon: -71.6020,
         name: 'Mirador Bahía Tacul / Villa Tacul',
         description: 'Vista abierta a la bahía. Un kilómetro más adelante, la playa de piedras de Villa Tacul sobre el lago Nahuel Huapi.',
       },
     ],
-    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    parking: 'Banquina junto a la portada del parque sobre la Ruta 77.',
     access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
     water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia, aunque el paseo es corto.',
     camping_allowed: false,
@@ -2041,7 +2066,7 @@ Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señal
     elevation_gain_m: 50,
     max_altitude_m: 800,
     duration: { min: 1.5, max: 2.5, unit: 'horas' },
-    coordinates: { lat: -41.0400, lon: -71.5820 },
+    coordinates: { lat: -41.0330, lon: -71.5710 },
     photo_uri:
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
     tags: ['bosque nativo', 'arrayanes', 'apto familias', 'Circuito Chico', 'fácil', 'interpretativo'],
@@ -2051,36 +2076,36 @@ Es una de las salidas más accesibles de la zona: casi sin desnivel, bien señal
       'Circuito interpretativo de 6,3 km por el Parque Municipal Llao Llao, entre un bosque de arrayanes centenarios de corteza canela característica. Se puede combinar con los senderos al Puente Romano, Lago Escondido y Villa Tacul, que comparten trazado en varios tramos.',
     description_en:
       'A 6.3 km interpretive loop through the Llao Llao Municipal Park, among centuries-old arrayán trees with their distinctive cinnamon-colored bark. Can be combined with the Puente Romano, Lago Escondido and Villa Tacul trails, which share sections of the route.',
-    trailhead: 'Casa de guardaparques, Parque Municipal Llao Llao (Circuito Chico, Bariloche)',
+    trailhead: 'Portada Parque Municipal Llao Llao, Ruta 77',
     source: 'barilochetrekking.com',
     long_description: `El bosque de arrayanes del Parque Municipal Llao Llao es uno de los más accesibles de la región — no hace falta cruzar a la isla Victoria ni al Parque Nacional Los Arrayanes de Villa La Angostura para ver esta especie curiosa, con su corteza lisa de color canela y su copa que en enero se llena de flores blancas.
 
-El sendero es un circuito bien señalizado que combina tramos con los senderos al Puente Romano, la Villa Tacul y el Lago Escondido, todos dentro del mismo parque municipal — quien quiera puede combinar dos o tres de estos recorridos en una sola salida, ya que comparten buena parte del trazado inicial desde la casa de guardaparques.
+El sendero es un circuito bien señalizado que combina tramos con los senderos al Puente Romano, la Villa Tacul y el Lago Escondido, todos dentro del mismo parque municipal — quien quiera puede combinar dos o tres de estos recorridos en una sola salida, ya que comparten buena parte del trazado inicial desde la portada.
 
 Es un paseo casi llano, apto para cualquier edad y nivel físico, con carteles interpretativos sobre la flora nativa a lo largo del camino. Ideal para un día de lluvia liviana bajo el techo del bosque, o para complementar una salida más corta cuando el tiempo no acompaña para las alturas.`,
     gpxTrack: [
-      { lat: -41.0400, lon: -71.5820, ele: 770 },
-      { lat: -41.0385, lon: -71.5860, ele: 785 },
-      { lat: -41.0395, lon: -71.5900, ele: 800 },
-      { lat: -41.0420, lon: -71.5890, ele: 790 },
-      { lat: -41.0410, lon: -71.5850, ele: 775 },
-      { lat: -41.0400, lon: -71.5820, ele: 770 },
+      { lat: -41.0330, lon: -71.5710, ele: 825 },
+      { lat: -41.0355, lon: -71.5780, ele: 850 },
+      { lat: -41.0390, lon: -71.5850, ele: 800 },
+      { lat: -41.0405, lon: -71.5810, ele: 790 },
+      { lat: -41.0370, lon: -71.5750, ele: 810 },
+      { lat: -41.0330, lon: -71.5710, ele: 825 },
     ],
     namedWaypoints: [
       {
-        lat: -41.0400,
-        lon: -71.5820,
-        name: 'Casa de guardaparques (Parque Municipal Llao Llao)',
+        lat: -41.0330,
+        lon: -71.5710,
+        name: 'Portada Parque Municipal Llao Llao',
         description: 'Punto de partida y llegada del circuito. Cartelería con mapa de todos los senderos del parque.',
       },
       {
-        lat: -41.0395,
-        lon: -71.5900,
+        lat: -41.0390,
+        lon: -71.5850,
         name: 'Bosque de arrayanes',
         description: 'Sector con los ejemplares más grandes, corteza canela característica. Floración blanca en enero.',
       },
     ],
-    parking: 'Estacionamiento junto a la casa de guardaparques, Parque Municipal Llao Llao.',
+    parking: 'Banquina junto a la portada del parque sobre la Ruta 77.',
     access_notes: 'Desde Bariloche por Av. Bustillo (Circuito Chico) hasta el Parque Municipal Llao Llao, unos 25 km. Bus urbano línea 20 llega hasta la zona del Llao Llao.',
     water_sources: 'Sin fuentes de agua confiables en el recorrido. Llevar agua propia.',
     camping_allowed: false,

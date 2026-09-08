@@ -1018,8 +1018,9 @@ function DownloadRow({
   const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
 
   async function handleGpx() {
-    const gpxPoints = (trail as any).gpxTrack
-      ? (trail as any).gpxTrack.map((p: any) => ({ lat: p.lat, lon: p.lon, ele: p.ele, name: '' }))
+    const realGpxTrack = (trail as any).gpxTrack;
+    const gpxPoints = realGpxTrack?.length >= 2
+      ? realGpxTrack.map((p: any) => ({ lat: p.lat, lon: p.lon, ele: p.ele, name: '' }))
       : [{ lat: trail.coordinates.lat, lon: trail.coordinates.lon, name: trail.trailhead }];
 
     if (Platform.OS === 'web') {
