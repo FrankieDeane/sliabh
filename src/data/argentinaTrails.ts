@@ -41,6 +41,8 @@ export interface ArgentinaTrail {
   long_description_en?: string;
   /** Optional key landmarks, same convention as ExtendedTrail.namedWaypoints. */
   namedWaypoints?: Array<{ lat: number; lon: number; name: string; description: string }>;
+  /** Optional attribution for the data, same convention as ExtendedTrail.source. */
+  source?: string;
 }
 
 export const ARGENTINA_TRAILS: ArgentinaTrail[] = [
@@ -491,11 +493,11 @@ The descent follows the same route, with extra care on the softened afternoon sn
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'dificil',
-    distance_km: 8,
+    distance_km: 7.6,
     elevation_gain_m: 800,
     max_altitude_m: 1838,
     duration: { min: 4.5, max: 5, unit: 'horas' },
-    coordinates: { lat: -40.1331, lon: -71.4167 },
+    coordinates: { lat: -40.10924, lon: -71.41418 },
     photo_uri:
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
     tags: ['cumbre', 'volcán antiguo', 'panorámica', 'exigente', 'San Martín de los Andes'],
@@ -506,6 +508,7 @@ The descent follows the same route, with extra care on the softened afternoon sn
     description_en:
       'A short but demanding climb up Cerro Colorado (an old volcano) from the Trompul area, near San Martín de los Andes. 800 m of elevation gain packed into a few kilometers. The summit looks out over the Lanín, Villarrica and Choshuenco volcanoes, and Cerro Tronador to the south.',
     trailhead: 'Trompul, unos 20 min de San Martín de los Andes camino al Paso Hua Hum',
+    source: 'Sendas del Parque Nacional Lanín — mapa oficial (pnlanin.com.ar)',
     long_description: `El Cerro Colorado debe su nombre al color rojizo de la roca volcánica que aflora en su cumbre — resto de un antiguo cono eruptivo que hoy es una de las cumbres accesibles más panorámicas del entorno de San Martín de los Andes. Pese a su altura modesta, el desnivel concentrado en poca distancia lo vuelve una salida exigente, más cercana a un ascenso de montaña que a una caminata.
 
 El acceso es por Trompul, un paraje a unos 20 minutos de San Martín de los Andes camino al Paso Hua Hum (frontera con Chile). Desde ahí el sendero gana altura de forma sostenida por bosque hasta dejar la vegetación y trepar por laderas más abiertas de roca volcánica hacia la cumbre.
@@ -517,19 +520,31 @@ Access is via Trompul, a locality about 20 minutes from San Martín de los Andes
 
 From the top the panorama is one of the most complete in the area: the Lanín, Villarrica and Choshuenco volcano chain to the north and west, and on clear days Cerro Tronador stands out to the south. The descent follows the same trail.`,
     gpxTrack: [
-      { lat: -40.1331, lon: -71.4167, ele: 1038 },
-      { lat: -40.1106, lon: -71.3800, ele: 1838 },
+      { lat: -40.10924, lon: -71.41418, ele: 1038 },
+      { lat: -40.10709, lon: -71.41268, ele: 1100 },
+      { lat: -40.10394, lon: -71.41158, ele: 1161 },
+      { lat: -40.10304, lon: -71.41122, ele: 1223 },
+      { lat: -40.10227, lon: -71.41008, ele: 1284 },
+      { lat: -40.10177, lon: -71.40912, ele: 1346 },
+      { lat: -40.10104, lon: -71.40755, ele: 1407 },
+      { lat: -40.10048, lon: -71.40671, ele: 1469 },
+      { lat: -40.09993, lon: -71.40590, ele: 1530 },
+      { lat: -40.09922, lon: -71.40470, ele: 1592 },
+      { lat: -40.09782, lon: -71.40418, ele: 1653 },
+      { lat: -40.09663, lon: -71.40674, ele: 1715 },
+      { lat: -40.09503, lon: -71.40519, ele: 1777 },
+      { lat: -40.09304, lon: -71.40192, ele: 1838 },
     ],
     namedWaypoints: [
       {
-        lat: -40.1331,
-        lon: -71.4167,
+        lat: -40.10924,
+        lon: -71.41418,
         name: 'Trompul',
         description: 'Paraje de partida, unos 20 minutos de San Martín de los Andes por el camino al Paso Hua Hum.',
       },
       {
-        lat: -40.1106,
-        lon: -71.3800,
+        lat: -40.09304,
+        lon: -71.40192,
         name: 'Cumbre Cerro Colorado (1838 m)',
         description: 'Roca volcánica de color rojizo. Vista al cordón Lanín-Villarrica-Choshuenco y, en días claros, al Tronador.',
       },
@@ -544,11 +559,11 @@ From the top the panorama is one of the most complete in the area: the Lanín, V
     region: 'patagonia-norte',
     activity: 'trekking',
     difficulty: 'facil',
-    distance_km: 10,
+    distance_km: 9.1,
     elevation_gain_m: 456,
     max_altitude_m: 1684,
     duration: { min: 4, max: 5, unit: 'horas' },
-    coordinates: { lat: -39.2400, lon: -71.1900 },
+    coordinates: { lat: -39.22851, lon: -71.21093 },
     photo_uri:
       'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
     tags: ['araucarias', 'laguna', 'apto familias', 'fácil', 'zona norte', 'Aluminé'],
@@ -559,6 +574,7 @@ From the top the panorama is one of the most complete in the area: the Lanín, V
     description_en:
       'An out-and-back walk from Lago Rucachoroy north to Laguna Verde, entirely ringed by araucaria forest. 10 km round trip, 456 m elevation gain, family-friendly.',
     trailhead: 'Seccional Rucachoroy, Parque Nacional Lanín (Zona Norte), unos 27 km de Aluminé',
+    source: 'Sendas del Parque Nacional Lanín — mapa oficial (pnlanin.com.ar)',
     long_description: `El lago Rucachoroy ("casa de loros" en mapuche) es la puerta de entrada a uno de los bosques de araucarias más densos del sector norte del Parque Nacional Lanín, a unos 27 km de Aluminé por camino de ripio. Desde la seccional de guardaparques junto al lago (1228 m), un sendero se interna hacia el norte totalmente rodeado de araucarias hasta la Laguna Verde, un espejo de agua pequeño y tranquilo enmarcado por el bosque.
 
 El desnivel es moderado para la distancia, y el sendero está bien marcado, por lo que es una de las opciones más accesibles de la zona norte del parque para salir con chicos o para quien busca una caminata de medio día sin la exigencia de las travesías de varios días que también parten de esta zona.
@@ -570,21 +586,151 @@ The elevation gain is moderate for the distance, and the trail is well marked, m
 
 The area operates as a hunting reserve outside the summer season (December to March), which restricts access — check trail conditions with the ranger station before heading out.`,
     gpxTrack: [
-      { lat: -39.2400, lon: -71.1900, ele: 1228 },
-      { lat: -39.1959, lon: -71.1790, ele: 1684 },
+      { lat: -39.22851, lon: -71.21093, ele: 1228 },
+      { lat: -39.22456, lon: -71.20870, ele: 1304 },
+      { lat: -39.22692, lon: -71.21080, ele: 1380 },
+      { lat: -39.23344, lon: -71.21325, ele: 1456 },
+      { lat: -39.24059, lon: -71.21222, ele: 1532 },
+      { lat: -39.24700, lon: -71.21091, ele: 1608 },
+      { lat: -39.25195, lon: -71.20768, ele: 1684 },
     ],
     namedWaypoints: [
       {
-        lat: -39.2400,
-        lon: -71.1900,
+        lat: -39.22851,
+        lon: -71.21093,
         name: 'Seccional Rucachoroy (1228 m)',
         description: 'Punto de partida junto al lago Rucachoroy, unos 27 km de Aluminé.',
       },
       {
-        lat: -39.1959,
-        lon: -71.1790,
+        lat: -39.25195,
+        lon: -71.20768,
         name: 'Laguna Verde',
         description: 'Laguna pequeña rodeada por completo de bosque de araucarias, al norte del lago Rucachoroy.',
+      },
+    ],
+  },
+  {
+    id: 'cascada-arroyo-grande-quila-quina',
+    name: 'Cascada Arroyo Grande — Quila Quina',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Quila Quina',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 0.7,
+    elevation_gain_m: 40,
+    max_altitude_m: 680,
+    duration: { min: 0.5, max: 0.75, unit: 'horas' },
+    coordinates: { lat: -40.17694, lon: -71.44609 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['cascada', 'apto familias', 'fácil', 'lago Lácar', 'Quila Quina'],
+    permits_required: false,
+    best_season: 'Dic – Abr',
+    description:
+      'Caminata muy corta y fácil en Quila Quina, a orillas del lago Lácar, hasta la cascada del Arroyo Grande — un salto de agua de unos 60 m. Apta para toda la familia, unos 20-30 minutos ida y vuelta.',
+    description_en:
+      'A very short, easy walk in Quila Quina, on the shore of Lago Lácar, to the Arroyo Grande waterfall — a roughly 60 m drop. Suitable for the whole family, about 20-30 minutes round trip.',
+    trailhead: 'Muelle de Quila Quina, unos 18 km de San Martín de los Andes (por lancha o camino)',
+    source: 'Sendas del Parque Nacional Lanín — mapa oficial (pnlanin.com.ar)',
+    long_description: `Quila Quina es uno de los rincones más visitados de la costa sur del lago Lácar, con una playa de arena volcánica y accesos tanto por camino de ripio como en lancha desde San Martín de los Andes. Desde el muelle, un sendero corto y llano se interna en el bosque hasta la cascada del Arroyo Grande, un salto de agua de unos 60 metros que cae entre la vegetación.
+
+Es una de las caminatas más cortas y accesibles de todo el Parque Nacional Lanín — apenas 20 a 30 minutos ida y vuelta — por lo que se combina fácilmente con un día de playa en Quila Quina o con otras excursiones por el lago Lácar.
+
+El acceso al sendero está gestionado por la comunidad mapuche de Quila Quina, con un arancel simbólico de ingreso.`,
+    long_description_en: `Quila Quina is one of the most visited spots on the southern shore of Lago Lácar, with a volcanic-sand beach reachable both by gravel road and by boat from San Martín de los Andes. From the pier, a short, flat trail heads into the forest to the Arroyo Grande waterfall, a roughly 60-meter drop through the vegetation.
+
+It's one of the shortest, most accessible walks in the whole of Parque Nacional Lanín — just 20 to 30 minutes round trip — so it pairs easily with a beach day at Quila Quina or with other excursions on Lago Lácar.
+
+Trail access is managed by the Quila Quina Mapuche community, with a token entry fee.`,
+    gpxTrack: [
+      { lat: -40.17694, lon: -71.44609, ele: 680 },
+      { lat: -40.17654, lon: -71.44571, ele: 690 },
+      { lat: -40.17608, lon: -71.44544, ele: 700 },
+      { lat: -40.17565, lon: -71.44515, ele: 710 },
+      { lat: -40.17531, lon: -71.44477, ele: 715 },
+      { lat: -40.17502, lon: -71.44440, ele: 718 },
+      { lat: -40.17454, lon: -71.44406, ele: 720 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -40.17694,
+        lon: -71.44609,
+        name: 'Muelle de Quila Quina',
+        description: 'Punto de partida junto a la playa, acceso por camino o en lancha desde San Martín de los Andes.',
+      },
+      {
+        lat: -40.17454,
+        lon: -71.44406,
+        name: 'Cascada Arroyo Grande',
+        description: 'Salto de agua de unos 60 m, en pleno bosque.',
+      },
+    ],
+  },
+  {
+    id: 'cerro-acol',
+    name: 'Cerro Acol',
+    province: 'Neuquén',
+    area: 'Parque Nacional Lanín',
+    subarea: 'Hua Hum',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 10.2,
+    elevation_gain_m: 1100,
+    max_altitude_m: 1860,
+    duration: { min: 8, max: 10, unit: 'horas' },
+    coordinates: { lat: -40.12664, lon: -71.69698 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cumbre', 'exigente', 'lagunas de altura', 'Hua Hum', 'jornada completa'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso exigente al Cerro Acol (1860 m), cerca del Paso Hua Hum, con pendiente pronunciada casi toda la subida. Jornada completa de trekking; desde la cumbre se ven los lagos Lácar, Nonthué y Queñi.',
+    description_en:
+      'A demanding climb up Cerro Acol (1,860 m), near the Paso Hua Hum border crossing, with a steep grade for nearly the whole ascent. A full day of trekking; the summit looks out over Lagos Lácar, Nonthué and Queñi.',
+    trailhead: 'Cercanías del lago Queñi, junto al Paso Hua Hum, unos 50 km de San Martín de los Andes',
+    source: 'Sendas del Parque Nacional Lanín — mapa oficial (pnlanin.com.ar)',
+    long_description: `El Cerro Acol es uno de los ascensos más exigentes y menos transitados del entorno de San Martín de los Andes, con un sendero que gana altura de forma sostenida y pronunciada durante casi toda la subida — apto solo para quien ya tiene experiencia de trekking y buen estado físico.
+
+El acceso es cerca del lago Queñi, junto al Paso Hua Hum (frontera con Chile), a unos 50 km de San Martín de los Andes. El sendero atraviesa bosque andino-patagónico antes de ganar altura por laderas más expuestas, con tramos de pendiente pronunciada donde conviene tener las manos libres.
+
+Desde la cumbre (1860 m) el panorama abarca simultáneamente los lagos Lácar, Nonthué y Queñi, con el paisaje cordillerano de fondo — una de las vistas más completas de la zona. Hasta bien entrado el verano puede haber nieve en los tramos altos. Por la exigencia física y la duración de jornada completa, conviene salir muy temprano y evaluar el estado del tiempo antes de encarar la cumbre.`,
+    long_description_en: `Cerro Acol is one of the most demanding, least-traveled climbs around San Martín de los Andes, with a trail that gains altitude steadily and steeply for nearly the entire ascent — suitable only for those with prior trekking experience and good physical fitness.
+
+Access is near Lago Queñi, by the Paso Hua Hum border crossing, about 50 km from San Martín de los Andes. The trail crosses Andean-Patagonian forest before climbing more exposed slopes, with steep sections where it helps to have your hands free.
+
+From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi all at once, with the Andes as a backdrop — one of the most complete panoramas in the area. Snow can linger on the upper sections well into summer. Given the physical demands and full-day length, it's worth starting very early and checking the weather before committing to the summit.`,
+    gpxTrack: [
+      { lat: -40.12664, lon: -71.69698, ele: 760 },
+      { lat: -40.12723, lon: -71.70106, ele: 845 },
+      { lat: -40.12732, lon: -71.70959, ele: 929 },
+      { lat: -40.12909, lon: -71.71583, ele: 1015 },
+      { lat: -40.13047, lon: -71.71991, ele: 1100 },
+      { lat: -40.12927, lon: -71.72908, ele: 1185 },
+      { lat: -40.12946, lon: -71.73127, ele: 1269 },
+      { lat: -40.12894, lon: -71.73490, ele: 1354 },
+      { lat: -40.12784, lon: -71.73725, ele: 1438 },
+      { lat: -40.12800, lon: -71.73873, ele: 1523 },
+      { lat: -40.12761, lon: -71.73948, ele: 1608 },
+      { lat: -40.12842, lon: -71.74102, ele: 1692 },
+      { lat: -40.12887, lon: -71.74207, ele: 1777 },
+      { lat: -40.12903, lon: -71.74316, ele: 1860 },
+    ],
+    namedWaypoints: [
+      {
+        lat: -40.12664,
+        lon: -71.69698,
+        name: 'Inicio cerca del lago Queñi',
+        description: 'Punto de partida junto al Paso Hua Hum, unos 50 km de San Martín de los Andes.',
+      },
+      {
+        lat: -40.12903,
+        lon: -71.74316,
+        name: 'Cumbre Cerro Acol (1860 m)',
+        description: 'Vista simultánea a los lagos Lácar, Nonthué y Queñi. Nieve posible hasta entrado el verano.',
       },
     ],
   },
