@@ -73,6 +73,7 @@ export function PromoBanner() {
   const isNarrow = width < 560;
 
   const [message, setMessage] = useState<PromoMessage | null>(null);
+  const barRef = React.useRef<any>(null);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -95,6 +96,35 @@ export function PromoBanner() {
     const timer = setTimeout(() => setMessage(pick), 2500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Keep --sliabh-banner-h in sync with the bar's actual rendered height, so
+  // fixed-viewport layouts that sit right below the header (see
+  // [data-rutas-split] etc. in src/utils/webStyles.ts) can subtract it and
+  // still fill the screen exactly whether or not this banner is showing —
+  // otherwise those layouts either leave a gap or get pushed off-screen by
+  // whatever height this banner happens to take (it wraps to 2-3 lines on
+  // narrow screens).
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    const root = document.documentElement;
+    if (!message) {
+      root.style.setProperty('--sliabh-banner-h', '0px');
+      return;
+    }
+    const el = barRef.current as HTMLElement | null;
+    if (!el || typeof ResizeObserver === 'undefined') {
+      root.style.setProperty('--sliabh-banner-h', '0px');
+      return;
+    }
+    const observer = new ResizeObserver(([entry]) => {
+      root.style.setProperty('--sliabh-banner-h', `${Math.ceil(entry.contentRect.height)}px`);
+    });
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.setProperty('--sliabh-banner-h', '0px');
+    };
+  }, [message]);
 
   function dismiss() {
     try {
@@ -122,7 +152,7 @@ export function PromoBanner() {
     : { bg: '#f0fdf4', border: 'rgba(22,163,74,0.35)', text: '#052e16', muted: '#16a34a' };
 
   return (
-    <View style={[styles.bar, { backgroundColor: c.bg, borderBottomColor: c.border }]}>
+    <View ref={barRef} style={[styles.bar, { backgroundColor: c.bg, borderBottomColor: c.border }]}>
       <View style={[styles.inner, isNarrow && styles.innerNarrow]}>
         <View style={styles.textWrap}>
           <Ionicons name={message.icon} size={16} color="#16a34a" style={{ flexShrink: 0 }} />

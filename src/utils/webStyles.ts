@@ -493,11 +493,15 @@ export function injectWebStyles() {
     /* ─────────────────────────────────────────────
        RUTAS SPLIT LAYOUT
     ───────────────────────────────────────────── */
+    /* --sliabh-banner-h is kept in sync with PromoBanner's actual rendered
+       height (0px when it isn't shown) — see src/components/ui/PromoBanner.tsx
+       — so the split still fills the viewport exactly whether or not the
+       occasional announcement strip is sitting between it and the header. */
     [data-rutas-split] {
       display: flex;
       flex-direction: row;
-      height: calc(100vh - 58px);
-      height: calc(100dvh - 58px);
+      height: calc(100vh - 58px - var(--sliabh-banner-h, 0px));
+      height: calc(100dvh - 58px - var(--sliabh-banner-h, 0px));
       overflow: hidden;
     }
     [data-rutas-list-panel] {
@@ -510,8 +514,8 @@ export function injectWebStyles() {
       flex: 1;
       position: sticky;
       top: 0;
-      height: calc(100vh - 58px);
-      height: calc(100dvh - 58px);
+      height: calc(100vh - 58px - var(--sliabh-banner-h, 0px));
+      height: calc(100dvh - 58px - var(--sliabh-banner-h, 0px));
     }
 
     /* ─────────────────────────────────────────────

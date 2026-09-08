@@ -74,6 +74,21 @@
     .section-head { padding: 6px 4px 14px; }
     .section-head h2 { margin: 0 0 6px; font-size: 1.5rem; }
     .section-head p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; font-size: .95rem; }
+    /* Embedded in the /rutas split panel (see MAP_CTX above): the map is the
+       whole point of this narrower side panel, so give it the same compact
+       treatment the mobile layout already uses instead of a full standalone
+       page's rich intro copy + legend eating the vertical space #map (flex:1)
+       needs to actually grow into. Scoped to desktop widths (min-width:901px,
+       the mobile breakpoint's mirror) so it can't interact with the separate
+       @media(max-width:900px) mobile rules below at narrower widths — the
+       mobile layout already gets its own, already-tuned compact treatment. */
+    @media (min-width: 901px) {
+      body.ctx-rutas .section-head { padding-bottom: 8px; }
+      body.ctx-rutas .section-head h2 { font-size: 1.2rem; }
+      body.ctx-rutas .section-head p { display: none; }
+      body.ctx-rutas .legend { display: none; }
+      body.ctx-rutas .layer-toggle-row .layer-toggle { padding: 6px 11px; font-size: 12px; }
+    }
     .toolbar { display: grid; gap: 10px; }
     .filters { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
@@ -102,7 +117,7 @@
     .search::placeholder { color: var(--muted); }
     #map {
       flex: 1;
-      min-height: 280px;
+      min-height: 420px;
       width: 100%;
       max-width: 100%;
       border-radius: 16px;
@@ -121,6 +136,17 @@
     .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
     @keyframes osmspin { to { transform: rotate(360deg); } }
     #osmLoading { display: none; }
+    /* Wraps to 2 lines instead of stacking one full-width button per line —
+       6 stacked buttons (~40px each) were eating so much of .map-card's
+       flex column that #map (flex:1) had nothing left to grow into and sat
+       at its min-height floor. Wrapping keeps the same buttons but frees
+       most of that vertical space for the map. */
+    .layer-toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
     .layer-toggle {
       display: flex;
       align-items: center;
@@ -134,8 +160,8 @@
       font-size: 13px;
       font-weight: 600;
       transition: .18s ease;
-      margin-top: 8px;
     }
+    .layer-toggle-row .layer-toggle { margin-top: 0; }
     .layer-toggle.active { background: #1c3a6e; border-color: #3b82f6; color: #93c5fd; }
     .layer-toggle.active.chalten { background: #1a2e1a; border-color: #22c55e; color: #86efac; }
     .layer-toggle .toggle-dot { width: 9px; height: 9px; border-radius: 50%; background: #3b82f6; flex-shrink: 0; }
@@ -688,6 +714,12 @@
     // Embedding context: 'mapas' keeps the left map clean (parks only) and
     // shows trails on the right detail map; 'rutas' shows trails on this map.
     const MAP_CTX = new URLSearchParams(location.search).get('ctx') || 'rutas';
+    // The 'rutas' embed is a narrower side panel, not the full standalone
+    // page — give it the same compact header treatment as the mobile layout
+    // (hide the intro paragraph + legend, tighten the title) so the chrome
+    // above/below #map doesn't out-compete it for the panel's limited
+    // height. See the body.ctx-rutas rules near .section-head's CSS.
+    if (MAP_CTX === 'rutas') document.body.classList.add('ctx-rutas');
 
     function showMapFallback(reason) {
       const el = document.getElementById('mapFallback');
