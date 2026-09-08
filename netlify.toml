@@ -32,10 +32,14 @@
 # Security headers, sent on every response. Kept conservative (no CSP yet —
 # the app pulls scripts/tiles from several CDNs and a wrong CSP would break
 # maps in production; add one later after a careful per-origin audit).
+# X-Frame-Options is SAMEORIGIN, not DENY: /parques.html is embedded in an
+# <iframe> by /rutas and /mapas (the 3D map), so DENY breaks the map — it
+# blocks ALL framing, even from our own pages. SAMEORIGIN still blocks
+# third-party sites from framing us (the anti-clickjacking goal).
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(self), camera=(), microphone=(), payment=()"
