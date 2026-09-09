@@ -2515,6 +2515,77 @@ La vista desde la cumbre abarca el lago Gutiérrez en primer plano y buena parte
     camping_allowed: false,
     round_trip: true,
   },
+
+  // -------------------------------------------------------------------------
+  // Cerro Villegas — desde Ruta 23
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-villegas-ruta-23',
+    name: 'Cerro Villegas — desde Ruta 23',
+    province: 'Río Negro',
+    area: 'Parque Nacional Nahuel Huapi',
+    subarea: 'Bariloche',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 9.25,
+    elevation_gain_m: 566,
+    max_altitude_m: 1441,
+    duration: { min: 5, max: 6, unit: 'horas' },
+    coordinates: { lat: -41.04169, lon: -71.06576 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop',
+    tags: ['sin marcar', 'panorámica', 'ruta 23', 'poco transitado'],
+    permits_required: false,
+    best_season: 'Nov – Abr',
+    description:
+      'Circuito de montaña sobre la Ruta 23, al norte de Bariloche, hasta la Cumbre Villegas (1439 m) y una cumbre vecina sin nombre. Sendero de huella, poco transitado, con varios miradores panorámicos en el ascenso.',
+    description_en:
+      'A mountain loop off Ruta 23, north of Bariloche, up to Cumbre Villegas (1,439 m) and a neighboring unnamed summit. A lightly-traveled route with several panoramic lookout points along the climb.',
+    trailhead: 'Ruta 23, acceso norte de Bariloche (Río Negro)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -41.04169, lon: -71.06576, ele: 1032 },
+      { lat: -41.03626, lon: -71.06824, ele: 1053 },
+      { lat: -41.03434, lon: -71.07502, ele: 1239 },
+      { lat: -41.03460, lon: -71.08416, ele: 1295 },
+      { lat: -41.03688, lon: -71.09198, ele: 1366 },
+      { lat: -41.03685, lon: -71.09811, ele: 1440 },
+      { lat: -41.03704, lon: -71.09180, ele: 1359 },
+      { lat: -41.03303, lon: -71.08504, ele: 1317 },
+      { lat: -41.02822, lon: -71.08026, ele: 1409 },
+      { lat: -41.02828, lon: -71.07208, ele: 1310 },
+      { lat: -41.03086, lon: -71.06540, ele: 1093 },
+      { lat: -41.03663, lon: -71.06610, ele: 1042 },
+      { lat: -41.04172, lon: -71.06580, ele: 1033 },
+    ],
+    long_description: `El Cerro Villegas es una excursión de montaña menos conocida que las clásicas de Cerro Catedral o Refugio Frey, ideal para quienes buscan un circuito con menos gente y vistas igual de espectaculares. El acceso es directo desde la Ruta 23, al norte de la ciudad, sin necesidad de traslados largos.
+
+El sendero, de huella y sin señalización oficial, asciende en zigzag ganando altura de forma constante entre matorrales bajos y afloramientos rocosos. A lo largo del camino se suceden varios "miradores" naturales desde donde se aprecia el valle y las montañas circundantes, hasta llegar a la Cumbre Villegas (1439 m).
+
+Desde la cumbre principal es posible extender la caminata hasta una cumbre vecina sin nombre, ligeramente más alta (1404 m según el track GPS), que ofrece una perspectiva distinta del cordón montañoso. El circuito completo retorna por una variante del sendero de ascenso, cerrando un loop de aproximadamente 9 km.
+
+Por tratarse de un sendero de huella, sin marcas ni infraestructura, se recomienda experiencia en orientación y llevar buen calzado de trekking, suficiente agua y protección solar — el trayecto tiene poca sombra en los tramos altos.`,
+    namedWaypoints: [
+      {
+        lat: -41.03681,
+        lon: -71.09799,
+        name: 'Cumbre Villegas',
+        description: 'Cumbre principal del circuito, 1439 m, con vistas panorámicas de 360°.',
+      },
+      {
+        lat: -41.02777,
+        lon: -71.08023,
+        name: 'Cumbre sin nombre (al este)',
+        description: 'Antecumbre vecina, alcanzable como extensión opcional del circuito.',
+      },
+    ],
+    parking: 'Banquina sobre la Ruta 23, sin instalaciones formales.',
+    access_notes: 'Desde el centro de Bariloche, tomar la Ruta 23 hacia el norte. El inicio del sendero de huella se encuentra sobre la banquina de la ruta, sin cartelería.',
+    water_sources: 'Sin fuentes de agua confirmadas en el recorrido. Cargar toda el agua necesaria desde el inicio.',
+    camping_allowed: false,
+    round_trip: false,
+  },
 ];
 
 // ---------------------------------------------------------------------------
