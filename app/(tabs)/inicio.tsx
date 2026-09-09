@@ -19,6 +19,7 @@ import { useAuthStore } from '../../src/store/authStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SponsorsAndAbout } from '../../src/components/sponsors/SponsorsAndAbout';
+import { NewsletterCard } from '../../src/components/home/NewsletterCard';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
@@ -933,6 +934,13 @@ export default function InicioScreen() {
             <Text style={styles.cafecitoBtnTxt}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
           </TouchableOpacity>
         </View>
+
+        {/* ── NEWSLETTER (native only — web has it in the footer) ── */}
+        {Platform.OS !== 'web' && (
+          <View style={{ marginHorizontal: sidePad }}>
+            <NewsletterCard c={c} />
+          </View>
+        )}
 
         {/* ── AUTH BANNER ── */}
         {!user && (
