@@ -282,6 +282,11 @@ export async function submitSponsorLead(lead: {
     message: lead.message || null,
   });
   if (error) throw error;
+
+  // Best-effort: email the sponsorship PDF right away. Never blocks or
+  // fails the submission — the lead is already saved either way, and
+  // we'll follow up by hand if this doesn't go through.
+  supabase.functions.invoke('send-sponsor-kit', { body: { email: lead.email } }).catch(() => {});
 }
 
 // ── Newsletter ──────────────────────────────────────────────────────
