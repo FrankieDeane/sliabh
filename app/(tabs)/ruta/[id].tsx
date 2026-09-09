@@ -26,6 +26,7 @@ import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
 import { saveTrailTrack, isSupabaseConfigured } from '../../../src/services/supabase';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
+import { downloadAreaTiles, isAreaCached, isTileCachingSupported, estimateAreaSizeMb } from '../../../src/utils/offlineTiles';
 import type { TrailDifficulty, TrailActivity, ArgentinaTrail } from '../../../src/data/argentinaTrails';
 // Platform-specific 3D map — .web.tsx / .native.tsx resolved by bundler
 const TrailMap3D = Platform.OS === 'web'
@@ -1014,8 +1015,44 @@ function DownloadRow({
   const { width } = useWindowDimensions();
   const { lang } = useLangStore();
   const [gpxState, setGpxState] = useState<'idle' | 'done'>('idle');
+  const [cacheState, setCacheState] = useState<'idle' | 'downloading' | 'done'>('idle');
+  const [cacheProgress, setCacheProgress] = useState(0);
   const narrow = width < 420;
   const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
+
+  useEffect(() => {
+    if (!isTileCachingSupported()) return;
+    let alive = true;
+    isAreaCached(trail.coordinates.lat, trail.coordinates.lon).then((cached) => {
+      if (alive && cached) setCacheState('done');
+    });
+    return () => { alive = false; };
+  }, [trail.id]);
+
+  async function handleCache() {
+    if (cacheState !== 'idle') return;
+    if (!isTileCachingSupported()) {
+      if (typeof window !== 'undefined') {
+        window.alert(
+          t(
+            'Tu navegador no soporta almacenamiento offline. Abrí el sitio en HTTPS para activarlo.',
+            'Your browser does not support offline storage. Open the site over HTTPS to enable it.',
+          ),
+        );
+      }
+      return;
+    }
+    setCacheState('downloading');
+    setCacheProgress(0);
+    try {
+      await downloadAreaTiles(trail.coordinates.lat, trail.coordinates.lon, (done, total) => {
+        setCacheProgress(Math.round((done / total) * 100));
+      });
+      setCacheState('done');
+    } catch {
+      setCacheState('idle');
+    }
+  }
 
   async function handleGpx() {
     const realGpxTrack = (trail as any).gpxTrack;
@@ -1082,6 +1119,37 @@ function DownloadRow({
             {gpxState === 'done' ? t('GPX listo', 'GPX ready') : 'GPX'}
           </Text>
         </TouchableOpacity>
+
+        {Platform.OS === 'web' && (
+          <TouchableOpacity
+            style={[
+              dlRowS.btn,
+              cacheState === 'done' ? dlRowS.btnGreenDone : dlRowS.btnGreen,
+              narrow && dlRowS.btnFull,
+            ]}
+            onPress={handleCache}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name={
+                cacheState === 'done'
+                  ? 'checkmark-circle-outline'
+                  : cacheState === 'downloading'
+                    ? 'time-outline'
+                    : 'save-outline'
+              }
+              size={15}
+              color="#22c55e"
+            />
+            <Text style={dlRowS.btnTxtGreen}>
+              {cacheState === 'downloading'
+                ? `${cacheProgress}%`
+                : cacheState === 'done'
+                  ? t('Mapa guardado', 'Map saved')
+                  : t(`Mapa offline (~${estimateAreaSizeMb()} MB)`, `Offline map (~${estimateAreaSizeMb()} MB)`)}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -1114,6 +1182,9 @@ const dlRowS = StyleSheet.create({
   btnFull: { flex: 1 },
   btnBlue: { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' },
   btnTxtBlue: { fontSize: 13, fontWeight: '700', color: '#93c5fd' },
+  btnGreen: { backgroundColor: 'rgba(34,197,94,0.14)', borderColor: '#22c55e' },
+  btnGreenDone: { backgroundColor: 'rgba(34,197,94,0.22)', borderColor: '#22c55e' },
+  btnTxtGreen: { fontSize: 13, fontWeight: '700', color: '#22c55e' },
 });
 
 function OverviewTab({
