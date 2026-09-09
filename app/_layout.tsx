@@ -9,6 +9,7 @@ import { WebHeader } from '../src/components/layout/WebHeader';
 import { PromoBanner } from '../src/components/ui/PromoBanner';
 import { CookieBanner } from '../src/components/ui/CookieBanner';
 import { QuickPoll } from '../src/components/ui/QuickPoll';
+import { NewsletterPopup } from '../src/components/ui/NewsletterPopup';
 import { SiteHead } from '../src/components/ui/SiteHead';
 import { injectWebStyles } from '../src/utils/webStyles';
 
@@ -149,6 +150,7 @@ export default function RootLayout() {
           </View>
           <CookieBanner />
           <QuickPoll />
+          <NewsletterPopup />
         </View>
       </AppErrorBoundary>
     );
