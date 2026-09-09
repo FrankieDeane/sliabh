@@ -284,6 +284,20 @@ export async function submitSponsorLead(lead: {
   if (error) throw error;
 }
 
+// ── Newsletter ──────────────────────────────────────────────────────
+
+/**
+ * Subscribes an email to the newsletter. Stored in newsletter_subscribers —
+ * no public select policy, same privacy shape as poll_leads/sponsor_leads:
+ * only readable from the Supabase dashboard, never via the anon key. `email`
+ * is unique, so a repeat signup (same browser or not) is treated as success
+ * rather than surfaced as an error.
+ */
+export async function subscribeNewsletter(email: string, lang?: 'es' | 'en') {
+  const { error } = await supabase.from('newsletter_subscribers').insert({ email, lang: lang ?? null });
+  if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
+}
+
 /** Vote counts per option for a poll, plus the total. */
 export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
   const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);

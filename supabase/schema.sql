@@ -248,3 +248,31 @@ create policy "Anyone can submit a sponsor inquiry"
 -- Deliberately no select policy: PII stays unreadable via the public anon key.
 
 create index if not exists sponsor_leads_created_idx on public.sponsor_leads (created_at desc);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- newsletter_subscribers: email-only signups from the newsletter button.
+-- Same privacy shape as poll_leads/sponsor_leads — no public select policy,
+-- only readable from the Supabase dashboard. Unique on email so a repeat
+-- signup is a harmless no-op (insert ... on conflict do nothing, handled
+-- client-side by treating the unique_violation error as success).
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.newsletter_subscribers (
+  id          uuid primary key default gen_random_uuid(),
+  email       text not null unique,
+  lang        text,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.newsletter_subscribers enable row level security;
+
+drop policy if exists "Anyone can subscribe" on public.newsletter_subscribers;
+create policy "Anyone can subscribe"
+  on public.newsletter_subscribers for insert
+  with check (
+    email like '%_@_%.__%' and length(email) between 5 and 200
+    and (lang is null or lang in ('es', 'en'))
+  );
+
+-- Deliberately no select policy: emails stay unreadable via the public anon key.
+
+create index if not exists newsletter_subscribers_created_idx on public.newsletter_subscribers (created_at desc);
