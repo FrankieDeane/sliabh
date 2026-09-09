@@ -1888,6 +1888,473 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
       'A short, low-difficulty trail to the Laguna de los Patitos lagoon, next to the Operations Center. Great for birdwatching — especially waterfowl — and family-friendly.',
     trailhead: 'Centro Operativo El Rey (Santa Elena, Salta)',
   },
+
+  // -------------------------------------------------------------------------
+  // Cerro Los Monjes — Picos Central y Oeste (Ruta 40 / Brazo Huemul)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-los-monjes-brazo-huemul',
+    name: 'Cerro Los Monjes — Picos Central y Oeste',
+    province: 'Neuquén',
+    area: 'Ruta 40 / Brazo Huemul, Lago Nahuel Huapi',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 8.1,
+    elevation_gain_m: 863,
+    max_altitude_m: 1515,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -40.96867, lon: -71.34803 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
+    tags: ['sin marcar', 'sendero de huella', 'vista al Nahuel Huapi', 'ruta 40'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso sin sendero oficial marcado a los picos Central y Oeste del Cerro Los Monjes, sobre la costa del Brazo Huemul del Lago Nahuel Huapi, con vistas privilegiadas al lago y la cordillera. Requiere orientación y experiencia en fuera de huella.',
+    description_en:
+      'An unmarked ascent to the Central and West summits of Cerro Los Monjes, above the Brazo Huemul arm of Lago Nahuel Huapi, with sweeping views of the lake and the cordillera. Requires off-trail navigation experience.',
+    trailhead: 'Costa Ruta 40, Brazo Huemul (Lago Nahuel Huapi, Neuquén)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -40.96867, lon: -71.34803, ele: 783 },
+      { lat: -40.97151, lon: -71.35339, ele: 797 },
+      { lat: -40.97552, lon: -71.35478, ele: 867 },
+      { lat: -40.97596, lon: -71.35945, ele: 1033 },
+      { lat: -40.97294, lon: -71.36388, ele: 1228 },
+      { lat: -40.96908, lon: -71.36815, ele: 1359 },
+      { lat: -40.96677, lon: -71.36997, ele: 1483 },
+      { lat: -40.96503, lon: -71.37131, ele: 1510 },
+      { lat: -40.96695, lon: -71.37318, ele: 1414 },
+      { lat: -40.96944, lon: -71.36734, ele: 1331 },
+      { lat: -40.97341, lon: -71.36394, ele: 1225 },
+      { lat: -40.97626, lon: -71.35922, ele: 1021 },
+      { lat: -40.97550, lon: -71.35408, ele: 866 },
+      { lat: -40.97118, lon: -71.35298, ele: 792 },
+      { lat: -40.96869, lon: -71.34802, ele: 783 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Falkner (Filo Hua Hum, Ruta de los 7 Lagos)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-falkner-filo-hua-hum',
+    name: 'Cerro Falkner (Filo Hua Hum)',
+    province: 'Neuquén',
+    area: 'Ruta de los 7 Lagos',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 10,
+    elevation_gain_m: 1142,
+    max_altitude_m: 1987,
+    duration: { min: 7, max: 9, unit: 'horas' },
+    coordinates: { lat: -40.44530, lon: -71.54350 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['filo', 'sin marcar', 'vista panorámica', 'ruta de los 7 lagos'],
+    permits_required: false,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso de montaña por el filo Hua Hum hasta la cumbre del Cerro Falkner (1987 m), sobre la Ruta de los 7 Lagos. Trayecto exigente y sin sendero marcado, con desniveles pronunciados y buenas vistas a los lagos Espejo y Correntoso.',
+    description_en:
+      'A demanding mountain ascent along the Filo Hua Hum ridge to the summit of Cerro Falkner (1,987 m), above the Seven Lakes Route. Unmarked and steep, with fine views of Lago Espejo and Lago Correntoso.',
+    trailhead: 'Ruta de los 7 Lagos, cerca de Villa La Angostura (Neuquén)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -40.44530, lon: -71.54350, ele: 996 },
+      { lat: -40.44897, lon: -71.54129, ele: 922 },
+      { lat: -40.45200, lon: -71.54255, ele: 1035 },
+      { lat: -40.45571, lon: -71.53965, ele: 1241 },
+      { lat: -40.45741, lon: -71.53838, ele: 1395 },
+      { lat: -40.46134, lon: -71.53845, ele: 1514 },
+      { lat: -40.46294, lon: -71.54245, ele: 1630 },
+      { lat: -40.46632, lon: -71.54835, ele: 1930 },
+      { lat: -40.46475, lon: -71.54600, ele: 1836 },
+      { lat: -40.46232, lon: -71.53919, ele: 1582 },
+      { lat: -40.45824, lon: -71.53807, ele: 1464 },
+      { lat: -40.45457, lon: -71.54141, ele: 1248 },
+      { lat: -40.45115, lon: -71.54369, ele: 1072 },
+      { lat: -40.44764, lon: -71.54387, ele: 909 },
+      { lat: -40.44623, lon: -71.54300, ele: 893 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Piltriquitrón — El Bolsón
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-piltriquitron-el-bolson',
+    name: 'Cerro Piltriquitrón',
+    province: 'Río Negro',
+    area: 'El Bolsón',
+    region: 'patagonia-norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 8.8,
+    elevation_gain_m: 1074,
+    max_altitude_m: 2260,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -41.96958, lon: -71.47720 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop',
+    tags: ['bosque tallado', 'refugio', 'mirador', 'ícono de el bolsón'],
+    permits_required: false,
+    best_season: 'Nov – Abr',
+    description:
+      'El cerro insignia de El Bolsón. El sendero sube desde el estacionamiento pasando por el Bosque Tallado (esculturas en troncos) y el refugio, hasta la cumbre a 2260 m con vistas de 360° sobre el valle del río Azul y la cordillera.',
+    description_en:
+      "El Bolsón's iconic peak. The trail climbs from the parking area past the Bosque Tallado (carved tree-trunk sculptures) and the mountain hut to the 2,260 m summit, with 360° views over the Río Azul valley and the cordillera.",
+    trailhead: 'Estacionamiento Cerro Piltriquitrón (El Bolsón, Río Negro)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -41.96958, lon: -71.47720, ele: 1178 },
+      { lat: -41.96868, lon: -71.47249, ele: 1304 },
+      { lat: -41.96740, lon: -71.47023, ele: 1389 },
+      { lat: -41.96939, lon: -71.46827, ele: 1467 },
+      { lat: -41.97082, lon: -71.46473, ele: 1606 },
+      { lat: -41.97115, lon: -71.45796, ele: 1629 },
+      { lat: -41.97475, lon: -71.45471, ele: 1730 },
+      { lat: -41.97984, lon: -71.45663, ele: 1903 },
+      { lat: -41.98460, lon: -71.45917, ele: 2141 },
+      { lat: -41.98314, lon: -71.45771, ele: 2085 },
+      { lat: -41.97832, lon: -71.45584, ele: 1846 },
+      { lat: -41.97322, lon: -71.45425, ele: 1688 },
+      { lat: -41.97050, lon: -71.45993, ele: 1618 },
+      { lat: -41.97207, lon: -71.46619, ele: 1593 },
+      { lat: -41.96909, lon: -71.47004, ele: 1433 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Sendero Macuco — Salto Arrechea (PN Iguazú)
+  // -------------------------------------------------------------------------
+  {
+    id: 'sendero-macuco-salto-arrechea',
+    name: 'Sendero Macuco — Salto Arrechea',
+    province: 'Misiones',
+    area: 'Parque Nacional Iguazú',
+    region: 'litoral',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 8.3,
+    elevation_gain_m: 109,
+    max_altitude_m: 194,
+    duration: { min: 3, max: 4, unit: 'horas' },
+    coordinates: { lat: -25.67986, lon: -54.44544 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['selva paranense', 'cascada', 'fauna', 'apto familias'],
+    permits_required: false,
+    best_season: 'Todo el año',
+    description:
+      'Caminata de ida y vuelta por la selva del Parque Nacional Iguazú hasta el Salto Arrechea, la única cascada del parque con acceso para bañarse. Sendero llano y sombreado, buena oportunidad de avistar fauna (coatíes, tucanes, monos caí).',
+    description_en:
+      'An out-and-back walk through the rainforest of Iguazú National Park to Salto Arrechea, the only waterfall in the park where swimming is allowed. Flat and shaded, with good chances of spotting wildlife (coatis, toucans, capuchin monkeys).',
+    trailhead: 'Sendero Macuco, cerca de Cataratas (PN Iguazú, Misiones)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -25.67986, lon: -54.44544, ele: 188 },
+      { lat: -25.67881, lon: -54.44797, ele: 182 },
+      { lat: -25.67828, lon: -54.45007, ele: 182 },
+      { lat: -25.67645, lon: -54.44798, ele: 182 },
+      { lat: -25.67351, lon: -54.44858, ele: 179 },
+      { lat: -25.67054, lon: -54.44801, ele: 180 },
+      { lat: -25.66787, lon: -54.44948, ele: 180 },
+      { lat: -25.66500, lon: -54.45027, ele: 178 },
+      { lat: -25.66289, lon: -54.45264, ele: 179 },
+      { lat: -25.66035, lon: -54.45449, ele: 179 },
+      { lat: -25.65753, lon: -54.45574, ele: 177 },
+      { lat: -25.65552, lon: -54.45738, ele: 174 },
+      { lat: -25.65517, lon: -54.45719, ele: 150 },
+    ],
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Huella Impenetrable (PN El Impenetrable, Chaco)
+  // -------------------------------------------------------------------------
+  {
+    id: 'huella-impenetrable-chaco',
+    name: 'Huella Impenetrable',
+    province: 'Chaco',
+    area: 'Parque Nacional El Impenetrable',
+    region: 'litoral',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 15.3,
+    elevation_gain_m: 61,
+    max_altitude_m: 137,
+    duration: { min: 5, max: 7, unit: 'horas' },
+    coordinates: { lat: -25.17990, lon: -61.09682 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&q=80&fit=crop&auto=format',
+    tags: ['chaco seco', 'monte nativo', 'fauna', 'poca sombra'],
+    permits_required: false,
+    best_season: 'Abr – Sep (evitar el calor extremo del verano chaqueño)',
+    description:
+      'Travesía llana a través del monte chaqueño en el Parque Nacional El Impenetrable, uno de los últimos grandes bosques secos de Sudamérica. Terreno sin desnivel pero exigente por la distancia y el calor; llevar bastante agua.',
+    description_en:
+      'A flat trek through dry Chaco forest in Parque Nacional El Impenetrable, one of the last great dry forests in South America. No elevation change, but demanding due to distance and heat — carry plenty of water.',
+    trailhead: 'PN El Impenetrable (Chaco)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -25.17990, lon: -61.09682, ele: 135 },
+      { lat: -25.17176, lon: -61.09367, ele: 135 },
+      { lat: -25.16298, lon: -61.09369, ele: 135 },
+      { lat: -25.15463, lon: -61.09706, ele: 136 },
+      { lat: -25.15116, lon: -61.10076, ele: 135 },
+      { lat: -25.14686, lon: -61.10292, ele: 136 },
+      { lat: -25.14181, lon: -61.11021, ele: 137 },
+      { lat: -25.13750, lon: -61.11761, ele: 137 },
+      { lat: -25.13624, lon: -61.12644, ele: 136 },
+      { lat: -25.12926, lon: -61.12384, ele: 136 },
+      { lat: -25.12235, lon: -61.12878, ele: 135 },
+      { lat: -25.12097, lon: -61.13615, ele: 135 },
+      { lat: -25.11933, lon: -61.14306, ele: 135 },
+      { lat: -25.12134, lon: -61.15197, ele: 136 },
+      { lat: -25.12694, lon: -61.14992, ele: 137 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Funke — Cerro Naposta — Cerro Tres Picos (encadenamiento)
+  // -------------------------------------------------------------------------
+  {
+    id: 'funke-naposta-tres-picos',
+    name: 'Cerro Funke — Naposta — Tres Picos (Encadenamiento)',
+    province: 'Buenos Aires',
+    area: 'Sierra de la Ventana',
+    region: 'buenos-aires',
+    activity: 'travesia',
+    difficulty: 'extremo',
+    distance_km: 50.7,
+    elevation_gain_m: 2328,
+    max_altitude_m: 1093,
+    duration: { min: 2, max: 3, unit: 'dias' },
+    coordinates: { lat: -38.06528, lon: -62.06550 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['encadenamiento', 'sierra de la ventana', 'punto más alto de buenos aires', 'multi-día'],
+    permits_required: true,
+    best_season: 'Abr – Oct (evitar calor extremo del verano)',
+    description:
+      'Travesía de varios días que encadena las cumbres del Cerro Funke, Cerro Naposta y Cerro Tres Picos (1093 m, el punto más alto de la provincia de Buenos Aires), en Sierra de la Ventana. Terreno serrano exigente con tramos expuestos. El acceso a varios sectores cruza estancias privadas: gestionar autorización antes de salir.',
+    description_en:
+      'A multi-day traverse chaining the summits of Cerro Funke, Cerro Naposta and Cerro Tres Picos (1,093 m, the highest point in Buenos Aires province), in Sierra de la Ventana. Demanding, exposed terrain. Access to several sections crosses private estancias — arrange authorization before setting out.',
+    trailhead: 'Sierra de la Ventana (Buenos Aires)',
+    source: 'Track GPS verificado vía Wikiloc',
+    namedWaypoints: [
+      { lat: -38.08678, lon: -61.99522, name: 'Cima Cerro Funke', description: 'Primera cumbre del encadenamiento.' },
+      { lat: -38.10379, lon: -61.97492, name: 'Cima Cerro Naposta', description: 'Segunda cumbre, filo intermedio.' },
+      { lat: -38.15811, lon: -61.95212, name: 'Cima Cerro Tres Picos', description: 'Punto más alto de la provincia de Buenos Aires (1093 m).' },
+    ],
+    gpxTrack: [
+      { lat: -38.06528, lon: -62.06550, ele: 425 },
+      { lat: -38.08074, lon: -62.04078, ele: 601 },
+      { lat: -38.08518, lon: -62.01359, ele: 817 },
+      { lat: -38.08904, lon: -61.98344, ele: 959 },
+      { lat: -38.11224, lon: -61.97311, ele: 977 },
+      { lat: -38.13052, lon: -61.95508, ele: 992 },
+      { lat: -38.14739, lon: -61.96332, ele: 965 },
+      { lat: -38.14204, lon: -61.97316, ele: 994 },
+      { lat: -38.13399, lon: -61.99994, ele: 557 },
+      { lat: -38.14221, lon: -62.03146, ele: 490 },
+      { lat: -38.14850, lon: -62.06341, ele: 458 },
+      { lat: -38.14503, lon: -62.09391, ele: 457 },
+      { lat: -38.12748, lon: -62.08731, ele: 463 },
+      { lat: -38.10363, lon: -62.09215, ele: 506 },
+      { lat: -38.07726, lon: -62.10633, ele: 520 },
+      { lat: -38.05554, lon: -62.11174, ele: 503 },
+      { lat: -38.06092, lon: -62.07772, ele: 551 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Sendero de las Señoritas (Uquía, Jujuy)
+  // -------------------------------------------------------------------------
+  {
+    id: 'sendero-senoritas-uquia',
+    name: 'Sendero de las Señoritas',
+    province: 'Jujuy',
+    area: 'Uquía, Quebrada de Humahuaca',
+    region: 'norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 7.7,
+    elevation_gain_m: 691,
+    max_altitude_m: 3147,
+    duration: { min: 4, max: 6, unit: 'horas' },
+    coordinates: { lat: -23.30280, lon: -65.35538 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop',
+    tags: ['quebrada de humahuaca', 'formaciones rocosas', 'altura', 'circuito opcional'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Ascenso desde Uquía hasta formaciones rocosas de gran altura, con un circuito opcional al Cañón de las 13 Curvas. Terreno árido de puna con fuerte exposición solar; buena aclimatación recomendada por la altitud (hasta 3147 m).',
+    description_en:
+      'A climb from Uquía to high-altitude rock formations, with an optional side loop through the Cañón de las 13 Curvas. Arid puna terrain with strong sun exposure — acclimatization recommended given the altitude (up to 3,147 m).',
+    trailhead: 'Uquía (Quebrada de Humahuaca, Jujuy)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -23.30280, lon: -65.35538, ele: 2821 },
+      { lat: -23.30511, lon: -65.36061, ele: 2863 },
+      { lat: -23.30892, lon: -65.36447, ele: 2887 },
+      { lat: -23.31291, lon: -65.36790, ele: 2901 },
+      { lat: -23.31502, lon: -65.37269, ele: 2953 },
+      { lat: -23.31715, lon: -65.37740, ele: 3067 },
+      { lat: -23.31658, lon: -65.37889, ele: 3061 },
+      { lat: -23.31556, lon: -65.37457, ele: 3014 },
+      { lat: -23.31295, lon: -65.37113, ele: 2930 },
+      { lat: -23.31133, lon: -65.37406, ele: 3059 },
+      { lat: -23.31162, lon: -65.37284, ele: 2989 },
+      { lat: -23.31256, lon: -65.36775, ele: 2900 },
+      { lat: -23.30867, lon: -65.36408, ele: 2891 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Inca Cueva (Humahuaca, Jujuy)
+  // -------------------------------------------------------------------------
+  {
+    id: 'inca-cueva-humahuaca',
+    name: 'Inca Cueva',
+    province: 'Jujuy',
+    area: 'Humahuaca',
+    region: 'norte',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 8.9,
+    elevation_gain_m: 541,
+    max_altitude_m: 3764,
+    duration: { min: 4, max: 6, unit: 'horas' },
+    coordinates: { lat: -22.97617, lon: -65.46428 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop',
+    tags: ['puna', 'arte rupestre', 'altura', 'quebrada de humahuaca'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Circuito de altura en la puna jujeña cerca de Humahuaca, con petroglifos y arte rupestre en las cuevas de la zona. Terreno de puna seca por encima de los 3600 m; requiere buena aclimatación.',
+    description_en:
+      'A high-altitude circuit on the Jujuy puna near Humahuaca, with petroglyphs and rock art in the area\'s caves. Dry puna terrain above 3,600 m — requires solid acclimatization.',
+    trailhead: 'Inca Cueva (Humahuaca, Jujuy)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -22.97617, lon: -65.46428, ele: 3624 },
+      { lat: -22.98169, lon: -65.46574, ele: 3610 },
+      { lat: -22.98765, lon: -65.46810, ele: 3630 },
+      { lat: -22.99388, lon: -65.46740, ele: 3658 },
+      { lat: -22.99827, lon: -65.46295, ele: 3677 },
+      { lat: -23.00202, lon: -65.46191, ele: 3712 },
+      { lat: -23.00227, lon: -65.46400, ele: 3752 },
+      { lat: -23.00365, lon: -65.46348, ele: 3729 },
+      { lat: -22.99910, lon: -65.46247, ele: 3682 },
+      { lat: -22.99465, lon: -65.46717, ele: 3665 },
+      { lat: -22.98822, lon: -65.46769, ele: 3635 },
+      { lat: -22.98210, lon: -65.46598, ele: 3615 },
+      { lat: -22.97619, lon: -65.46435, ele: 3622 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Parque Nacional Río Pilcomayo — Portal Estero Poí (Formosa)
+  // -------------------------------------------------------------------------
+  {
+    id: 'pilcomayo-estero-poi',
+    name: 'PN Río Pilcomayo — Portal Estero Poí',
+    province: 'Formosa',
+    area: 'Parque Nacional Río Pilcomayo',
+    region: 'litoral',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 34.4,
+    elevation_gain_m: 103,
+    max_altitude_m: 76,
+    duration: { min: 6, max: 9, unit: 'horas' },
+    coordinates: { lat: -25.12300, lon: -58.17588 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&q=80&fit=crop&auto=format',
+    tags: ['esteros', 'humedal ramsar', 'fauna', 'apto bicicleta'],
+    permits_required: false,
+    best_season: 'Abr – Sep',
+    description:
+      'Circuito llano por los humedales del Portal Estero Poí, en el Parque Nacional Río Pilcomayo (sitio RAMSAR). Terreno totalmente plano, apto para recorrer caminando o en bicicleta; buena observación de aves y fauna del Chaco húmedo.',
+    description_en:
+      'A flat circuit through the wetlands of the Estero Poí portal, in Parque Nacional Río Pilcomayo (a RAMSAR site). Completely level terrain, suitable on foot or by bike, with good birdwatching and wildlife of the humid Chaco.',
+    trailhead: 'Portal Estero Poí, PN Río Pilcomayo (Formosa)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -25.12300, lon: -58.17588, ele: 74 },
+      { lat: -25.11541, lon: -58.15142, ele: 75 },
+      { lat: -25.10411, lon: -58.15487, ele: 76 },
+      { lat: -25.07944, lon: -58.15405, ele: 75 },
+      { lat: -25.05918, lon: -58.13744, ele: 75 },
+      { lat: -25.04310, lon: -58.12675, ele: 75 },
+      { lat: -25.01857, lon: -58.12955, ele: 75 },
+      { lat: -25.03196, lon: -58.12692, ele: 75 },
+      { lat: -25.05478, lon: -58.13233, ele: 75 },
+      { lat: -25.07386, lon: -58.15015, ele: 75 },
+      { lat: -25.09763, lon: -58.15637, ele: 76 },
+      { lat: -25.11901, lon: -58.15687, ele: 76 },
+      { lat: -25.12320, lon: -58.17594, ele: 74 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Uritorco (Capilla del Monte, Córdoba)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-uritorco',
+    name: 'Cerro Uritorco',
+    province: 'Córdoba',
+    area: 'Capilla del Monte',
+    region: 'sierras-centrales',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 10.1,
+    elevation_gain_m: 998,
+    max_altitude_m: 1979,
+    duration: { min: 5, max: 7, unit: 'horas' },
+    coordinates: { lat: -30.86197, lon: -64.49551 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['sierras chicas', 'punto más alto', 'místico', 'ícono de córdoba'],
+    permits_required: true,
+    best_season: 'Abr – Nov (acceso pago, se cierra por lluvia/tormenta eléctrica)',
+    description:
+      'El cerro más alto de las Sierras Chicas (1979 m) y uno de los ascensos más populares de Córdoba, famoso por su fama de sitio "místico". Acceso pago desde Capilla del Monte, sendero bien marcado y muy transitado en temporada.',
+    description_en:
+      'The highest peak in the Sierras Chicas (1,979 m) and one of the most popular climbs in Córdoba, famous for its "mystical" reputation. Paid access from Capilla del Monte, well-marked and busy in season.',
+    trailhead: 'Capilla del Monte (Córdoba)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -30.86197, lon: -64.49551, ele: 1059 },
+      { lat: -30.85980, lon: -64.49291, ele: 1214 },
+      { lat: -30.85780, lon: -64.48719, ele: 1369 },
+      { lat: -30.85419, lon: -64.48302, ele: 1501 },
+      { lat: -30.85289, lon: -64.47939, ele: 1643 },
+      { lat: -30.84949, lon: -64.47598, ele: 1767 },
+      { lat: -30.84563, lon: -64.47758, ele: 1916 },
+      { lat: -30.84817, lon: -64.47765, ele: 1788 },
+      { lat: -30.85191, lon: -64.47781, ele: 1678 },
+      { lat: -30.85362, lon: -64.48243, ele: 1540 },
+      { lat: -30.85748, lon: -64.48638, ele: 1390 },
+      { lat: -30.85966, lon: -64.49229, ele: 1235 },
+      { lat: -30.86149, lon: -64.49557, ele: 1062 },
+    ],
+    round_trip: false,
+  },
 ];
 
 export const TRAIL_REGIONS = [
@@ -1931,7 +2398,7 @@ export function filterByRegion(trails: ArgentinaTrail[], region: TrailRegion): A
     Cuyo: ['Mendoza', 'San Juan', 'La Rioja'],
     Norte: ['Jujuy', 'Salta', 'Tucumán', 'Catamarca'],
     'Sierras Centrales': ['Córdoba', 'San Luis'],
-    Litoral: ['Misiones', 'Chaco', 'Corrientes', 'Entre Ríos'],
+    Litoral: ['Misiones', 'Chaco', 'Corrientes', 'Entre Ríos', 'Formosa'],
     'Buenos Aires': ['Buenos Aires'],
   };
   return trails.filter((t) => map[region].includes(t.province));
