@@ -2355,6 +2355,265 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     ],
     round_trip: false,
   },
+
+  // -------------------------------------------------------------------------
+  // Pozo del Indio — Cascada del Indio Miguel — Piedras Lisas — Cueva de los Helechos (Tanti)
+  // -------------------------------------------------------------------------
+  {
+    id: 'pozo-del-indio-tanti',
+    name: 'Pozo del Indio — Cascada del Indio Miguel',
+    province: 'Córdoba',
+    area: 'Tanti',
+    region: 'sierras-centrales',
+    activity: 'trekking',
+    difficulty: 'moderado',
+    distance_km: 16.9,
+    elevation_gain_m: 903,
+    max_altitude_m: 1117,
+    duration: { min: 6, max: 8, unit: 'horas' },
+    coordinates: { lat: -31.35640, lon: -64.59065 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&q=80&fit=crop&auto=format',
+    tags: ['cascadas', 'cuevas', 'sierras chicas', 'cruces de arroyo'],
+    permits_required: false,
+    best_season: 'Abr – Nov',
+    description:
+      'Circuito largo por las sierras de Tanti que encadena varias cascadas (Cascada Tanti, Cascada Panorámica, Cascada Escondida, Cascada del Indio Miguel) y cuevas (de los Helechos, de los Murciélagos), con cruces de arroyo en el camino.',
+    description_en:
+      'A long circuit through the Tanti hills linking several waterfalls (Cascada Tanti, Cascada Panorámica, Cascada Escondida, Cascada del Indio Miguel) and caves (de los Helechos, de los Murciélagos), with stream crossings along the way.',
+    trailhead: 'Terminal de ómnibus de Tanti (Córdoba)',
+    source: 'Track GPS verificado vía Wikiloc',
+    namedWaypoints: [
+      { lat: -31.35035, lon: -64.59958, name: 'Cascada Tanti', description: 'Primera cascada del recorrido.' },
+      { lat: -31.34637, lon: -64.60194, name: 'Cueva de los Helechos', description: 'Cueva con helechos en las paredes.' },
+      { lat: -31.33021, lon: -64.62182, name: 'Cueva de los Murciélagos', description: 'Cueva habitada por murciélagos.' },
+      { lat: -31.32099, lon: -64.63924, name: 'Cascada del Indio Miguel', description: 'Cascada final del circuito, punto de retorno.' },
+    ],
+    gpxTrack: [
+      { lat: -31.35640, lon: -64.59065, ele: 855 },
+      { lat: -31.35198, lon: -64.59852, ele: 866 },
+      { lat: -31.34705, lon: -64.60422, ele: 891 },
+      { lat: -31.34072, lon: -64.61050, ele: 959 },
+      { lat: -31.33312, lon: -64.61700, ele: 998 },
+      { lat: -31.32748, lon: -64.62427, ele: 1095 },
+      { lat: -31.32532, lon: -64.63320, ele: 1063 },
+      { lat: -31.32084, lon: -64.63915, ele: 1059 },
+      { lat: -31.32469, lon: -64.63299, ele: 1062 },
+      { lat: -31.32787, lon: -64.62366, ele: 1099 },
+      { lat: -31.33344, lon: -64.61646, ele: 1000 },
+      { lat: -31.34072, lon: -64.61027, ele: 960 },
+      { lat: -31.34697, lon: -64.60421, ele: 891 },
+      { lat: -31.35243, lon: -64.59783, ele: 863 },
+      { lat: -31.35648, lon: -64.59067, ele: 865 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cascada del Ángel — Quebrada del 55 (Cordón del Plata, Potrerillos)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cascada-del-angel-q55',
+    name: 'Cascada del Ángel — Quebrada del 55',
+    province: 'Mendoza',
+    area: 'Cordón del Plata, Potrerillos',
+    region: 'cuyo',
+    activity: 'trekking',
+    difficulty: 'facil',
+    distance_km: 4,
+    elevation_gain_m: 342,
+    max_altitude_m: 1552,
+    duration: { min: 2, max: 3, unit: 'horas' },
+    coordinates: { lat: -32.91770, lon: -69.23769 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop&auto=format',
+    tags: ['cascada', 'apto familias', 'cordón del plata', 'potrerillos'],
+    permits_required: false,
+    best_season: 'Todo el año',
+    description:
+      'Caminata corta y accesible por la Quebrada del 55, en las estribaciones del Cordón del Plata, hasta la Cascada del Ángel. Ideal para medio día, con varios miradores panorámicos en el ascenso.',
+    description_en:
+      'A short, accessible walk through the Quebrada del 55, on the foothills of the Cordón del Plata, up to the Cascada del Ángel waterfall. A good half-day option, with several panoramic viewpoints along the climb.',
+    trailhead: 'Potrerillos (Mendoza)',
+    source: 'Track GPS verificado vía Wikiloc',
+    gpxTrack: [
+      { lat: -32.91770, lon: -69.23769, ele: 1437 },
+      { lat: -32.91819, lon: -69.23909, ele: 1471 },
+      { lat: -32.91953, lon: -69.23988, ele: 1504 },
+      { lat: -32.92127, lon: -69.24158, ele: 1472 },
+      { lat: -32.92306, lon: -69.24328, ele: 1481 },
+      { lat: -32.92504, lon: -69.24384, ele: 1504 },
+      { lat: -32.92727, lon: -69.24334, ele: 1533 },
+      { lat: -32.92809, lon: -69.24410, ele: 1552 },
+      { lat: -32.92735, lon: -69.24347, ele: 1524 },
+      { lat: -32.92516, lon: -69.24385, ele: 1510 },
+      { lat: -32.92314, lon: -69.24338, ele: 1495 },
+      { lat: -32.92124, lon: -69.24159, ele: 1475 },
+      { lat: -32.91967, lon: -69.24000, ele: 1492 },
+      { lat: -32.91825, lon: -69.23912, ele: 1477 },
+      { lat: -32.91768, lon: -69.23768, ele: 1433 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Arenales y Cerro Andresito (Vallecitos, Cordón del Plata)
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-arenales-andresito',
+    name: 'Cerro Arenales y Cerro Andresito',
+    province: 'Mendoza',
+    area: 'Vallecitos, Cordón del Plata',
+    region: 'cuyo',
+    activity: 'trekking',
+    difficulty: 'dificil',
+    distance_km: 5.7,
+    elevation_gain_m: 755,
+    max_altitude_m: 3383,
+    duration: { min: 5, max: 7, unit: 'horas' },
+    coordinates: { lat: -32.97732, lon: -69.35322 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80&fit=crop&auto=format',
+    tags: ['dos cumbres', 'filo', 'vallecitos', 'alta montaña'],
+    permits_required: true,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso de doble cumbre desde el estacionamiento de Vallecitos, subiendo por el filo hasta el Cerro Andresito y el Cerro Arenales (3383 m). Buena excursión de aclimatación para quienes se preparan para picos más altos del Cordón del Plata.',
+    description_en:
+      'A double-summit climb from the Vallecitos parking area, up the ridge to Cerro Andresito and Cerro Arenales (3,383 m). A good acclimatization outing for those training for the higher peaks of the Cordón del Plata.',
+    trailhead: 'Estacionamiento Vallecitos (Mendoza)',
+    source: 'Track GPS verificado vía Wikiloc',
+    namedWaypoints: [
+      { lat: -32.96211, lon: -69.35102, name: 'Cumbre Arenales', description: 'Cumbre más alta del circuito, 3383 m.' },
+      { lat: -32.97235, lon: -69.35397, name: 'Cumbre Andresito', description: 'Segunda cumbre, en el regreso hacia el estacionamiento.' },
+    ],
+    gpxTrack: [
+      { lat: -32.97731, lon: -69.35322, ele: 2738 },
+      { lat: -32.97496, lon: -69.35592, ele: 2833 },
+      { lat: -32.97182, lon: -69.35631, ele: 2947 },
+      { lat: -32.96856, lon: -69.35604, ele: 3040 },
+      { lat: -32.96602, lon: -69.35439, ele: 3146 },
+      { lat: -32.96613, lon: -69.35094, ele: 3306 },
+      { lat: -32.96423, lon: -69.34961, ele: 3361 },
+      { lat: -32.96276, lon: -69.35070, ele: 3373 },
+      { lat: -32.96576, lon: -69.34865, ele: 3364 },
+      { lat: -32.96826, lon: -69.35029, ele: 3287 },
+      { lat: -32.96998, lon: -69.35268, ele: 3158 },
+      { lat: -32.97209, lon: -69.35391, ele: 3113 },
+      { lat: -32.97727, lon: -69.35314, ele: 2822 },
+    ],
+    round_trip: false,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Plata (5956 m) — Vallecitos, Cordón del Plata
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-plata-vallecitos',
+    name: 'Cerro Plata',
+    province: 'Mendoza',
+    area: 'Vallecitos, Cordón del Plata',
+    region: 'cuyo',
+    activity: 'alta_montana',
+    difficulty: 'extremo',
+    distance_km: 30.9,
+    elevation_gain_m: 4744,
+    max_altitude_m: 5956,
+    duration: { min: 4, max: 6, unit: 'dias' },
+    coordinates: { lat: -32.97541, lon: -69.35858 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cinco mil', 'expedición', 'cordón del plata', 'aclimatación para aconcagua'],
+    permits_required: true,
+    best_season: 'Dic – Mar',
+    description:
+      'El punto más alto del Cordón del Plata (5956 m) y una de las expediciones de altura más exigentes de Mendoza fuera de Aconcagua. Ruta de varios días desde el estacionamiento de Vallecitos, con campamentos escalonados en Piedra Grande, Salto de Agua y La Hoyada antes del ascenso final.',
+    description_en:
+      "The highest point of the Cordón del Plata (5,956 m) and one of the most demanding high-altitude expeditions in Mendoza outside Aconcagua. A multi-day route from the Vallecitos parking area, with staged camps at Piedra Grande, Salto de Agua and La Hoyada before the final push to the summit.",
+    trailhead: 'Estacionamiento Vallecitos (Mendoza)',
+    source: 'Track GPS verificado vía Wikiloc',
+    namedWaypoints: [
+      { lat: -32.98125, lon: -69.38879, name: 'Campamento Piedra Grande', description: 'Primer campamento de la expedición.' },
+      { lat: -32.97942, lon: -69.41467, name: 'Campamento Salto de Agua', description: 'Segundo campamento, junto a una cascada.' },
+      { lat: -32.99041, lon: -69.42664, name: 'Campamento La Hoyada', description: 'Campamento de altura, base para el ascenso final.' },
+      { lat: -32.99680, lon: -69.43887, name: 'Coll Vallecitos - Plata', description: 'Collado entre Cerro Vallecitos y Cerro Plata.' },
+    ],
+    gpxTrack: [
+      { lat: -32.97541, lon: -69.35858, ele: 2954 },
+      { lat: -32.97543, lon: -69.36449, ele: 3074 },
+      { lat: -32.97631, lon: -69.36998, ele: 3225 },
+      { lat: -32.97554, lon: -69.37738, ele: 3337 },
+      { lat: -32.97909, lon: -69.38362, ele: 3488 },
+      { lat: -32.98124, lon: -69.38930, ele: 3573 },
+      { lat: -32.98248, lon: -69.39622, ele: 3752 },
+      { lat: -32.98236, lon: -69.40148, ele: 3919 },
+      { lat: -32.98114, lon: -69.40838, ele: 4056 },
+      { lat: -32.97888, lon: -69.41442, ele: 4262 },
+      { lat: -32.98131, lon: -69.41971, ele: 4397 },
+      { lat: -32.98580, lon: -69.42399, ele: 4486 },
+      { lat: -32.99008, lon: -69.42629, ele: 4505 },
+      { lat: -32.99538, lon: -69.42845, ele: 4854 },
+      { lat: -32.99743, lon: -69.43374, ele: 5042 },
+      { lat: -32.99729, lon: -69.43861, ele: 5208 },
+      { lat: -33.00111, lon: -69.44284, ele: 5327 },
+      { lat: -33.00428, lon: -69.44909, ele: 5467 },
+      { lat: -33.00939, lon: -69.45364, ele: 5621 },
+      { lat: -33.01202, lon: -69.45588, ele: 5775 },
+      { lat: -33.01584, lon: -69.45500, ele: 5957 },
+    ],
+    round_trip: true,
+  },
+
+  // -------------------------------------------------------------------------
+  // Cerro Lomas Amarillas (5159 m) — tramo final desde Piedra Grande
+  // -------------------------------------------------------------------------
+  {
+    id: 'cerro-lomas-amarillas',
+    name: 'Cerro Lomas Amarillas (5159 m)',
+    province: 'Mendoza',
+    area: 'Vallecitos, Cordón del Plata',
+    region: 'cuyo',
+    activity: 'alta_montana',
+    difficulty: 'extremo',
+    distance_km: 7,
+    elevation_gain_m: 1917,
+    max_altitude_m: 5159,
+    duration: { min: 1, max: 1, unit: 'dias' },
+    coordinates: { lat: -32.98134, lon: -69.38957 },
+    photo_uri:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop&auto=format',
+    tags: ['cinco mil', 'vallecitos', 'cordón del plata', 'ascenso de altura'],
+    permits_required: true,
+    best_season: 'Dic – Mar',
+    description:
+      'Ascenso final al Cerro Lomas Amarillas (5159 m) desde el Campamento Piedra Grande, pasando por La Hoyada y el Gran Acarreo. Se trata del tramo alto de una expedición de varios días: llegar a Piedra Grande desde el estacionamiento de Vallecitos ya insume 3-4 horas adicionales de aproximación.',
+    description_en:
+      "The final ascent to Cerro Lomas Amarillas (5,159 m) from Campamento Piedra Grande, via La Hoyada and the Gran Acarreo scree slope. This covers the high segment of a multi-day expedition — reaching Piedra Grande from the Vallecitos parking area alone takes another 3-4 hours of approach.",
+    trailhead: 'Campamento Piedra Grande (Vallecitos, Mendoza)',
+    source: 'Track GPS verificado vía Wikiloc',
+    namedWaypoints: [
+      { lat: -32.99036, lon: -69.42653, name: 'Campamento La Hoyada', description: 'Campamento de altura previo al ascenso final.' },
+      { lat: -32.99349, lon: -69.42345, name: 'Gran Acarreo', description: 'Tramo de pedregal suelto antes de la cumbre.' },
+      { lat: -32.99347, lon: -69.41833, name: 'Cumbre Lomas Amarillas', description: 'Cumbre a 5159 m.' },
+    ],
+    gpxTrack: [
+      { lat: -32.98134, lon: -69.38957, ele: 3564 },
+      { lat: -32.98183, lon: -69.39414, ele: 3658 },
+      { lat: -32.98324, lon: -69.39746, ele: 3783 },
+      { lat: -32.98291, lon: -69.40074, ele: 3893 },
+      { lat: -32.98131, lon: -69.40351, ele: 3960 },
+      { lat: -32.98111, lon: -69.40857, ele: 4035 },
+      { lat: -32.97963, lon: -69.41290, ele: 4194 },
+      { lat: -32.97988, lon: -69.41561, ele: 4308 },
+      { lat: -32.98128, lon: -69.41955, ele: 4374 },
+      { lat: -32.98421, lon: -69.42186, ele: 4410 },
+      { lat: -32.98686, lon: -69.42533, ele: 4516 },
+      { lat: -32.99027, lon: -69.42655, ele: 4641 },
+      { lat: -32.99303, lon: -69.42393, ele: 4838 },
+      { lat: -32.99370, lon: -69.42153, ele: 5044 },
+    ],
+    round_trip: false,
+  },
 ];
 
 export const TRAIL_REGIONS = [
