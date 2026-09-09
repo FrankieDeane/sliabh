@@ -8,6 +8,7 @@ import { LOGO_URI } from '../../constants/logo';
 import { MERCADOPAGO_URL } from '../../constants/links';
 import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
 import { subscribeNewsletter } from '../../services/supabase';
+import { SUBSCRIBED_KEY } from '../ui/NewsletterPopup';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -235,6 +236,7 @@ function NewsletterSignup({ c }: { c: { border: string; text: string; muted: str
     setStatus('sending');
     try {
       await subscribeNewsletter(trimmed, lang);
+      try { localStorage.setItem(SUBSCRIBED_KEY, '1'); } catch {}
       setStatus('done');
       setEmail('');
     } catch {
