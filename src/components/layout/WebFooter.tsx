@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
@@ -7,6 +7,9 @@ import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 import { MERCADOPAGO_URL } from '../../constants/links';
 import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
+import { subscribeNewsletter } from '../../services/supabase';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MAX_CONTENT = 1200;
 
@@ -60,6 +63,7 @@ export function WebFooter() {
               <Ionicons name="call-outline" size={12} color="#ef4444" />
               <Text style={[styles.emergencyTxt, { color: c.muted }]}>Emergencias APN: 105</Text>
             </View>
+            <NewsletterSignup c={c} />
           </View>
 
           {/* Explorar column */}
@@ -217,6 +221,71 @@ export function WebFooter() {
   );
 }
 
+function NewsletterSignup({ c }: { c: { border: string; text: string; muted: string; surface: string } }) {
+  const { t, lang } = useLangStore();
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+
+  const submit = async () => {
+    const trimmed = email.trim();
+    if (!EMAIL_RE.test(trimmed)) {
+      setStatus('error');
+      return;
+    }
+    setStatus('sending');
+    try {
+      await subscribeNewsletter(trimmed, lang);
+      setStatus('done');
+      setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'done') {
+    return (
+      <View style={[styles.newsletterBox, { borderColor: c.border }]}>
+        <Ionicons name="checkmark-circle" size={14} color="#22c55e" />
+        <Text style={[styles.newsletterDoneTxt, { color: c.muted }]}>
+          {t('¡Listo! Ya estás suscripto.', "You're subscribed!")}
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ gap: 6, width: '100%', maxWidth: 280 }}>
+      <Text style={[styles.newsletterLabel, { color: c.muted }]}>
+        {t('Recibí nuevos senderos por mail', 'Get new trails by email')}
+      </Text>
+      <View style={styles.newsletterRow}>
+        <TextInput
+          value={email}
+          onChangeText={(v) => { setEmail(v); if (status === 'error') setStatus('idle'); }}
+          placeholder={t('tu@email.com', 'you@email.com')}
+          placeholderTextColor={c.muted}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={[styles.newsletterInput, { borderColor: c.border, backgroundColor: c.surface, color: c.text }]}
+        />
+        <TouchableOpacity
+          style={[styles.newsletterBtn, status === 'sending' && { opacity: 0.6 }]}
+          onPress={submit}
+          disabled={status === 'sending'}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="arrow-forward" size={15} color="#04110a" />
+        </TouchableOpacity>
+      </View>
+      {status === 'error' && (
+        <Text style={styles.newsletterErrorTxt}>
+          {t('Revisá el email e intentá de nuevo.', 'Check the email and try again.')}
+        </Text>
+      )}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   footer: { width: '100%', borderTopWidth: 1 },
   inner: { paddingTop: 48, paddingBottom: 28 },
@@ -235,6 +304,23 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   emergencyTxt: { fontSize: 11, fontWeight: '600' },
+  newsletterLabel: { fontSize: 11.5, fontWeight: '600' },
+  newsletterRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  newsletterInput: {
+    flex: 1, height: 36, borderWidth: 1, borderRadius: 8,
+    paddingHorizontal: 10, fontSize: 13,
+  },
+  newsletterBtn: {
+    width: 36, height: 36, borderRadius: 8, backgroundColor: '#22c55e',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  newsletterErrorTxt: { fontSize: 11, color: '#ef4444' },
+  newsletterBox: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8,
+    alignSelf: 'flex-start', maxWidth: 280,
+  },
+  newsletterDoneTxt: { fontSize: 11.5, fontWeight: '600' },
   navCol: { flex: 1, minWidth: 140, gap: 10 },
   navTitle: { fontSize: 9, fontWeight: '800', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 },
   navItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
