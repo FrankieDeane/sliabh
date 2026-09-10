@@ -276,3 +276,90 @@ create policy "Anyone can subscribe"
 -- Deliberately no select policy: emails stay unreadable via the public anon key.
 
 create index if not exists newsletter_subscribers_created_idx on public.newsletter_subscribers (created_at desc);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- guides: public directory of mountain guides, listed per-TRAIL (shown on
+-- each trail's own page, not browsed by region). Every listing is paid —
+-- there's no free tier — and payment IS the moderation: a row goes public
+-- the instant Mercado Pago confirms it, no admin review step.
+--
+-- Security model: ALL writes come from Edge Functions using the service
+-- role (which bypasses RLS), never directly from the browser with the
+-- anon key:
+--   - create-guide-checkout inserts the pending row (paid=false) and opens
+--     a Mercado Pago Checkout Pro preference for it.
+--   - mp-webhook is the ONLY thing that ever sets paid=true, and only
+--     after re-fetching the payment from Mercado Pago's own API to
+--     confirm it's really approved (never trusts the webhook payload).
+-- Because of that, there is deliberately no public insert/update/delete
+-- policy at all — the anon key can only read.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.guides (
+  id               uuid primary key default gen_random_uuid(),
+  full_name        text not null,
+  email            text not null,
+  phone            text,
+  regions          text[] default '{}', -- superseded by trail_ids; kept optional for possible future region browsing
+  trail_ids        text[] not null default '{}',
+  specialties      text,
+  certification    text,
+  bio              text,
+  photo_url        text,
+  instagram        text,
+  website          text,
+  newsletter_opt_in boolean not null default false,
+  paid             boolean not null default false,
+  paid_at          timestamptz,
+  expires_at       timestamptz, -- listing lapses on its own 1 year after payment
+  amount_total     numeric,
+  currency         text not null default 'ARS',
+  mp_preference_id text,
+  mp_payment_id    text,
+  -- Legacy from the v1 (region-directory) design — unused by the current
+  -- flow (payment replaces manual approval) but kept for now rather than
+  -- dropped, in case a manual-review step comes back.
+  status           text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  verified         boolean not null default false,
+  featured         boolean not null default false,
+  featured_until   timestamptz,
+  created_at       timestamptz not null default now()
+);
+
+alter table public.guides enable row level security;
+
+drop policy if exists "Anyone can apply as a guide" on public.guides;
+drop policy if exists "Approved guides are viewable by everyone" on public.guides;
+
+drop policy if exists "Paid guides are viewable by everyone" on public.guides;
+create policy "Paid guides are viewable by everyone"
+  on public.guides for select
+  using (paid = true and (expires_at is null or expires_at > now()));
+
+-- Deliberately no insert/update/delete policy: every write goes through
+-- create-guide-checkout / mp-webhook via the service role.
+
+create index if not exists guides_status_idx on public.guides (status);
+create index if not exists guides_trail_ids_idx on public.guides using gin (trail_ids);
+create index if not exists guides_mp_preference_idx on public.guides (mp_preference_id);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- guide-photos: public storage bucket for guide profile photos, uploaded
+-- directly from the browser (anon key) before the application is
+-- submitted — the resulting public URL is what gets sent to
+-- create-guide-checkout as photo_url. Anyone can upload (no auth on the
+-- application form), capped by bucket-level size/type limits below;
+-- anyone can view, since these are meant to be public.
+-- ──────────────────────────────────────────────────────────────────────────
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('guide-photos', 'guide-photos', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])
+on conflict (id) do nothing;
+
+drop policy if exists "Anyone can upload a guide photo" on storage.objects;
+create policy "Anyone can upload a guide photo"
+  on storage.objects for insert
+  with check (bucket_id = 'guide-photos');
+
+drop policy if exists "Guide photos are publicly viewable" on storage.objects;
+create policy "Guide photos are publicly viewable"
+  on storage.objects for select
+  using (bucket_id = 'guide-photos');

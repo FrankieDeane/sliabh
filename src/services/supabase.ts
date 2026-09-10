@@ -303,6 +303,96 @@ export async function subscribeNewsletter(email: string, lang?: 'es' | 'en') {
   if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
 }
 
+// ── Mountain guides (per-trail, paid listing) ──────────────────────────
+
+export interface Guide {
+  id: string;
+  full_name: string;
+  trail_ids: string[];
+  specialties: string | null;
+  certification: string | null;
+  bio: string | null;
+  photo_url: string | null;
+  instagram: string | null;
+  website: string | null;
+}
+
+/**
+ * Guides listed for a specific trail — newest first. Only `paid = true`
+ * (and not expired) rows are ever returned, enforced server-side by RLS.
+ * Contact info (email/phone) is deliberately never selected here: only
+ * Instagram/website are public, so a visitor reaches out through those,
+ * never a scraped phone number.
+ */
+export async function fetchGuidesForTrail(trailId: string): Promise<Guide[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await supabase
+    .from('guides')
+    .select('id, full_name, trail_ids, specialties, certification, bio, photo_url, instagram, website')
+    .contains('trail_ids', [trailId])
+    .order('created_at', { ascending: false });
+  if (error) return [];
+  return (data as Guide[]) ?? [];
+}
+
+/**
+ * Uploads a guide's profile photo to the public `guide-photos` bucket and
+ * returns its public URL — call this BEFORE createGuideCheckout, and pass
+ * the resulting URL as `photoUrl`. Web only for now (plain <input type=
+ * file>, no native image picker wired up yet).
+ */
+export async function uploadGuidePhoto(file: File): Promise<string> {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from('guide-photos').upload(path, file, {
+    contentType: file.type || 'image/jpeg',
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from('guide-photos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/**
+ * Submits a guide application and opens a Mercado Pago Checkout Pro
+ * preference for it via the `create-guide-checkout` Edge Function — the
+ * ONLY way a row ever gets inserted into `guides` (the table has no public
+ * insert policy; see schema.sql). Returns the checkout URL to redirect to.
+ * The listing only goes live once Mercado Pago confirms the payment
+ * (mp-webhook), never on submission alone.
+ */
+export async function createGuideCheckout(app: {
+  fullName: string;
+  email: string;
+  phone?: string;
+  photoUrl?: string;
+  trailIds: string[];
+  specialties?: string;
+  certification?: string;
+  bio?: string;
+  instagram?: string;
+  website?: string;
+  newsletterOptIn?: boolean;
+}): Promise<{ checkoutUrl: string }> {
+  const { data, error } = await supabase.functions.invoke('create-guide-checkout', {
+    body: {
+      fullName: app.fullName,
+      email: app.email,
+      phone: app.phone || '',
+      photoUrl: app.photoUrl || '',
+      trailIds: app.trailIds,
+      specialties: app.specialties || '',
+      certification: app.certification || '',
+      bio: app.bio || '',
+      instagram: app.instagram || '',
+      website: app.website || '',
+      newsletterOptIn: app.newsletterOptIn === true,
+    },
+  });
+  if (error) throw error;
+  if (!data?.checkoutUrl) throw new Error(data?.error || 'No se pudo generar el pago');
+  return { checkoutUrl: data.checkoutUrl as string };
+}
+
 /** Vote counts per option for a poll, plus the total. */
 export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
   const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);

@@ -25,7 +25,8 @@ import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMER
 import type { ExtendedTrail } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
-import { saveTrailTrack, isSupabaseConfigured } from '../../../src/services/supabase';
+import { saveTrailTrack, isSupabaseConfigured, fetchGuidesForTrail, Guide } from '../../../src/services/supabase';
+import { TrailGuidesSection } from '../../../src/components/guides/TrailGuidesSection';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported, estimateAreaSizeMb } from '../../../src/utils/offlineTiles';
 import type { TrailDifficulty, TrailActivity, ArgentinaTrail } from '../../../src/data/argentinaTrails';
@@ -475,8 +476,23 @@ export default function TrailDetailScreen() {
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [isHiking, setIsHiking] = useState(false);
+  const [guides, setGuides] = useState<Guide[]>([]);
 
   const trail = ALL_TRAILS.find((tr) => tr.id === id);
+
+  useEffect(() => {
+    if (!trail) return;
+    fetchGuidesForTrail(trail.id).then(setGuides);
+  }, [trail?.id]);
+
+  function scrollToGuides() {
+    setActiveTab('overview');
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        document.getElementById('guias-sendero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 60);
+    }
+  }
 
   const MAX_CONTENT = 800;
   const sidePad = Math.max(16, (width - Math.min(width, MAX_CONTENT)) / 2);
@@ -666,6 +682,16 @@ export default function TrailDetailScreen() {
                 <View style={styles.heroStatDivider} />
                 <HeroStat label={t('Tiempo', 'Time')} value={durationLabel} />
               </View>
+
+              <TouchableOpacity onPress={scrollToGuides} style={styles.guidesJumpBtn} activeOpacity={0.85}>
+                <Ionicons name="compass-outline" size={14} color="#f0f9ff" />
+                <Text style={styles.guidesJumpBtnTxt}>
+                  {guides.length > 0
+                    ? t(`Ver guías expertos (${guides.length})`, `See expert guides (${guides.length})`)
+                    : t('¿Sos guía de este sendero?', 'Are you a guide for this trail?')}
+                </Text>
+                <Ionicons name="arrow-down" size={13} color="#f0f9ff" />
+              </TouchableOpacity>
             </View>
           </ImageBackground>
         </View>
@@ -695,7 +721,7 @@ export default function TrailDetailScreen() {
         {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
         <View style={[styles.scrollContent, { paddingHorizontal: sidePad, backgroundColor: C.bg }]}>
           {activeTab === 'overview' && (
-            <OverviewTab trail={trail} lang={lang} t={t} onStartHike={() => setIsHiking(true)} />
+            <OverviewTab trail={trail} lang={lang} t={t} guides={guides} onStartHike={() => setIsHiking(true)} />
           )}
           {activeTab === 'logistics' && (
             <LogisticsTab lines={logisticsLines} t={t} />
@@ -1192,11 +1218,13 @@ function OverviewTab({
   trail,
   lang,
   t,
+  guides,
   onStartHike,
 }: {
   trail: TrailDetail;
   lang: 'es' | 'en';
   t: (es: string, en: string) => string;
+  guides: Guide[];
   onStartHike: () => void;
 }) {
   const C = useC();
@@ -1415,6 +1443,8 @@ function OverviewTab({
       )}
 
       <VideoSection trailId={trail.id} t={t} />
+
+      <TrailGuidesSection guides={guides} t={t} />
 
       {trail.id === 'tierra-del-fuego-costera' && (
         <PeninsulaMitreSection t={t} lang={lang} />
@@ -1980,6 +2010,12 @@ const styles = StyleSheet.create({
   heroStatValue: { fontSize: 18, fontWeight: '800', color: C.text, letterSpacing: -0.5 },
   heroStatLabel: { fontSize: 10, color: 'rgba(240,249,255,0.5)', marginTop: 2, letterSpacing: 0.5 },
   heroStatDivider: { width: 1, height: 32, backgroundColor: 'rgba(255,255,255,0.12)' },
+  guidesJumpBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start',
+    marginTop: 16, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999,
+    backgroundColor: 'rgba(34,197,94,0.22)', borderWidth: 1, borderColor: 'rgba(34,197,94,0.5)',
+  },
+  guidesJumpBtnTxt: { color: '#f0f9ff', fontSize: 12, fontWeight: '700' },
 
   // Stats (legacy — kept for pill usage if needed)
   statsBar: {

@@ -113,6 +113,14 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* Guías: reachable at /guias, but deliberately not a bottom-tab icon
+          (the mobile tab bar is already full at 7) — linked from WebHeader on
+          web and, on native, would need its own entry point (e.g. a card on
+          Inicio) once the native app ships this. */}
+      <Tabs.Screen
+        name="guias"
+        options={{ href: null }}
+      />
       <Tabs.Screen
         name="faq"
         options={{
