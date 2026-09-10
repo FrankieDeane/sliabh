@@ -303,6 +303,70 @@ export async function subscribeNewsletter(email: string, lang?: 'es' | 'en') {
   if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
 }
 
+// ── Mountain guides directory ─────────────────────────────────────────
+
+export interface Guide {
+  id: string;
+  full_name: string;
+  regions: string[];
+  specialties: string | null;
+  certification: string | null;
+  bio: string | null;
+  instagram: string | null;
+  website: string | null;
+  verified: boolean;
+  featured: boolean;
+}
+
+/**
+ * Approved guides, featured first (then newest). Only `status = 'approved'`
+ * rows are ever returned — enforced server-side by RLS, not by this query —
+ * and contact info (email/phone) is deliberately never selected here: it's
+ * only readable from the Supabase dashboard, so a browsing visitor sees the
+ * profile and reaches out via Instagram/website, not a scraped phone number.
+ */
+export async function fetchApprovedGuides(): Promise<Guide[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await supabase
+    .from('guides')
+    .select('id, full_name, regions, specialties, certification, bio, instagram, website, verified, featured')
+    .order('featured', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) return [];
+  return (data as Guide[]) ?? [];
+}
+
+/**
+ * Submits a guide application. Lands as status='pending' — invisible in the
+ * public directory (fetchApprovedGuides) until approved from the Supabase
+ * dashboard. See schema.sql: the insert policy pins status/verified/featured
+ * so an applicant can't self-approve, self-verify or self-feature.
+ */
+export async function submitGuideApplication(app: {
+  fullName: string;
+  email: string;
+  phone?: string;
+  regions: string[];
+  specialties?: string;
+  certification?: string;
+  bio?: string;
+  instagram?: string;
+  website?: string;
+}) {
+  const { error } = await supabase.from('guides').insert({
+    full_name: app.fullName,
+    email: app.email,
+    phone: app.phone || null,
+    regions: app.regions,
+    specialties: app.specialties || null,
+    certification: app.certification || null,
+    bio: app.bio || null,
+    instagram: app.instagram || null,
+    website: app.website || null,
+  });
+  if (error) throw error;
+}
+
 /** Vote counts per option for a poll, plus the total. */
 export async function fetchPollResults(pollId: string): Promise<{ counts: Record<string, number>; total: number }> {
   const { data, error } = await supabase.from('poll_votes').select('option_id').eq('poll_id', pollId);

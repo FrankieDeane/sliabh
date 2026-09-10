@@ -276,3 +276,62 @@ create policy "Anyone can subscribe"
 -- Deliberately no select policy: emails stay unreadable via the public anon key.
 
 create index if not exists newsletter_subscribers_created_idx on public.newsletter_subscribers (created_at desc);
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- guides: public directory of mountain guides. Unlike the lead tables above,
+-- this one IS publicly readable (that's the point — it's a directory), but
+-- only rows an admin has approved. `status` gates the review queue and
+-- `featured`/`verified` gate paid placement / manual credential checks —
+-- both flags are admin-only, flipped from the Supabase dashboard (service
+-- role bypasses RLS), never settable by the applicant. The insert policy
+-- pins new rows to status='pending', featured=false, verified=false so an
+-- applicant can't self-approve, self-feature or self-verify by sending a
+-- crafted payload.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.guides (
+  id             uuid primary key default gen_random_uuid(),
+  full_name      text not null,
+  email          text not null,
+  phone          text,
+  regions        text[] not null default '{}',
+  specialties    text,
+  certification  text,
+  bio            text,
+  instagram      text,
+  website        text,
+  status         text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  verified       boolean not null default false,
+  featured       boolean not null default false,
+  featured_until timestamptz,
+  created_at     timestamptz not null default now()
+);
+
+alter table public.guides enable row level security;
+
+drop policy if exists "Anyone can apply as a guide" on public.guides;
+create policy "Anyone can apply as a guide"
+  on public.guides for insert
+  with check (
+    status = 'pending' and verified = false and featured = false
+    and length(full_name) between 1 and 200
+    and email like '%_@_%.__%' and length(email) between 5 and 200
+    and (phone is null or length(phone) <= 40)
+    and array_length(regions, 1) between 1 and 20
+    and (specialties is null or length(specialties) <= 500)
+    and (certification is null or length(certification) <= 300)
+    and (bio is null or length(bio) <= 2000)
+    and (instagram is null or length(instagram) <= 300)
+    and (website is null or length(website) <= 300)
+  );
+
+drop policy if exists "Approved guides are viewable by everyone" on public.guides;
+create policy "Approved guides are viewable by everyone"
+  on public.guides for select
+  using (status = 'approved');
+
+-- Deliberately no public update/delete policy: moderation (approve/reject,
+-- toggle verified/featured) happens only from the Supabase dashboard
+-- (service role), never via the anon key.
+
+create index if not exists guides_status_idx on public.guides (status);
+create index if not exists guides_featured_idx on public.guides (featured) where featured = true;
