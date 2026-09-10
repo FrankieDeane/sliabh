@@ -706,6 +706,48 @@
     // English variant exists yet (e.g. trails pushed from the parent app).
     const TF = (es, en) => (lang === 'es' ? es : (en || es));
 
+    // ── Open-popup language tracking ──────────────────────────────────────────
+    // A MapLibre popup is static HTML, set once when it's opened, so a card
+    // that's already on screen keeps whatever language it was built in — the
+    // language switch relabelled the toolbar and the side panel but left the
+    // open trail card stale (that's what "the cards don't translate" was).
+    // Track the open popup together with the function that builds its markup
+    // so a language switch can re-render it in place.
+    let activePopup = null;
+    let activePopupRender = null;
+
+    function openPopup(popup, render) {
+      activePopup = popup;
+      activePopupRender = render;
+      popup.setHTML(render());
+      popup.on('close', function () {
+        if (activePopup === popup) { activePopup = null; activePopupRender = null; }
+      });
+      return popup;
+    }
+
+    function refreshOpenPopup() {
+      if (activePopup && activePopupRender && activePopup.isOpen()) {
+        activePopup.setHTML(activePopupRender());
+      }
+    }
+
+    // Shared markup for a curated-trail card (Bariloche / El Chaltén / trails
+    // pushed from the parent app). `arrayName` is the global the GPX button
+    // reads the trail back out of.
+    function trailPopupHtml(trail, arrayName, idx) {
+      return '<div class="trail-popup">'
+        + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
+        + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
+        + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration || '', trail.duration_en) + '</span></div>'
+        + (trail.trailhead ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>' : '')
+        + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>' : '')
+        + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + TF(trail.description || '', trail.description_en) + '</p>'
+        + '<div><button class="btn-gpx" onclick="downloadGpx(' + arrayName + '[' + idx + '])">⬇ GPX offline</button>'
+        + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
+        + '</div>';
+    }
+
     // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
@@ -1077,19 +1119,10 @@
         if (window.parent && window.parent !== window) {
           window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
         }
-        new maplibregl.Popup({ maxWidth: '300px' })
-          .setLngLat(e.lngLat)
-          .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
-            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration, trail.duration_en) + '</span></div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>'
-            + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + TF(trail.description, trail.description_en) + '</p>'
-            + '<div><button class="btn-gpx" onclick="downloadGpx(barilocheTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
-            + '</div>')
-          .addTo(map);
+        openPopup(
+          new maplibregl.Popup({ maxWidth: '300px' }).setLngLat(e.lngLat),
+          function () { return trailPopupHtml(trail, 'barilocheTrails', idx); }
+        ).addTo(map);
       });
       map.on('click', 'bariloche-clusters', function (e) {
         const features = map.queryRenderedFeatures(e.point, { layers: ['bariloche-clusters'] });
@@ -1154,19 +1187,10 @@
         if (window.parent && window.parent !== window) {
           window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
         }
-        new maplibregl.Popup({ maxWidth: '300px' })
-          .setLngLat(e.lngLat)
-          .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
-            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration, trail.duration_en) + '</span></div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>'
-            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + TF(trail.description, trail.description_en) + '</p>'
-            + '<div><button class="btn-gpx" onclick="downloadGpx(chaltenTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
-            + '</div>')
-          .addTo(map);
+        openPopup(
+          new maplibregl.Popup({ maxWidth: '300px' }).setLngLat(e.lngLat),
+          function () { return trailPopupHtml(trail, 'chaltenTrails', idx); }
+        ).addTo(map);
       });
       map.on('click', 'chalten-clusters', function (e) {
         const features = map.queryRenderedFeatures(e.point, { layers: ['chalten-clusters'] });
@@ -1224,19 +1248,10 @@
         if (window.parent && window.parent !== window) {
           window.parent.postMessage({ type: 'trailClick', id: trail.id }, '*');
         }
-        new maplibregl.Popup({ maxWidth: '300px' })
-          .setLngLat(e.lngLat)
-          .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
-            + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration || '', trail.duration_en) + '</span></div>'
-            + (trail.trailhead ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>' : '')
-            + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>' : '')
-            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + TF(trail.description || '', trail.description_en) + '</p>'
-            + '<div><button class="btn-gpx" onclick="downloadGpx(appTrails[' + idx + '])">⬇ GPX offline</button>'
-            + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
-            + '</div>')
-          .addTo(map);
+        openPopup(
+          new maplibregl.Popup({ maxWidth: '300px' }).setLngLat(e.lngLat),
+          function () { return trailPopupHtml(trail, 'appTrails', idx); }
+        ).addTo(map);
       });
       map.on('click', 'app-trails-clusters', function (e) {
         const features = map.queryRenderedFeatures(e.point, { layers: ['app-trails-clusters'] });
@@ -1276,13 +1291,15 @@
       map.on('click', 'osm-trails-line', function (e) {
         var f = e.features && e.features[0]; if (!f) return;
         var p = f.properties || {};
-        var name = p.name || p.ref || (lang === 'es' ? 'Sendero sin nombre' : 'Unnamed trail');
         var dist = p.distance ? ('<div style="color:#94a3b8;font-size:12px;margin:2px 0">↔ ' + p.distance + '</div>') : '';
-        new maplibregl.Popup({ maxWidth: '260px' })
-          .setLngLat(e.lngLat)
-          .setHTML('<div class="trail-popup"><h4>' + name + '</h4>' + dist
-            + '<div style="color:#64748b;font-size:10px;margin-top:6px">' + T('Datos © colaboradores de OpenStreetMap', 'Data © OpenStreetMap contributors') + '</div></div>')
-          .addTo(map);
+        openPopup(
+          new maplibregl.Popup({ maxWidth: '260px' }).setLngLat(e.lngLat),
+          function () {
+            var name = p.name || p.ref || T('Sendero sin nombre', 'Unnamed trail');
+            return '<div class="trail-popup"><h4>' + name + '</h4>' + dist
+              + '<div style="color:#64748b;font-size:10px;margin-top:6px">' + T('Datos © colaboradores de OpenStreetMap', 'Data © OpenStreetMap contributors') + '</div></div>';
+          }
+        ).addTo(map);
       });
       map.on('mouseenter', 'osm-trails-line', function () { map.getCanvas().style.cursor = 'pointer'; });
       map.on('mouseleave', 'osm-trails-line', function () { map.getCanvas().style.cursor = ''; });
@@ -1883,6 +1900,7 @@
       const savedPark = currentPark; // preserve user's selected park
       applyFilters();                // re-renders list + metaCount in new lang
       if (savedPark) renderPanel(savedPark); // re-render user's park in new lang (never auto-open)
+      refreshOpenPopup();            // re-render an open trail card in new lang
     });
 
     // ── El Chaltén trekking layer ─────────────────────────────────────────────
@@ -2666,22 +2684,22 @@ ${trkpts}
         if (!f) return;
         const p = f.properties;
         if (satellitesPopup) satellitesPopup.remove();
-        satellitesPopup = new maplibregl.Popup({ offset: 10 })
-          .setLngLat(f.geometry.coordinates)
-          .setHTML(
-            '<div class="trail-popup"><h4>🛰️ ' + p.name + '</h4>'
-            + '<div class="stats">'
-            + '<span>' + T('Altitud', 'Altitude') + ': ' + p.altKm + ' km</span>'
-            + '<span>' + T('Órbita', 'Orbit') + ': ' + p.orbitClass + '</span>'
-            + (p.periodMin ? '<span>' + T('Período', 'Period') + ': ' + p.periodMin + ' min</span>' : '')
-            + (p.speedKmS ? '<span>' + T('Velocidad', 'Speed') + ': ' + p.speedKmS + ' km/s</span>' : '')
-            + '<span>NORAD ID: ' + p.noradId + '</span>'
-            + '</div>'
-            + '<a class="btn-gpx" href="https://www.n2yo.com/satellite/?s=' + p.noradId + '" target="_blank" rel="noopener">'
-            + T('Ver en N2YO', 'Track on N2YO') + '</a>'
-            + '</div>',
-          )
-          .addTo(glMap);
+        satellitesPopup = openPopup(
+          new maplibregl.Popup({ offset: 10 }).setLngLat(f.geometry.coordinates),
+          function () {
+            return '<div class="trail-popup"><h4>🛰️ ' + p.name + '</h4>'
+              + '<div class="stats">'
+              + '<span>' + T('Altitud', 'Altitude') + ': ' + p.altKm + ' km</span>'
+              + '<span>' + T('Órbita', 'Orbit') + ': ' + p.orbitClass + '</span>'
+              + (p.periodMin ? '<span>' + T('Período', 'Period') + ': ' + p.periodMin + ' min</span>' : '')
+              + (p.speedKmS ? '<span>' + T('Velocidad', 'Speed') + ': ' + p.speedKmS + ' km/s</span>' : '')
+              + '<span>NORAD ID: ' + p.noradId + '</span>'
+              + '</div>'
+              + '<a class="btn-gpx" href="https://www.n2yo.com/satellite/?s=' + p.noradId + '" target="_blank" rel="noopener">'
+              + T('Ver en N2YO', 'Track on N2YO') + '</a>'
+              + '</div>';
+          }
+        ).addTo(glMap);
       });
     }
 
@@ -2751,16 +2769,16 @@ ${trkpts}
         if (!f) return;
         const p = f.properties;
         if (poiPopup) poiPopup.remove();
-        poiPopup = new maplibregl.Popup({ offset: 10, maxWidth: '280px' })
-          .setLngLat(f.geometry.coordinates)
-          .setHTML(
-            '<div class="trail-popup"><h4>📍 ' + p.name + '</h4>'
-            + '<p style="margin:0 0 8px;font-size:12.5px;color:#334155;line-height:1.5;">' + p.description + '</p>'
-            + '<a class="btn-pdf" href="/ruta/' + p.trailId + '" target="_top">'
-            + T('Ver ficha: ', 'View trail: ') + p.trailName + '</a>'
-            + '</div>',
-          )
-          .addTo(glMap);
+        poiPopup = openPopup(
+          new maplibregl.Popup({ offset: 10, maxWidth: '280px' }).setLngLat(f.geometry.coordinates),
+          function () {
+            return '<div class="trail-popup"><h4>📍 ' + p.name + '</h4>'
+              + '<p style="margin:0 0 8px;font-size:12.5px;color:#334155;line-height:1.5;">' + p.description + '</p>'
+              + '<a class="btn-pdf" href="/ruta/' + p.trailId + '" target="_top">'
+              + T('Ver ficha: ', 'View trail: ') + p.trailName + '</a>'
+              + '</div>';
+          }
+        ).addTo(glMap);
       });
     }
 
@@ -3184,6 +3202,7 @@ ${trkpts}
         // on every iframe load, and auto-opening here forced split view (and
         // a blank screen on mobile) before any user interaction.
         if (savedPark) renderPanel(savedPark);
+        refreshOpenPopup(); // re-render an open trail card in the new language
         return;
       }
 
