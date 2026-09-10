@@ -42,6 +42,7 @@ export function GuidesDirectory() {
       <Hero t={t} />
       <Intro c={c} t={t} />
       <ApplyForm c={c} t={t} isNarrow={isNarrow} />
+      <ExamplePreview c={c} t={t} isNarrow={isNarrow} />
     </View>
   );
 }
@@ -277,6 +278,88 @@ function ApplyForm({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => 
   );
 }
 
+/**
+ * "How it looks once published" — a step-by-step plus a mock guide card,
+ * shown below the form so someone deciding whether to pay can see the
+ * result first. The example person is fictional and uses an initials
+ * avatar (no photo) — deliberately: pairing a real, identifiable stranger's
+ * face with a fabricated name/certification would misrepresent that real
+ * person as an actual Sliabh guide, which we don't do even with a stock
+ * photo's usage rights in hand (those cover the photographer's copyright,
+ * not the subject's consent to be depicted as a fictional professional).
+ */
+function ExamplePreview({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => string; isNarrow: boolean }) {
+  const steps = [
+    {
+      icon: 'create-outline' as const,
+      title: t('Completá el formulario', 'Fill out the form'),
+      body: t('Tus datos, foto, certificación y los senderos donde sos experto.', 'Your info, photo, certification, and the trails you specialize in.'),
+    },
+    {
+      icon: 'card-outline' as const,
+      title: t('Pagá en Mercado Pago', 'Pay with Mercado Pago'),
+      body: t(`$${PRICE_ARS.toLocaleString('es-AR')} ARS por sendero elegido, por año.`, `$${PRICE_ARS.toLocaleString('en-US')} ARS per trail selected, per year.`),
+    },
+    {
+      icon: 'checkmark-circle-outline' as const,
+      title: t('Aparecés al instante', "You're live instantly"),
+      body: t('Automático al confirmarse el pago — sin espera, sin revisión manual.', 'Automatic the moment payment clears — no wait, no manual review.'),
+    },
+  ];
+
+  return (
+    <View style={[styles.section, { borderTopWidth: 1, borderColor: c.border }]}>
+      <Text style={[styles.eyebrow, { color: c.accent }]}>{t('CÓMO SE VE', 'WHAT IT LOOKS LIKE')}</Text>
+      <Text style={[styles.formSectionTitle, { color: c.text }]}>
+        {t('Así queda tu perfil publicado', "Here's your profile, published")}
+      </Text>
+
+      <View style={[styles.stepsRow, isNarrow && styles.stepsRowNarrow]}>
+        {steps.map((s, i) => (
+          <View key={s.title} style={[styles.stepCard, { borderColor: c.border, backgroundColor: c.surface }]}>
+            <View style={[styles.stepNum, { backgroundColor: c.accent }]}>
+              <Text style={[styles.stepNumTxt, { color: c.accentInk }]}>{i + 1}</Text>
+            </View>
+            <Ionicons name={s.icon} size={18} color={c.accent} style={{ marginBottom: 6 }} />
+            <Text style={[styles.stepTitle, { color: c.text }]}>{s.title}</Text>
+            <Text style={[styles.stepBody, { color: c.muted }]}>{s.body}</Text>
+          </View>
+        ))}
+      </View>
+
+      <Text style={[styles.previewLabel, { color: c.muted }]}>
+        {t('Ejemplo — así se ve en la página del sendero', 'Example — this is how it looks on the trail page')}
+      </Text>
+      <View style={[styles.exampleCard, { borderColor: c.border, backgroundColor: c.surface2 }]}>
+        <View style={styles.exampleCardHead}>
+          <View style={[styles.exampleAvatar, { backgroundColor: c.accent }]}>
+            <Text style={[styles.exampleAvatarTxt, { color: c.accentInk }]}>JP</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.exampleName, { color: c.text }]}>Juan Pérez</Text>
+            <Text style={[styles.exampleCert, { color: c.accent }]}>
+              {t('Ej: AAGM — Guía de Media Montaña', 'e.g. AAGM — Mid-mountain Guide')}
+            </Text>
+          </View>
+        </View>
+        <Text style={[styles.exampleSpec, { color: c.text }]}>
+          {t('Trekking y travesías de varios días en Patagonia.', 'Trekking and multi-day treks in Patagonia.')}
+        </Text>
+        <Text style={[styles.exampleBio, { color: c.muted }]}>
+          {t(
+            '10 años guiando en la zona. Conozco el sendero en cualquier condición climática.',
+            '10 years guiding in the area. I know the trail in any weather condition.',
+          )}
+        </Text>
+        <View style={styles.exampleLinkRow}>
+          <Ionicons name="link-outline" size={13} color={c.accent} />
+          <Text style={[styles.exampleLinkTxt, { color: c.accent }]}>{t('Ver contacto', 'View contact')}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function Field({
   c, label, value, onChangeText, placeholder, full, multiline, keyboardType, autoCapitalize, editable, isNarrow,
 }: {
@@ -351,4 +434,28 @@ const styles = StyleSheet.create({
   fineprint: { fontSize: 11.5, flex: 1, maxWidth: 420 },
   submitBtn: { borderRadius: 10, paddingVertical: 13, paddingHorizontal: 28 },
   submitBtnTxt: { fontSize: 14.5, fontWeight: '800' },
+
+  // "Cómo se ve" example preview
+  stepsRow: { flexDirection: 'row', gap: 14, marginTop: 24, marginBottom: 36 },
+  stepsRowNarrow: { flexDirection: 'column' },
+  stepCard: { flex: 1, borderWidth: 1, borderRadius: 14, padding: 16, position: 'relative' },
+  stepNum: {
+    position: 'absolute', top: -10, left: 14, width: 22, height: 22, borderRadius: 11,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  stepNumTxt: { fontSize: 11.5, fontWeight: '800' },
+  stepTitle: { fontSize: 14, fontWeight: '800', marginTop: 4, marginBottom: 4 },
+  stepBody: { fontSize: 12.5, lineHeight: 18 },
+
+  previewLabel: { fontSize: 12, fontWeight: '700', marginBottom: 10 },
+  exampleCard: { maxWidth: 320, borderWidth: 1, borderRadius: 14, padding: 16, gap: 6 },
+  exampleCardHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 2 },
+  exampleAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  exampleAvatarTxt: { fontSize: 15, fontWeight: '800' },
+  exampleName: { fontSize: 14.5, fontWeight: '800' },
+  exampleCert: { fontSize: 11, fontWeight: '600', marginTop: 1 },
+  exampleSpec: { fontSize: 12.5, lineHeight: 18 },
+  exampleBio: { fontSize: 12, lineHeight: 17 },
+  exampleLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
+  exampleLinkTxt: { fontSize: 12, fontWeight: '700' },
 });
