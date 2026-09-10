@@ -29,6 +29,14 @@
   path = "/*"
   function = "block-previews"
 
+# Sets the site's default language (Spanish vs English) from the visitor's
+# country via Netlify's built-in geo-IP — runs after block-previews (which
+# already 401s non-production contexts before this would matter). See
+# netlify/edge-functions/geo-lang.ts.
+[[edge_functions]]
+  path = "/*"
+  function = "geo-lang"
+
 # Security headers, sent on every response. Kept conservative (no CSP yet —
 # the app pulls scripts/tiles from several CDNs and a wrong CSP would break
 # maps in production; add one later after a careful per-origin audit).
