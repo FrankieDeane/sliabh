@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, useWindowDimensions, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, useWindowDimensions, Image, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
@@ -10,6 +10,10 @@ import { BARILOCHE_TRAILS } from '../../data/barilocheTreks';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PRICE_ARS = 10000; // kept in sync with the server default in create-guide-checkout/index.ts
 const MAX_TRAILS = 20;
+
+// Same hero image as the homepage (app/(tabs)/inicio.tsx HERO_URI) — reused
+// rather than a new asset so the page reads as part of the same site.
+const HERO_URI = 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
 // One flat {id, name} list to search/pick from — every trail in the app,
 // Argentina-wide + the Bariloche set, same combined source rutas.tsx uses.
@@ -35,17 +39,28 @@ export function GuidesDirectory() {
 
   return (
     <View style={{ backgroundColor: c.bg }}>
+      <Hero t={t} />
       <Intro c={c} t={t} />
       <ApplyForm c={c} t={t} isNarrow={isNarrow} />
     </View>
   );
 }
 
+function Hero({ t }: { t: (es: string, en: string) => string }) {
+  return (
+    <ImageBackground source={{ uri: HERO_URI }} style={styles.hero} resizeMode="cover">
+      <View style={styles.heroOverlay} />
+      <View style={styles.heroContent}>
+        <Text style={styles.heroEyebrow}>{t('GUÍAS DE MONTAÑA', 'MOUNTAIN GUIDES')}</Text>
+        <Text style={styles.heroTitle}>{t('Publicá tu perfil en cada sendero', 'List your profile on every trail')}</Text>
+      </View>
+    </ImageBackground>
+  );
+}
+
 function Intro({ c, t }: { c: any; t: (es: string, en: string) => string }) {
   return (
     <View style={[styles.section, { borderColor: c.border, borderBottomWidth: 1, paddingBottom: 40 }]}>
-      <Text style={[styles.eyebrow, { color: c.accent }]}>{t('GUÍAS DE MONTAÑA', 'MOUNTAIN GUIDES')}</Text>
-      <Text style={[styles.title, { color: c.text }]}>{t('Publicá tu perfil en cada sendero', 'List your profile on every trail')}</Text>
       <Text style={[styles.intro, { color: c.muted }]}>
         {t(
           `Elegí los senderos donde sos experto y aparecé directo en esa página, donde miles de personas planifican su salida. $${PRICE_ARS.toLocaleString('es-AR')} ARS por sendero, por año — mismo precio para todos, publicación automática en cuanto se acredita el pago.`,
@@ -298,10 +313,15 @@ const fieldStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  hero: { width: '100%', height: Platform.OS === 'web' ? 320 : 220, justifyContent: 'flex-end' },
+  heroOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(4,8,16,0.55)' },
+  heroContent: { maxWidth: 1080, width: '100%', alignSelf: 'center', paddingHorizontal: 24, paddingBottom: 28 },
+  heroEyebrow: { color: '#86efac', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, marginBottom: 8 },
+  heroTitle: { color: '#f0f9ff', fontSize: 34, fontWeight: '800', maxWidth: 620 },
+
   section: { maxWidth: 1080, width: '100%', alignSelf: 'center', paddingHorizontal: 24, paddingVertical: 48 },
   eyebrow: { fontSize: 11.5, fontWeight: '700', letterSpacing: 1.2, marginBottom: 10 },
-  title: { fontSize: 32, fontWeight: '800', marginBottom: 14 },
-  intro: { fontSize: 15.5, lineHeight: 24, maxWidth: 680 },
+  intro: { fontSize: 15.5, lineHeight: 24, maxWidth: 680, marginTop: 28 },
   disclaimer: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', borderWidth: 1, borderRadius: 12, padding: 14, marginTop: 20, maxWidth: 680 },
   disclaimerTxt: { flex: 1, fontSize: 12.5, lineHeight: 18 },
 
