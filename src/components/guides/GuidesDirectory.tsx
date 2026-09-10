@@ -1,40 +1,41 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, useWindowDimensions, Linking } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, useWindowDimensions, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
-import { isSupabaseConfigured, fetchApprovedGuides, submitGuideApplication, Guide } from '../../services/supabase';
-import { TRAIL_REGIONS, regionLabel, TrailRegion } from '../../data/argentinaTrails';
+import { isSupabaseConfigured, uploadGuidePhoto, createGuideCheckout } from '../../services/supabase';
+import { ARGENTINA_TRAILS } from '../../data/argentinaTrails';
+import { BARILOCHE_TRAILS } from '../../data/barilocheTreks';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const APPLICABLE_REGIONS = TRAIL_REGIONS.filter((r) => r !== 'Todas') as Exclude<TrailRegion, 'Todas'>[];
+const PRICE_ARS = 10000; // kept in sync with the server default in create-guide-checkout/index.ts
+const MAX_TRAILS = 20;
+
+// One flat {id, name} list to search/pick from — every trail in the app,
+// Argentina-wide + the Bariloche set, same combined source rutas.tsx uses.
+const ALL_TRAILS_LIST: { id: string; name: string }[] = [...ARGENTINA_TRAILS, ...BARILOCHE_TRAILS]
+  .map((t) => ({ id: t.id, name: t.name }));
 
 /**
- * Public guide directory ("Guías") + application form, mirroring the shape
- * of SponsorsAndAbout.tsx: an intro section, a filterable list of approved
- * guides (featured ones first — that's the paid-placement product), and a
- * self-serve application form that lands as a pending row for manual review.
- *
- * Verification and featured placement are both operational (not automated)
- * for v1: an admin reviews applications and toggles `verified`/`featured`
- * from the Supabase dashboard after confirming credentials and, for
- * `featured`, coordinating payment directly with the guide.
+ * "Guías" page: explains the per-trail paid-listing model and hosts the
+ * application form. Discovery itself happens on each trail's own page
+ * (see TrailGuidesSection in ruta/[id].tsx) — this page is the signup
+ * funnel, not a browsable directory.
  */
 export function GuidesDirectory() {
   const { theme } = useThemeStore();
-  const { t, lang } = useLangStore();
+  const { t } = useLangStore();
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
   const isNarrow = width < 760;
 
   const c = isDark
-    ? { bg: '#040810', surface: '#070b14', surface2: '#0c121f', border: '#1e2d42', text: '#f0f9ff', muted: '#8ea0b8', accent: '#22c55e', accentInk: '#052e16', gold: '#f59e0b' }
-    : { bg: '#f1f5f9', surface: '#ffffff', surface2: '#e2e8f0', border: '#cbd5e1', text: '#0f172a', muted: '#475569', accent: '#16a34a', accentInk: '#ffffff', gold: '#b45309' };
+    ? { bg: '#040810', surface: '#070b14', surface2: '#0c121f', border: '#1e2d42', text: '#f0f9ff', muted: '#8ea0b8', accent: '#22c55e', accentInk: '#052e16' }
+    : { bg: '#f1f5f9', surface: '#ffffff', surface2: '#e2e8f0', border: '#cbd5e1', text: '#0f172a', muted: '#475569', accent: '#16a34a', accentInk: '#ffffff' };
 
   return (
     <View style={{ backgroundColor: c.bg }}>
       <Intro c={c} t={t} />
-      <GuideList c={c} t={t} lang={lang} isNarrow={isNarrow} />
       <ApplyForm c={c} t={t} isNarrow={isNarrow} />
     </View>
   );
@@ -44,105 +45,22 @@ function Intro({ c, t }: { c: any; t: (es: string, en: string) => string }) {
   return (
     <View style={[styles.section, { borderColor: c.border, borderBottomWidth: 1, paddingBottom: 40 }]}>
       <Text style={[styles.eyebrow, { color: c.accent }]}>{t('GUÍAS DE MONTAÑA', 'MOUNTAIN GUIDES')}</Text>
-      <Text style={[styles.title, { color: c.text }]}>{t('Encontrá un guía para tu próxima salida', 'Find a guide for your next trip')}</Text>
+      <Text style={[styles.title, { color: c.text }]}>{t('Publicá tu perfil en cada sendero', 'List your profile on every trail')}</Text>
       <Text style={[styles.intro, { color: c.muted }]}>
         {t(
-          'Un directorio de guías de montaña que ya conocen el terreno. Sliabh no organiza ni cobra las excursiones — te ponemos en contacto directo con el guía, vos coordinás todo con él.',
-          "A directory of mountain guides who already know the terrain. Sliabh doesn't run or charge for the trips — we connect you directly with the guide, you coordinate everything with them.",
+          `Elegí los senderos donde sos experto y aparecé directo en esa página, donde miles de personas planifican su salida. $${PRICE_ARS.toLocaleString('es-AR')} ARS por sendero, por año — mismo precio para todos, publicación automática en cuanto se acredita el pago.`,
+          `Pick the trails you're an expert on and appear right on that page, where thousands of people plan their trip. $${PRICE_ARS.toLocaleString('en-US')} ARS per trail, per year — same price for everyone, published automatically the moment payment clears.`,
         )}
       </Text>
       <View style={[styles.disclaimer, { borderColor: c.border, backgroundColor: c.surface }]}>
         <Ionicons name="information-circle-outline" size={16} color={c.muted} />
         <Text style={[styles.disclaimerTxt, { color: c.muted }]}>
           {t(
-            '"Verificado" significa que confirmamos manualmente la certificación declarada por el guía. Sliabh no es responsable por los servicios que cada guía preste — revisá sus credenciales antes de contratar.',
-            '"Verified" means we manually confirmed the certification the guide declared. Sliabh is not responsible for the services each guide provides — check their credentials before hiring.',
+            'Sliabh no organiza ni cobra las excursiones — te ponemos en contacto, vos coordinás todo directamente. Revisá tus propias credenciales antes de guiar.',
+            "Sliabh doesn't run or charge for the trips — we connect you, you coordinate everything directly. Make sure your own credentials are in order before guiding.",
           )}
         </Text>
       </View>
-    </View>
-  );
-}
-
-function GuideList({ c, t, lang, isNarrow }: { c: any; t: (es: string, en: string) => string; lang: 'es' | 'en'; isNarrow: boolean }) {
-  const [guides, setGuides] = useState<Guide[] | null>(null);
-  const [region, setRegion] = useState<TrailRegion>('Todas');
-
-  useEffect(() => {
-    fetchApprovedGuides().then(setGuides);
-  }, []);
-
-  const filtered = useMemo(() => {
-    if (!guides) return [];
-    if (region === 'Todas') return guides;
-    return guides.filter((g) => g.regions.includes(region));
-  }, [guides, region]);
-
-  return (
-    <View style={[styles.section, { borderColor: c.border, borderBottomWidth: 1 }]}>
-      <View style={[styles.chipsRow]}>
-        {(['Todas', ...APPLICABLE_REGIONS] as TrailRegion[]).map((r) => {
-          const active = region === r;
-          return (
-            <TouchableOpacity
-              key={r}
-              onPress={() => setRegion(r)}
-              style={[styles.chip, { borderColor: active ? c.accent : c.border, backgroundColor: active ? c.accent : c.surface }]}
-            >
-              <Text style={[styles.chipTxt, { color: active ? c.accentInk : c.muted }]}>{regionLabel(r, lang)}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {guides === null ? (
-        <Text style={[styles.emptyTxt, { color: c.muted }]}>{t('Cargando guías…', 'Loading guides…')}</Text>
-      ) : filtered.length === 0 ? (
-        <Text style={[styles.emptyTxt, { color: c.muted }]}>
-          {t('Todavía no hay guías publicados en esta región. ¡Sé el primero en sumarte!', "No guides published in this region yet. Be the first to join!")}
-        </Text>
-      ) : (
-        <View style={[styles.guideGrid, isNarrow && styles.guideGridNarrow]}>
-          {filtered.map((g) => <GuideCard key={g.id} guide={g} c={c} t={t} />)}
-        </View>
-      )}
-    </View>
-  );
-}
-
-function GuideCard({ guide, c, t }: { guide: Guide; c: any; t: (es: string, en: string) => string }) {
-  const link = guide.website || (guide.instagram ? `https://instagram.com/${guide.instagram.replace(/^@/, '')}` : null);
-  return (
-    <View style={[styles.guideCard, { borderColor: guide.featured ? c.gold : c.border, backgroundColor: c.surface }]}>
-      {guide.featured && (
-        <View style={[styles.featuredBadge, { backgroundColor: c.gold }]}>
-          <Ionicons name="star" size={11} color="#1c1206" />
-          <Text style={styles.featuredBadgeTxt}>{t('Destacado', 'Featured')}</Text>
-        </View>
-      )}
-      <Text style={[styles.guideName, { color: c.text }]}>{guide.full_name}</Text>
-      {guide.verified && (
-        <View style={styles.verifiedRow}>
-          <Ionicons name="checkmark-circle" size={13} color={c.accent} />
-          <Text style={[styles.verifiedTxt, { color: c.accent }]}>{t('Verificado por Sliabh', 'Verified by Sliabh')}</Text>
-        </View>
-      )}
-      <View style={styles.regionRow}>
-        {guide.regions.map((r) => (
-          <View key={r} style={[styles.regionTag, { backgroundColor: c.surface2 }]}>
-            <Text style={[styles.regionTagTxt, { color: c.muted }]}>{r}</Text>
-          </View>
-        ))}
-      </View>
-      {guide.certification && <Text style={[styles.guideCert, { color: c.muted }]}>{guide.certification}</Text>}
-      {guide.specialties && <Text style={[styles.guideSpec, { color: c.text }]}>{guide.specialties}</Text>}
-      {guide.bio && <Text style={[styles.guideBio, { color: c.muted }]} numberOfLines={3}>{guide.bio}</Text>}
-      {link && (
-        <TouchableOpacity onPress={() => Linking.openURL(link)} style={styles.guideLinkRow}>
-          <Ionicons name="link-outline" size={13} color={c.accent} />
-          <Text style={[styles.guideLinkTxt, { color: c.accent }]}>{t('Ver contacto', 'View contact')}</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
@@ -151,56 +69,88 @@ function ApplyForm({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [regions, setRegions] = useState<TrailRegion[]>([]);
   const [specialties, setSpecialties] = useState('');
   const [certification, setCertification] = useState('');
   const [bio, setBio] = useState('');
   const [instagram, setInstagram] = useState('');
   const [website, setWebsite] = useState('');
+  const [newsletterOptIn, setNewsletterOptIn] = useState(true);
+
+  const [trailQuery, setTrailQuery] = useState('');
+  const [selectedTrails, setSelectedTrails] = useState<{ id: string; name: string }[]>([]);
+
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
+
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
 
-  function toggleRegion(r: TrailRegion) {
-    setRegions((prev) => (prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]));
+  const matches = useMemo(() => {
+    const q = trailQuery.trim().toLowerCase();
+    if (!q) return [];
+    const selectedIds = new Set(selectedTrails.map((x) => x.id));
+    return ALL_TRAILS_LIST.filter((tr) => !selectedIds.has(tr.id) && tr.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [trailQuery, selectedTrails]);
+
+  function addTrail(trail: { id: string; name: string }) {
+    if (selectedTrails.length >= MAX_TRAILS) return;
+    setSelectedTrails((prev) => [...prev, trail]);
+    setTrailQuery('');
   }
 
-  async function submit() {
-    if (pending) return;
-    if (!fullName.trim()) {
-      setError(t('Completá tu nombre.', 'Enter your name.'));
-      return;
-    }
-    if (!EMAIL_RE.test(email.trim())) {
-      setError(t('Ingresá un email válido.', 'Enter a valid email.'));
-      return;
-    }
-    if (regions.length === 0) {
-      setError(t('Elegí al menos una región donde guiás.', 'Pick at least one region where you guide.'));
-      return;
-    }
+  function removeTrail(id: string) {
+    setSelectedTrails((prev) => prev.filter((x) => x.id !== id));
+  }
+
+  async function handlePickPhoto(e: any) {
+    const file: File | undefined = e.target?.files?.[0];
+    if (!file) return;
     if (!isSupabaseConfigured()) {
       setError(t('No disponible en este momento.', 'Not available right now.'));
       return;
     }
+    setPhotoUploading(true);
+    setError(null);
+    try {
+      const url = await uploadGuidePhoto(file);
+      setPhotoUrl(url);
+    } catch {
+      setError(t('No se pudo subir la foto. Probá con otra imagen.', "Couldn't upload the photo. Try a different image."));
+    } finally {
+      setPhotoUploading(false);
+    }
+  }
+
+  const totalPrice = PRICE_ARS * selectedTrails.length;
+
+  async function submit() {
+    if (pending) return;
+    if (!fullName.trim()) return setError(t('Completá tu nombre.', 'Enter your name.'));
+    if (!EMAIL_RE.test(email.trim())) return setError(t('Ingresá un email válido.', 'Enter a valid email.'));
+    if (selectedTrails.length === 0) return setError(t('Elegí al menos un sendero.', 'Pick at least one trail.'));
+    if (!isSupabaseConfigured()) return setError(t('No disponible en este momento.', 'Not available right now.'));
+
     setError(null);
     setPending(true);
     try {
-      await submitGuideApplication({
+      const { checkoutUrl } = await createGuideCheckout({
         fullName: fullName.trim(),
         email: email.trim(),
         phone: phone.trim(),
-        regions,
+        photoUrl: photoUrl || '',
+        trailIds: selectedTrails.map((x) => x.id),
         specialties: specialties.trim(),
         certification: certification.trim(),
         bio: bio.trim(),
         instagram: instagram.trim(),
         website: website.trim(),
+        newsletterOptIn,
       });
-      setDone(true);
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.location.href = checkoutUrl;
+      }
     } catch {
-      setError(t('No se pudo enviar. Probá de nuevo.', "Couldn't submit. Please try again."));
-    } finally {
+      setError(t('No se pudo iniciar el pago. Probá de nuevo.', "Couldn't start the payment. Please try again."));
       setPending(false);
     }
   }
@@ -208,66 +158,105 @@ function ApplyForm({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => 
   return (
     <View {...({ id: 'guides-form' } as any)} style={[styles.section]}>
       <Text style={[styles.eyebrow, { color: c.accent }]}>{t('¿SOS GUÍA DE MONTAÑA?', 'ARE YOU A MOUNTAIN GUIDE?')}</Text>
-      <Text style={[styles.formSectionTitle, { color: c.text }]}>{t('Sumate al directorio', 'Join the directory')}</Text>
-      <Text style={[styles.intro, { color: c.muted, marginBottom: 28 }]}>
-        {t(
-          'Publicar tu perfil es gratis. Si querés aparecer destacado arriba de tu región, contanos en el mensaje y coordinamos el pago.',
-          "Publishing your profile is free. If you want to appear featured at the top of your region, mention it in the message and we'll coordinate payment.",
-        )}
-      </Text>
+      <Text style={[styles.formSectionTitle, { color: c.text }]}>{t('Postulá tu perfil', 'Apply now')}</Text>
 
       <View style={[styles.formCard, { borderColor: c.border, backgroundColor: c.surface }]}>
-        {done ? (
-          <View style={styles.doneBox}>
-            <Ionicons name="checkmark-circle" size={40} color={c.accent} />
-            <Text style={[styles.doneTitle, { color: c.text }]}>{t('¡Gracias! Recibimos tu postulación.', 'Thanks! We received your application.')}</Text>
-            <Text style={[styles.doneSub, { color: c.muted }]}>
-              {t('La revisamos y te contactamos por email antes de publicarla.', "We'll review it and reach out by email before publishing it.")}
-            </Text>
+        {/* Photo (web only for v1) */}
+        {Platform.OS === 'web' && (
+          <View style={styles.photoRow}>
+            <View style={[styles.photoPreview, { borderColor: c.border, backgroundColor: c.surface2 }]}>
+              {photoUrl ? (
+                <Image source={{ uri: photoUrl }} style={{ width: '100%', height: '100%', borderRadius: 40 }} />
+              ) : (
+                <Ionicons name="person-outline" size={28} color={c.muted} />
+              )}
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.fieldLabel, { color: c.muted, marginBottom: 8 }]}>{t('Foto de perfil', 'Profile photo')}</Text>
+              {/* @ts-ignore — plain web file input */}
+              <input type="file" accept="image/*" onChange={handlePickPhoto} disabled={photoUploading} />
+              {photoUploading && <Text style={{ color: c.muted, fontSize: 12, marginTop: 4 }}>{t('Subiendo…', 'Uploading…')}</Text>}
+            </View>
           </View>
-        ) : (
-          <>
-            <View style={[styles.formGrid, isNarrow && styles.formGridNarrow]}>
-              <Field c={c} isNarrow={isNarrow} label={t('Nombre completo', 'Full name')} value={fullName} onChangeText={setFullName} placeholder="Juan Pérez" editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('Email', 'Email')} value={email} onChangeText={setEmail} placeholder="juan@email.com" keyboardType="email-address" autoCapitalize="none" editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('WhatsApp', 'WhatsApp')} value={phone} onChangeText={setPhone} placeholder="+54 9 294 000-0000" keyboardType="phone-pad" editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('Certificación', 'Certification')} value={certification} onChangeText={setCertification} placeholder={t('Ej: AAGM — Guía de Media Montaña', 'e.g. AAGM — Mid-mountain Guide')} editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('Especialidades', 'Specialties')} value={specialties} onChangeText={setSpecialties} placeholder={t('Trekking, alta montaña, escalada…', 'Trekking, high mountain, climbing…')} full editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label="Instagram" value={instagram} onChangeText={setInstagram} placeholder="@tuguia" autoCapitalize="none" editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('Sitio web', 'Website')} value={website} onChangeText={setWebsite} placeholder="https://" autoCapitalize="none" editable={!pending} />
-              <Field c={c} isNarrow={isNarrow} label={t('Sobre vos / mensaje', 'About you / message')} value={bio} onChangeText={setBio} placeholder={t('Contanos tu experiencia y si te interesa destacarte…', "Tell us your experience, and mention if you're interested in being featured…")} multiline full editable={!pending} />
-            </View>
-
-            <View style={styles.regionPickWrap}>
-              <Text style={[styles.fieldLabel, { color: c.muted, marginBottom: 8 }]}>{t('Regiones donde guiás', 'Regions where you guide')}</Text>
-              <View style={styles.chipsRow}>
-                {APPLICABLE_REGIONS.map((r) => {
-                  const active = regions.includes(r);
-                  return (
-                    <TouchableOpacity
-                      key={r}
-                      onPress={() => toggleRegion(r)}
-                      disabled={pending}
-                      style={[styles.chip, { borderColor: active ? c.accent : c.border, backgroundColor: active ? c.accent : c.surface2 }]}
-                    >
-                      <Text style={[styles.chipTxt, { color: active ? c.accentInk : c.muted }]}>{r}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {error && <Text style={styles.errorTxt}>{error}</Text>}
-            <View style={[styles.submitRow, isNarrow && styles.submitRowNarrow]}>
-              <Text style={[styles.fineprint, { color: c.muted }]}>
-                {t('Al enviar aceptás que guardemos estos datos para revisar tu postulación.', "By submitting, you agree we'll store this info to review your application.")}
-              </Text>
-              <TouchableOpacity onPress={submit} disabled={pending} style={[styles.submitBtn, { backgroundColor: c.accent, opacity: pending ? 0.6 : 1 }]} activeOpacity={0.85}>
-                <Text style={[styles.submitBtnTxt, { color: c.accentInk }]}>{pending ? t('Enviando…', 'Sending…') : t('Enviar postulación', 'Send application')}</Text>
-              </TouchableOpacity>
-            </View>
-          </>
         )}
+
+        <View style={[styles.formGrid, isNarrow && styles.formGridNarrow]}>
+          <Field c={c} isNarrow={isNarrow} label={t('Nombre completo', 'Full name')} value={fullName} onChangeText={setFullName} placeholder="Juan Pérez" editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('Email', 'Email')} value={email} onChangeText={setEmail} placeholder="juan@email.com" keyboardType="email-address" autoCapitalize="none" editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('WhatsApp (link o número)', 'WhatsApp (link or number)')} value={phone} onChangeText={setPhone} placeholder="+54 9 294 000-0000" editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('Certificación', 'Certification')} value={certification} onChangeText={setCertification} placeholder={t('Ej: AAGM — Guía de Media Montaña', 'e.g. AAGM — Mid-mountain Guide')} editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label="Instagram" value={instagram} onChangeText={setInstagram} placeholder="@tuguia" autoCapitalize="none" editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('Sitio web', 'Website')} value={website} onChangeText={setWebsite} placeholder="https://" autoCapitalize="none" editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('Especialidades', 'Specialties')} value={specialties} onChangeText={setSpecialties} placeholder={t('Trekking, alta montaña, escalada…', 'Trekking, high mountain, climbing…')} full editable={!pending} />
+          <Field c={c} isNarrow={isNarrow} label={t('Por qué te especializás en estos senderos', 'Why you specialize in these trails')} value={bio} onChangeText={setBio} placeholder={t('Contanos tu experiencia en estos senderos…', 'Tell us your experience on these trails…')} multiline full editable={!pending} />
+        </View>
+
+        {/* Trail picker */}
+        <View style={styles.trailPickWrap}>
+          <Text style={[styles.fieldLabel, { color: c.muted, marginBottom: 8 }]}>
+            {t('Senderos donde sos experto', 'Trails you specialize in')}
+          </Text>
+          <TextInput
+            value={trailQuery}
+            onChangeText={setTrailQuery}
+            placeholder={t('Buscar sendero por nombre…', 'Search trail by name…')}
+            placeholderTextColor={c.muted}
+            editable={!pending}
+            style={[fieldStyles.input, { borderColor: c.border, backgroundColor: c.surface2, color: c.text }]}
+          />
+          {matches.length > 0 && (
+            <View style={[styles.trailResults, { borderColor: c.border, backgroundColor: c.surface2 }]}>
+              {matches.map((tr) => (
+                <TouchableOpacity key={tr.id} onPress={() => addTrail(tr)} style={styles.trailResultRow}>
+                  <Text style={{ color: c.text, fontSize: 13.5 }}>{tr.name}</Text>
+                  <Ionicons name="add-circle-outline" size={18} color={c.accent} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+          {selectedTrails.length > 0 && (
+            <View style={styles.chipsRow}>
+              {selectedTrails.map((tr) => (
+                <View key={tr.id} style={[styles.trailChip, { borderColor: c.accent, backgroundColor: c.surface2 }]}>
+                  <Text style={{ color: c.text, fontSize: 12.5, fontWeight: '700' }}>{tr.name}</Text>
+                  <TouchableOpacity onPress={() => removeTrail(tr.id)}>
+                    <Ionicons name="close-circle" size={16} color={c.muted} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Newsletter opt-in */}
+        <TouchableOpacity onPress={() => setNewsletterOptIn((v) => !v)} style={styles.checkboxRow} disabled={pending}>
+          <Ionicons name={newsletterOptIn ? 'checkbox' : 'square-outline'} size={20} color={c.accent} />
+          <Text style={{ color: c.muted, fontSize: 12.5, flex: 1 }}>
+            {t('Quiero recibir novedades y ofertas de Sliabh por email.', 'I want to receive Sliabh news and offers by email.')}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Price summary */}
+        <View style={[styles.priceBox, { borderColor: c.accent, backgroundColor: c.surface2 }]}>
+          <Text style={{ color: c.muted, fontSize: 13 }}>
+            {selectedTrails.length} {selectedTrails.length === 1 ? t('sendero', 'trail') : t('senderos', 'trails')} × ${PRICE_ARS.toLocaleString('es-AR')} ARS
+          </Text>
+          <Text style={{ color: c.text, fontSize: 22, fontWeight: '800' }}>
+            ${totalPrice.toLocaleString('es-AR')} ARS <Text style={{ fontSize: 13, fontWeight: '600', color: c.muted }}>{t('/ año', '/ year')}</Text>
+          </Text>
+        </View>
+
+        {error && <Text style={styles.errorTxt}>{error}</Text>}
+        <View style={[styles.submitRow, isNarrow && styles.submitRowNarrow]}>
+          <Text style={[styles.fineprint, { color: c.muted }]}>
+            {t('Al continuar vas a pagar en Mercado Pago. Tu perfil se publica automáticamente al confirmarse el pago.', "You'll continue to Mercado Pago to pay. Your profile publishes automatically once payment is confirmed.")}
+          </Text>
+          <TouchableOpacity onPress={submit} disabled={pending || selectedTrails.length === 0} style={[styles.submitBtn, { backgroundColor: c.accent, opacity: pending || selectedTrails.length === 0 ? 0.6 : 1 }]} activeOpacity={0.85}>
+            <Text style={[styles.submitBtnTxt, { color: c.accentInk }]}>
+              {pending ? t('Redirigiendo…', 'Redirecting…') : t('Ir a pagar', 'Go to payment')}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -316,41 +305,30 @@ const styles = StyleSheet.create({
   disclaimer: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', borderWidth: 1, borderRadius: 12, padding: 14, marginTop: 20, maxWidth: 680 },
   disclaimerTxt: { flex: 1, fontSize: 12.5, lineHeight: 18 },
 
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
-  chip: { borderWidth: 1, borderRadius: 999, paddingVertical: 8, paddingHorizontal: 14 },
-  chipTxt: { fontSize: 12.5, fontWeight: '700' },
-  emptyTxt: { fontSize: 14, lineHeight: 22, paddingVertical: 20 },
-
-  guideGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
-  guideGridNarrow: { flexDirection: 'column' },
-  guideCard: { width: 320, maxWidth: '100%', borderWidth: 1, borderRadius: 16, padding: 18, gap: 6 },
-  featuredBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9, marginBottom: 6 },
-  featuredBadgeTxt: { fontSize: 10.5, fontWeight: '800', color: '#1c1206' },
-  guideName: { fontSize: 17, fontWeight: '800' },
-  verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 2 },
-  verifiedTxt: { fontSize: 11.5, fontWeight: '700' },
-  regionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginVertical: 4 },
-  regionTag: { borderRadius: 999, paddingVertical: 3, paddingHorizontal: 9 },
-  regionTagTxt: { fontSize: 11, fontWeight: '600' },
-  guideCert: { fontSize: 12, fontWeight: '600', marginTop: 2 },
-  guideSpec: { fontSize: 13.5, lineHeight: 19, marginTop: 4 },
-  guideBio: { fontSize: 12.5, lineHeight: 18, marginTop: 4 },
-  guideLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 8 },
-  guideLinkTxt: { fontSize: 12.5, fontWeight: '700' },
-
-  formSectionTitle: { fontSize: 28, fontWeight: '800', marginBottom: 12 },
+  formSectionTitle: { fontSize: 28, fontWeight: '800', marginBottom: 20 },
   formCard: { borderWidth: 1, borderRadius: 20, padding: Platform.OS === 'web' ? 36 : 20 },
+
+  photoRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24 },
+  photoPreview: { width: 80, height: 80, borderRadius: 40, borderWidth: 1, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+
   formGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 20, rowGap: 18 },
   formGridNarrow: { flexDirection: 'column' },
   fieldLabel: { fontSize: 12.5, fontWeight: '700' },
-  regionPickWrap: { marginTop: 22 },
+
+  trailPickWrap: { marginTop: 22 },
+  trailResults: { borderWidth: 1, borderRadius: 10, marginTop: 6, overflow: 'hidden' },
+  trailResultRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, paddingHorizontal: 12 },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  trailChip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
+
+  checkboxRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 20 },
+
+  priceBox: { borderWidth: 1.5, borderRadius: 14, padding: 16, marginTop: 22, gap: 4 },
+
   errorTxt: { color: '#ef4444', fontSize: 12.5, fontWeight: '600', marginTop: 14 },
   submitRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 16, marginTop: 22 },
   submitRowNarrow: { flexDirection: 'column', alignItems: 'flex-start' },
   fineprint: { fontSize: 11.5, flex: 1, maxWidth: 420 },
   submitBtn: { borderRadius: 10, paddingVertical: 13, paddingHorizontal: 28 },
   submitBtnTxt: { fontSize: 14.5, fontWeight: '800' },
-  doneBox: { alignItems: 'center', gap: 10, paddingVertical: 24 },
-  doneTitle: { fontSize: 17, fontWeight: '800' },
-  doneSub: { fontSize: 13.5 },
 });

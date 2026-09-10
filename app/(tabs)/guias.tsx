@@ -19,13 +19,13 @@ export default function GuiasScreen() {
       <SeoHead
         title={
           lang === 'en'
-            ? 'Mountain Guides in Argentina | Sliabh'
-            : 'Guías de montaña en Argentina | Sliabh'
+            ? 'List Your Profile — Mountain Guides | Sliabh'
+            : 'Publicá tu perfil — Guías de montaña | Sliabh'
         }
         description={
           lang === 'en'
-            ? "Find a mountain guide for your next trek in Argentina's national parks — Bariloche, El Chaltén and beyond."
-            : 'Encontrá un guía de montaña para tu próxima salida a los parques nacionales de Argentina — Bariloche, El Chaltén y más.'
+            ? 'Mountain guides: list your profile on the specific trails you specialize in, right where thousands plan their trip.'
+            : 'Guías de montaña: publicá tu perfil en los senderos donde sos experto, justo donde miles planifican su salida.'
         }
         path="/guias"
       />

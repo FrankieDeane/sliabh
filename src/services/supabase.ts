@@ -303,68 +303,94 @@ export async function subscribeNewsletter(email: string, lang?: 'es' | 'en') {
   if (error && (error as { code?: string }).code !== UNIQUE_VIOLATION) throw error;
 }
 
-// ── Mountain guides directory ─────────────────────────────────────────
+// ── Mountain guides (per-trail, paid listing) ──────────────────────────
 
 export interface Guide {
   id: string;
   full_name: string;
-  regions: string[];
+  trail_ids: string[];
   specialties: string | null;
   certification: string | null;
   bio: string | null;
+  photo_url: string | null;
   instagram: string | null;
   website: string | null;
-  verified: boolean;
-  featured: boolean;
 }
 
 /**
- * Approved guides, featured first (then newest). Only `status = 'approved'`
- * rows are ever returned — enforced server-side by RLS, not by this query —
- * and contact info (email/phone) is deliberately never selected here: it's
- * only readable from the Supabase dashboard, so a browsing visitor sees the
- * profile and reaches out via Instagram/website, not a scraped phone number.
+ * Guides listed for a specific trail — newest first. Only `paid = true`
+ * (and not expired) rows are ever returned, enforced server-side by RLS.
+ * Contact info (email/phone) is deliberately never selected here: only
+ * Instagram/website are public, so a visitor reaches out through those,
+ * never a scraped phone number.
  */
-export async function fetchApprovedGuides(): Promise<Guide[]> {
+export async function fetchGuidesForTrail(trailId: string): Promise<Guide[]> {
   if (!isSupabaseConfigured()) return [];
   const { data, error } = await supabase
     .from('guides')
-    .select('id, full_name, regions, specialties, certification, bio, instagram, website, verified, featured')
-    .order('featured', { ascending: false })
+    .select('id, full_name, trail_ids, specialties, certification, bio, photo_url, instagram, website')
+    .contains('trail_ids', [trailId])
     .order('created_at', { ascending: false });
   if (error) return [];
   return (data as Guide[]) ?? [];
 }
 
 /**
- * Submits a guide application. Lands as status='pending' — invisible in the
- * public directory (fetchApprovedGuides) until approved from the Supabase
- * dashboard. See schema.sql: the insert policy pins status/verified/featured
- * so an applicant can't self-approve, self-verify or self-feature.
+ * Uploads a guide's profile photo to the public `guide-photos` bucket and
+ * returns its public URL — call this BEFORE createGuideCheckout, and pass
+ * the resulting URL as `photoUrl`. Web only for now (plain <input type=
+ * file>, no native image picker wired up yet).
  */
-export async function submitGuideApplication(app: {
+export async function uploadGuidePhoto(file: File): Promise<string> {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from('guide-photos').upload(path, file, {
+    contentType: file.type || 'image/jpeg',
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from('guide-photos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/**
+ * Submits a guide application and opens a Mercado Pago Checkout Pro
+ * preference for it via the `create-guide-checkout` Edge Function — the
+ * ONLY way a row ever gets inserted into `guides` (the table has no public
+ * insert policy; see schema.sql). Returns the checkout URL to redirect to.
+ * The listing only goes live once Mercado Pago confirms the payment
+ * (mp-webhook), never on submission alone.
+ */
+export async function createGuideCheckout(app: {
   fullName: string;
   email: string;
   phone?: string;
-  regions: string[];
+  photoUrl?: string;
+  trailIds: string[];
   specialties?: string;
   certification?: string;
   bio?: string;
   instagram?: string;
   website?: string;
-}) {
-  const { error } = await supabase.from('guides').insert({
-    full_name: app.fullName,
-    email: app.email,
-    phone: app.phone || null,
-    regions: app.regions,
-    specialties: app.specialties || null,
-    certification: app.certification || null,
-    bio: app.bio || null,
-    instagram: app.instagram || null,
-    website: app.website || null,
+  newsletterOptIn?: boolean;
+}): Promise<{ checkoutUrl: string }> {
+  const { data, error } = await supabase.functions.invoke('create-guide-checkout', {
+    body: {
+      fullName: app.fullName,
+      email: app.email,
+      phone: app.phone || '',
+      photoUrl: app.photoUrl || '',
+      trailIds: app.trailIds,
+      specialties: app.specialties || '',
+      certification: app.certification || '',
+      bio: app.bio || '',
+      instagram: app.instagram || '',
+      website: app.website || '',
+      newsletterOptIn: app.newsletterOptIn === true,
+    },
   });
   if (error) throw error;
+  if (!data?.checkoutUrl) throw new Error(data?.error || 'No se pudo generar el pago');
+  return { checkoutUrl: data.checkoutUrl as string };
 }
 
 /** Vote counts per option for a poll, plus the total. */
