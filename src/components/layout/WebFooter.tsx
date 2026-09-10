@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
-import { MERCADOPAGO_URL } from '../../constants/links';
 import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
 import { subscribeNewsletter } from '../../services/supabase';
 import { SUBSCRIBED_KEY } from '../ui/NewsletterPopup';
@@ -121,14 +120,6 @@ export function WebFooter() {
             </Text>
           </View>
           <View style={styles.copyRight}>
-            <TouchableOpacity
-              style={[styles.cafecitoLink, { borderColor: c.border }]}
-              onPress={() => Linking.openURL(MERCADOPAGO_URL)}
-              activeOpacity={0.75}
-            >
-              <Ionicons name="cafe-outline" size={12} color="#fbbf24" />
-              <Text style={[styles.copySmall, { color: c.muted }]}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.cafecitoLink, { borderColor: c.border }]}
               onPress={() =>

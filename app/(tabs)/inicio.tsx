@@ -2,14 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  Image,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
   useWindowDimensions,
   Platform,
-  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -21,7 +19,6 @@ import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SponsorsAndAbout } from '../../src/components/sponsors/SponsorsAndAbout';
 import { NewsletterCard } from '../../src/components/home/NewsletterCard';
 import { SeoHead } from '../../src/components/ui/SeoHead';
-import { MERCADOPAGO_URL } from '../../src/constants/links';
 import { injectWebStyles } from '../../src/utils/webStyles';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
@@ -33,10 +30,6 @@ const HERO_URI =
 
 // ?v=2 — file was re-muxed in place (faststart); busts the 30-day media cache
 const HERO_VIDEO_URL = '/hero-patagonia.mp4?v=2';
-
-// Small, low-weight thumbnail for the cafecito CTA band
-const CAFECITO_IMG_URI =
-  'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=112&q=60&fit=crop&auto=format';
 
 // Featured routes — all Argentine
 const FEATURED = [
@@ -898,43 +891,6 @@ export default function InicioScreen() {
 
         <SectionDivider sidePad={sidePad} isDark={isDark} />
 
-        {/* ── CAFECITO / CROWDFUNDING ── */}
-        <View
-          style={[
-            styles.cafecitoBand,
-            isWide ? styles.cafecitoBandWide : styles.cafecitoBandNarrow,
-            { marginHorizontal: sidePad, backgroundColor: c.surface, borderColor: c.border },
-          ]}
-        >
-          <View style={styles.cafecitoHead}>
-            <Image
-              source={{ uri: CAFECITO_IMG_URI }}
-              style={styles.cafecitoImg}
-              resizeMode="cover"
-              alt=""
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.cafecitoTitle, { color: c.text }]}>
-                {t('¿Te sirvió Sliabh?', 'Did Sliabh help you?')}
-              </Text>
-              <Text style={[styles.cafecitoSub, { color: c.muted }]}>
-                {t(
-                  'Sliabh es un proyecto independiente y gratuito. Si querés apoyarlo, invitanos un cafecito.',
-                  'Sliabh is an independent, free project. If you want to support it, invite us for a coffee.',
-                )}
-              </Text>
-            </View>
-          </View>
-          <TouchableOpacity
-            style={[styles.cafecitoBtn, !isWide && styles.cafecitoBtnFull]}
-            activeOpacity={0.85}
-            onPress={() => Linking.openURL(MERCADOPAGO_URL)}
-          >
-            <Ionicons name="cafe" size={15} color="#0f172a" />
-            <Text style={styles.cafecitoBtnTxt}>{t('Invitame un cafecito', 'Buy me a coffee')}</Text>
-          </TouchableOpacity>
-        </View>
-
         {/* ── NEWSLETTER (native only — web has it in the footer) ── */}
         {Platform.OS !== 'web' && (
           <View style={{ marginHorizontal: sidePad }}>
@@ -1220,27 +1176,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 9, flexShrink: 0,
   },
   authBannerCtaTxt: { fontSize: 13, fontWeight: '700', color: '#fff' },
-
-  // Cafecito / crowdfunding band
-  cafecitoBand: {
-    borderRadius: 20, borderWidth: 1, padding: 18,
-    marginTop: 16, gap: 16,
-  },
-  cafecitoBandWide: { flexDirection: 'row', alignItems: 'center' },
-  cafecitoBandNarrow: { flexDirection: 'column', alignItems: 'stretch' },
-  cafecitoHead: { flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1, minWidth: 0 },
-  cafecitoImg: {
-    width: 52, height: 52, borderRadius: 16, flexShrink: 0,
-  },
-  cafecitoTitle: { fontSize: 15, fontWeight: '800', marginBottom: 3, letterSpacing: -0.3 },
-  cafecitoSub: { fontSize: 12, lineHeight: 17 },
-  cafecitoBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7,
-    backgroundColor: '#fbbf24', borderRadius: 999,
-    paddingHorizontal: 16, paddingVertical: 10, flexShrink: 0,
-  },
-  cafecitoBtnFull: { alignSelf: 'stretch' },
-  cafecitoBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
 
   // Comparison — Sliabh vs otras apps
   compareChips: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 14, marginBottom: 20 },
