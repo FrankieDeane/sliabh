@@ -15,6 +15,12 @@ const MAX_TRAILS = 20;
 // rather than a new asset so the page reads as part of the same site.
 const HERO_URI = 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=1920&q=90&fit=crop&auto=format';
 
+// Background for the "examples" section — same photo already used as the
+// homepage's "Join the community" banner background (inicio.tsx). A real,
+// atmospheric mountain photo for visual impact, not a portrait — nobody's
+// face/identity is attached to the fabricated example names on top of it.
+const EXAMPLES_BG_URI = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85&fit=crop&auto=format';
+
 // One flat {id, name} list to search/pick from — every trail in the app,
 // Argentina-wide + the Bariloche set, same combined source rutas.tsx uses.
 const ALL_TRAILS_LIST: { id: string; name: string }[] = [...ARGENTINA_TRAILS, ...BARILOCHE_TRAILS]
@@ -279,14 +285,15 @@ function ApplyForm({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => 
 }
 
 /**
- * "How it looks once published" — a step-by-step plus a mock guide card,
+ * "How it looks once published" — a step-by-step plus 3 mock guide cards,
  * shown below the form so someone deciding whether to pay can see the
- * result first. The example person is fictional and uses an initials
+ * result first. All 3 people are fictional, each with a gradient/initials
  * avatar (no photo) — deliberately: pairing a real, identifiable stranger's
  * face with a fabricated name/certification would misrepresent that real
- * person as an actual Sliabh guide, which we don't do even with a stock
- * photo's usage rights in hand (those cover the photographer's copyright,
- * not the subject's consent to be depicted as a fictional professional).
+ * person as an actual Sliabh guide. A stock photo's usage rights cover the
+ * photographer's copyright, not the depicted person's consent to be shown
+ * as a fictional professional — most stock licenses (Unsplash's included)
+ * explicitly exclude implying endorsement, which is exactly this case.
  */
 function ExamplePreview({ c, t, isNarrow }: { c: any; t: (es: string, en: string) => string; isNarrow: boolean }) {
   const steps = [
@@ -327,34 +334,72 @@ function ExamplePreview({ c, t, isNarrow }: { c: any; t: (es: string, en: string
         ))}
       </View>
 
-      <Text style={[styles.previewLabel, { color: c.muted }]}>
-        {t('Ejemplo — así se ve en la página del sendero', 'Example — this is how it looks on the trail page')}
-      </Text>
-      <View style={[styles.exampleCard, { borderColor: c.border, backgroundColor: c.surface2 }]}>
-        <View style={styles.exampleCardHead}>
-          <View style={[styles.exampleAvatar, { backgroundColor: c.accent }]}>
-            <Text style={[styles.exampleAvatarTxt, { color: c.accentInk }]}>JP</Text>
+      <ImageBackground source={{ uri: EXAMPLES_BG_URI }} style={styles.examplesBg} resizeMode="cover" imageStyle={{ borderRadius: 20 }}>
+        <View style={[styles.examplesBgOverlay, { borderRadius: 20 }]} />
+        <Text style={styles.previewLabel}>
+          {t('EJEMPLOS — ASÍ SE VEN EN LA PÁGINA DEL SENDERO', 'EXAMPLES — HOW THEY LOOK ON THE TRAIL PAGE')}
+        </Text>
+        <View style={[styles.exampleGrid, isNarrow && styles.exampleGridNarrow]}>
+          <ExampleGuideCard
+            initials="JP" emoji="🥾" gradient={['#3b82f6', '#1d4ed8']}
+            name="Juan Pérez"
+            cert={t('AAGM — Guía de Media Montaña', 'AAGM — Mid-mountain Guide')}
+            spec={t('Trekking y travesías de varios días en Patagonia.', 'Trekking and multi-day treks in Patagonia.')}
+            bio={t('10 años guiando en la zona. Conozco el sendero en cualquier condición climática.', '10 years guiding in the area. I know the trail in any weather condition.')}
+            contactLabel={t('Ver contacto', 'View contact')}
+          />
+          <ExampleGuideCard
+            initials="MG" emoji="🧗" gradient={['#a855f7', '#7e22ce']}
+            name="María Gómez"
+            cert={t('UIAGM — Guía de Montaña', 'UIAGM — Mountain Guide')}
+            spec={t('Alta montaña, escalada y travesías técnicas.', 'High mountain, climbing and technical treks.')}
+            bio={t('Especialista en condiciones de nieve y hielo.', 'Specialist in snow and ice conditions.')}
+            contactLabel={t('Ver contacto', 'View contact')}
+          />
+          <ExampleGuideCard
+            initials="RF" emoji="📸" gradient={['#f59e0b', '#b45309']}
+            name="Rodrigo Funes"
+            cert={t('Guía Baqueano — Registro Provincial', 'Local Guide — Provincial Registry')}
+            spec={t('Salidas fotográficas y grupos reducidos.', 'Photography trips and small groups.')}
+            bio={t('Foco en fotografía de paisaje y amaneceres.', 'Focus on landscape photography and sunrises.')}
+            contactLabel={t('Ver contacto', 'View contact')}
+          />
+        </View>
+      </ImageBackground>
+    </View>
+  );
+}
+
+function ExampleGuideCard({
+  initials, emoji, gradient, name, cert, spec, bio, contactLabel,
+}: {
+  initials: string; emoji: string; gradient: [string, string]; name: string; cert: string; spec: string; bio: string; contactLabel: string;
+}) {
+  // Fixed "glass on photo" treatment, independent of the app's light/dark
+  // theme — this card floats on a real photo background (EXAMPLES_BG_URI),
+  // so it needs its own always-legible palette rather than the surrounding
+  // section's theme-aware colors.
+  return (
+    <View style={styles.exampleCard}>
+      <View style={styles.exampleCardHead}>
+        <View style={[styles.exampleAvatarRing, { borderColor: gradient[0] }]}>
+          <View style={[styles.exampleAvatar, { backgroundColor: gradient[1] }]}>
+            <Text style={styles.exampleAvatarTxt}>{initials}</Text>
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.exampleName, { color: c.text }]}>Juan Pérez</Text>
-            <Text style={[styles.exampleCert, { color: c.accent }]}>
-              {t('Ej: AAGM — Guía de Media Montaña', 'e.g. AAGM — Mid-mountain Guide')}
-            </Text>
+          <View style={styles.exampleEmojiBadge}>
+            <Text style={styles.exampleEmojiTxt}>{emoji}</Text>
           </View>
         </View>
-        <Text style={[styles.exampleSpec, { color: c.text }]}>
-          {t('Trekking y travesías de varios días en Patagonia.', 'Trekking and multi-day treks in Patagonia.')}
-        </Text>
-        <Text style={[styles.exampleBio, { color: c.muted }]}>
-          {t(
-            '10 años guiando en la zona. Conozco el sendero en cualquier condición climática.',
-            '10 years guiding in the area. I know the trail in any weather condition.',
-          )}
-        </Text>
-        <View style={styles.exampleLinkRow}>
-          <Ionicons name="link-outline" size={13} color={c.accent} />
-          <Text style={[styles.exampleLinkTxt, { color: c.accent }]}>{t('Ver contacto', 'View contact')}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.exampleName}>{name}</Text>
+          <Text style={styles.exampleCert}>{cert}</Text>
         </View>
+      </View>
+      <Text style={styles.exampleSpec}>{spec}</Text>
+      <Text style={styles.exampleBio}>{bio}</Text>
+      <View style={styles.exampleLinkRow}>
+        <Ionicons name="link-outline" size={13} color="#86efac" />
+        <Text style={styles.exampleLinkTxt}>{contactLabel}</Text>
       </View>
     </View>
   );
@@ -447,15 +492,32 @@ const styles = StyleSheet.create({
   stepTitle: { fontSize: 14, fontWeight: '800', marginTop: 4, marginBottom: 4 },
   stepBody: { fontSize: 12.5, lineHeight: 18 },
 
-  previewLabel: { fontSize: 12, fontWeight: '700', marginBottom: 10 },
-  exampleCard: { maxWidth: 320, borderWidth: 1, borderRadius: 14, padding: 16, gap: 6 },
+  examplesBg: { borderRadius: 20, overflow: 'hidden', padding: Platform.OS === 'web' ? 28 : 18 },
+  examplesBgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(4,8,16,0.72)' },
+  previewLabel: { fontSize: 11.5, fontWeight: '800', letterSpacing: 0.6, marginBottom: 16, color: '#86efac' },
+  exampleGrid: { flexDirection: 'row', gap: 14, flexWrap: 'wrap' },
+  exampleGridNarrow: { flexDirection: 'column' },
+  // Fixed "glass on photo" card — floats on EXAMPLES_BG_URI, so its colors
+  // are hardcoded for legibility rather than theme-aware (see
+  // ExampleGuideCard's comment).
+  exampleCard: {
+    flex: 1, minWidth: 220, maxWidth: 300, borderRadius: 14, padding: 16, gap: 6,
+    backgroundColor: 'rgba(15,23,36,0.72)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)',
+  },
   exampleCardHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 2 },
-  exampleAvatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  exampleAvatarTxt: { fontSize: 15, fontWeight: '800' },
-  exampleName: { fontSize: 14.5, fontWeight: '800' },
-  exampleCert: { fontSize: 11, fontWeight: '600', marginTop: 1 },
-  exampleSpec: { fontSize: 12.5, lineHeight: 18 },
-  exampleBio: { fontSize: 12, lineHeight: 17 },
+  exampleAvatarRing: { width: 50, height: 50, borderRadius: 25, borderWidth: 2, alignItems: 'center', justifyContent: 'center', padding: 2 },
+  exampleAvatar: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  exampleAvatarTxt: { fontSize: 14, fontWeight: '800', color: '#fff' },
+  exampleEmojiBadge: {
+    position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11,
+    backgroundColor: '#0f1724', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  exampleEmojiTxt: { fontSize: 11 },
+  exampleName: { fontSize: 14.5, fontWeight: '800', color: '#f0f9ff' },
+  exampleCert: { fontSize: 11, fontWeight: '600', marginTop: 1, color: '#86efac' },
+  exampleSpec: { fontSize: 12.5, lineHeight: 18, color: '#f0f9ff' },
+  exampleBio: { fontSize: 12, lineHeight: 17, color: 'rgba(240,249,255,0.65)' },
   exampleLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
-  exampleLinkTxt: { fontSize: 12, fontWeight: '700' },
+  exampleLinkTxt: { fontSize: 12, fontWeight: '700', color: '#86efac' },
 });
