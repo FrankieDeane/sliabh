@@ -702,6 +702,9 @@
     // ── i18n — declared early so controls can reference lang ─────────────────
     let lang = 'es';
     const T = (es, en) => (lang === 'es' ? es : en);
+    // Trail-card field translator: falls back to the Spanish value when no
+    // English variant exists yet (e.g. trails pushed from the parent app).
+    const TF = (es, en) => (lang === 'es' ? es : (en || es));
 
     // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -1077,12 +1080,12 @@
         new maplibregl.Popup({ maxWidth: '300px' })
           .setLngLat(e.lngLat)
           .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
             + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + trail.duration + '</span></div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
-            + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + trail.description + '</p>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration, trail.duration_en) + '</span></div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>'
+            + '<p style="margin:0 0 8px;font-size:13px;color:#0f172a;line-height:1.5;">' + TF(trail.description, trail.description_en) + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(barilocheTrails[' + idx + '])">⬇ GPX offline</button>'
             + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
@@ -1154,12 +1157,12 @@
         new maplibregl.Popup({ maxWidth: '300px' })
           .setLngLat(e.lngLat)
           .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
             + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + trail.duration + '</span></div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>'
-            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>'
-            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + trail.description + '</p>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration, trail.duration_en) + '</span></div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>'
+            + '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>'
+            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + TF(trail.description, trail.description_en) + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(chaltenTrails[' + idx + '])">⬇ GPX offline</button>'
             + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
@@ -1224,12 +1227,12 @@
         new maplibregl.Popup({ maxWidth: '300px' })
           .setLngLat(e.lngLat)
           .setHTML('<div class="trail-popup">'
-            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + trail.difficulty + '</span></h4>'
+            + '<h4>' + trail.name + '<span class="diff-badge ' + diffClass(trail.difficulty) + '">' + diffLabel(trail.difficulty) + '</span></h4>'
             + '<div class="stats"><span>↔ ' + trail.distance_km + ' km</span><span>↑ ' + trail.elevation_gain_m + ' m</span>'
-            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + (trail.duration || '') + '</span></div>'
-            + (trail.trailhead ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + trail.trailhead + '</div>' : '')
-            + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + trail.best_season + '</div>' : '')
-            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + (trail.description || '') + '</p>'
+            + '<span>⛰ ' + trail.max_altitude_m + ' m</span><span>⏱ ' + TF(trail.duration || '', trail.duration_en) + '</span></div>'
+            + (trail.trailhead ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:4px;">📍 ' + TF(trail.trailhead, trail.trailhead_en) + '</div>' : '')
+            + (trail.best_season ? '<div style="color:#94a3b8;font-size:12px;margin-bottom:6px;">🗓 ' + TF(trail.best_season, trail.best_season_en) + '</div>' : '')
+            + '<p style="margin:0 0 8px;font-size:13px;line-height:1.5;">' + TF(trail.description || '', trail.description_en) + '</p>'
             + '<div><button class="btn-gpx" onclick="downloadGpx(appTrails[' + idx + '])">⬇ GPX offline</button>'
             + '<a class="btn-pdf" href="/ruta/' + trail.id + '" target="_top">' + T('Ver guía', 'View guide') + '</a></div>'
             + '</div>')
@@ -1890,10 +1893,14 @@
         difficulty: 'dificil', color: '#ef4444',
         distance_km: 20.7, elevation_gain_m: 977, max_altitude_m: 1177,
         duration: '7–9 h (ida y vuelta)',
+        duration_en: '7–9 h (round trip)',
         lat: -49.3369, lng: -72.8956,
         trailhead: 'Final Av. San Martín, El Chaltén',
+        trailhead_en: 'End of Av. San Martín, El Chaltén',
         best_season: 'Nov – Mar',
+        best_season_en: 'Nov – Mar',
         description: 'El sendero más famoso de la Patagonia. Sube hasta la Laguna de los Tres (1.177 m) con vista directa al Fitz Roy (3.405 m). Tramo final +400 m en 1 km.',
+        description_en: 'Patagonia\'s most famous trail. Climbs to Laguna de los Tres (1,177 m) with a direct view of Fitz Roy (3,405 m). Final stretch gains +400 m over 1 km.',
         gpxTrack: [
           {lat:-49.3369,lon:-72.8956,ele:421},{lat:-49.3283,lon:-72.8982,ele:560},
           {lat:-49.3195,lon:-72.9048,ele:575},{lat:-49.3108,lon:-72.9148,ele:583},
@@ -1910,10 +1917,14 @@
         difficulty: 'moderado', color: '#3b82f6',
         distance_km: 17.6, elevation_gain_m: 343, max_altitude_m: 650,
         duration: '5–7 h (ida y vuelta)',
+        duration_en: '5–7 h (round trip)',
         lat: -49.3333, lng: -72.8947,
         trailhead: 'Av. Llao Llao s/n, El Chaltén',
+        trailhead_en: 'Av. Llao Llao s/n, El Chaltén',
         best_season: 'Nov – Mar',
+        best_season_en: 'Nov – Mar',
         description: 'Clásico trekking al oeste hasta la Laguna Torre con vista frontal al Cerro Torre (3.128 m) y sus icebergs. Terreno parejo, suave ganancia de altura.',
+        description_en: 'Classic trek west to Laguna Torre with a frontal view of Cerro Torre (3,128 m) and its icebergs. Even terrain with a gentle elevation gain.',
         gpxTrack: [
           {lat:-49.3333,lon:-72.8947,ele:421},{lat:-49.3303,lon:-72.9145,ele:450},
           {lat:-49.3268,lon:-72.9368,ele:480},{lat:-49.3240,lon:-72.9520,ele:492},
@@ -1928,10 +1939,14 @@
         difficulty: 'moderado', color: '#f97316',
         distance_km: 20.5, elevation_gain_m: 1103, max_altitude_m: 1528,
         duration: '7–8 h (ida y vuelta)',
+        duration_en: '7–8 h (round trip)',
         lat: -49.3430, lng: -72.8850,
         trailhead: 'Administración PN Los Glaciares / RP23',
+        trailhead_en: 'Los Glaciares NP ranger station / RP23',
         best_season: 'Nov – Mar',
+        best_season_en: 'Nov – Mar',
         description: 'Sube al sur de El Chaltén hasta la Cima (1.528 m) con vista 360°: Fitz Roy, Cerro Torre y Lago Viedma.',
+        description_en: 'Climbs south of El Chaltén to the summit (1,528 m) with 360° views: Fitz Roy, Cerro Torre and Lago Viedma.',
         gpxTrack: [
           {lat:-49.3430,lon:-72.8850,ele:350},{lat:-49.3520,lon:-72.8718,ele:420},
           {lat:-49.3592,lon:-72.8588,ele:520},{lat:-49.3678,lon:-72.8440,ele:660},
@@ -1945,10 +1960,14 @@
         difficulty: 'facil', color: '#eab308',
         distance_km: 12.3, elevation_gain_m: 419, max_altitude_m: 840,
         duration: '3–5 h (ida y vuelta)',
+        duration_en: '3–5 h (round trip)',
         lat: -49.2990, lng: -72.9040,
         trailhead: 'Final Av. San Martín (mismo inicio que Fitz Roy)',
+        trailhead_en: 'End of Av. San Martín (same start as Fitz Roy)',
         best_season: 'Oct – Mar',
+        best_season_en: 'Oct – Mar',
         description: 'Ideal como primer sendero. Comparte inicio con Fitz Roy; al km 3,5 se sube a la Laguna Capri (840 m) que refleja el macizo en días sin viento.',
+        description_en: 'A great first trail. Shares its start with Fitz Roy; at km 3.5 it climbs to Laguna Capri (840 m), which mirrors the massif on windless days.',
         gpxTrack: [
           {lat:-49.3369,lon:-72.8956,ele:421},{lat:-49.3283,lon:-72.8982,ele:560},
           {lat:-49.3195,lon:-72.9048,ele:575},{lat:-49.3108,lon:-72.9148,ele:583},
@@ -1963,10 +1982,14 @@
         difficulty: 'facil', color: '#22c55e',
         distance_km: 6.5, elevation_gain_m: 82, max_altitude_m: 743,
         duration: '1–2 h (solo ida)',
+        duration_en: '1–2 h (one way)',
         lat: -49.2960, lng: -72.9510,
         trailhead: 'Km 7 Sendero Laguna Torre',
+        trailhead_en: 'Km 7 of the Laguna Torre trail',
         best_season: 'Oct – Mar',
+        best_season_en: 'Oct – Mar',
         description: 'Conector entre el sendero Torre (km 7) y el sendero Fitz Roy (km 7), pasando por Laguna Madre y Laguna Hija. Permite el Gran Circuito (~25 km).',
+        description_en: 'Connector between the Torre trail (km 7) and the Fitz Roy trail (km 7), passing Laguna Madre and Laguna Hija. Enables the Grand Circuit (~25 km).',
         gpxTrack: [
           {lat:-49.3130,lon:-72.9960,ele:558},{lat:-49.3095,lon:-72.9878,ele:568},
           {lat:-49.3058,lon:-72.9795,ele:598},{lat:-49.3018,lon:-72.9718,ele:648},
@@ -1981,10 +2004,14 @@
         difficulty: 'facil', color: '#a855f7',
         distance_km: 5.3, elevation_gain_m: 170, max_altitude_m: 520,
         duration: '1–2 h (circular)',
+        duration_en: '1–2 h (loop)',
         lat: -49.3570, lng: -72.9038,
         trailhead: 'Portal Los Cóndores, sur de El Chaltén',
+        trailhead_en: 'Portal Los Cóndores, south of El Chaltén',
         best_season: 'Oct – Mar',
+        best_season_en: 'Oct – Mar',
         description: 'Circuito corto con vistas aéreas sobre El Chaltén, el Río de las Vueltas y los valles. Ideal al llegar o al atardecer.',
+        description_en: 'Short loop with aerial views over El Chaltén, the Río de las Vueltas and the valleys. Great on arrival or at sunset.',
         gpxTrack: [
           {lat:-49.3420,lon:-72.8880,ele:350},{lat:-49.3468,lon:-72.8938,ele:395},
           {lat:-49.3510,lon:-72.8985,ele:455},{lat:-49.3545,lon:-72.9018,ele:498},
@@ -1999,10 +2026,14 @@
         difficulty: 'facil', color: '#67e8f9',
         distance_km: 1.1, elevation_gain_m: 28, max_altitude_m: 478,
         duration: '1 h (ida y vuelta)',
+        duration_en: '1 h (round trip)',
         lat: -49.3048, lng: -72.8942,
         trailhead: 'RP23, 2,5 km al norte de El Chaltén',
+        trailhead_en: 'RP23, 2.5 km north of El Chaltén',
         best_season: 'Oct – Mar',
+        best_season_en: 'Oct – Mar',
         description: 'Corto sendero a la cascada Chorrillo del Salto de 20 m. Punto clásico de primer día en El Chaltén.',
+        description_en: 'Short trail to the 20 m Chorrillo del Salto waterfall. A classic first-day stop in El Chaltén.',
         gpxTrack: [
           {lat:-49.3100,lon:-72.8870,ele:450},{lat:-49.3082,lon:-72.8895,ele:460},
           {lat:-49.3065,lon:-72.8920,ele:470},{lat:-49.3048,lon:-72.8942,ele:478}
@@ -2018,11 +2049,15 @@
         difficulty: 'moderado',
         distance_km: 20, elevation_gain_m: 1000, max_altitude_m: 1700,
         duration: '6–8 h (ida y vuelta)',
+        duration_en: '6–8 h (round trip)',
         lat: -41.1997, lng: -71.4741,
         trailhead: 'Base Cerro Catedral, Villa Catedral',
+        trailhead_en: 'Base of Cerro Catedral, Villa Catedral',
         best_season: 'Nov – Abr',
+        best_season_en: 'Nov – Apr',
         refugio: 'Refugio Frey (CAB)',
         description: 'Sendero clásico de Bariloche al Refugio Frey, a orillas de la Laguna Schmoll rodeado de agujas de granito. Centro de escalada en roca más importante de la región.',
+        description_en: 'Bariloche\'s classic trail to Refugio Frey, on the shore of Laguna Schmoll surrounded by granite spires. The region\'s most important rock-climbing hub.',
         gpxTrack: [
           {lat:-41.1855,lon:-71.4499,ele:1050},{lat:-41.1878,lon:-71.4520,ele:1100},
           {lat:-41.1897,lon:-71.4545,ele:1170},{lat:-41.1917,lon:-71.4568,ele:1250},
@@ -2040,10 +2075,14 @@
         difficulty: 'dificil',
         distance_km: 22, elevation_gain_m: 1300, max_altitude_m: 2076,
         duration: '8–10 h (ida y vuelta)',
+        duration_en: '8–10 h (round trip)',
         lat: -41.0950, lng: -71.5300,
         trailhead: 'Ruta 79 km 20, Bariloche',
+        trailhead_en: 'Route 79, km 20, Bariloche',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         description: 'Cumbre con vistas panorámicas del Lago Nahuel Huapi y el Cerro Tronador. Tramo final requiere trepar rocas. Refugio López a 1626 m.',
+        description_en: 'Summit with panoramic views of Lago Nahuel Huapi and Cerro Tronador. The final stretch requires scrambling over rocks. Refugio López sits at 1,626 m.',
         gpxTrack: [
           {lat:-41.0817,lon:-71.5133,ele:776},{lat:-41.0828,lon:-71.5158,ele:870},
           {lat:-41.0838,lon:-71.5183,ele:970},{lat:-41.0848,lon:-71.5203,ele:1080},
@@ -2060,10 +2099,14 @@
         difficulty: 'moderado',
         distance_km: 26, elevation_gain_m: 750, max_altitude_m: 1800,
         duration: '7–9 h (ida y vuelta)',
+        duration_en: '7–9 h (round trip)',
         lat: -41.3500, lng: -71.9100,
         trailhead: 'Pampa Linda, 90 km de Bariloche',
+        trailhead_en: 'Pampa Linda, 90 km from Bariloche',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         description: 'Excursión al pie del Glaciar Negro del volcán Tronador (3491 m). Se pasa por la Garganta del Diablo. Hielos y avalanchas constantes dan el nombre al cerro.',
+        description_en: 'Hike to the foot of the Black Glacier on Tronador volcano (3,491 m), passing through Garganta del Diablo (Devil\'s Throat). Constant ice and avalanches give the peak its name.',
         gpxTrack: [
           {lat:-41.3298,lon:-71.8879,ele:1050},{lat:-41.3315,lon:-71.8910,ele:1080},
           {lat:-41.3332,lon:-71.8940,ele:1110},{lat:-41.3349,lon:-71.8963,ele:1150},
@@ -2080,10 +2123,14 @@
         difficulty: 'moderado',
         distance_km: 18, elevation_gain_m: 600, max_altitude_m: 1400,
         duration: '5–7 h (ida y vuelta)',
+        duration_en: '5–7 h (round trip)',
         lat: -41.3467, lng: -71.9267,
         trailhead: 'Pampa Linda',
+        trailhead_en: 'Pampa Linda',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         description: 'Laguna glaciar con témpanos que caen del glaciar colgante. Alejada del turismo masivo. Fauna abundante: aves acuáticas y a veces pumas.',
+        description_en: 'Glacial lagoon with icebergs calving from the hanging glacier. Off the mass-tourism radar. Abundant wildlife: waterfowl and, occasionally, pumas.',
         gpxTrack: [
           {lat:-41.3298,lon:-71.8879,ele:1050},{lat:-41.3310,lon:-71.8967,ele:1080},
           {lat:-41.3325,lon:-71.9050,ele:1120},{lat:-41.3340,lon:-71.9100,ele:1160},
@@ -2099,10 +2146,14 @@
         difficulty: 'dificil',
         distance_km: 18, elevation_gain_m: 1200, max_altitude_m: 1895,
         duration: '6–8 h (ida y vuelta)',
+        duration_en: '6–8 h (round trip)',
         lat: -41.2250, lng: -71.4867,
         trailhead: 'Barrio Melipal, Bariloche',
+        trailhead_en: 'Barrio Melipal, Bariloche',
         best_season: 'Nov – Abr',
+        best_season_en: 'Nov – Apr',
         description: 'Cumbre exigente con vistas hacia el sur a los Lagos Gutiérrez y Mascardi. Terreno forestal en la subida, zona alpina arriba. Poco concurrida.',
+        description_en: 'Demanding summit with southern views over Lagos Gutiérrez and Mascardi. Forested terrain on the climb, alpine zone above. Lightly trafficked.',
         gpxTrack: [
           {lat:-41.2083,lon:-71.4667,ele:820},{lat:-41.2100,lon:-71.4700,ele:910},
           {lat:-41.2117,lon:-71.4733,ele:1010},{lat:-41.2133,lon:-71.4767,ele:1110},
@@ -2118,11 +2169,15 @@
         difficulty: 'dificil',
         distance_km: 35, elevation_gain_m: 2100, max_altitude_m: 2000,
         duration: '2 días',
+        duration_en: '2 days',
         lat: -41.1267, lng: -71.5117,
         trailhead: 'Base Cerro Catedral → Colonia Suiza',
+        trailhead_en: 'Base of Cerro Catedral → Colonia Suiza',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         refugio: 'Refugio Frey + Refugio Jakob (CAB)',
         description: 'La travesía más emblemática de Bariloche. De Catedral a Frey el primer día, cruce de pasos alpinos en altura al segundo día para llegar al Refugio Jakob. Técnica e impresionante.',
+        description_en: 'Bariloche\'s most iconic traverse. Catedral to Frey on day one, then a high alpine-pass crossing on day two to reach Refugio Jakob. Technical and spectacular.',
         gpxTrack: [
           {lat:-41.1855,lon:-71.4499,ele:1050},{lat:-41.1900,lon:-71.4560,ele:1150},
           {lat:-41.1940,lon:-71.4630,ele:1300},{lat:-41.1970,lon:-71.4700,ele:1500},
@@ -2143,11 +2198,15 @@
         difficulty: 'dificil',
         distance_km: 20, elevation_gain_m: 1170, max_altitude_m: 2000,
         duration: '7–9 h (ida y vuelta)',
+        duration_en: '7–9 h (round trip)',
         lat: -41.1267, lng: -71.5117,
         trailhead: 'Colonia Suiza, km 24 Circuito Chico',
+        trailhead_en: 'Colonia Suiza, km 24 of Circuito Chico',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         refugio: 'Refugio San Martín / Jakob (CAB)',
         description: 'Ascenso al remoto Refugio Jakob en el corazón del backcountry de Nahuel Huapi. Inicio de la travesía Frey-Jakob. Pasos técnicos en altura con vistas excepcionales.',
+        description_en: 'Climb to the remote Refugio Jakob, deep in the Nahuel Huapi backcountry. Starting point of the Frey–Jakob traverse. Technical high-altitude passes with exceptional views.',
         gpxTrack: [
           {lat:-41.0567,lon:-71.5867,ele:830},{lat:-41.0633,lon:-71.5833,ele:900},
           {lat:-41.0700,lon:-71.5783,ele:980},{lat:-41.0767,lon:-71.5717,ele:1080},
@@ -2163,10 +2222,14 @@
         difficulty: 'moderado',
         distance_km: 12, elevation_gain_m: 600, max_altitude_m: 1450,
         duration: '4–6 h (ida y vuelta)',
+        duration_en: '4–6 h (round trip)',
         lat: -41.2483, lng: -71.5033,
         trailhead: 'Zona baja Cerro Catedral, Villa Catedral',
+        trailhead_en: 'Lower Cerro Catedral, Villa Catedral',
         best_season: 'Nov – Abr',
+        best_season_en: 'Nov – Apr',
         description: 'Laguna de altura escondida al sur del Cerro Catedral, poco frecuentada. Buena para pesca y observación de flora alpina. Sendero sin señalización completa — GPS recomendado.',
+        description_en: 'Hidden high-altitude lagoon south of Cerro Catedral, rarely visited. Good for fishing and alpine flora. Trail not fully marked — GPS recommended.',
         gpxTrack: [
           {lat:-41.2000,lon:-71.4600,ele:1100},{lat:-41.2050,lon:-71.4650,ele:1150},
           {lat:-41.2100,lon:-71.4700,ele:1200},{lat:-41.2150,lon:-71.4750,ele:1250},
@@ -2182,10 +2245,14 @@
         difficulty: 'facil',
         distance_km: 14, elevation_gain_m: 300, max_altitude_m: 900,
         duration: '4–5 h (ida y vuelta)',
+        duration_en: '4–5 h (round trip)',
         lat: -41.2300, lng: -71.3983,
         trailhead: 'Camping Petunia, km 13 Ruta 82',
+        trailhead_en: 'Camping Petunia, km 13 Route 82',
         best_season: 'Oct – Abr',
+        best_season_en: 'Oct – Apr',
         description: 'Sendero por la orilla sur del Lago Gutiérrez entre bosque nativo y piedras. Posibilidad de nado en verano. Menos concurrido que las rutas principales del Circuito Chico.',
+        description_en: 'Trail along Lago Gutiérrez\'s south shore through native forest and rocky stretches. Swimming possible in summer. Less crowded than the main Circuito Chico routes.',
         gpxTrack: [
           {lat:-41.2150,lon:-71.4050,ele:770},{lat:-41.2183,lon:-71.4017,ele:790},
           {lat:-41.2217,lon:-71.3983,ele:810},{lat:-41.2250,lon:-71.3967,ele:840},
@@ -2201,10 +2268,14 @@
         difficulty: 'moderado',
         distance_km: 15, elevation_gain_m: 850, max_altitude_m: 1580,
         duration: '5–7 h (ida y vuelta)',
+        duration_en: '5–7 h (round trip)',
         lat: -41.1967, lng: -71.5283,
         trailhead: 'Refugio Piedritas, Cerro Catedral',
+        trailhead_en: 'Refugio Piedritas, Cerro Catedral',
         best_season: 'Dic – Mar',
+        best_season_en: 'Dec – Mar',
         description: 'Laguna de altura de aguas oscuras y enclave alpino al oeste del Cerro Catedral. Terreno técnico por encima de la línea de árboles. Buenas vistas del macizo de Catedral.',
+        description_en: 'Dark-water high-altitude lagoon in an alpine setting west of Cerro Catedral. Technical terrain above the tree line. Great views of the Catedral massif.',
         gpxTrack: [
           {lat:-41.1900,lon:-71.4800,ele:1100},{lat:-41.1917,lon:-71.4867,ele:1170},
           {lat:-41.1933,lon:-71.4933,ele:1240},{lat:-41.1942,lon:-71.5000,ele:1310},
@@ -2255,6 +2326,15 @@ ${trkpts}
       if (d === 'moderado') return 'diff-moderado';
       if (d === 'dificil') return 'diff-dificil';
       return 'diff-extremo';
+    }
+
+    const DIFF_LABEL = {
+      facil: ['Fácil', 'Easy'], moderado: ['Moderado', 'Moderate'],
+      dificil: ['Difícil', 'Hard'], extremo: ['Extremo', 'Extreme'],
+    };
+    function diffLabel(d) {
+      const pair = DIFF_LABEL[d];
+      return pair ? pair[lang === 'es' ? 0 : 1] : d;
     }
 
     // All trekking trails (Bariloche + El Chaltén + pushed dataset) whose start
