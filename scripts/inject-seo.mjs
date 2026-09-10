@@ -63,9 +63,6 @@ const headTags = `
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
 
-    <!-- Google Search Console domain verification -->
-    <meta name="google-site-verification" content="cUFCw7BKSdO7gjRm3aJ3cIDBXu7hcifH2i_VCCrmtKo" />
-
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V6D0K72LW7"></script>
     <script>
