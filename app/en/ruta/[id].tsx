@@ -21,11 +21,18 @@ import TrailDetailScreen from '../../(tabs)/ruta/[id]';
  * clicked the toggle themselves.
  */
 export default function EnglishTrailDetailScreen() {
-  const { lang, setLang } = useLangStore();
+  const { setLang } = useLangStore();
 
+  // Mount-only: set English once on arrival, same as clicking "EN" in the
+  // header. Deliberately NOT watching `lang` here — this screen can stay
+  // mounted (tab/stack navigators keep prior screens alive) after the
+  // visitor navigates elsewhere, and a `[lang, ...]` dependency would re-fire
+  // on every language change, snapping the toggle straight back to English
+  // no matter which way the visitor clicked it.
   useEffect(() => {
-    if (lang !== 'en') setLang('en');
-  }, [lang, setLang]);
+    setLang('en');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <TrailDetailScreen />;
 }
