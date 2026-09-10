@@ -19,6 +19,7 @@ import {
   ARGENTINA_TRAILS,
   DIFFICULTY_LABEL,
   DIFFICULTY_COLOR,
+  seasonLabel,
 } from '../../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMERGENCIAS, BARILOCHE_SEGURIDAD } from '../../../src/data/barilocheTreks';
 import type { ExtendedTrail } from '../../../src/data/barilocheTreks';
@@ -111,7 +112,7 @@ function getLogisticsContent(
     ];
     if (trail.subarea) lines.push(`Access point: ${trail.subarea}.`);
     lines.push(
-      `The recommended season is ${trail.best_season}. Outside these months weather conditions can be severe and trail access may be restricted.`,
+      `The recommended season is ${seasonLabel(trail.best_season, 'en')}. Outside these months weather conditions can be severe and trail access may be restricted.`,
     );
     if (trail.permits_required) {
       lines.push(
@@ -580,7 +581,7 @@ export default function TrailDetailScreen() {
         { '@type': 'PropertyValue', name: 'Dificultad', value: DIFFICULTY_LABEL[trail.difficulty] ?? trail.difficulty },
         { '@type': 'PropertyValue', name: 'Distancia', value: `${trail.distance_km} km` },
         { '@type': 'PropertyValue', name: 'Duración', value: `${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}` },
-        { '@type': 'PropertyValue', name: 'Mejor época', value: trail.best_season },
+        { '@type': 'PropertyValue', name: lang === 'en' ? 'Best season' : 'Mejor época', value: seasonLabel(trail.best_season, lang) },
       ],
     },
     {
@@ -1369,7 +1370,7 @@ function OverviewTab({
         <CardLabel text={t('Mejor época', 'Best Season')} />
         <View style={styles.infoRow}>
           <Ionicons name="sunny-outline" size={16} color={C.accent} />
-          <Text style={[styles.bodyText, { color: C.text }]}>{trail.best_season}</Text>
+          <Text style={[styles.bodyText, { color: C.text }]}>{seasonLabel(trail.best_season, lang)}</Text>
         </View>
       </SectionCard>
 
