@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
-import { difficultyLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
+import { difficultyLabel, activityLabel, seasonLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
 import { fetchWikiImage } from '../../utils/wikiImage';
 import { useLangStore, Lang } from '../../store/langStore';
 
@@ -142,11 +142,11 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
           <View style={[styles.activityTag, { backgroundColor: c.elevated, borderColor: c.border }]}>
             <Ionicons name={ACTIVITY_ICON[trail.activity] as any} size={10} color={c.muted} />
             <Text style={[styles.activityTagText, { color: c.muted }]}>
-              {trail.activity.replace('_', ' ')}
+              {activityLabel(trail.activity, lang)}
             </Text>
           </View>
           {trail.best_season && (
-            <Text style={[styles.seasonText, { color: c.muted }]}>{trail.best_season}</Text>
+            <Text style={[styles.seasonText, { color: c.muted }]}>{seasonLabel(trail.best_season, lang)}</Text>
           )}
         </View>
       </View>

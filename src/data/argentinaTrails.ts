@@ -2696,3 +2696,54 @@ export const ACTIVITY_ICON: Record<string, string> = {
   travesia: 'compass-outline',
   alta_montana: 'triangle-outline',
 };
+
+export const ACTIVITY_LABEL: Record<string, string> = {
+  trekking: 'Trekking',
+  escalada: 'Escalada',
+  travesia: 'Travesía',
+  alta_montana: 'Alta montaña',
+};
+
+/** Bilingual activity labels. Use `activityLabel(activity, lang)` to display. */
+export const ACTIVITY_LABEL_EN: Record<string, string> = {
+  trekking: 'Trekking',
+  escalada: 'Climbing',
+  travesia: 'Trek crossing',
+  alta_montana: 'High mountain',
+};
+
+export function activityLabel(activity: string, lang: 'es' | 'en'): string {
+  const map = lang === 'en' ? ACTIVITY_LABEL_EN : ACTIVITY_LABEL;
+  return map[activity] ?? activity.replace('_', ' ');
+}
+
+// Spanish month abbreviations (as used in `best_season`) → English, applied
+// word-by-word so any "Mon – Mon" combination translates without needing an
+// _en field on every trail. Longest keys first so e.g. "May" isn't clobbered
+// by a shorter partial match.
+const MONTH_ES_EN: Record<string, string> = {
+  Ene: 'Jan', Feb: 'Feb', Mar: 'Mar', Abr: 'Apr', May: 'May', Jun: 'Jun',
+  Jul: 'Jul', Ago: 'Aug', Sep: 'Sep', Oct: 'Oct', Nov: 'Nov', Dic: 'Dec',
+};
+
+// Recurring non-month phrases seen in `best_season` across both trail data
+// files — kept as a lookup (not a generic translator) since the set of
+// phrases is small and fixed; add a new entry here if a new phrase appears.
+const SEASON_PHRASE_EN: Record<string, string> = {
+  'todo el año': 'year-round',
+  'evento anual': 'annual event',
+  'acceso restringido fuera de temporada por reserva de caza': 'restricted access out of season (hunting reserve)',
+  'acceso pago, se cierra por lluvia/tormenta eléctrica': 'paid access, closes for rain/electrical storms',
+  'evitar calor extremo del verano': 'avoid extreme summer heat',
+  'evitar el calor extremo del verano chaqueño': 'avoid the extreme heat of the Chaco summer',
+};
+
+/** Translate a `best_season` string (e.g. "Dic – Feb (evento anual)") for display. */
+export function seasonLabel(season: string, lang: 'es' | 'en'): string {
+  if (lang !== 'en' || !season) return season;
+  let out = season.replace(/\b([A-ZÁ][a-zá]{2})\b/g, (m) => MONTH_ES_EN[m] ?? m);
+  for (const [es, en] of Object.entries(SEASON_PHRASE_EN)) {
+    out = out.replace(new RegExp(es.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), en);
+  }
+  return out;
+}
