@@ -78,9 +78,19 @@ export default function RutasScreen() {
       '*',
     );
   }
+  // Keep the iframe's language in sync with the app's — it defaults to
+  // Spanish on load and, unlike Mapas, this embed never told it otherwise,
+  // so switching the app to English left the map's own popups (difficulty,
+  // duration, trailhead, description) stuck in Spanish.
+  function pushLangToMap() {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'setLang', lang }, '*');
+  }
   useEffect(() => {
-    if (iframeReady) pushTrailsToMap();
+    if (iframeReady) { pushLangToMap(); pushTrailsToMap(); }
   }, [iframeReady]);
+  useEffect(() => {
+    if (iframeReady) pushLangToMap();
+  }, [lang]);
 
   // Listen for clicks coming back from the map iframe → highlight the card.
   useEffect(() => {
@@ -91,7 +101,7 @@ export default function RutasScreen() {
     }
     function onMessage(e: MessageEvent) {
       if (!e.data) return;
-      if (e.data.type === 'mapReady') { pushTrailsToMap(); return; }
+      if (e.data.type === 'mapReady') { pushLangToMap(); pushTrailsToMap(); return; }
       // A trail was selected on the map → highlight + scroll to its card
       if (e.data.type === 'trailClick' && e.data.id) {
         const id = e.data.id as string;
