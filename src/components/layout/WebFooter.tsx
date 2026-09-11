@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
@@ -12,6 +12,7 @@ import { SUBSCRIBED_KEY } from '../ui/NewsletterPopup';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MAX_CONTENT = 1200;
+const INSTAGRAM_URL = 'https://www.instagram.com/sliabh_arg/';
 
 const REGION_LINKS = [
   { labelEs: 'Patagonia Sur', labelEn: 'Patagonia Sur', region: 'Patagonia Sur' },
@@ -120,6 +121,15 @@ export function WebFooter() {
             </Text>
           </View>
           <View style={styles.copyRight}>
+            <TouchableOpacity
+              style={[styles.cafecitoLink, { borderColor: c.border }]}
+              onPress={() => Linking.openURL(INSTAGRAM_URL)}
+              activeOpacity={0.75}
+              accessibilityLabel="Instagram"
+            >
+              <Ionicons name="logo-instagram" size={12} color="#E1306C" />
+              <Text style={[styles.copySmall, { color: c.muted }]}>Instagram</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={[styles.cafecitoLink, { borderColor: c.border }]}
               onPress={() =>
