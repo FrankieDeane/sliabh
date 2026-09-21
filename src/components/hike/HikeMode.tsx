@@ -10,8 +10,14 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { isSupabaseConfigured } from '../../services/supabase';
 import { recordTrack } from '../../services/trackSync';
+import { useNetworkStore } from '../../store/networkStore';
+import {
+  beginLiveSession,
+  appendLivePoint,
+  clearLiveSession,
+  type LiveSession,
+} from '../../services/liveTrack';
 import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
 
 // Platform-specific flat map — both platforms use MapLibreEsri
@@ -82,11 +88,15 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [gpsDenied, setGpsDenied] = useState(false);
+  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'searching'>(null);
+  const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
+  const online = useNetworkStore((st) => st.isOnline);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const mapRef = useRef<MapLibreEsriHandle>(null);
+  const sessionRef = useRef<LiveSession | null>(null);
+  const wakeLockRef = useRef<any>(null);
 
   // The trail's own line, so the walker can compare it against where they are.
   const routePoints = React.useMemo(() => {
@@ -95,9 +105,14 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   }, [trail]);
 
   const updatePosition = useCallback((lat: number, lon: number) => {
-    setGpsDenied(false); // a fix arrived, so clear any earlier GPS warning
+    setGpsProblem(null); // a fix arrived, so clear any earlier GPS warning
     setUserPos({ lat, lon });
-    setPosHistory((prev) => [...prev, { lat, lon, t: Date.now() }]);
+    const session = sessionRef.current;
+    if (!session) return;
+    // Persist before rendering: what the screen shows is recoverable only
+    // because it reached storage first.
+    const kept = appendLivePoint(session, { lat, lon, t: Date.now() });
+    if (kept) setPosHistory([...session.points]);
   }, []);
 
   useEffect(() => {
@@ -106,7 +121,9 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
     setElapsed(0);
     setUserPos(null);
     setPosHistory([]);
-    setGpsDenied(false);
+    setGpsProblem(null);
+    setResult(null);
+    sessionRef.current = beginLiveSession(trail?.id ?? null, trail?.name ?? null);
 
     timerRef.current = setInterval(() => {
       setElapsed(Date.now() - startRef.current);
@@ -119,18 +136,28 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
         watchIdRef.current = navigator.geolocation.watchPosition(
           (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude),
-          () => setGpsDenied(true),
-          { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
+          (err) => {
+            // A cold GPS fix under tree cover routinely takes longer than the
+            // timeout. Only a denied permission is a dead end; the rest means
+            // "still looking", and the watch stays alive either way.
+            setGpsProblem(err?.code === 1 ? 'denied' : 'searching');
+          },
+          { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 },
         );
+        // Without a wake lock the screen sleeps, the page is frozen and the
+        // track simply stops — silently, mid-walk.
+        (navigator as any).wakeLock?.request?.('screen')
+          .then((lock: any) => { wakeLockRef.current = lock; })
+          .catch(() => { /* unsupported or denied; recording still runs */ });
       } else {
-        setGpsDenied(true);
+        setGpsProblem('denied');
       }
     } else {
       // Android WebView geolocation stays silent unless the app itself holds
       // the runtime permission, so ask before handing tracking to the map.
       requestLocationPermission().then((granted) => {
         if (cancelled) return;
-        if (!granted) { setGpsDenied(true); return; }
+        if (!granted) { setGpsProblem('denied'); return; }
         (mapRef.current as any)?.startHikeTracking?.();
         // The WebView may still be loading; the second call is a no-op once
         // tracking is already running.
@@ -150,6 +177,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       } else {
         (mapRef.current as any)?.stopHikeTracking?.();
       }
+      wakeLockRef.current?.release?.().catch?.(() => {});
+      wakeLockRef.current = null;
     };
   }, [visible, updatePosition]);
 
@@ -161,28 +190,98 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   // there's no session or no connection the hike is queued locally and pushed
   // to the account later, so it still reaches the user's other devices.
   const handleStop = useCallback(async () => {
-    if (posHistory.length >= 2 && isSupabaseConfigured()) {
-      setStopping(true);
-      try {
-        await recordTrack({
-          trailId: trail?.id ?? FREE_TRACK_ID,
-          points: posHistory,
-          distanceKm: distanceCovered,
-          durationS: Math.round(elapsed / 1000),
-          startedAt: new Date(startRef.current).toISOString(),
-        });
-      } catch {
-        // best-effort — never block the user from stopping their hike
-      } finally {
-        setStopping(false);
-      }
+    if (posHistory.length < 2) {
+      clearLiveSession();
+      setResult('too-short');
+      return;
     }
-    onClose();
-  }, [posHistory, distanceCovered, elapsed, trail, onClose]);
+    setStopping(true);
+    try {
+      const { saved } = await recordTrack({
+        trailId: trail?.id ?? FREE_TRACK_ID,
+        points: posHistory,
+        distanceKm: distanceCovered,
+        durationS: Math.round(elapsed / 1000),
+        startedAt: new Date(startRef.current).toISOString(),
+      });
+      // Say plainly where the hike ended up: in the account, or on this phone
+      // waiting for signal. A walker who recorded offline should never have to
+      // guess whether the last four hours survived.
+      setResult(saved ? 'synced' : 'queued');
+    } catch {
+      setResult('queued');
+    } finally {
+      // recordTrack has written the hike to the upload queue, so the in-flight
+      // copy has done its job and must not be offered for recovery later.
+      clearLiveSession();
+      setStopping(false);
+    }
+  }, [posHistory, distanceCovered, elapsed, trail]);
 
   const mapCenter: [number, number] | undefined = trail?.coordinates
     ? [trail.coordinates.lat, trail.coordinates.lon]
     : userPos ? [userPos.lat, userPos.lon] : undefined;
+
+  if (result) {
+    const copy =
+      result === 'synced'
+        ? {
+            icon: 'cloud-done-outline' as const,
+            tone: C.accent,
+            title: t('Guardado en tu cuenta', 'Saved to your account'),
+            body: t(
+              'Ya podés verlo desde cualquier dispositivo donde inicies sesión.',
+              'It is now visible on any device you sign in on.',
+            ),
+          }
+        : result === 'queued'
+          ? {
+              icon: 'save-outline' as const,
+              tone: '#f59e0b',
+              title: t('Guardado en este dispositivo', 'Saved on this device'),
+              body: t(
+                'Sin señal o sin sesión iniciada. El recorrido queda acá y se sube solo cuando vuelva la conexión o inicies sesión — no hace falta que hagas nada.',
+                'No signal, or not signed in. The track stays here and uploads itself once the connection returns or you sign in — nothing else to do.',
+              ),
+            }
+          : {
+              icon: 'alert-circle-outline' as const,
+              tone: C.muted,
+              title: t('Recorrido demasiado corto', 'Track too short'),
+              body: t(
+                'No se registraron suficientes posiciones para guardarlo.',
+                'Not enough positions were recorded to save it.',
+              ),
+            };
+
+    return (
+      <Modal visible={visible} animationType="slide" statusBarTranslucent>
+        <SafeAreaView style={[hikeS.root, { backgroundColor: C.bg }]}>
+          <View style={hikeS.resultWrap}>
+            <Ionicons name={copy.icon} size={44} color={copy.tone} />
+            <Text style={[hikeS.resultTitle, { color: C.text }]}>{copy.title}</Text>
+            <Text style={[hikeS.resultBody, { color: C.muted }]}>{copy.body}</Text>
+            {result !== 'too-short' && (
+              <Text style={[hikeS.resultStats, { color: C.text }]}>
+                {distanceCovered >= 1
+                  ? `${distanceCovered.toFixed(2)} km`
+                  : `${Math.round(distanceCovered * 1000)} m`}
+                {'  ·  '}
+                {formatElapsed(elapsed)}
+              </Text>
+            )}
+            <TouchableOpacity
+              onPress={onClose}
+              activeOpacity={0.85}
+              style={[hikeS.resultBtn, { backgroundColor: C.accent }]}
+            >
+              <Text style={hikeS.resultBtnTxt}>{t('Listo', 'Done')}</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
 
   return (
     <Modal visible={visible} animationType="slide" statusBarTranslucent>
@@ -194,6 +293,12 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
             <Text style={[hikeS.headerTitle, { color: C.accent }]}>
               {t('CAMINATA ACTIVA', 'ACTIVE HIKE')}
             </Text>
+            {!online && (
+              <View style={[hikeS.offlineChip, { borderColor: C.border }]}>
+                <Ionicons name="cloud-offline-outline" size={11} color="#f59e0b" />
+                <Text style={hikeS.offlineChipTxt}>{t('sin señal', 'offline')}</Text>
+              </View>
+            )}
           </View>
           <TouchableOpacity
             style={[hikeS.stopBtn, { borderColor: '#ef4444', opacity: stopping ? 0.6 : 1 }]}
@@ -222,7 +327,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
             routePoints={routePoints}
             trackPoints={posHistory}
             onLocationUpdate={updatePosition}
-            onLocationError={() => setGpsDenied(true)}
+            onLocationError={() => setGpsProblem('searching')}
           />
           <TouchableOpacity
             onPress={() => setSatelliteView((v) => !v)}
@@ -267,14 +372,19 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
           )}
         </View>
 
-        {gpsDenied && (
+        {gpsProblem && (
           <View style={[hikeS.gpsWarn, { borderTopColor: C.border }]}>
             <Ionicons name="warning-outline" size={14} color="#f59e0b" />
             <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
-              {t(
-                'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
-                'No GPS access. Turn on location and restart the hike to record your track.',
-              )}
+              {gpsProblem === 'denied'
+                ? t(
+                    'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
+                    'No GPS access. Turn on location and restart the hike to record your track.',
+                  )
+                : t(
+                    'Buscando señal GPS. Puede tardar un minuto bajo el bosque o entre paredones; seguimos intentando.',
+                    'Searching for a GPS fix. Under tree cover or between walls this can take a minute; still trying.',
+                  )}
             </Text>
           </View>
         )}
@@ -392,6 +502,18 @@ const hikeS = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 8,
   },
   footerText: { fontSize: 12, flex: 1 },
+  offlineChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    borderWidth: 1, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2,
+    backgroundColor: 'rgba(245,158,11,0.12)',
+  },
+  offlineChipTxt: { color: '#f59e0b', fontSize: 10, fontWeight: '800', letterSpacing: 0.4 },
+  resultWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 32 },
+  resultTitle: { fontSize: 18, fontWeight: '800', textAlign: 'center' },
+  resultBody: { fontSize: 13, lineHeight: 19, textAlign: 'center' },
+  resultStats: { fontSize: 15, fontWeight: '700', letterSpacing: -0.3, marginTop: 4 },
+  resultBtn: { borderRadius: 999, paddingHorizontal: 30, paddingVertical: 12, marginTop: 8 },
+  resultBtnTxt: { color: '#04210f', fontSize: 14, fontWeight: '800' },
 });
 
 export default HikeMode;

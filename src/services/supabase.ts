@@ -177,6 +177,32 @@ export interface SavedTrack {
   created_at: string;
 }
 
+/**
+ * The signed-in user's id read from the *stored* session, with no request.
+ * `getUser()` always calls GET /auth/v1/user, which offline means waiting for
+ * a fetch to fail — on the write path that is the difference between a hike
+ * being filed instantly and a spinner that outlives the walk.
+ */
+export async function currentUserId(): Promise<string | null> {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Rejects instead of hanging when the network accepts but never answers. */
+function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), ms);
+    Promise.resolve(promise).then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (error) => { clearTimeout(timer); reject(error); },
+    );
+  });
+}
+
 export interface TrackInput {
   trailId: string;
   points: TrackPoint[];
@@ -191,19 +217,42 @@ export interface TrackInput {
  * false` when there is no session or the insert fails — callers queue those
  * locally (see trackSync) instead of losing the hike.
  */
-export async function saveTrailTrack(opts: TrackInput): Promise<{ saved: boolean }> {
+export async function saveTrailTrack(opts: TrackInput, timeoutMs = 12_000): Promise<{ saved: boolean }> {
   if (!isSupabaseConfigured()) return { saved: false };
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { saved: false };
-  const { error } = await supabase.from('trail_tracks').insert({
-    user_id: user.id,
-    trail_id: opts.trailId,
-    points: opts.points,
-    distance_km: opts.distanceKm,
-    duration_s: opts.durationS,
-    started_at: opts.startedAt,
-  });
-  return { saved: !error };
+  const userId = await currentUserId();
+  if (!userId) return { saved: false };
+  try {
+    // A hike already filed under this exact start instant is the same hike:
+    // the queue can retry an upload whose success was never recorded (the app
+    // died in between), and a duplicate row would be indistinguishable.
+    const existing = await withTimeout(
+      supabase
+        .from('trail_tracks')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('trail_id', opts.trailId)
+        .eq('started_at', opts.startedAt)
+        .limit(1),
+      timeoutMs,
+    );
+    if (existing.error) return { saved: false };
+    if (existing.data?.length) return { saved: true };
+
+    const { error } = await withTimeout(
+      supabase.from('trail_tracks').insert({
+        user_id: userId,
+        trail_id: opts.trailId,
+        points: opts.points,
+        distance_km: opts.distanceKm,
+        duration_s: opts.durationS,
+        started_at: opts.startedAt,
+      }),
+      timeoutMs,
+    );
+    return { saved: !error };
+  } catch {
+    return { saved: false }; // offline or timed out — the caller keeps it queued
+  }
 }
 
 /**
@@ -213,12 +262,12 @@ export async function saveTrailTrack(opts: TrackInput): Promise<{ saved: boolean
  */
 export async function fetchMyTrailTracks(trailId?: string, limit = 20): Promise<SavedTrack[]> {
   if (!isSupabaseConfigured()) return [];
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
+  const userId = await currentUserId();
+  if (!userId) return [];
   let query = supabase
     .from('trail_tracks')
     .select('id, trail_id, points, distance_km, duration_s, started_at, created_at')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .order('started_at', { ascending: false })
     .limit(limit);
   if (trailId) query = query.eq('trail_id', trailId);

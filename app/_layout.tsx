@@ -14,6 +14,8 @@ import { SiteHead } from '../src/components/ui/SiteHead';
 import { injectWebStyles } from '../src/utils/webStyles';
 import { supabase } from '../src/services/supabase';
 import { syncPendingTracks } from '../src/services/trackSync';
+import { InstallPrompt } from '../src/components/offline/InstallPrompt';
+import { UnfinishedHikeBanner } from '../src/components/hike/UnfinishedHikeBanner';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
 // app/+html.tsx, so these must be injected at runtime.
@@ -33,9 +35,13 @@ if (Platform.OS === 'web' && typeof document !== 'undefined') {
   }
   document.title = 'Sliabh — Explora la montaña';
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
+    // The bundle often runs after `load` has already fired, and a listener
+    // added then never runs: the worker was never registering, so nothing was
+    // cached and the site did not open offline at all. Register straight away
+    // when the document is already done.
+    const registerSw = () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); };
+    if (document.readyState === 'complete') registerSw();
+    else window.addEventListener('load', registerSw);
   }
 }
 
@@ -173,6 +179,8 @@ export default function RootLayout() {
             />
           </View>
           <CookieBanner />
+          <UnfinishedHikeBanner />
+          <InstallPrompt />
           <QuickPoll />
           <NewsletterPopup />
         </View>
@@ -184,6 +192,7 @@ export default function RootLayout() {
     <AppErrorBoundary>
       <NetworkWatcher />
       <TrackSyncWatcher />
+      <UnfinishedHikeBanner />
       <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={isDark ? '#111827' : '#ffffff'} />
       <Stack
         screenOptions={{

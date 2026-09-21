@@ -1,16 +1,26 @@
-import { saveTrailTrack, isSupabaseConfigured, supabase, type TrackInput } from './supabase';
+import { saveTrailTrack, isSupabaseConfigured, currentUserId, type TrackInput } from './supabase';
 import { useTrackQueueStore } from '../store/trackQueueStore';
 
-/** Saves a finished hike, keeping it locally when it can't reach the account yet. */
+/**
+ * Files a finished hike: on the device first, then to the account.
+ *
+ * The order matters. Uploading first and queueing only on failure leaves a
+ * window — the seconds the request is in flight — where the hike exists
+ * nowhere but memory, and a phone that dies in that window loses it. Writing
+ * the queue first means the worst case is an upload that happens later;
+ * saveTrailTrack ignores a hike already filed under the same start instant, so
+ * a retry can never duplicate one.
+ */
 export async function recordTrack(track: TrackInput): Promise<{ saved: boolean }> {
+  const entry = useTrackQueueStore.getState().enqueue(track);
+  let saved = false;
   try {
-    const { saved } = await saveTrailTrack(track);
-    if (saved) return { saved: true };
+    ({ saved } = await saveTrailTrack(track));
   } catch {
-    // fall through to the queue
+    saved = false;
   }
-  useTrackQueueStore.getState().enqueue(track);
-  return { saved: false };
+  if (saved) useTrackQueueStore.getState().remove(entry.id);
+  return { saved };
 }
 
 let syncing = false;
@@ -25,8 +35,10 @@ export async function syncPendingTracks(): Promise<number> {
   const { pending } = useTrackQueueStore.getState();
   if (!pending.length) return 0;
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return 0;
+  // Read the stored session rather than calling the auth endpoint: offline
+  // that request only fails slowly, and the queue is meant to drain fast.
+  const userId = await currentUserId();
+  if (!userId) return 0;
 
   syncing = true;
   let synced = 0;
