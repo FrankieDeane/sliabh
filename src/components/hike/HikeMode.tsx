@@ -97,6 +97,9 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'searching'>(null);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
   const [recovered, setRecovered] = useState(false);
+  /** How long the app was in the background, when that gap cost us fixes. */
+  const [pausedGapMs, setPausedGapMs] = useState<number | null>(null);
+  const hiddenAtRef = useRef<number | null>(null);
   const online = useNetworkStore((st) => st.isOnline);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -126,6 +129,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     if (!visible) return;
     setGpsProblem(null);
     setResult(null);
+    setPausedGapMs(null);
+    hiddenAtRef.current = null;
 
     if (resume) {
       // Continuity, not just recovery: the clock keeps running from the
@@ -188,7 +193,17 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     }
 
     const onVisible = () => {
-      if (typeof document === 'undefined' || document.visibilityState !== 'visible') return;
+      if (typeof document === 'undefined') return;
+      if (document.visibilityState !== 'visible') {
+        hiddenAtRef.current = Date.now();
+        return;
+      }
+      // The browser freezes a hidden page, so no fixes arrive while the walker
+      // is in another app or the screen is off. Rather than leave a silent
+      // hole in the track, measure the gap and say it out loud.
+      const hiddenAt = hiddenAtRef.current;
+      hiddenAtRef.current = null;
+      if (hiddenAt && Date.now() - hiddenAt > 20_000) setPausedGapMs(Date.now() - hiddenAt);
       (navigator as any).wakeLock?.request?.('screen')
         .then((lock: any) => { wakeLockRef.current = lock; })
         .catch(() => {});
@@ -431,6 +446,31 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           </View>
         )}
 
+        {pausedGapMs !== null && (
+          <View style={[hikeS.gapWarn, { borderTopColor: C.border }]}>
+            <Ionicons name="alert-circle" size={15} color="#f59e0b" />
+            <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
+              {t(
+                `Estuviste ${Math.round(pausedGapMs / 60000) || 1} min fuera de la app: en ese rato no se grabó nada. El tramo queda cortado.`,
+                `You were away from the app for ${Math.round(pausedGapMs / 60000) || 1} min: nothing was recorded then. That stretch is missing.`,
+              )}
+            </Text>
+            <TouchableOpacity onPress={() => setPausedGapMs(null)} accessibilityLabel={t('Entendido', 'Got it')}>
+              <Ionicons name="close" size={15} color={C.muted} />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View style={[hikeS.keepOpen, { borderTopColor: C.border, backgroundColor: C.surface }]}>
+          <Ionicons name="phone-portrait-outline" size={13} color={C.muted} />
+          <Text style={[hikeS.keepOpenTxt, { color: C.muted }]}>
+            {t(
+              'Dejá esta pantalla abierta. Si cambiás de app o bloqueás el teléfono, la grabación se pausa hasta que vuelvas.',
+              'Keep this screen open. Switching apps or locking the phone pauses the recording until you come back.',
+            )}
+          </Text>
+        </View>
+
         {/* Stats HUD */}
         <View style={[hikeS.hud, { backgroundColor: C.surface, borderTopColor: C.border }]}>
           <HikeStat
@@ -536,6 +576,16 @@ const hikeS = StyleSheet.create({
     backgroundColor: 'rgba(245,158,11,0.12)',
   },
   gpsWarnText: { fontSize: 11.5, flex: 1, lineHeight: 16 },
+  gapWarn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1,
+    backgroundColor: 'rgba(245,158,11,0.16)',
+  },
+  keepOpen: {
+    flexDirection: 'row', alignItems: 'center', gap: 7,
+    paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1,
+  },
+  keepOpenTxt: { fontSize: 10.5, lineHeight: 14, flex: 1 },
   statItem: { flex: 1, alignItems: 'center', gap: 4 },
   statValue: { fontSize: 17, fontWeight: '800', letterSpacing: -0.5 },
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },

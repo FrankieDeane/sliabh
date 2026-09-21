@@ -250,6 +250,14 @@ try {
   check('the hikes page opens offline', (await page.getByText(/Mis recorridos/).count()) > 0);
   check('it lists what is waiting to upload',
     (await page.getByText(/esperando subir|waiting to upload/i).count()) > 0);
+
+  // ── 7. A share link opened with no signal must say so, not spin ────────
+  console.log('\nshared hike link');
+  await page.goto(base + '/recorrido/sin-conexion-test', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(11_000);   // longer than the read timeout
+  check('a share link with no connection explains itself',
+    (await page.getByText(/no está disponible|not available/i).count()) > 0,
+    'it must never sit on a spinner');
 } finally {
   await browser.close();
   server.close();

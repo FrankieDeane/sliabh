@@ -21,6 +21,7 @@ import {
 } from '../../src/services/liveTrack';
 import { findTrailForHike } from '../../src/data/trailLookup';
 import { FREE_TRACK_ID } from '../../src/components/hike/HikeMode';
+import { ShareTrackRow } from '../../src/components/hike/ShareTrackRow';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 
@@ -220,26 +221,31 @@ export default function MisRecorridosScreen() {
           )}
 
           {tracks.map((track) => (
-            <View
-              key={track.id}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6, borderTopWidth: 1, borderTopColor: c.border }}
-            >
-              <Ionicons name="footsteps-outline" size={16} color={c.accent} />
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: c.text, fontSize: 13, fontWeight: '700' }} numberOfLines={1}>
-                  {trackLabel(track.trail_id)}
-                </Text>
-                <Text style={{ color: c.muted, fontSize: 11.5 }}>
-                  {new Date(track.started_at).toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })}
-                  {' · '}
-                  {new Date(track.started_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
+            <View key={track.id} style={{ paddingVertical: 8, borderTopWidth: 1, borderTopColor: c.border }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Ionicons name="footsteps-outline" size={16} color={c.accent} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: c.text, fontSize: 13, fontWeight: '700' }} numberOfLines={1}>
+                    {track.title || trackLabel(track.trail_id)}
+                  </Text>
+                  <Text style={{ color: c.muted, fontSize: 11.5 }}>
+                    {new Date(track.started_at).toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' })}
+                    {' · '}
+                    {new Date(track.started_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
+                  </Text>
+                </View>
+                <Text style={{ color: c.muted, fontSize: 12, textAlign: 'right' }}>
+                  {fmtDistance(track.distance_km)}
+                  {'\n'}
+                  {fmtDuration(track.duration_s)}
                 </Text>
               </View>
-              <Text style={{ color: c.muted, fontSize: 12, textAlign: 'right' }}>
-                {fmtDistance(track.distance_km)}
-                {'\n'}
-                {fmtDuration(track.duration_s)}
-              </Text>
+              <ShareTrackRow
+                track={track}
+                colors={c}
+                label={track.title || trackLabel(track.trail_id)}
+                onChanged={load}
+              />
             </View>
           ))}
         </View>
