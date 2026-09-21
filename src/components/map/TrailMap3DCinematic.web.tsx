@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { gpxTrackToGeoJSON, trackToSlopeSegments } from '../../utils/geojson';
+import { useMapFullscreen, FullscreenButton } from './MapFullscreen';
 
 interface GpxPoint {
   lat: number;
@@ -64,6 +65,7 @@ export default function TrailMap3DCinematic({
   const [phase, setPhase] = useState<'loading' | 'flying' | 'interactive'>('loading');
   const phaseRef = useRef<'loading' | 'flying' | 'interactive'>('loading');
   const [is3D, setIs3D] = useState(true);
+  const fs = useMapFullscreen();
   const [satellite, setSatellite] = useState(true);
   const [slopeVisible, setSlopeVisible] = useState(false);
   const [rotateMode, setRotateMode] = useState(false);
@@ -192,6 +194,7 @@ export default function TrailMap3DCinematic({
           dragRotate: true,
           touchZoomRotate: true,
           touchPitch: true,
+          attributionControl: { compact: true },
         });
 
         mapRef.current = map;
@@ -490,6 +493,15 @@ export default function TrailMap3DCinematic({
     map.setLayoutProperty('trail-glow', 'visibility', next ? 'none' : 'visible');
   }
 
+  // The canvas keeps the old size when the panel grows to the viewport, so
+  // the map must be told its container changed.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const id = setTimeout(() => map.resize?.(), 60);
+    return () => clearTimeout(id);
+  }, [fs.expanded]);
+
   const containerH = typeof height === 'number' ? height : 420;
   // Shorter labels + tighter paddings on phones — the four control buttons
   // (rotate, 2D/3D, sat/topo, pendiente) pack into two bottom corners, and
@@ -500,9 +512,19 @@ export default function TrailMap3DCinematic({
   const btnFontSize = smallScreen ? 10 : 11;
 
   return (
-    <View style={{ borderRadius: 16, overflow: 'hidden', position: 'relative' }}>
+    <View
+      style={[
+        { borderRadius: 16, overflow: 'hidden', position: 'relative' },
+        fs.panelStyle,
+      ]}
+    >
       {/* @ts-ignore */}
-      <div ref={containerRef} style={{ width: '100%', height: containerH, display: 'block' }} />
+      <div
+        ref={containerRef}
+        className="sliabh-map3d"
+        style={{ width: '100%', height: fs.expanded ? '100%' : containerH, display: 'block' }}
+      />
+
 
       {/* Loading overlay */}
       {phase === 'loading' && !error && (
@@ -620,6 +642,13 @@ export default function TrailMap3DCinematic({
           ))}
         </View>
       )}
+
+      <FullscreenButton
+        expanded={fs.expanded}
+        onPress={fs.toggle}
+        compact={smallScreen}
+        style={{ position: 'absolute', top: 12, right: 12 }}
+      />
 
       {/* SAT/TOPO badge */}
       {phase !== 'loading' && (

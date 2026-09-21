@@ -25,7 +25,16 @@ function formatDistance(km: number): string {
  * on the desktop and vice versa. Hikes still waiting to reach the account
  * (recorded signed-out or offline) are listed as pending.
  */
-export function MyTracksSection({ trailId, colors }: { trailId: string; colors: Colors }) {
+export function MyTracksSection({
+  trailId,
+  colors,
+  limit,
+}: {
+  /** Omit to list every hike on the account, whatever trail it belongs to. */
+  trailId?: string;
+  colors: Colors;
+  limit?: number;
+}) {
   const { t, lang } = useLangStore();
   const router = useRouter();
   const [tracks, setTracks] = React.useState<SavedTrack[]>([]);
@@ -33,7 +42,7 @@ export function MyTracksSection({ trailId, colors }: { trailId: string; colors: 
   const [authed, setAuthed] = React.useState(false);
   const allPending = useTrackQueueStore((s) => s.pending);
   const pending = React.useMemo(
-    () => allPending.filter((p) => p.trailId === trailId),
+    () => (trailId ? allPending.filter((p) => p.trailId === trailId) : allPending),
     [allPending, trailId],
   );
   const configured = isSupabaseConfigured();
@@ -41,9 +50,9 @@ export function MyTracksSection({ trailId, colors }: { trailId: string; colors: 
   const load = React.useCallback(async () => {
     const { data } = await supabase.auth.getUser();
     setAuthed(!!data.user);
-    setTracks(data.user ? await fetchMyTrailTracks(trailId) : []);
+    setTracks(data.user ? await fetchMyTrailTracks(trailId, limit) : []);
     setLoading(false);
-  }, [trailId]);
+  }, [trailId, limit]);
 
   React.useEffect(() => {
     if (!configured) { setLoading(false); return; }
@@ -96,7 +105,9 @@ export function MyTracksSection({ trailId, colors }: { trailId: string; colors: 
 
       {!loading && authed && !tracks.length && !pending.length && (
         <Text style={{ color: colors.muted, fontSize: 12.5 }}>
-          {t('Todavía no grabaste esta ruta.', "You haven't recorded this trail yet.")}
+          {trailId
+            ? t('Todavía no grabaste esta ruta.', "You haven't recorded this trail yet.")
+            : t('Todavía no grabaste ningún recorrido.', "You haven't recorded any hike yet.")}
         </Text>
       )}
 

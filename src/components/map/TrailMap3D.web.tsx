@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { gpxTrackToGeoJSON } from '../../utils/geojson';
+import { useMapFullscreen, FullscreenButton } from './MapFullscreen';
 
 interface GpxPoint {
   lat: number;
@@ -35,6 +36,7 @@ export default function TrailMap3D({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const [is3D, setIs3D] = useState(true);
+  const fs = useMapFullscreen();
   const [satellite, setSatellite] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -252,16 +254,37 @@ export default function TrailMap3D({
 
   // Support both fixed pixel heights and '100%' (fills the parent panel).
   const isFill = typeof height === 'string';
+  // The canvas keeps its old size when the panel grows to the viewport.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const id = setTimeout(() => map.resize?.(), 60);
+    return () => clearTimeout(id);
+  }, [fs.expanded]);
+
   const containerH: number | string = height ?? 340;
 
   return (
-    <View style={[{ borderRadius: 16, overflow: 'hidden', position: 'relative' }, isFill ? { flex: 1 } : null]}>
+    <View
+      style={[
+        { borderRadius: 16, overflow: 'hidden', position: 'relative' },
+        isFill ? { flex: 1 } : null,
+        fs.panelStyle,
+      ]}
+    >
       {/* Map container */}
       {/* @ts-ignore — div on web */}
       <div
         ref={containerRef}
-        style={{ width: '100%', height: isFill ? '100%' : containerH, minHeight: isFill ? '100%' : undefined, display: 'block' }}
+        className="sliabh-map3d"
+        style={{
+          width: '100%',
+          height: isFill || fs.expanded ? '100%' : containerH,
+          minHeight: isFill ? '100%' : undefined,
+          display: 'block',
+        }}
       />
+
 
       {/* Loading overlay */}
       {!loaded && !error && (
@@ -304,6 +327,13 @@ export default function TrailMap3D({
           </Text>
         </TouchableOpacity>
       )}
+
+      <FullscreenButton
+        expanded={fs.expanded}
+        onPress={fs.toggle}
+        compact
+        style={{ position: 'absolute', top: 12, right: 64 }}
+      />
 
       {/* Satélite / Topo toggle */}
       {loaded && (
