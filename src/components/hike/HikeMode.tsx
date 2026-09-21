@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { isSupabaseConfigured } from '../../services/supabase';
 import { recordTrack } from '../../services/trackSync';
+import { useNetworkStore } from '../../store/networkStore';
 import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
 
 // Platform-specific flat map — both platforms use MapLibreEsri
@@ -83,6 +84,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
   const [gpsDenied, setGpsDenied] = useState(false);
+  const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
+  const online = useNetworkStore((st) => st.isOnline);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
@@ -107,6 +110,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
     setUserPos(null);
     setPosHistory([]);
     setGpsDenied(false);
+    setResult(null);
 
     timerRef.current = setInterval(() => {
       setElapsed(Date.now() - startRef.current);
@@ -161,28 +165,94 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   // there's no session or no connection the hike is queued locally and pushed
   // to the account later, so it still reaches the user's other devices.
   const handleStop = useCallback(async () => {
-    if (posHistory.length >= 2 && isSupabaseConfigured()) {
-      setStopping(true);
-      try {
-        await recordTrack({
-          trailId: trail?.id ?? FREE_TRACK_ID,
-          points: posHistory,
-          distanceKm: distanceCovered,
-          durationS: Math.round(elapsed / 1000),
-          startedAt: new Date(startRef.current).toISOString(),
-        });
-      } catch {
-        // best-effort — never block the user from stopping their hike
-      } finally {
-        setStopping(false);
-      }
+    if (posHistory.length < 2 || !isSupabaseConfigured()) {
+      setResult('too-short');
+      return;
     }
-    onClose();
-  }, [posHistory, distanceCovered, elapsed, trail, onClose]);
+    setStopping(true);
+    try {
+      const { saved } = await recordTrack({
+        trailId: trail?.id ?? FREE_TRACK_ID,
+        points: posHistory,
+        distanceKm: distanceCovered,
+        durationS: Math.round(elapsed / 1000),
+        startedAt: new Date(startRef.current).toISOString(),
+      });
+      // Say plainly where the hike ended up: in the account, or on this phone
+      // waiting for signal. A walker who recorded offline should never have to
+      // guess whether the last four hours survived.
+      setResult(saved ? 'synced' : 'queued');
+    } catch {
+      setResult('queued');
+    } finally {
+      setStopping(false);
+    }
+  }, [posHistory, distanceCovered, elapsed, trail]);
 
   const mapCenter: [number, number] | undefined = trail?.coordinates
     ? [trail.coordinates.lat, trail.coordinates.lon]
     : userPos ? [userPos.lat, userPos.lon] : undefined;
+
+  if (result) {
+    const copy =
+      result === 'synced'
+        ? {
+            icon: 'cloud-done-outline' as const,
+            tone: C.accent,
+            title: t('Guardado en tu cuenta', 'Saved to your account'),
+            body: t(
+              'Ya podés verlo desde cualquier dispositivo donde inicies sesión.',
+              'It is now visible on any device you sign in on.',
+            ),
+          }
+        : result === 'queued'
+          ? {
+              icon: 'save-outline' as const,
+              tone: '#f59e0b',
+              title: t('Guardado en este dispositivo', 'Saved on this device'),
+              body: t(
+                'Sin señal o sin sesión iniciada. El recorrido queda acá y se sube solo cuando vuelva la conexión o inicies sesión — no hace falta que hagas nada.',
+                'No signal, or not signed in. The track stays here and uploads itself once the connection returns or you sign in — nothing else to do.',
+              ),
+            }
+          : {
+              icon: 'alert-circle-outline' as const,
+              tone: C.muted,
+              title: t('Recorrido demasiado corto', 'Track too short'),
+              body: t(
+                'No se registraron suficientes posiciones para guardarlo.',
+                'Not enough positions were recorded to save it.',
+              ),
+            };
+
+    return (
+      <Modal visible={visible} animationType="slide" statusBarTranslucent>
+        <SafeAreaView style={[hikeS.root, { backgroundColor: C.bg }]}>
+          <View style={hikeS.resultWrap}>
+            <Ionicons name={copy.icon} size={44} color={copy.tone} />
+            <Text style={[hikeS.resultTitle, { color: C.text }]}>{copy.title}</Text>
+            <Text style={[hikeS.resultBody, { color: C.muted }]}>{copy.body}</Text>
+            {result !== 'too-short' && (
+              <Text style={[hikeS.resultStats, { color: C.text }]}>
+                {distanceCovered >= 1
+                  ? `${distanceCovered.toFixed(2)} km`
+                  : `${Math.round(distanceCovered * 1000)} m`}
+                {'  ·  '}
+                {formatElapsed(elapsed)}
+              </Text>
+            )}
+            <TouchableOpacity
+              onPress={onClose}
+              activeOpacity={0.85}
+              style={[hikeS.resultBtn, { backgroundColor: C.accent }]}
+            >
+              <Text style={hikeS.resultBtnTxt}>{t('Listo', 'Done')}</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
 
   return (
     <Modal visible={visible} animationType="slide" statusBarTranslucent>
@@ -194,6 +264,12 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
             <Text style={[hikeS.headerTitle, { color: C.accent }]}>
               {t('CAMINATA ACTIVA', 'ACTIVE HIKE')}
             </Text>
+            {!online && (
+              <View style={[hikeS.offlineChip, { borderColor: C.border }]}>
+                <Ionicons name="cloud-offline-outline" size={11} color="#f59e0b" />
+                <Text style={hikeS.offlineChipTxt}>{t('sin señal', 'offline')}</Text>
+              </View>
+            )}
           </View>
           <TouchableOpacity
             style={[hikeS.stopBtn, { borderColor: '#ef4444', opacity: stopping ? 0.6 : 1 }]}
@@ -392,6 +468,18 @@ const hikeS = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 8,
   },
   footerText: { fontSize: 12, flex: 1 },
+  offlineChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    borderWidth: 1, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2,
+    backgroundColor: 'rgba(245,158,11,0.12)',
+  },
+  offlineChipTxt: { color: '#f59e0b', fontSize: 10, fontWeight: '800', letterSpacing: 0.4 },
+  resultWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 32 },
+  resultTitle: { fontSize: 18, fontWeight: '800', textAlign: 'center' },
+  resultBody: { fontSize: 13, lineHeight: 19, textAlign: 'center' },
+  resultStats: { fontSize: 15, fontWeight: '700', letterSpacing: -0.3, marginTop: 4 },
+  resultBtn: { borderRadius: 999, paddingHorizontal: 30, paddingVertical: 12, marginTop: 8 },
+  resultBtnTxt: { color: '#04210f', fontSize: 14, fontWeight: '800' },
 });
 
 export default HikeMode;

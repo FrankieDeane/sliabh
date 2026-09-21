@@ -1,10 +1,10 @@
-/* Sliabh — Service Worker v27
+/* Sliabh — Service Worker v28
    - Precache the offline map shell (parques.html + vendored MapLibre/jsPDF)
      so the map works on the very first offline visit.
    - Tile caching now matches the providers the map actually uses (ESRI World
      Imagery + terrarium DEM), and retains any tile fetched while online so
      browsing an area online makes it available offline. */
-const CACHE = 'sliabh-v27';
+const CACHE = 'sliabh-v28';
 const TILE_CACHE = 'sliabh-tiles-v1';
 
 // Same-origin assets the offline map needs. Kept small and stable; the
@@ -29,12 +29,30 @@ function isTileHost(url) {
   );
 }
 
+// The app bundle is content-hashed at build time, so its filename can't be
+// listed above. Read it out of the shell instead: without the bundle cached,
+// an offline visit serves index.html and then renders nothing at all.
+async function precacheAppBundle(cache) {
+  try {
+    const res = await fetch('/', { cache: 'reload' });
+    if (!res || !res.ok) return;
+    await cache.put('/', res.clone());
+    const html = await res.text();
+    const assets = new Set();
+    for (const m of html.matchAll(/(?:src|href)="(\/_expo\/[^"]+\.(?:js|css))"/g)) assets.add(m[1]);
+    await Promise.allSettled([...assets].map((u) => cache.add(u)));
+  } catch {
+    // offline at install time — the runtime cache below still fills in later
+  }
+}
+
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) =>
+    caches.open(CACHE).then(async (c) => {
       // Tolerate individual failures so one bad asset can't block activation.
-      Promise.allSettled(PRECACHE_URLS.map((u) => c.add(u)))
-    ).then(() => self.skipWaiting())
+      await Promise.allSettled(PRECACHE_URLS.map((u) => c.add(u)));
+      await precacheAppBundle(c);
+    }).then(() => self.skipWaiting())
   );
 });
 
