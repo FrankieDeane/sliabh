@@ -40,6 +40,7 @@ const TrailMap3DCinematic = Platform.OS === 'web'
 
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { MyTracksSection } from '../../../src/components/trails/MyTracksSection';
+import { SolarPanel } from '../../../src/components/trails/SolarPanel';
 import { RecordHikeButton } from '../../../src/components/hike/RecordHikeButton';
 import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
 import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
@@ -1291,6 +1292,10 @@ function OverviewTab({
 
       {/* Recent nearby earthquake alert (USGS, no key needed) */}
       <EarthquakeRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
+
+      {/* Sun times and coordinates, computed on-device from this trail's own
+          latitude and longitude — works with no connection */}
+      <SolarPanel trail={trail} colors={C} />
 
       {/* The user's own recorded hikes — read from their account, not the device */}
       <MyTracksSection trailId={trail.id} colors={C} />
