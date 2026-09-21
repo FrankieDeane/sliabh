@@ -167,6 +167,8 @@ export interface TrackPoint {
   t: number; // ms epoch
 }
 
+export type TrackVisibility = 'private' | 'public';
+
 export interface SavedTrack {
   id: string;
   trail_id: string;
@@ -175,6 +177,10 @@ export interface SavedTrack {
   duration_s: number;
   started_at: string;
   created_at: string;
+  /** Absent until the sharing migration has been applied. */
+  visibility?: TrackVisibility;
+  share_token?: string;
+  title?: string | null;
 }
 
 /**
@@ -264,16 +270,90 @@ export async function fetchMyTrailTracks(trailId?: string, limit = 20): Promise<
   if (!isSupabaseConfigured()) return [];
   const userId = await currentUserId();
   if (!userId) return [];
-  let query = supabase
-    .from('trail_tracks')
-    .select('id, trail_id, points, distance_km, duration_s, started_at, created_at')
-    .eq('user_id', userId)
-    .order('started_at', { ascending: false })
-    .limit(limit);
-  if (trailId) query = query.eq('trail_id', trailId);
-  const { data, error } = await query;
+  const withSharing = 'id, trail_id, points, distance_km, duration_s, started_at, created_at, visibility, share_token, title';
+  const base = 'id, trail_id, points, distance_km, duration_s, started_at, created_at';
+
+  async function run(columns: string) {
+    let query = supabase
+      .from('trail_tracks')
+      .select(columns)
+      .eq('user_id', userId)
+      .order('started_at', { ascending: false })
+      .limit(limit);
+    if (trailId) query = query.eq('trail_id', trailId);
+    return query;
+  }
+
+  let { data, error } = await run(withSharing);
+  if (error) {
+    // The sharing columns only exist once the migration has been applied; a
+    // project still on the old schema keeps working, minus the share button.
+    ({ data, error } = await run(base));
+  }
   if (error || !data) return [];
-  return data as SavedTrack[];
+  return data as unknown as SavedTrack[];
+}
+
+/** True once the sharing migration is live on this project. */
+export async function isSharingAvailable(): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+  const { error } = await supabase.from('trail_tracks').select('share_token').limit(1);
+  return !error;
+}
+
+/**
+ * Publishes or unpublishes one of the user's own hikes. RLS restricts the
+ * update to its owner, so a token alone can never flip someone else's track.
+ */
+export async function setTrackVisibility(
+  trackId: string,
+  visibility: TrackVisibility,
+): Promise<{ ok: boolean; error?: string }> {
+  const userId = await currentUserId();
+  if (!userId) return { ok: false, error: 'not-signed-in' };
+  const { error } = await supabase
+    .from('trail_tracks')
+    .update({ visibility })
+    .eq('id', trackId)
+    .eq('user_id', userId);
+  return error ? { ok: false, error: error.message } : { ok: true };
+}
+
+/** Renames a hike the user owns. */
+export async function setTrackTitle(trackId: string, title: string): Promise<boolean> {
+  const userId = await currentUserId();
+  if (!userId) return false;
+  const { error } = await supabase
+    .from('trail_tracks')
+    .update({ title: title.trim() || null })
+    .eq('id', trackId)
+    .eq('user_id', userId);
+  return !error;
+}
+
+/**
+ * A hike someone shared, read by its token. Works signed out — that is the
+ * point of a share link — and returns null for a token that was unshared.
+ */
+export async function fetchSharedTrack(token: string, timeoutMs = 8_000): Promise<SavedTrack | null> {
+  if (!isSupabaseConfigured() || !token) return null;
+  try {
+    // A share link opened with no signal must say so, not spin forever: this
+    // page is the one part of the app that genuinely needs the network.
+    const { data, error } = await withTimeout(
+      supabase
+        .from('trail_tracks')
+        .select('id, trail_id, points, distance_km, duration_s, started_at, created_at, visibility, share_token, title')
+        .eq('share_token', token)
+        .eq('visibility', 'public')
+        .limit(1),
+      timeoutMs,
+    );
+    if (error || !data?.length) return null;
+    return data[0] as unknown as SavedTrack;
+  } catch {
+    return null;
+  }
 }
 
 // ── Trail condition reports (live, perishable) ──────────────────────

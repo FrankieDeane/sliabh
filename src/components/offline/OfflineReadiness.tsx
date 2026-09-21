@@ -96,8 +96,8 @@ export function OfflineReadiness({
       key: 'gps',
       label: t('Grabar tu recorrido', 'Recording your hike'),
       detail: t(
-        'El GPS del celular no usa datos: graba igual sin señal y el recorrido queda en el dispositivo hasta que vuelva la conexión.',
-        "The phone's GPS needs no data: it records without signal and the track stays on the device until the connection returns.",
+        'El GPS del celular no usa datos: graba igual sin señal y el recorrido queda en el dispositivo hasta que vuelva la conexión. Eso sí: la grabación se pausa si cambiás de app o bloqueás la pantalla, así que dejá la pantalla de caminata abierta.',
+        "The phone's GPS needs no data: it records without signal and the track stays on the device until the connection returns. One caveat: recording pauses if you switch apps or lock the screen, so leave the hike screen open.",
       ),
       state: 'ready',
     },
