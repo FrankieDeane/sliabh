@@ -118,6 +118,19 @@ export default function TabLayout() {
           web and, on native, would need its own entry point (e.g. a card on
           Inicio) once the native app ships this. */}
       <Tabs.Screen
+        name="mis-recorridos"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              icon="footsteps"
+              iconOutline="footsteps-outline"
+              label={t('Recorridos', 'Hikes')}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="guias"
         options={{ href: null }}
       />

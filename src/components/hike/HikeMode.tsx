@@ -16,6 +16,7 @@ import {
   beginLiveSession,
   appendLivePoint,
   clearLiveSession,
+  resumeLiveSession,
   type LiveSession,
 } from '../../services/liveTrack';
 import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
@@ -80,9 +81,14 @@ interface HikeModeProps {
   t: (es: string, en: string) => string;
   /** Omit to record a free track that is not tied to any trail. */
   trail?: HikeTrail;
+  /**
+   * A recording read back from storage. Passing it picks that walk up where
+   * it stopped — same start time, same points — instead of starting a new one.
+   */
+  resume?: LiveSession | null;
 }
 
-export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProps) {
+export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: HikeModeProps) {
   const [elapsed, setElapsed] = useState(0);
   const [userPos, setUserPos] = useState<{ lat: number; lon: number } | null>(null);
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
@@ -90,6 +96,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   const [satelliteView, setSatelliteView] = useState(false);
   const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'searching'>(null);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
+  const [recovered, setRecovered] = useState(false);
   const online = useNetworkStore((st) => st.isOnline);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -117,13 +124,26 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
 
   useEffect(() => {
     if (!visible) return;
-    startRef.current = Date.now();
-    setElapsed(0);
-    setUserPos(null);
-    setPosHistory([]);
     setGpsProblem(null);
     setResult(null);
-    sessionRef.current = beginLiveSession(trail?.id ?? null, trail?.name ?? null);
+
+    if (resume) {
+      // Continuity, not just recovery: the clock keeps running from the
+      // original start and the track already walked is back on the map.
+      sessionRef.current = resumeLiveSession(resume);
+      startRef.current = new Date(resume.startedAt).getTime();
+      setPosHistory([...resume.points]);
+      const last = resume.points[resume.points.length - 1];
+      setUserPos(last ? { lat: last.lat, lon: last.lon } : null);
+      setRecovered(true);
+    } else {
+      sessionRef.current = beginLiveSession(trail?.id ?? null, trail?.name ?? null);
+      startRef.current = Date.now();
+      setPosHistory([]);
+      setUserPos(null);
+      setRecovered(false);
+    }
+    setElapsed(Date.now() - startRef.current);
 
     timerRef.current = setInterval(() => {
       setElapsed(Date.now() - startRef.current);
@@ -167,8 +187,21 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       });
     }
 
+    const onVisible = () => {
+      if (typeof document === 'undefined' || document.visibilityState !== 'visible') return;
+      (navigator as any).wakeLock?.request?.('screen')
+        .then((lock: any) => { wakeLockRef.current = lock; })
+        .catch(() => {});
+    };
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', onVisible);
+    }
+
     return () => {
       cancelled = true;
+      if (Platform.OS === 'web' && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisible);
+      }
       if (retryId) clearTimeout(retryId);
       if (timerRef.current) clearInterval(timerRef.current);
       if (Platform.OS === 'web' && watchIdRef.current !== null) {
@@ -180,7 +213,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       wakeLockRef.current?.release?.().catch?.(() => {});
       wakeLockRef.current = null;
     };
-  }, [visible, updatePosition]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, updatePosition, resume?.id]);
 
   const distanceCovered = posHistory.length >= 2
     ? posHistory.reduce((sum, p, i) => i === 0 ? 0 : sum + haversineKm(posHistory[i - 1], p), 0)
@@ -297,6 +331,14 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
               <View style={[hikeS.offlineChip, { borderColor: C.border }]}>
                 <Ionicons name="cloud-offline-outline" size={11} color="#f59e0b" />
                 <Text style={hikeS.offlineChipTxt}>{t('sin señal', 'offline')}</Text>
+              </View>
+            )}
+            {recovered && (
+              <View style={[hikeS.resumedChip, { borderColor: C.border }]}>
+                <Ionicons name="refresh" size={11} color={C.accent} />
+                <Text style={[hikeS.resumedChipTxt, { color: C.accent }]}>
+                  {t('retomada', 'resumed')}
+                </Text>
               </View>
             )}
           </View>
@@ -508,6 +550,12 @@ const hikeS = StyleSheet.create({
     backgroundColor: 'rgba(245,158,11,0.12)',
   },
   offlineChipTxt: { color: '#f59e0b', fontSize: 10, fontWeight: '800', letterSpacing: 0.4 },
+  resumedChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    borderWidth: 1, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2,
+    backgroundColor: 'rgba(34,197,94,0.12)',
+  },
+  resumedChipTxt: { fontSize: 10, fontWeight: '800', letterSpacing: 0.4 },
   resultWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 32 },
   resultTitle: { fontSize: 18, fontWeight: '800', textAlign: 'center' },
   resultBody: { fontSize: 13, lineHeight: 19, textAlign: 'center' },

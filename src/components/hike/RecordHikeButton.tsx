@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { HikeMode, type HikeColors, type HikeTrail } from './HikeMode';
+import { type HikeColors, type HikeTrail } from './HikeMode';
+import { useHikeStore } from '../../store/hikeStore';
 import { useLangStore } from '../../store/langStore';
 
 interface Props {
@@ -18,7 +19,13 @@ interface Props {
  */
 export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props) {
   const { t } = useLangStore();
-  const [hiking, setHiking] = React.useState(false);
+  // The recording belongs to the app, not to this button: that is what lets
+  // the screen come back on its own after the browser is killed.
+  const start = useHikeStore((s) => s.start);
+  const openHike = React.useCallback(
+    () => start(trail ? { ...trail, id: trail.id, name: trail.name } : undefined),
+    [start, trail],
+  );
 
   const label = t('Grabar recorrido', 'Record hike');
   const sub = trail
@@ -30,7 +37,7 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
       {variant === 'floating' ? (
         <View style={s.floatWrap} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => setHiking(true)}
+            onPress={openHike}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={label}
@@ -42,7 +49,7 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
         </View>
       ) : (
         <TouchableOpacity
-          onPress={() => setHiking(true)}
+          onPress={openHike}
           activeOpacity={0.85}
           accessibilityRole="button"
           accessibilityLabel={label}
@@ -57,13 +64,6 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
         </TouchableOpacity>
       )}
 
-      <HikeMode
-        visible={hiking}
-        trail={trail}
-        colors={colors}
-        t={t}
-        onClose={() => setHiking(false)}
-      />
     </>
   );
 }

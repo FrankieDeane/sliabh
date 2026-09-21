@@ -28,6 +28,13 @@ export interface LiveSession {
   trailName: string | null;
   startedAt: string;
   updatedAt: string;
+  /**
+   * `recording` means the walk is still under way. It survives the app being
+   * killed, which is the point: a session found in this state on the next
+   * launch is a recording that was interrupted, and must be picked back up
+   * rather than merely mourned.
+   */
+  status: 'recording' | 'stopped';
   points: TrackPoint[];
 }
 
@@ -37,6 +44,7 @@ interface StoredSession {
   trailName: string | null;
   startedAt: string;
   updatedAt: string;
+  status?: 'recording' | 'stopped';
   p: Array<[number, number, number]>;
 }
 
@@ -57,6 +65,7 @@ function write(session: LiveSession): void {
     trailName: session.trailName,
     startedAt: session.startedAt,
     updatedAt: session.updatedAt,
+    status: session.status,
     p: session.points.map((pt) => [
       Math.round(pt.lat * 1e6) / 1e6,
       Math.round(pt.lon * 1e6) / 1e6,
@@ -80,6 +89,7 @@ export function beginLiveSession(trailId: string | null, trailName: string | nul
     trailName,
     startedAt: now,
     updatedAt: now,
+    status: 'recording',
     points: [],
   };
   write(session);
@@ -115,6 +125,7 @@ export function readLiveSession(): LiveSession | null {
       trailName: stored.trailName ?? null,
       startedAt: stored.startedAt,
       updatedAt: stored.updatedAt ?? stored.startedAt,
+      status: stored.status ?? 'recording',
       points: stored.p
         .filter((pt) => Array.isArray(pt) && pt.length === 3)
         .map(([lat, lon, t]) => ({ lat, lon, t })),
@@ -122,6 +133,13 @@ export function readLiveSession(): LiveSession | null {
   } catch {
     return null;
   }
+}
+
+/** Re-opens a session read back from storage so appends keep persisting. */
+export function resumeLiveSession(session: LiveSession): LiveSession {
+  const resumed: LiveSession = { ...session, status: 'recording' };
+  write(resumed);
+  return resumed;
 }
 
 export function clearLiveSession(): void {
