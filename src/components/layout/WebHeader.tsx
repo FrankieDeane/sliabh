@@ -89,16 +89,27 @@ export function WebHeader() {
     });
   }
 
-  const NAV = [
-    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio' as const, icon: 'home-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas' as const, icon: 'trail-sign-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar' as const, icon: 'map-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq' as const, icon: 'chatbubble-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia' as const, icon: 'shield-checkmark-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Guías', labelEn: 'Guides', href: '/(tabs)/guias' as const, icon: 'compass-outline' as const, scrollTo: null as string | null },
-    { labelEs: 'Nosotros', labelEn: 'About', href: '/(tabs)/inicio' as const, icon: 'people-outline' as const, scrollTo: 'about-us' as string | null },
-    { labelEs: 'Contactanos', labelEn: 'Contact us', href: '/(tabs)/inicio' as const, icon: 'mail-outline' as const, scrollTo: 'sponsors-form' as string | null },
+  // Annotated rather than inferred: expo-router's typed-route union is
+  // generated (.expo/types), so a freshly added screen fails to type-check
+  // until someone runs the dev server — and the failure surfaces far from
+  // here. These hrefs are only ever used as strings.
+  const NAV: Array<{
+    labelEs: string;
+    labelEn: string;
+    href: string;
+    icon: React.ComponentProps<typeof Ionicons>['name'];
+    scrollTo: string | null;
+  }> = [
+    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio', icon: 'home-outline', scrollTo: null },
+    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas', icon: 'trail-sign-outline', scrollTo: null },
+    { labelEs: 'Mis recorridos', labelEn: 'My hikes', href: '/(tabs)/mis-recorridos', icon: 'footsteps-outline', scrollTo: null },
+    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas', icon: 'map-outline', scrollTo: null },
+    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar', icon: 'map-outline', scrollTo: null },
+    { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq', icon: 'chatbubble-outline', scrollTo: null },
+    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia', icon: 'shield-checkmark-outline', scrollTo: null },
+    { labelEs: 'Guías', labelEn: 'Guides', href: '/(tabs)/guias', icon: 'compass-outline', scrollTo: null },
+    { labelEs: 'Nosotros', labelEn: 'About', href: '/(tabs)/inicio', icon: 'people-outline', scrollTo: 'about-us' },
+    { labelEs: 'Contactanos', labelEn: 'Contact us', href: '/(tabs)/inicio', icon: 'mail-outline', scrollTo: 'sponsors-form' },
   ];
 
   const c = isDark
@@ -332,7 +343,10 @@ const styles = StyleSheet.create({
     width: '100%',
     borderBottomWidth: 1,
     zIndex: 100,
-    transition: 'background-color 0.3s ease, border-color 0.3s ease' as any,
+    // Web-only CSS transition. Spread from a plain object so it reaches the
+    // DOM without tripping the excess-property check on RN's style types,
+    // which an inline `as any` only silences until inference shifts.
+    ...({ transition: 'background-color 0.3s ease, border-color 0.3s ease' } as object),
   },
   inner: {
     flexDirection: 'row',
@@ -379,7 +393,7 @@ const styles = StyleSheet.create({
   navLabel: {
     fontSize: 13,
     fontWeight: '600',
-    transition: 'color 0.18s ease' as any,
+    ...({ transition: 'color 0.18s ease' } as object),
   },
   navLabelActive: {
     color: '#22c55e',
@@ -406,7 +420,7 @@ const styles = StyleSheet.create({
   langBtn: {
     paddingHorizontal: 12,
     paddingVertical: 9,
-    transition: 'background-color 0.18s ease' as any,
+    ...({ transition: 'background-color 0.18s ease' } as object),
   },
   langBtnActive: {
     backgroundColor: '#16a34a',
@@ -422,7 +436,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'border-color 0.18s ease' as any,
+    ...({ transition: 'border-color 0.18s ease' } as object),
   },
   userRow: {
     flexDirection: 'row',
@@ -438,7 +452,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 7,
-    transition: 'background-color 0.18s ease' as any,
+    ...({ transition: 'background-color 0.18s ease' } as object),
   },
   loginBtnTxt: {
     fontSize: 13,

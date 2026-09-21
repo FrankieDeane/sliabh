@@ -148,11 +148,17 @@ try {
   check('in-progress track is on disk mid-hike', !!live && live.p?.length >= 3,
     live ? `${live.p?.length ?? 0} points persisted` : 'nothing written');
 
-  // ── 4. A crash mid-hike does not lose the walk ────────────────────────
+  // ── 4. Killing the browser mid-hike must not end the recording ────────
+  //
+  // This is the case that failed in the field: the walk was on disk, but the
+  // app came back to an ordinary page with nothing recording, and the walker
+  // had no way to know. Coming back has to mean coming back *to the
+  // recording*, still running.
   console.log('\ncrash recovery');
   const pointsBeforeCrash = live?.p?.length ?? 0;
   await page.reload({ waitUntil: 'domcontentloaded' });   // the OS reclaims the tab
-  await page.waitForTimeout(3500);
+  await page.waitForTimeout(4000);
+
   const survived = await page.evaluate(() => {
     const raw = localStorage.getItem('live-hike-v1');
     return raw ? JSON.parse(raw).p.length : 0;
@@ -160,20 +166,46 @@ try {
   check('the track survives the reload', survived >= pointsBeforeCrash && survived >= 3,
     `${survived} points still stored`);
 
-  // The banner only offers sessions that have gone quiet, so age it by hand
-  // rather than idling the test for five minutes.
+  check('the recording screen comes back by itself',
+    (await page.getByText(/CAMINATA ACTIVA/).count()) > 0);
+  check('it says the recording was resumed',
+    (await page.getByText(/retomada|resumed/i).count()) > 0);
+
+  // Keep walking: the resumed screen must still be appending fixes.
+  const MORE = [[-49.2920, -72.9430], [-49.2880, -72.9520], [-49.2840, -72.9600]];
+  for (const [latitude, longitude] of MORE) {
+    await ctx.setGeolocation({ latitude, longitude });
+    await page.waitForTimeout(800);
+  }
+  await page.waitForTimeout(1200);
+  const afterResume = await page.evaluate(() => {
+    const raw = localStorage.getItem('live-hike-v1');
+    return raw ? JSON.parse(raw).p.length : 0;
+  });
+  check('it keeps recording after coming back', afterResume > survived,
+    `${survived} → ${afterResume} points`);
+
+  const sameStart = await page.evaluate(() => {
+    const raw = localStorage.getItem('live-hike-v1');
+    return raw ? JSON.parse(raw).startedAt : null;
+  });
+  check('the resumed walk is the same walk, not a new one',
+    !!sameStart && new Date(sameStart).getTime() < Date.now() - 4000,
+    `started ${sameStart}`);
+
+  // ── 4b. A session abandoned hours ago is offered back instead ──────────
   await page.evaluate(() => {
     const raw = localStorage.getItem('live-hike-v1');
     if (!raw) return;
     const s = JSON.parse(raw);
-    s.updatedAt = new Date(Date.now() - 20 * 60_000).toISOString();
+    s.updatedAt = new Date(Date.now() - 9 * 3600_000).toISOString();
     localStorage.setItem('live-hike-v1', JSON.stringify(s));
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(3500);
+  await page.waitForTimeout(4000);
   await dismissBanners(page);
   const offered = (await page.getByText(/Quedó una caminata sin cerrar/).count()) > 0;
-  check('an interrupted hike is offered back', offered);
+  check('a hike abandoned hours ago is offered back, not resumed', offered);
 
   if (offered) {
     await page.getByText(/Guardarla/).first().click();
@@ -211,6 +243,13 @@ try {
     try { return JSON.parse(raw).state?.pending?.length ?? 0; } catch { return 0; }
   });
   check('the stopped hike is queued for upload', pending >= 1, `${pending} queued`);
+  // ── 6. The walker can find their hikes from the menu ──────────────────
+  console.log('\nmy hikes page');
+  await page.goto(base + '/mis-recorridos', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(3000);
+  check('the hikes page opens offline', (await page.getByText(/Mis recorridos/).count()) > 0);
+  check('it lists what is waiting to upload',
+    (await page.getByText(/esperando subir|waiting to upload/i).count()) > 0);
 } finally {
   await browser.close();
   server.close();
