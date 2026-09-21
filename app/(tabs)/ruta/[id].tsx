@@ -11,6 +11,7 @@ import {
   Linking,
   Modal,
   SafeAreaView,
+  PermissionsAndroid,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,7 +26,8 @@ import { BARILOCHE_TRAILS, ALL_BARILOCHE_IDS, BARILOCHE_REGISTRO, BARILOCHE_EMER
 import type { ExtendedTrail } from '../../../src/data/barilocheTreks';
 import { useLangStore } from '../../../src/store/langStore';
 import { useThemeStore } from '../../../src/store/themeStore';
-import { saveTrailTrack, isSupabaseConfigured, fetchGuidesForTrail, Guide } from '../../../src/services/supabase';
+import { isSupabaseConfigured, fetchGuidesForTrail, Guide } from '../../../src/services/supabase';
+import { recordTrack } from '../../../src/services/trackSync';
 import { TrailGuidesSection } from '../../../src/components/guides/TrailGuidesSection';
 import { downloadGpx, buildGpx } from '../../../src/utils/gpx';
 import { downloadAreaTiles, isAreaCached, isTileCachingSupported, estimateAreaSizeMb } from '../../../src/utils/offlineTiles';
@@ -47,6 +49,7 @@ const HikeMap = Platform.OS === 'web'
   : require('../../../src/components/map/MapLibreEsri.native').MapLibreEsri;
 import type { MapLibreEsriHandle } from '../../../src/components/map/MapLibreEsri.native';
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
+import { MyTracksSection } from '../../../src/components/trails/MyTracksSection';
 import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
 import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
@@ -1324,6 +1327,9 @@ function OverviewTab({
       {/* Recent nearby earthquake alert (USGS, no key needed) */}
       <EarthquakeRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
 
+      {/* The user's own recorded hikes — read from their account, not the device */}
+      <MyTracksSection trailId={trail.id} colors={C} />
+
       {/* Live community condition reports (shown once Supabase is configured) */}
       <TrailReports trailId={trail.id} colors={C} />
 
@@ -1672,6 +1678,19 @@ function haversineKm(a: { lat: number; lon: number }, b: { lat: number; lon: num
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 }
 
+/** Android needs the runtime location grant before the WebView can get a fix. */
+async function requestLocationPermission(): Promise<boolean> {
+  if (Platform.OS !== 'android') return true;
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  } catch {
+    return false;
+  }
+}
+
 interface HikeModeProps {
   visible: boolean;
   trail: TrailDetail;
@@ -1686,12 +1705,20 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
+  const [gpsDenied, setGpsDenied] = useState(false);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const mapRef = useRef<MapLibreEsriHandle>(null);
 
+  // The trail's own line, so the walker can compare it against where they are.
+  const routePoints = React.useMemo(() => {
+    const track = trail.gpxTrack;
+    return track && track.length >= 2 ? track.map((p) => ({ lat: p.lat, lon: p.lon })) : undefined;
+  }, [trail]);
+
   const updatePosition = useCallback((lat: number, lon: number) => {
+    setGpsDenied(false); // a fix arrived, so clear any earlier GPS warning
     setUserPos({ lat, lon });
     setPosHistory((prev) => {
       const next = [...prev, { lat, lon, t: Date.now() }];
@@ -1705,27 +1732,43 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
     setElapsed(0);
     setUserPos(null);
     setPosHistory([]);
+    setGpsDenied(false);
 
     timerRef.current = setInterval(() => {
       setElapsed(Date.now() - startRef.current);
     }, 1000);
 
+    let cancelled = false;
+    let retryId: ReturnType<typeof setTimeout> | null = null;
+
     if (Platform.OS === 'web') {
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
         watchIdRef.current = navigator.geolocation.watchPosition(
           (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude),
-          () => {},
+          () => setGpsDenied(true),
           { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
         );
+      } else {
+        setGpsDenied(true);
       }
     } else {
-      // Native: start tracking via WebView injectJavaScript
-      setTimeout(() => {
+      // Android WebView geolocation stays silent unless the app itself holds
+      // the runtime permission, so ask before handing tracking to the map.
+      requestLocationPermission().then((granted) => {
+        if (cancelled) return;
+        if (!granted) { setGpsDenied(true); return; }
         (mapRef.current as any)?.startHikeTracking?.();
-      }, 1200); // give WebView time to load
+        // The WebView may still be loading; the second call is a no-op once
+        // tracking is already running.
+        retryId = setTimeout(() => {
+          if (!cancelled) (mapRef.current as any)?.startHikeTracking?.();
+        }, 1500);
+      });
     }
 
     return () => {
+      cancelled = true;
+      if (retryId) clearTimeout(retryId);
       if (timerRef.current) clearInterval(timerRef.current);
       if (Platform.OS === 'web' && watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
@@ -1740,13 +1783,14 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
     ? posHistory.reduce((sum, p, i) => i === 0 ? 0 : sum + haversineKm(posHistory[i - 1], p), 0)
     : 0;
 
-  // Recording is mandatory for signed-in users — saveTrailTrack no-ops for
-  // anonymous ones, so this always runs, never behind a toggle.
+  // Recording is mandatory for signed-in users — never behind a toggle. When
+  // there's no session or no connection the hike is queued locally and pushed
+  // to the account later, so it still reaches the user's other devices.
   const handleStop = useCallback(async () => {
     if (posHistory.length >= 2 && isSupabaseConfigured()) {
       setStopping(true);
       try {
-        await saveTrailTrack({
+        await recordTrack({
           trailId: trail.id,
           points: posHistory,
           distanceKm: distanceCovered,
@@ -1799,7 +1843,10 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
             showPolyline={false}
             showHikingRoute={false}
             userPosition={userPos}
+            routePoints={routePoints}
+            trackPoints={posHistory}
             onLocationUpdate={updatePosition}
+            onLocationError={() => setGpsDenied(true)}
           />
           <TouchableOpacity
             onPress={() => setSatelliteView((v) => !v)}
@@ -1825,6 +1872,36 @@ function HikeMode({ visible, trail, onClose, t }: HikeModeProps) {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Map legend — which line is the trail and which one is yours */}
+        <View style={[hikeS.legend, { backgroundColor: C.surface, borderTopColor: C.border }]}>
+          <View style={hikeS.legendItem}>
+            <View style={[hikeS.legendLine, { backgroundColor: '#3b82f6' }]} />
+            <Text style={[hikeS.legendText, { color: C.text }]}>
+              {t('Tu recorrido', 'Your track')}
+            </Text>
+          </View>
+          {!!routePoints && (
+            <View style={hikeS.legendItem}>
+              <View style={[hikeS.legendLine, { backgroundColor: '#22c55e' }]} />
+              <Text style={[hikeS.legendText, { color: C.muted }]}>
+                {t('Ruta sugerida', 'Suggested route')}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {gpsDenied && (
+          <View style={[hikeS.gpsWarn, { borderTopColor: C.border }]}>
+            <Ionicons name="warning-outline" size={14} color="#f59e0b" />
+            <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
+              {t(
+                'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
+                'No GPS access. Turn on location and restart the hike to record your track.',
+              )}
+            </Text>
+          </View>
+        )}
 
         {/* Stats HUD */}
         <View style={[hikeS.hud, { backgroundColor: C.surface, borderTopColor: C.border }]}>
@@ -1931,6 +2008,19 @@ const hikeS = StyleSheet.create({
     paddingHorizontal: 8,
   },
   hudDivider: { width: 1, height: 40, marginHorizontal: 4 },
+  legend: {
+    flexDirection: 'row', alignItems: 'center', gap: 16,
+    paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1,
+  },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  legendLine: { width: 18, height: 3, borderRadius: 2 },
+  legendText: { fontSize: 11.5, fontWeight: '600' },
+  gpsWarn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1,
+    backgroundColor: 'rgba(245,158,11,0.12)',
+  },
+  gpsWarnText: { fontSize: 11.5, flex: 1, lineHeight: 16 },
   statItem: { flex: 1, alignItems: 'center', gap: 4 },
   statValue: { fontSize: 17, fontWeight: '800', letterSpacing: -0.5 },
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },

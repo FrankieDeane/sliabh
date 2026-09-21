@@ -12,6 +12,8 @@ import { QuickPoll } from '../src/components/ui/QuickPoll';
 import { NewsletterPopup } from '../src/components/ui/NewsletterPopup';
 import { SiteHead } from '../src/components/ui/SiteHead';
 import { injectWebStyles } from '../src/utils/webStyles';
+import { supabase } from '../src/services/supabase';
+import { syncPendingTracks } from '../src/services/trackSync';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
 // app/+html.tsx, so these must be injected at runtime.
@@ -123,6 +125,27 @@ function NetworkWatcher() {
   return null;
 }
 
+/**
+ * Flushes hikes recorded while signed out or offline into the account, so the
+ * same history shows up on every device the user logs in on.
+ */
+function TrackSyncWatcher() {
+  const online = useNetworkStore((s) => s.isOnline);
+
+  useEffect(() => {
+    if (!online) return;
+    syncPendingTracks().catch(() => {});
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
+        syncPendingTracks().catch(() => {});
+      }
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [online]);
+
+  return null;
+}
+
 export default function RootLayout() {
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
@@ -137,6 +160,7 @@ export default function RootLayout() {
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <SiteHead />
           <NetworkWatcher />
+          <TrackSyncWatcher />
           <StatusBar style={isDark ? 'light' : 'dark'} />
           <WebHeader />
           <PromoBanner />
@@ -159,6 +183,7 @@ export default function RootLayout() {
   return (
     <AppErrorBoundary>
       <NetworkWatcher />
+      <TrackSyncWatcher />
       <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={isDark ? '#111827' : '#ffffff'} />
       <Stack
         screenOptions={{
