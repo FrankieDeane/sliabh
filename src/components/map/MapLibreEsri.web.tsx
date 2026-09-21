@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 export interface MapMarker {
@@ -10,6 +10,11 @@ export interface MapMarker {
 }
 
 export type EsriLayer = 'esri-topo' | 'esri-satellite' | 'esri-streets';
+
+export interface LatLon { lat: number; lon: number }
+
+/** GPS fixes closer than this to the previous one are jitter, not movement. */
+const MIN_TRACK_MOVE_M = 4;
 
 const ESRI_TILES: Record<EsriLayer, string> = {
   'esri-topo':      'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
@@ -31,6 +36,10 @@ interface Props {
   showPolyline?: boolean;
   layer?: EsriLayer;
   userPosition?: { lat: number; lon: number } | null;
+  /** Reference route of the trail (the suggested path), drawn in green. */
+  routePoints?: LatLon[];
+  /** Live breadcrumb of where the user has actually walked, drawn in blue. */
+  trackPoints?: LatLon[];
 }
 
 // Load MapLibre GL JS from CDN once (no npm dep needed)
@@ -83,6 +92,29 @@ function makeMarkerEl(color = '#16a34a') {
   return el;
 }
 
+function metersBetween(a: [number, number], b: [number, number]): number {
+  const R = 6371000;
+  const dLat = ((b[1] - a[1]) * Math.PI) / 180;
+  const dLon = ((b[0] - a[0]) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a[1] * Math.PI) / 180) * Math.cos((b[1] * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+}
+
+/** GeoJSON LineString from lat/lon points; `minMoveM` drops GPS jitter. */
+function lineFeature(points: LatLon[] | undefined, minMoveM = 0) {
+  const coords: [number, number][] = [];
+  (points ?? []).forEach((p) => {
+    if (!Number.isFinite(p?.lat) || !Number.isFinite(p?.lon)) return;
+    const next: [number, number] = [p.lon, p.lat];
+    const last = coords[coords.length - 1];
+    if (last && minMoveM > 0 && metersBetween(last, next) < minMoveM) return;
+    coords.push(next);
+  });
+  return { type: 'Feature' as const, geometry: { type: 'LineString' as const, coordinates: coords }, properties: {} };
+}
+
 export function MapLibreEsri({
   onMarkerPress,
   onMapPress,
@@ -93,11 +125,28 @@ export function MapLibreEsri({
   height = 400,
   layer = 'esri-topo',
   userPosition,
+  routePoints,
+  trackPoints,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerInstancesRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
+  const readyRef = useRef(false);
+  const routeRef = useRef(routePoints);
+  const trackRef = useRef(trackPoints);
+  const followRef = useRef(true);
+  const [following, setFollowing] = useState(true);
+
+  routeRef.current = routePoints;
+  trackRef.current = trackPoints;
+
+  const setLineData = useCallback((sourceId: string, points: LatLon[] | undefined, minMoveM: number) => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    const src = map.getSource(sourceId);
+    if (src) src.setData(lineFeature(points, minMoveM));
+  }, []);
 
   // Init map (re-create when layer changes)
   useEffect(() => {
@@ -123,8 +172,46 @@ export function MapLibreEsri({
         map.on('click', (e: any) => onMapPress(e.lngLat.lat, e.lngLat.lng));
       }
 
-      // Add markers after style loads
+      // Panning or zooming by hand releases the camera, so the live position
+      // can no longer yank the map back while the user reads the terrain.
+      const release = (e: any) => {
+        if (!e?.originalEvent || !followRef.current) return;
+        followRef.current = false;
+        setFollowing(false);
+      };
+      map.on('dragstart', release);
+      map.on('zoomstart', release);
+      map.on('rotatestart', release);
+
+      // Add markers and route/track layers after style loads
       map.on('load', () => {
+        if (cancelled) return;
+        readyRef.current = true;
+
+        map.addSource('trail-route', { type: 'geojson', data: lineFeature(routeRef.current) });
+        map.addLayer({
+          id: 'trail-route-casing', type: 'line', source: 'trail-route',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#04260f', 'line-width': 7, 'line-opacity': 0.45 },
+        });
+        map.addLayer({
+          id: 'trail-route-line', type: 'line', source: 'trail-route',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#22c55e', 'line-width': 3.5, 'line-dasharray': [2, 1.6] },
+        });
+
+        map.addSource('user-track', { type: 'geojson', data: lineFeature(trackRef.current, MIN_TRACK_MOVE_M) });
+        map.addLayer({
+          id: 'user-track-casing', type: 'line', source: 'user-track',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#ffffff', 'line-width': 8, 'line-opacity': 0.55 },
+        });
+        map.addLayer({
+          id: 'user-track-line', type: 'line', source: 'user-track',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: { 'line-color': '#3b82f6', 'line-width': 4.5 },
+        });
+
         markers.forEach((m) => {
           const el = makeMarkerEl();
           el.addEventListener('click', () => onMarkerPress?.(m.id));
@@ -138,6 +225,7 @@ export function MapLibreEsri({
 
     return () => {
       cancelled = true;
+      readyRef.current = false;
       markerInstancesRef.current = [];
       userMarkerRef.current = null;
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
@@ -161,6 +249,16 @@ export function MapLibreEsri({
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markers]);
+
+  // Reference route of the trail
+  useEffect(() => {
+    setLineData('trail-route', routePoints, 0);
+  }, [routePoints, setLineData]);
+
+  // Breadcrumb of the walked path — redrawn on every new fix
+  useEffect(() => {
+    setLineData('user-track', trackPoints, MIN_TRACK_MOVE_M);
+  }, [trackPoints, setLineData]);
 
   // FlyTo
   useEffect(() => {
@@ -187,8 +285,19 @@ export function MapLibreEsri({
         .setLngLat([userPosition.lon, userPosition.lat])
         .addTo(map);
     }
-    map.panTo([userPosition.lon, userPosition.lat], { animate: true, duration: 500 });
+    if (followRef.current) {
+      map.panTo([userPosition.lon, userPosition.lat], { animate: true, duration: 500 });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userPosition?.lat, userPosition?.lon]);
+
+  const recenter = useCallback(() => {
+    followRef.current = true;
+    setFollowing(true);
+    const map = mapRef.current;
+    if (map && userPosition) {
+      map.easeTo({ center: [userPosition.lon, userPosition.lat], duration: 600 });
+    }
   }, [userPosition?.lat, userPosition?.lon]);
 
   if (typeof window === 'undefined') {
@@ -204,15 +313,46 @@ export function MapLibreEsri({
   }
 
   const isFullHeight = height === '100%';
+  const resolvedHeight = isFullHeight
+    ? 'calc(100vh - 58px)'
+    : typeof height === 'number' ? `${height}px` : String(height);
   const containerStyle: React.CSSProperties = {
     width: '100%',
-    height: isFullHeight ? 'calc(100vh - 58px)' : typeof height === 'number' ? `${height}px` : String(height),
+    height: resolvedHeight,
     minHeight: 300,
     position: 'relative',
     display: 'block',
   };
 
-  return <div ref={containerRef} style={containerStyle} />;
+  return (
+    <div style={{ position: 'relative', width: '100%', height: resolvedHeight, minHeight: 300 }}>
+      <div ref={containerRef} style={containerStyle} />
+      {!following && userPosition && (
+        <button
+          type="button"
+          onClick={recenter}
+          style={{
+            position: 'absolute',
+            left: 14,
+            bottom: 18,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 999,
+            padding: '8px 14px',
+            background: 'rgba(15,23,42,0.85)',
+            color: '#fff',
+            fontSize: 12.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          ◎ Centrar / Recenter
+        </button>
+      )}
+    </div>
+  );
 }
 
 export default MapLibreEsri;

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
+import { mmkvStorage } from '../store/mmkv';
 
 // Replace with your Supabase project values
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
@@ -15,6 +16,12 @@ export function isSupabaseConfigured(): boolean {
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
+    // Without an explicit adapter supabase-js falls back to localStorage, which
+    // does not exist on native: the session would die with the app and the
+    // phone would never see what the account recorded elsewhere. mmkvStorage
+    // resolves to MMKV on native and to localStorage on web (same keys, so web
+    // sessions carry over unchanged).
+    storage: mmkvStorage,
     autoRefreshToken: true,
     persistSession: true,
     // On web we let supabase-js parse the recovery token from the URL when the
@@ -160,22 +167,35 @@ export interface TrackPoint {
   t: number; // ms epoch
 }
 
-/**
- * Persists a completed hike's GPS track. Called automatically when a
- * signed-in user stops "Modo Caminata" — recording is mandatory for logged-in
- * users, not an opt-in choice. Silently no-ops when there's no authenticated
- * user (anonymous hikes are never saved).
- */
-export async function saveTrailTrack(opts: {
+export interface SavedTrack {
+  id: string;
+  trail_id: string;
+  points: TrackPoint[];
+  distance_km: number;
+  duration_s: number;
+  started_at: string;
+  created_at: string;
+}
+
+export interface TrackInput {
   trailId: string;
   points: TrackPoint[];
   distanceKm: number;
   durationS: number;
   startedAt: string;
-}) {
+}
+
+/**
+ * Persists a completed hike's GPS track against the signed-in account, so it
+ * is readable from every device that account logs in on. Returns `saved:
+ * false` when there is no session or the insert fails — callers queue those
+ * locally (see trackSync) instead of losing the hike.
+ */
+export async function saveTrailTrack(opts: TrackInput): Promise<{ saved: boolean }> {
+  if (!isSupabaseConfigured()) return { saved: false };
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { data: null, error: null };
-  return supabase.from('trail_tracks').insert({
+  if (!user) return { saved: false };
+  const { error } = await supabase.from('trail_tracks').insert({
     user_id: user.id,
     trail_id: opts.trailId,
     points: opts.points,
@@ -183,6 +203,28 @@ export async function saveTrailTrack(opts: {
     duration_s: opts.durationS,
     started_at: opts.startedAt,
   });
+  return { saved: !error };
+}
+
+/**
+ * The signed-in user's own recorded hikes, newest first. RLS limits the rows
+ * to that user, so this is what makes a hike recorded on the phone show up on
+ * the desktop (and the other way round).
+ */
+export async function fetchMyTrailTracks(trailId?: string, limit = 20): Promise<SavedTrack[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+  let query = supabase
+    .from('trail_tracks')
+    .select('id, trail_id, points, distance_km, duration_s, started_at, created_at')
+    .eq('user_id', user.id)
+    .order('started_at', { ascending: false })
+    .limit(limit);
+  if (trailId) query = query.eq('trail_id', trailId);
+  const { data, error } = await query;
+  if (error || !data) return [];
+  return data as SavedTrack[];
 }
 
 // ── Trail condition reports (live, perishable) ──────────────────────

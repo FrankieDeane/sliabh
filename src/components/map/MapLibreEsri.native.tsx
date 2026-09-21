@@ -23,6 +23,8 @@ const ESRI_TILES: Record<EsriLayer, string> = {
   'esri-streets':   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
 };
 
+export interface LatLon { lat: number; lon: number }
+
 interface Props {
   onMarkerPress?: (id: string) => void;
   onLocationUpdate?: (lat: number, lon: number) => void;
@@ -35,6 +37,9 @@ interface Props {
   layer?: EsriLayer;
   userPosition?: { lat: number; lon: number } | null;
   showPolyline?: boolean;
+  /** Reference route of the trail (the suggested path), drawn in green. */
+  routePoints?: LatLon[];
+  onLocationError?: () => void;
 }
 
 // Ruta al Pico San Miguel — route coordinates [lon, lat]
@@ -91,11 +96,17 @@ function buildHTML(
   zoom: number,
   showHikingRoute: boolean,
   layer: EsriLayer,
+  routePoints: LatLon[] = [],
 ): string {
   const routeJson = JSON.stringify(ROUTE);
   const wpJson = JSON.stringify(HIKING_WAYPOINTS);
   const geoJson = JSON.stringify(GEO_LABELS);
   const distJson = JSON.stringify(DIST_LABELS);
+  const trailRouteJson = JSON.stringify(
+    routePoints
+      .filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lon))
+      .map((p) => [p.lon, p.lat]),
+  );
   const tileUrl = ESRI_TILES[layer];
 
   return `<!DOCTYPE html>
@@ -162,10 +173,18 @@ body{font-family:-apple-system,system-ui,sans-serif;}
               0.5px -0.5px 0 rgba(255,255,255,0.9),-0.5px 0.5px 0 rgba(255,255,255,0.9);
 }
 .maplibregl-ctrl-bottom-right{bottom:50px;}
+
+#recenter{
+  display:none;position:absolute;left:12px;bottom:18px;z-index:25;
+  align-items:center;gap:6px;background:rgba(15,23,42,0.88);
+  border:1px solid rgba(255,255,255,0.22);border-radius:999px;
+  padding:9px 15px;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;
+}
 </style>
 </head>
 <body>
 <div id="map"></div>
+<div id="recenter">◎ Centrar</div>
 ${showHikingRoute ? `
 <div id="title-bar"><span>MAPA DE SENDERISMO: RUTA AL PICO SAN MIGUEL</span></div>
 <div id="north-arrow"><div class="na">N</div><div class="ns">↑</div></div>
@@ -190,6 +209,13 @@ ${showHikingRoute ? `
 (function(){
   var showRoute = ${showHikingRoute};
   var route = ${routeJson};
+  var trailRoute = ${trailRouteJson};
+
+  // Hike mode can ask for tracking before the style is ready; remember the
+  // request so no fix is lost while MapLibre is still loading.
+  window.__hikePending=false;
+  window.startHikeTracking=function(){window.__hikePending=true;};
+  window.stopHikeTracking=function(){window.__hikePending=false;};
   var waypoints = ${wpJson};
   var geoLabels = ${geoJson};
   var distLabels = ${distJson};
@@ -226,6 +252,35 @@ ${showHikingRoute ? `
   }
 
   map.on('load',function(){
+
+    // ── Trail reference route + the user's own walked track ──────────────────
+    function lineFeature(coords){
+      return {type:'Feature',geometry:{type:'LineString',coordinates:coords||[]},properties:{}};
+    }
+
+    map.addSource('trail-route',{type:'geojson',data:lineFeature(trailRoute)});
+    map.addLayer({
+      id:'trail-route-casing',type:'line',source:'trail-route',
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#04260f','line-width':7,'line-opacity':0.45}
+    });
+    map.addLayer({
+      id:'trail-route-line',type:'line',source:'trail-route',
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#22c55e','line-width':3.5,'line-dasharray':[2,1.6]}
+    });
+
+    map.addSource('user-track',{type:'geojson',data:lineFeature([])});
+    map.addLayer({
+      id:'user-track-casing',type:'line',source:'user-track',
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#ffffff','line-width':8,'line-opacity':0.55}
+    });
+    map.addLayer({
+      id:'user-track-line',type:'line',source:'user-track',
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#3b82f6','line-width':4.5}
+    });
 
     if(showRoute){
       // ── Route line ──────────────────────────────────────────────────────────
@@ -319,10 +374,49 @@ ${showHikingRoute ? `
     // ── Hike tracking ────────────────────────────────────────────────────────
     var hikeWatchId=null;
     var hikeMarker=null;
+    var hikeTrack=[];
+    var following=true;
+
+    function metersBetween(a,b){
+      var R=6371000;
+      var dLat=(b[1]-a[1])*Math.PI/180, dLon=(b[0]-a[0])*Math.PI/180;
+      var s=Math.pow(Math.sin(dLat/2),2)
+        +Math.cos(a[1]*Math.PI/180)*Math.cos(b[1]*Math.PI/180)*Math.pow(Math.sin(dLon/2),2);
+      return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+    }
+
+    // Panning by hand releases the camera so the live fix stops yanking the
+    // map back while the walker reads the terrain ahead.
+    function releaseFollow(e){
+      if(!e || !e.originalEvent || !following) return;
+      following=false;
+      var btn=document.getElementById('recenter');
+      if(btn) btn.style.display='flex';
+    }
+    map.on('dragstart',releaseFollow);
+    map.on('zoomstart',releaseFollow);
+    map.on('rotatestart',releaseFollow);
+
+    var recenterBtn=document.getElementById('recenter');
+    if(recenterBtn){
+      recenterBtn.addEventListener('click',function(){
+        following=true;
+        recenterBtn.style.display='none';
+        var last=hikeTrack[hikeTrack.length-1];
+        if(last) map.easeTo({center:last,duration:600});
+      });
+    }
+
     window.startHikeTracking=function(){
       if(hikeWatchId!==null) return;
       hikeWatchId=navigator.geolocation.watchPosition(function(pos){
         var lat=pos.coords.latitude,lng=pos.coords.longitude;
+        var last=hikeTrack[hikeTrack.length-1];
+        if(!last || metersBetween(last,[lng,lat])>=4){
+          hikeTrack.push([lng,lat]);
+          var src=map.getSource('user-track');
+          if(src) src.setData(lineFeature(hikeTrack));
+        }
         if(!hikeMarker){
           var el=document.createElement('div');
           el.style.cssText='position:relative;width:20px;height:20px;';
@@ -333,14 +427,18 @@ ${showHikingRoute ? `
         } else {
           hikeMarker.setLngLat([lng,lat]);
         }
-        map.panTo([lng,lat],{animate:true,duration:500});
+        if(following) map.panTo([lng,lat],{animate:true,duration:500});
         try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationUpdate',lat:lat,lon:lng}));}catch(e){}
-      },function(){},{enableHighAccuracy:true,maximumAge:3000,timeout:20000});
+      },function(err){
+        try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationError',code:err&&err.code}));}catch(e){}
+      },{enableHighAccuracy:true,maximumAge:3000,timeout:20000});
     };
     window.stopHikeTracking=function(){
       if(hikeWatchId!==null){navigator.geolocation.clearWatch(hikeWatchId);hikeWatchId=null;}
       if(hikeMarker){hikeMarker.remove();hikeMarker=null;}
     };
+    // The hike modal may call these before the style finishes loading.
+    if(window.__hikePending){window.__hikePending=false;window.startHikeTracking();}
 
     // Listen for messages from React Native
     document.addEventListener('message',handleMsg);
@@ -365,6 +463,7 @@ ${showHikingRoute ? `
 export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLibreEsri({
   onMarkerPress,
   onLocationUpdate,
+  onLocationError,
   markers = [],
   flyTo,
   center = [-31.970, -64.910],
@@ -372,6 +471,7 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   height = 400,
   showHikingRoute = true,
   layer = 'esri-topo',
+  routePoints,
 }: Props, ref) {
   const webviewRef = useRef<WebView>(null);
   const loaded = useRef(false);
@@ -392,7 +492,13 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
     : center;
   const effectiveZoom = flyTo?.zoom ?? zoom;
 
-  const html = buildHTML(effectiveCenter, effectiveZoom, showHikingRoute, layer);
+  const routeKey = routePoints?.length ? `${routePoints.length}:${routePoints[0].lat},${routePoints[0].lon}` : '';
+  // Rebuilding the string remounts the WebView, so keep it stable across renders.
+  const html = React.useMemo(
+    () => buildHTML(effectiveCenter, effectiveZoom, showHikingRoute, layer, routePoints ?? []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [effectiveCenter[0], effectiveCenter[1], effectiveZoom, showHikingRoute, layer, routeKey],
+  );
 
   function flush() {
     if (!loaded.current || !webviewRef.current) return;
@@ -451,11 +557,14 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
         if (data.type === 'locationUpdate' && onLocationUpdate) {
           onLocationUpdate(data.lat, data.lon);
         }
+        if (data.type === 'locationError' && onLocationError) {
+          onLocationError();
+        }
       } catch {
         // ignore
       }
     },
-    [onMarkerPress, onLocationUpdate],
+    [onMarkerPress, onLocationUpdate, onLocationError],
   );
 
   const containerStyle = [
@@ -478,6 +587,7 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
         style={styles.webview}
         javaScriptEnabled
         domStorageEnabled
+        geolocationEnabled
         originWhitelist={['*']}
         mixedContentMode="always"
         scrollEnabled={false}
