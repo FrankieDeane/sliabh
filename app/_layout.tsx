@@ -15,6 +15,7 @@ import { injectWebStyles } from '../src/utils/webStyles';
 import { supabase } from '../src/services/supabase';
 import { syncPendingTracks } from '../src/services/trackSync';
 import { InstallPrompt } from '../src/components/offline/InstallPrompt';
+import { UnfinishedHikeBanner } from '../src/components/hike/UnfinishedHikeBanner';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
 // app/+html.tsx, so these must be injected at runtime.
@@ -178,6 +179,7 @@ export default function RootLayout() {
             />
           </View>
           <CookieBanner />
+          <UnfinishedHikeBanner />
           <InstallPrompt />
           <QuickPoll />
           <NewsletterPopup />
@@ -190,6 +192,7 @@ export default function RootLayout() {
     <AppErrorBoundary>
       <NetworkWatcher />
       <TrackSyncWatcher />
+      <UnfinishedHikeBanner />
       <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={isDark ? '#111827' : '#ffffff'} />
       <Stack
         screenOptions={{

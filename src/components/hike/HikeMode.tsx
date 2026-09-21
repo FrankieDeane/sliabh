@@ -10,9 +10,14 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { isSupabaseConfigured } from '../../services/supabase';
 import { recordTrack } from '../../services/trackSync';
 import { useNetworkStore } from '../../store/networkStore';
+import {
+  beginLiveSession,
+  appendLivePoint,
+  clearLiveSession,
+  type LiveSession,
+} from '../../services/liveTrack';
 import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
 
 // Platform-specific flat map — both platforms use MapLibreEsri
@@ -83,13 +88,15 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [gpsDenied, setGpsDenied] = useState(false);
+  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'searching'>(null);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
   const online = useNetworkStore((st) => st.isOnline);
   const startRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const mapRef = useRef<MapLibreEsriHandle>(null);
+  const sessionRef = useRef<LiveSession | null>(null);
+  const wakeLockRef = useRef<any>(null);
 
   // The trail's own line, so the walker can compare it against where they are.
   const routePoints = React.useMemo(() => {
@@ -98,9 +105,14 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   }, [trail]);
 
   const updatePosition = useCallback((lat: number, lon: number) => {
-    setGpsDenied(false); // a fix arrived, so clear any earlier GPS warning
+    setGpsProblem(null); // a fix arrived, so clear any earlier GPS warning
     setUserPos({ lat, lon });
-    setPosHistory((prev) => [...prev, { lat, lon, t: Date.now() }]);
+    const session = sessionRef.current;
+    if (!session) return;
+    // Persist before rendering: what the screen shows is recoverable only
+    // because it reached storage first.
+    const kept = appendLivePoint(session, { lat, lon, t: Date.now() });
+    if (kept) setPosHistory([...session.points]);
   }, []);
 
   useEffect(() => {
@@ -109,8 +121,9 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
     setElapsed(0);
     setUserPos(null);
     setPosHistory([]);
-    setGpsDenied(false);
+    setGpsProblem(null);
     setResult(null);
+    sessionRef.current = beginLiveSession(trail?.id ?? null, trail?.name ?? null);
 
     timerRef.current = setInterval(() => {
       setElapsed(Date.now() - startRef.current);
@@ -123,18 +136,28 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
         watchIdRef.current = navigator.geolocation.watchPosition(
           (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude),
-          () => setGpsDenied(true),
-          { enableHighAccuracy: true, maximumAge: 3000, timeout: 20000 },
+          (err) => {
+            // A cold GPS fix under tree cover routinely takes longer than the
+            // timeout. Only a denied permission is a dead end; the rest means
+            // "still looking", and the watch stays alive either way.
+            setGpsProblem(err?.code === 1 ? 'denied' : 'searching');
+          },
+          { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 },
         );
+        // Without a wake lock the screen sleeps, the page is frozen and the
+        // track simply stops — silently, mid-walk.
+        (navigator as any).wakeLock?.request?.('screen')
+          .then((lock: any) => { wakeLockRef.current = lock; })
+          .catch(() => { /* unsupported or denied; recording still runs */ });
       } else {
-        setGpsDenied(true);
+        setGpsProblem('denied');
       }
     } else {
       // Android WebView geolocation stays silent unless the app itself holds
       // the runtime permission, so ask before handing tracking to the map.
       requestLocationPermission().then((granted) => {
         if (cancelled) return;
-        if (!granted) { setGpsDenied(true); return; }
+        if (!granted) { setGpsProblem('denied'); return; }
         (mapRef.current as any)?.startHikeTracking?.();
         // The WebView may still be loading; the second call is a no-op once
         // tracking is already running.
@@ -154,6 +177,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
       } else {
         (mapRef.current as any)?.stopHikeTracking?.();
       }
+      wakeLockRef.current?.release?.().catch?.(() => {});
+      wakeLockRef.current = null;
     };
   }, [visible, updatePosition]);
 
@@ -165,7 +190,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
   // there's no session or no connection the hike is queued locally and pushed
   // to the account later, so it still reaches the user's other devices.
   const handleStop = useCallback(async () => {
-    if (posHistory.length < 2 || !isSupabaseConfigured()) {
+    if (posHistory.length < 2) {
+      clearLiveSession();
       setResult('too-short');
       return;
     }
@@ -185,6 +211,9 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
     } catch {
       setResult('queued');
     } finally {
+      // recordTrack has written the hike to the upload queue, so the in-flight
+      // copy has done its job and must not be offered for recovery later.
+      clearLiveSession();
       setStopping(false);
     }
   }, [posHistory, distanceCovered, elapsed, trail]);
@@ -298,7 +327,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
             routePoints={routePoints}
             trackPoints={posHistory}
             onLocationUpdate={updatePosition}
-            onLocationError={() => setGpsDenied(true)}
+            onLocationError={() => setGpsProblem('searching')}
           />
           <TouchableOpacity
             onPress={() => setSatelliteView((v) => !v)}
@@ -343,14 +372,19 @@ export function HikeMode({ visible, trail, onClose, colors: C, t }: HikeModeProp
           )}
         </View>
 
-        {gpsDenied && (
+        {gpsProblem && (
           <View style={[hikeS.gpsWarn, { borderTopColor: C.border }]}>
             <Ionicons name="warning-outline" size={14} color="#f59e0b" />
             <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
-              {t(
-                'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
-                'No GPS access. Turn on location and restart the hike to record your track.',
-              )}
+              {gpsProblem === 'denied'
+                ? t(
+                    'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
+                    'No GPS access. Turn on location and restart the hike to record your track.',
+                  )
+                : t(
+                    'Buscando señal GPS. Puede tardar un minuto bajo el bosque o entre paredones; seguimos intentando.',
+                    'Searching for a GPS fix. Under tree cover or between walls this can take a minute; still trying.',
+                  )}
             </Text>
           </View>
         )}

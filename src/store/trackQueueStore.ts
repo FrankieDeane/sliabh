@@ -11,7 +11,8 @@ export interface PendingTrack extends TrackInput {
 
 interface TrackQueueState {
   pending: PendingTrack[];
-  enqueue: (track: TrackInput) => void;
+  /** Returns the stored entry so the caller can remove it once uploaded. */
+  enqueue: (track: TrackInput) => PendingTrack;
   remove: (id: string) => void;
 }
 
@@ -24,13 +25,15 @@ export const useTrackQueueStore = create<TrackQueueState>()(
   persist(
     (set) => ({
       pending: [],
-      enqueue: (track) =>
-        set((s) => ({
-          pending: [
-            ...s.pending,
-            { ...track, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, queuedAt: new Date().toISOString() },
-          ],
-        })),
+      enqueue: (track) => {
+        const entry: PendingTrack = {
+          ...track,
+          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          queuedAt: new Date().toISOString(),
+        };
+        set((s) => ({ pending: [...s.pending, entry] }));
+        return entry;
+      },
       remove: (id) => set((s) => ({ pending: s.pending.filter((p) => p.id !== id) })),
     }),
     { name: 'track-queue', storage: createJSONStorage(() => mmkvStorage) },

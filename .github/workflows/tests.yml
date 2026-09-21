@@ -1,0 +1,44 @@
+name: tests
+
+# The offline guarantees are the kind that fail silently — a service worker
+# that never registers throws nothing. These run on every pull request so a
+# regression is caught here rather than on a mountain.
+on:
+  pull_request:
+  push:
+    branches: [sliabh-index]
+
+jobs:
+  offline-and-solar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # Public client config, same values the site builds with (see
+      # netlify.toml). The anon key is designed to be embedded in the client
+      # and is guarded by row-level security.
+      EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22 for `node --experimental-strip-types`, which the solar
+          # validation uses to import the TypeScript engine directly.
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Solar almanac vs SunCalc
+        run: npm run validate:solar
+
+      - name: Build the web bundle
+        run: npx expo export -p web
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Offline and recording guarantees
+        run: npm run test:offline
