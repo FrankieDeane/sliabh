@@ -17,6 +17,8 @@ import { downloadGpx } from '../../src/utils/gpx';
 import { ARGENTINA_TRAILS } from '../../src/data/argentinaTrails';
 import { BARILOCHE_TRAILS, BARILOCHE_SEGURIDAD } from '../../src/data/barilocheTreks';
 import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
+import { RecordHikeButton } from '../../src/components/hike/RecordHikeButton';
+import { useMapFullscreen, FullscreenButton } from '../../src/components/map/MapFullscreen';
 import { fetchWikiImage } from '../../src/utils/wikiImage';
 
 // All trails with a GPX track, pushed to the map iframe for rendering
@@ -1160,6 +1162,9 @@ export default function MapasScreen() {
     ? { bg: '#070b14', surface: '#0f1724', elevated: '#162035', border: '#1e2d42', text: '#f0f9ff', muted: '#64748b' }
     : { bg: '#f8fafc', surface: '#ffffff', elevated: '#f1f5f9', border: '#e2e8f0', text: '#0f172a', muted: '#64748b' };
 
+  const hikeColors = { ...c, accent: '#22c55e' };
+  const mapFs = useMapFullscreen();
+
   function handleViewMap(lat: number, lon: number) {
     setFlyTo({ lat, lon });
     setDownloadOpen(false);
@@ -1213,6 +1218,8 @@ export default function MapasScreen() {
             ))}
           </View>
         </SafeAreaView>
+
+        <RecordHikeButton colors={hikeColors} />
 
         <SafeAreaView edges={['bottom']} style={{ position: 'absolute', bottom: 0, right: 16 }}>
           <TouchableOpacity
@@ -1286,7 +1293,13 @@ export default function MapasScreen() {
         </View>
       </View>
 
-      <View style={[s.iframeWrapper, isMobile ? { height: Math.round(width * 1.7) } as any : { height: desktopMapHeight } as any]}>
+      <View
+        style={[
+          s.iframeWrapper,
+          isMobile ? { height: Math.round(width * 1.7) } as any : { height: desktopMapHeight } as any,
+          mapFs.panelStyle,
+        ]}
+      >
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
@@ -1295,6 +1308,11 @@ export default function MapasScreen() {
           title="Mapa de Parques Nacionales de Argentina"
           loading="eager"
           onLoad={handleIframeLoad}
+        />
+        <FullscreenButton
+          expanded={mapFs.expanded}
+          onPress={mapFs.toggle}
+          style={{ position: 'absolute', top: 12, right: 12 }}
         />
       </View>
 
@@ -1346,6 +1364,8 @@ export default function MapasScreen() {
           </View>
         </ImageBackground>
       )}
+
+      <RecordHikeButton colors={hikeColors} />
 
       <View style={[s.dlSection, { backgroundColor: c.bg }]}>
         <View style={s.dlHeader}>

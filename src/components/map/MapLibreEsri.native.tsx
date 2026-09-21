@@ -419,10 +419,10 @@ ${showHikingRoute ? `
         }
         if(!hikeMarker){
           var el=document.createElement('div');
-          el.style.cssText='position:relative;width:20px;height:20px;';
-          el.innerHTML='<div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.25);animation:hp 1.8s ease-out infinite;"></div>'
-            +'<div style="position:absolute;top:4px;left:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>'
-            +'<style>@keyframes hp{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.5);opacity:0}}</style>';
+          el.style.cssText='position:relative;width:34px;height:34px;';
+          el.innerHTML='<div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.3);animation:hp 1.8s ease-out infinite;"></div>'
+            +'<div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 1.5px rgba(2,6,23,0.75),0 3px 10px rgba(0,0,0,0.55);"></div>'
+            +'<style>@keyframes hp{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.4);opacity:0}}</style>';
           hikeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng,lat]).addTo(map);
         } else {
           hikeMarker.setLngLat([lng,lat]);

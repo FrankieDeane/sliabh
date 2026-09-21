@@ -26,6 +26,9 @@ const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTIN
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { RecordHikeButton } from '../../src/components/hike/RecordHikeButton';
+import { useMapFullscreen, FullscreenButton } from '../../src/components/map/MapFullscreen';
+import { MyTracksSection } from '../../src/components/trails/MyTracksSection';
 import { buildMapTrailPayload } from '../../src/utils/mapTrailPayload';
 
 // All trails with a GPX track, pushed to the 3D map iframe for rendering
@@ -153,6 +156,9 @@ export default function RutasScreen() {
         muted: '#64748b',
       };
 
+  const hikeColors = { ...c, accent: '#22c55e' };
+  const mapFs = useMapFullscreen();
+
   const [featured, ...rest] = filtered;
 
   const contentW = Math.min(width, MAX_CONTENT);
@@ -163,15 +169,22 @@ export default function RutasScreen() {
   // ── Single 3D map (shared by desktop split + mobile toggle) ──
   // Shows ALL routes; clicking one on the map highlights its card on the left.
   const map3dPanel = Platform.OS === 'web' ? (
-    // @ts-ignore — iframe on web
-    <iframe
-      ref={iframeRef}
-      src="/parques.html?v=20260630c&ctx=rutas"
-      style={{ width: '100%', height: '100%', border: 'none' }}
-      title="Mapa 3D de senderos de Argentina"
-      loading="eager"
-      onLoad={() => setIframeReady(true)}
-    />
+    <View style={[{ flex: 1 }, mapFs.panelStyle]}>
+      {/* @ts-ignore — iframe on web */}
+      <iframe
+        ref={iframeRef}
+        src="/parques.html?v=20260630c&ctx=rutas"
+        style={{ width: '100%', height: '100%', border: 'none' }}
+        title="Mapa 3D de senderos de Argentina"
+        loading="eager"
+        onLoad={() => setIframeReady(true)}
+      />
+      <FullscreenButton
+        expanded={mapFs.expanded}
+        onPress={mapFs.toggle}
+        style={{ position: 'absolute', top: 12, right: 12 }}
+      />
+    </View>
   ) : null;
 
   // ── Filter chips ──
@@ -432,6 +445,10 @@ export default function RutasScreen() {
               {ALL_TRAILS.length} {t('senderos en Argentina', 'trails across Argentina')}
             </Text>
           </View>
+
+          <RecordHikeButton colors={hikeColors} variant="block" />
+
+          <MyTracksSection colors={hikeColors} limit={3} />
 
           {filterChips}
 

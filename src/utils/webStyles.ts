@@ -570,6 +570,16 @@ export function injectWebStyles() {
     [data-float-orb="fast"] {
       animation-duration: 8s;
     }
+
+    /* MapLibre parks its own controls in the same two corners our map buttons
+       use: the attribution "i" landed on top of the rotate / 2D-3D pair, and
+       the zoom stack under the fullscreen toggle. Give each corner room. */
+    .sliabh-map3d .maplibregl-ctrl-top-right {
+      margin-top: 46px;
+    }
+    .sliabh-map3d .maplibregl-ctrl-bottom-right {
+      margin-bottom: 40px;
+    }
   `;
   document.head.appendChild(style);
 }
