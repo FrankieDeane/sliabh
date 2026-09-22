@@ -3,11 +3,18 @@ import { View, Text, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { isAreaCached, isTileCachingSupported } from '../../utils/offlineTiles';
 import { BACKGROUND_TRACKING_SUPPORTED as backgroundOk } from '../../services/backgroundTrack';
+import {
+  backgroundCapability,
+  captureAdvice,
+  captureSetting,
+} from '../../services/backgroundCapability';
 import { useLangStore } from '../../store/langStore';
 
 interface Colors { surface: string; elevated: string; border: string; text: string; muted: string; accent: string }
 
 type State = 'ready' | 'missing' | 'checking';
+/** `partial` is a real answer, not a pending one: it works, with a caveat. */
+type RowState = State | 'partial';
 
 /**
  * Answers the question a hiker actually has before losing signal: *what
@@ -24,6 +31,9 @@ export function OfflineReadiness({
   colors: Colors;
 }) {
   const { t } = useLangStore();
+  // Graded for the browser in the walker's hand, so the row below promises
+  // what Chrome, Safari or the native build can each actually deliver.
+  const cap = React.useMemo(() => backgroundCapability(), []);
   const [appCached, setAppCached] = React.useState<State>('checking');
   const [mapCached, setMapCached] = React.useState<State>('checking');
   const [installed, setInstalled] = React.useState(false);
@@ -64,7 +74,12 @@ export function OfflineReadiness({
     return () => { alive = false; };
   }, [trail.coordinates.lat, trail.coordinates.lon]);
 
-  const rows: Array<{ key: string; label: string; detail: string; state: State }> = [
+  const advice = captureAdvice(cap);
+  const setting = captureSetting(cap);
+  const pocketAdvice = t(advice.es, advice.en);
+  const pocketSetting = setting ? t(setting.es, setting.en) : '';
+
+  const rows: Array<{ key: string; label: string; detail: string; state: RowState }> = [
     {
       key: 'app',
       label: t('La app abre sin señal', 'The app opens with no signal'),
@@ -96,16 +111,23 @@ export function OfflineReadiness({
     {
       key: 'gps',
       label: t('Grabar tu recorrido', 'Recording your hike'),
-      detail: backgroundOk
-        ? t(
-            'El GPS no usa datos: graba sin señal, con la pantalla apagada y mientras escuchás música. El recorrido queda en el teléfono hasta que vuelva la conexión.',
-            "GPS needs no data: it records with no signal, with the screen off and while you play music. The track stays on the phone until a connection returns.",
-          )
-        : t(
-            'El GPS no usa datos: graba igual sin señal y el recorrido queda en el teléfono. Pero en el navegador la grabación se corta si bloqueás la pantalla o pasás a otra app — para eso está la app instalada.',
-            "GPS needs no data: it records without signal and the track stays on the phone. But in a browser, recording stops if you lock the screen or switch apps — that is what the installed app is for.",
-          ),
+      detail: t(
+        'El GPS no usa datos: graba igual sin señal y el recorrido queda en el teléfono hasta que vuelva la conexión.',
+        'GPS needs no data: it records with no signal and the track stays on the phone until a connection returns.',
+      ),
       state: 'ready',
+    },
+    {
+      // The row that answers the question the club test raised: what happens
+      // when the phone goes in a pocket? The answer is not the same in Chrome
+      // on Android, in Safari on an iPhone and in the native build, so it is
+      // read off this browser rather than written once for "the web".
+      key: 'pocket',
+      label: backgroundOk
+        ? t('Con la pantalla apagada', 'With the screen off')
+        : t(`Con la pantalla apagada · ${cap.browser}`, `With the screen off · ${cap.browser}`),
+      detail: [pocketAdvice, pocketSetting].filter(Boolean).join(' '),
+      state: cap.level === 'guaranteed' ? 'ready' : cap.level === 'foreground-only' ? 'missing' : 'partial',
     },
   ];
 
@@ -125,7 +147,13 @@ export function OfflineReadiness({
         <View key={row.key} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
           <Ionicons
             name={
-              row.state === 'ready' ? 'checkmark-circle' : row.state === 'checking' ? 'ellipse-outline' : 'alert-circle-outline'
+              row.state === 'ready'
+                ? 'checkmark-circle'
+                : row.state === 'checking'
+                  ? 'ellipse-outline'
+                  : row.state === 'partial'
+                    ? 'information-circle'
+                    : 'alert-circle-outline'
             }
             size={16}
             color={row.state === 'ready' ? colors.accent : row.state === 'checking' ? colors.muted : '#f59e0b'}

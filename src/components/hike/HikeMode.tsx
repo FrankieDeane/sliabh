@@ -26,6 +26,11 @@ import {
   BACKGROUND_TRACKING_SUPPORTED,
 } from '../../services/backgroundTrack';
 import { readLiveSession } from '../../services/liveTrack';
+import {
+  backgroundCapability,
+  captureAdvice,
+  captureSetting,
+} from '../../services/backgroundCapability';
 
 // Platform-specific flat map — both platforms use MapLibreEsri
 const HikeMap = Platform.OS === 'web'
@@ -113,6 +118,15 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const mapRef = useRef<MapLibreEsriHandle>(null);
   const sessionRef = useRef<LiveSession | null>(null);
   const wakeLockRef = useRef<any>(null);
+  /**
+   * Whether this browser is actually holding the screen awake. Asked for, not
+   * assumed: the API can exist and still refuse (low battery, a policy), and a
+   * walker told "the screen stays on" when it does not is worse off than one
+   * who was told to keep an eye on it.
+   */
+  const [screenHeld, setScreenHeld] = useState(false);
+  // What this exact browser can promise. Fixed for the life of the screen.
+  const cap = React.useMemo(() => backgroundCapability(), []);
 
   // The trail's own line, so the walker can compare it against where they are.
   const routePoints = React.useMemo(() => {
@@ -181,8 +195,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
         // Without a wake lock the screen sleeps, the page is frozen and the
         // track simply stops — silently, mid-walk.
         (navigator as any).wakeLock?.request?.('screen')
-          .then((lock: any) => { wakeLockRef.current = lock; })
-          .catch(() => { /* unsupported or denied; recording still runs */ });
+          .then((lock: any) => { wakeLockRef.current = lock; setScreenHeld(true); })
+          .catch(() => { setScreenHeld(false); /* unsupported or denied; recording still runs */ });
       } else {
         setGpsProblem('denied');
       }
@@ -219,9 +233,11 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       const hiddenAt = hiddenAtRef.current;
       hiddenAtRef.current = null;
       if (hiddenAt && Date.now() - hiddenAt > 20_000) setPausedGapMs(Date.now() - hiddenAt);
+      // A wake lock is released automatically when the page is hidden, so it
+      // has to be taken again every time the walker comes back.
       (navigator as any).wakeLock?.request?.('screen')
-        .then((lock: any) => { wakeLockRef.current = lock; })
-        .catch(() => {});
+        .then((lock: any) => { wakeLockRef.current = lock; setScreenHeld(true); })
+        .catch(() => { setScreenHeld(false); });
     };
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', onVisible);
@@ -481,19 +497,45 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           </View>
         )}
 
+        {/*
+          What happens if the walker pockets the phone — answered for the
+          browser in their hand, not for "browsers" in general. Chrome on
+          Android, Safari on an iPhone and the native build each get a
+          different sentence, because each can promise something different and
+          each needs a different setting changed.
+        */}
         <View style={[hikeS.keepOpen, { borderTopColor: C.border, backgroundColor: C.surface }]}>
-          <Ionicons name="phone-portrait-outline" size={13} color={C.muted} />
-          <Text style={[hikeS.keepOpenTxt, { color: C.muted }]}>
-            {BACKGROUND_TRACKING_SUPPORTED
-              ? t(
-                  'Seguí con el teléfono en el bolsillo: la grabación continúa con la pantalla apagada y mientras escuchás música. Vas a ver la notificación de Sliabh mientras graba.',
-                  'Pocket the phone: recording continues with the screen off and while you play music. Sliabh keeps a notification up while it records.',
-                )
-              : t(
-                  'En el navegador, la grabación puede cortarse si bloqueás la pantalla o pasás a otra app. Dejá esta pantalla abierta; si algo se pierde, acá abajo te decimos cuántos minutos.',
-                  'In a browser, recording can stop if you lock the screen or switch apps. Keep this screen open; if anything is missed, the app says how many minutes below.',
-                )}
-          </Text>
+          <Ionicons
+            name={
+              BACKGROUND_TRACKING_SUPPORTED
+                ? 'shield-checkmark-outline'
+                : screenHeld
+                  ? 'sunny-outline'
+                  : 'phone-portrait-outline'
+            }
+            size={13}
+            color={BACKGROUND_TRACKING_SUPPORTED ? C.accent : C.muted}
+          />
+          <View style={{ flex: 1, gap: 3 }}>
+            <Text style={[hikeS.keepOpenTxt, { color: C.muted }]}>
+              {(() => {
+                const advice = captureAdvice(cap);
+                return t(advice.es, advice.en);
+              })()}
+            </Text>
+            {(() => {
+              // Only shown when the walker can actually do something about it,
+              // and only while the lever is not already working.
+              if (BACKGROUND_TRACKING_SUPPORTED || screenHeld) return null;
+              const setting = captureSetting(cap);
+              if (!setting) return null;
+              return (
+                <Text style={[hikeS.keepOpenTxt, { color: C.muted, opacity: 0.85 }]}>
+                  {t(setting.es, setting.en)}
+                </Text>
+              );
+            })()}
+          </View>
         </View>
 
         {/* Stats HUD */}
@@ -607,10 +649,10 @@ const hikeS = StyleSheet.create({
     backgroundColor: 'rgba(245,158,11,0.16)',
   },
   keepOpen: {
-    flexDirection: 'row', alignItems: 'center', gap: 7,
+    flexDirection: 'row', alignItems: 'flex-start', gap: 7,
     paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1,
   },
-  keepOpenTxt: { fontSize: 10.5, lineHeight: 14, flex: 1 },
+  keepOpenTxt: { fontSize: 10.5, lineHeight: 14 },
   statItem: { flex: 1, alignItems: 'center', gap: 4 },
   statValue: { fontSize: 17, fontWeight: '800', letterSpacing: -0.5 },
   statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },

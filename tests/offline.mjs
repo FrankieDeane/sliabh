@@ -258,6 +258,57 @@ try {
   check('a share link with no connection explains itself',
     (await page.getByText(/no está disponible|not available/i).count()) > 0,
     'it must never sit on a spinner');
+
+  // ── 8. Each browser is told what *it* can do, not what "the web" can ──
+  //
+  // A walker on an iPhone and one on Android hit different limits and need
+  // different settings changed, so one sentence for both is wrong for at least
+  // one of them. Real user agents, real render, real text on the page.
+  console.log('\nper-browser honesty');
+  const AGENTS = [
+    {
+      name: 'Chrome on Android',
+      ua: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+      labelled: /Con la pantalla apagada · Chrome/,
+      advice: /con la pantalla apagada mientras la app siga sonando/i,
+      setting: /Batería → Sin restricciones/i,
+      notSetting: /Bloqueo automático/i,
+    },
+    {
+      name: 'Safari on iPhone',
+      ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+      labelled: /Con la pantalla apagada · Safari/,
+      advice: /la pantalla se mantiene encendida sola/i,
+      setting: /Bloqueo automático/i,
+      notSetting: /Batería → Sin restricciones/i,
+    },
+  ];
+
+  for (const agent of AGENTS) {
+    const agentCtx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      permissions: ['geolocation'],
+      geolocation: { latitude: -49.3369, longitude: -72.8956 },
+      userAgent: agent.ua,
+    });
+    const agentPage = await agentCtx.newPage();
+    await agentPage.goto(base + TRAIL, { waitUntil: 'domcontentloaded' });
+    await agentPage.waitForTimeout(3500);
+    await dismissBanners(agentPage);
+    const body = await agentPage.evaluate(() => document.body.innerText);
+
+    check(`${agent.name}: the row names the browser in hand`,
+      agent.labelled.test(body));
+    check(`${agent.name}: says what this engine actually does`,
+      agent.advice.test(body));
+    check(`${agent.name}: gives the setting that exists on this OS`,
+      agent.setting.test(body));
+    check(`${agent.name}: never gives the other platform's setting`,
+      !agent.notSetting.test(body),
+      'telling an iPhone user to open Android battery settings is worse than saying nothing');
+
+    await agentCtx.close();
+  }
 } finally {
   await browser.close();
   server.close();

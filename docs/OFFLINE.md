@@ -18,6 +18,7 @@ on every pull request via `.github/workflows/tests.yml`.
 | The trail, its data and its sun times load offline | Trail data and the solar engine are bundled, not fetched |
 | The map draws offline | Tiles for the area, downloaded on demand from the trail page |
 | GPS recording works offline | `watchPosition` reads the GPS chip; no request is involved |
+| Each browser is told what *it* can do | Capabilities feature-detected per engine, asserted against real user agents in the tests |
 | A recorded hike is never lost | Every accepted fix is written to device storage as it happens |
 | A hike interrupted by a crash is recoverable | The unfinished session is offered back on next launch |
 | A hike recorded offline reaches the account | Queued on the device first, uploaded when a session and signal exist |
@@ -67,34 +68,50 @@ precise about, because it is what a walker notices first.
 
 A page is **frozen the moment it is hidden**. Lock the phone, or switch to a
 music app, and `watchPosition` stops delivering. No flag, no permission and no
-API changes that; on iOS Safari there is no lever at all. Apps that record a
-walk from a pocket — Google Fit among them — are native apps running a
-**foreground service**: the ongoing notification is what buys the process the
-right to keep reading the GPS.
+API changes that. Apps that record a walk from a pocket — Google Fit among
+them — are native apps running a **foreground service**: the ongoing
+notification is what buys the process the right to keep reading the GPS.
 
-| | Browser (PWA) | Native app |
-| --- | --- | --- |
-| Screen on, app in front | records | records |
-| Screen off / another app | **may stop** | records |
-| Music playing | **may stop** | records |
-| Guarantee | none | foreground service |
+What differs is not *whether* a browser can do it — none can — but **which
+levers it leaves a page, and which setting the walker can change**. Answering
+that with one sentence for "the browser" is wrong for most of them, so the app
+grades the environment in front of it (`src/services/backgroundCapability.web.ts`).
 
-* **Native** (`src/services/backgroundTrack.ts`) starts
-  `Location.startLocationUpdatesAsync` with a foreground service, and its task
-  appends each fix to the same on-disk session the rest of the app uses, so
-  resuming, queueing, syncing and sharing work unchanged. It needs the "Allow
-  all the time" location grant; without it the hike screen says so instead of
-  failing quietly. Requires a native build — the PWA cannot load it.
-* **Web** (`src/services/backgroundTrack.web.ts`) plays a tone far below
-  hearing through Web Audio while recording. Chrome on Android exempts a tab
-  that is playing audio from being frozen, which is the only lever a page has;
-  the gain is 0.0001 and it goes through Web Audio rather than a media element,
-  so it does not take audio focus and the walker's own music keeps playing. It
-  is a workaround, not a promise: it depends on the phone, the browser and its
-  battery settings.
-* Either way the app **measures what it missed**. Coming back after more than
-  20 seconds away, the hike screen says how many minutes went unrecorded,
-  rather than leaving a silent hole in the line.
+| Environment | Wake lock | Audio keep-alive | Grade | What the app says |
+| --- | --- | --- | --- | --- |
+| Chromium on Android (Chrome, Edge, Samsung Internet, Opera) | yes | **yes** | `best-effort` | may survive the screen going off; set Battery → Unrestricted |
+| Firefox on Android | 126+ | no | `screen-on` | the screen is held awake; switching apps stops it |
+| Safari on iOS/iPadOS 16.4+ | yes | **no, on purpose** | `screen-on` | the screen is held awake; Auto-Lock → Never as backup |
+| Chrome/Edge/Firefox on iOS | yes | no | `screen-on` | same as Safari — they are all Safari's engine |
+| Safari on iOS < 16.4 | no | no | `foreground-only` | keep the screen on; Auto-Lock → Never |
+| Desktop browsers | yes | no | `screen-on` | a sleeping laptop stops it just the same |
+| **Android native build** | — | — | **`guaranteed`** | pocket the phone |
+
+Three decisions behind that table:
+
+* **Capabilities are detected, never inferred from the name.** Safari gained
+  Wake Lock in 16.4 and Firefox on Android in 126, so the same browser answers
+  differently depending on the version the walker actually has. Only the
+  *instruction* is chosen by name, because "Settings → Battery" does not exist
+  on an iPhone and "Auto-Lock" does not exist on Android.
+* **The tone runs on Chromium/Android only.** Chrome exempts a tab that is
+  playing audio from being frozen, and Web Audio at 0.0001 gain does not take
+  audio focus, so the walker's own music keeps playing. On iOS it would buy
+  nothing — Safari suspends the page on lock regardless — and an audio context
+  there can interrupt what the walker is listening to, which is the exact
+  failure this is meant to fix. On desktop it is battery for nothing.
+* **iPadOS reports itself as a Mac.** A touch-capable "Macintosh" is an iPad
+  and suspends pages like an iPhone, so it is graded as iOS, not as a desktop.
+
+Either way the app **measures what it missed**: coming back after more than
+20 seconds away, the hike screen says how many minutes went unrecorded, rather
+than leaving a silent hole in the line.
+
+The guarantee itself is native only. `src/services/backgroundTrack.ts` starts
+`Location.startLocationUpdatesAsync` behind a foreground service, and its task
+appends each fix to the same on-disk session the rest of the app uses, so
+resuming, queueing, syncing and sharing work unchanged. Building and testing it
+is [`NATIVE-BUILD.md`](./NATIVE-BUILD.md).
 
 ## Known limits
 * **Remote images** are not precached, so a trail photo may be missing offline
