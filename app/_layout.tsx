@@ -16,6 +16,18 @@ import { supabase } from '../src/services/supabase';
 import { syncPendingTracks } from '../src/services/trackSync';
 import { InstallPrompt } from '../src/components/offline/InstallPrompt';
 import { HikeHost } from '../src/components/hike/HikeHost';
+/**
+ * Side-effect import, and it must stay one.
+ *
+ * Android restarts this process with no UI to hand over a background GPS fix,
+ * and `TaskManager` only accepts a fix for a task that was defined while the
+ * bundle loaded. Reaching the definition through the component tree works
+ * today only because nothing on that path is lazy — one `React.lazy` on the
+ * hike screen and recording with the screen off would break silently, on a
+ * mountain, with no error anywhere. Importing it here makes that impossible.
+ * On web the file resolves to the no-op browser version.
+ */
+import '../src/services/backgroundTrack';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
 // app/+html.tsx, so these must be injected at runtime.

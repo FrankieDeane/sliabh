@@ -10,6 +10,7 @@ import {
   type LiveSession,
 } from '../../services/liveTrack';
 import { recordTrack } from '../../services/trackSync';
+import { stopBackgroundTrack } from '../../services/backgroundTrack';
 import { useHikeStore } from '../../store/hikeStore';
 import { findTrailForHike } from '../../data/trailLookup';
 import { useLangStore } from '../../store/langStore';
@@ -59,6 +60,11 @@ export function HikeHost() {
     if (idle < STALE_AFTER_MS) {
       resumeRecording(session, findTrailForHike(session.trailId) ?? undefined);
     } else {
+      // The walk ended hours ago; on native the foreground service may still
+      // be holding the GPS awake for it. Nothing is being usefully recorded
+      // any more, so let go of the battery before asking what to do with the
+      // data.
+      stopBackgroundTrack().catch(() => {});
       setStale(session);
     }
   }, [resumeRecording]);
@@ -75,6 +81,7 @@ export function HikeHost() {
         startedAt: stale.startedAt,
       });
       clearLiveSession();
+      stopBackgroundTrack().catch(() => {});
       setSaved(true);
       setTimeout(() => setStale(null), 2600);
     } finally {
@@ -137,7 +144,11 @@ export function HikeHost() {
                   <Text style={s.secondaryTxt}>{t('Seguir grabando', 'Keep recording')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => { clearLiveSession(); setStale(null); }}
+                  onPress={() => {
+                    clearLiveSession();
+                    stopBackgroundTrack().catch(() => {});
+                    setStale(null);
+                  }}
                   disabled={busy}
                   activeOpacity={0.85}
                   style={s.secondary}

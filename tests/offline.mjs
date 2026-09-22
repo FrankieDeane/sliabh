@@ -85,20 +85,46 @@ async function dismissBanners(page) {
   await page.waitForTimeout(300);
 }
 
+/**
+ * Wait for what the check is actually about, rather than for the network to
+ * fall silent.
+ *
+ * `networkidle` made this suite depend on every external service the page
+ * touches — Supabase, remote images — answering within the timeout. It passed
+ * where those hosts were unreachable and failed on a runner where they were
+ * not, which is the wrong way round and tells us nothing about the worker.
+ */
+async function waitFor(page, condition, timeoutMs = 25_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await page.evaluate(condition).catch(() => false)) return true;
+    await page.waitForTimeout(250);
+  }
+  return false;
+}
+
 try {
   // ── 1. The service worker installs and takes control ──────────────────
   console.log('service worker');
   let page = await ctx.newPage();
-  await page.goto(base + TRAIL, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(2500);
-  const registered = await page.evaluate(async () => !!(await navigator.serviceWorker?.getRegistration()));
+  await page.goto(base + TRAIL, { waitUntil: 'domcontentloaded' });
+  const registered = await waitFor(page, async () => !!(await navigator.serviceWorker?.getRegistration()));
   check('registers on first visit', registered);
 
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForTimeout(1500);
-  const controlled = await page.evaluate(() => !!navigator.serviceWorker?.controller);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const controlled = await waitFor(page, () => !!navigator.serviceWorker?.controller);
   check('controls the page after a reload', controlled);
 
+  // Precaching happens after the worker takes over, so wait for the bundle to
+  // land rather than assuming a fixed number of seconds is enough on a slow
+  // runner.
+  await waitFor(page, async () => {
+    const names = await caches.keys();
+    const shell = names.find((n) => n.startsWith('sliabh-v'));
+    if (!shell) return false;
+    const keys = await (await caches.open(shell)).keys();
+    return keys.some((r) => /\/_expo\/.*\.js$/.test(new URL(r.url).pathname));
+  });
   const cached = await page.evaluate(async () => {
     const names = await caches.keys();
     const shell = names.find((n) => n.startsWith('sliabh-v'));
@@ -258,6 +284,57 @@ try {
   check('a share link with no connection explains itself',
     (await page.getByText(/no está disponible|not available/i).count()) > 0,
     'it must never sit on a spinner');
+
+  // ── 8. Each browser is told what *it* can do, not what "the web" can ──
+  //
+  // A walker on an iPhone and one on Android hit different limits and need
+  // different settings changed, so one sentence for both is wrong for at least
+  // one of them. Real user agents, real render, real text on the page.
+  console.log('\nper-browser honesty');
+  const AGENTS = [
+    {
+      name: 'Chrome on Android',
+      ua: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+      labelled: /Con la pantalla apagada · Chrome/,
+      advice: /con la pantalla apagada mientras la app siga sonando/i,
+      setting: /Batería → Sin restricciones/i,
+      notSetting: /Bloqueo automático/i,
+    },
+    {
+      name: 'Safari on iPhone',
+      ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+      labelled: /Con la pantalla apagada · Safari/,
+      advice: /la pantalla se mantiene encendida sola/i,
+      setting: /Bloqueo automático/i,
+      notSetting: /Batería → Sin restricciones/i,
+    },
+  ];
+
+  for (const agent of AGENTS) {
+    const agentCtx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      permissions: ['geolocation'],
+      geolocation: { latitude: -49.3369, longitude: -72.8956 },
+      userAgent: agent.ua,
+    });
+    const agentPage = await agentCtx.newPage();
+    await agentPage.goto(base + TRAIL, { waitUntil: 'domcontentloaded' });
+    await agentPage.waitForTimeout(3500);
+    await dismissBanners(agentPage);
+    const body = await agentPage.evaluate(() => document.body.innerText);
+
+    check(`${agent.name}: the row names the browser in hand`,
+      agent.labelled.test(body));
+    check(`${agent.name}: says what this engine actually does`,
+      agent.advice.test(body));
+    check(`${agent.name}: gives the setting that exists on this OS`,
+      agent.setting.test(body));
+    check(`${agent.name}: never gives the other platform's setting`,
+      !agent.notSetting.test(body),
+      'telling an iPhone user to open Android battery settings is worse than saying nothing');
+
+    await agentCtx.close();
+  }
 } finally {
   await browser.close();
   server.close();

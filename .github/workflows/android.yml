@@ -1,0 +1,132 @@
+# Build the Android app from GitHub — the thing a browser cannot do.
+#
+# Recording with the screen off needs a foreground service, and a foreground
+# service needs a real app. This produces one: press "Run workflow" on the
+# Actions tab and an installable APK comes out the other end, roughly twenty
+# minutes later, attached to the run.
+#
+# No Expo account, no EAS queue, no secrets, no Play Store. The build runs
+# entirely on the GitHub runner and is signed with the keystore Expo's own
+# template ships, which is stable across builds — so each new APK installs
+# over the previous one instead of being refused as a different app.
+#
+# That keystore is public and is fine for a phone in your pocket. It is NOT
+# fine for the Play Store: that needs a private keystore of your own, which is
+# what the `production` path in eas.json and docs/NATIVE-BUILD.md are for.
+
+name: Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'What is this build for? (shows up in the run name)'
+        required: false
+        default: 'prueba en el cerro'
+  push:
+    tags:
+      - 'android-v*'
+  # Anything that can break the native build is built on the pull request that
+  # changes it, so a broken APK is found here and not the first time someone
+  # presses the button. Ordinary PRs do not pay the twenty minutes.
+  pull_request:
+    paths:
+      - 'app.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'eas.json'
+      - '.github/workflows/android.yml'
+      - 'src/services/backgroundTrack*'
+      - 'src/services/liveTrack.ts'
+
+run-name: 'Android APK — ${{ inputs.note || github.ref_name }}'
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The app's own guarantees, checked before anything is shipped to a
+      # phone. The offline suite needs the web export, so it runs here too.
+      # Seconds, and it catches the class of failure that otherwise shows up
+      # two minutes into Gradle as a missing plugin: an Expo package from the
+      # wrong SDK, which the web bundle happily ignores.
+      - name: Check the Expo packages match the SDK
+        run: npm run check:sdk
+
+      - name: Check the sun almanac
+        run: npm run validate:solar
+
+      - name: Generate the Android project
+        # android/ is not in the repo: app.json is the source of truth, so the
+        # project is regenerated here and cannot drift from it.
+        run: npx expo prebuild -p android --no-install
+
+      - name: Confirm the foreground service survived the merge
+        # If this ever stops matching, recording with the screen off is gone
+        # and nothing else in the build would say so.
+        run: |
+          set -e
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.ACCESS_BACKGROUND_LOCATION' "$MANIFEST"
+          grep -q 'android.permission.FOREGROUND_SERVICE_LOCATION' "$MANIFEST"
+          echo "background location + foreground service permissions present"
+
+      - name: Build the APK
+        working-directory: android
+        # The template asks for 2 GB, which is tight for a Hermes release
+        # build and shows up as a Gradle daemon killed with no useful error.
+        run: ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
+
+      - name: Name it after the commit
+        id: name
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          cp android/app/build/outputs/apk/release/app-release.apk "sliabh-${SHA}.apk"
+          echo "apk=sliabh-${SHA}.apk" >> "$GITHUB_OUTPUT"
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          ls -lh "sliabh-${SHA}.apk"
+
+      - name: Attach it to this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: sliabh-android-apk
+          path: ${{ steps.name.outputs.apk }}
+          retention-days: 30
+
+      # A tag also publishes a Release, so the APK has a permanent link that
+      # can be opened straight from a phone instead of a zip behind a login.
+      - name: Publish a release
+        if: startsWith(github.ref, 'refs/tags/android-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.name.outputs.apk }}
+          name: Sliabh Android ${{ github.ref_name }}
+          body: |
+            APK instalable de Sliabh (commit `${{ steps.name.outputs.sha }}`).
+
+            **Instalar:** abrí este link desde el teléfono, tocá el `.apk` y
+            aceptá "instalar de orígenes desconocidos" si lo pide.
+
+            **Al iniciar la primera caminata, elegí "Permitir siempre"** en el
+            permiso de ubicación. Sin eso Android corta la grabación al apagar
+            la pantalla — que es justo lo que esta app viene a arreglar.
