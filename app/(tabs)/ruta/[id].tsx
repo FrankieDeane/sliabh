@@ -714,7 +714,7 @@ export default function TrailDetailScreen() {
         </View>
 
         {/* ── Tab content — index 2 ───────────────────────────────────────────── */}
-        <View style={[styles.scrollContent, { paddingHorizontal: sidePad, backgroundColor: C.bg }]}>
+        <View style={[styles.scrollContent, { paddingHorizontal: sidePad, backgroundColor: C.bg, paddingBottom: Platform.OS === 'web' && width < 720 ? 140 : 80 }]}>
           {activeTab === 'overview' && (
             <OverviewTab trail={trail} lang={lang} t={t} guides={guides} />
           )}
