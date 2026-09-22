@@ -363,8 +363,11 @@ try {
       name: 'Chrome on Android',
       ua: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
       labelled: /Con la pantalla apagada · Chrome/,
-      advice: /apagar la pantalla.*sigue grabando/i,
-      setting: /Batería → Sin restricciones/i,
+      // Chrome cuts GPS to any hidden page, so it must never be told the
+      // screen can go off (crbug.com/506435).
+      advice: /No bloquees el teléfono.*deja de recibir el GPS/i,
+      notAdvice: /Podés apagar la pantalla/i,
+      setting: /Tiempo de espera de la pantalla/i,
       notSetting: /Bloqueo automático/i,
     },
     {
@@ -372,8 +375,9 @@ try {
       ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
       labelled: /Con la pantalla apagada · Safari/,
       advice: /mantiene la pantalla encendida sola/i,
+      notAdvice: /Podés apagar la pantalla/i,
       setting: /Bloqueo automático/i,
-      notSetting: /Batería → Sin restricciones/i,
+      notSetting: /Tiempo de espera de la pantalla/i,
     },
   ];
 
@@ -394,11 +398,14 @@ try {
       agent.labelled.test(body));
     check(`${agent.name}: says what this engine actually does`,
       agent.advice.test(body));
+    check(`${agent.name}: never promises recording with the screen off`,
+      !agent.notAdvice.test(body),
+      'no mobile browser delivers GPS to a hidden page');
     check(`${agent.name}: gives the setting that exists on this OS`,
       agent.setting.test(body));
     check(`${agent.name}: never gives the other platform's setting`,
       !agent.notSetting.test(body),
-      'telling an iPhone user to open Android battery settings is worse than saying nothing');
+      'telling an iPhone user to open Android settings is worse than saying nothing');
 
     await agentCtx.close();
   }
