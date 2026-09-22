@@ -112,6 +112,29 @@ export function appendLivePoint(session: LiveSession, point: TrackPoint): TrackP
   return point;
 }
 
+/**
+ * The same filter for a batch of fixes, with a single write at the end.
+ *
+ * The background service delivers locations in groups, and writing the whole
+ * session once per fix would mean several serialisations of the same growing
+ * array for one wake-up — on a nine-hour walk that is battery spent for
+ * nothing. Durability is unchanged: the write happens before the task hands
+ * control back, so a kill between wake-ups still loses only what the GPS had
+ * not yet delivered.
+ */
+export function appendLivePoints(session: LiveSession, points: TrackPoint[]): TrackPoint[] {
+  const kept: TrackPoint[] = [];
+  for (const point of points) {
+    const last = session.points[session.points.length - 1];
+    if (last && metresBetween(last, point) < MIN_MOVE_M && point.t - last.t < MAX_GAP_MS) continue;
+    session.points.push(point);
+    session.updatedAt = new Date(point.t).toISOString();
+    kept.push(point);
+  }
+  if (kept.length) write(session);
+  return kept;
+}
+
 /** The unfinished session left on this device, if any. */
 export function readLiveSession(): LiveSession | null {
   try {

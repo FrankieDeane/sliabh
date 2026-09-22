@@ -31,23 +31,52 @@ servicio nativo escribe en **el mismo archivo** que ya usa la PWA.
 
 ## Qué hace falta de tu lado
 
-1. **Una cuenta Expo** (gratis para empezar): https://expo.dev/signup
-2. Nada más para el APK de prueba. Google firma con una clave que EAS genera y
-   guarda; no hay que comprar ni configurar nada.
-3. Sólo si después querés publicar en Play Store: cuenta de Google Play
-   Developer, pago único de USD 25.
+**Nada.** Ni cuenta, ni tarjeta, ni instalar herramientas. El build sale de
+GitHub, que ya tenés.
 
-## Los comandos
+## Cómo se construye — desde GitHub, sin instalar nada
+
+Andá a **Actions → Android APK → Run workflow**. Pones una nota (opcional) y
+listo. A los ~20 minutos el APK queda colgado de esa corrida, en "Artifacts".
+
+No hace falta cuenta de Expo, ni EAS, ni secretos, ni Play Store: el build
+corre entero en el runner de GitHub. Se firma con el keystore que trae la
+plantilla de Expo, que es **el mismo en cada build**, así que cada APK nuevo se
+instala encima del anterior en vez de ser rechazado como si fuera otra app.
+
+Ese keystore es público y está perfecto para un teléfono tuyo. **No** sirve
+para Play Store: eso necesita un keystore privado propio, que es para lo que
+está el perfil `production` de `eas.json`, más abajo.
+
+### Para tener un link permanente
+
+Un tag `android-v*` además publica un **Release** de GitHub con el APK
+adjunto, que se puede abrir directo desde el teléfono sin pasar por Actions ni
+descomprimir un zip:
 
 ```bash
-npm i -g eas-cli
-eas login
-eas build:configure          # enlaza el repo con tu cuenta (crea el projectId)
-eas build -p android --profile preview
+git tag android-v1 && git push origin android-v1
 ```
 
-El build corre en los servidores de Expo (~15–25 min) y termina en una URL con
-el `.apk`. Se abre esa URL desde el teléfono, se instala y listo.
+### Para instalarlo en el teléfono
+
+1. Abrí el link del APK desde el teléfono (Chrome → Descargas).
+2. Tocalo. Android va a pedir permiso para "instalar apps desconocidas" — se
+   lo das a Chrome una vez.
+3. Se instala al lado de la PWA; son dos cosas distintas y pueden convivir.
+
+### Si algún día querés publicar en Play Store
+
+Ahí sí entra EAS, con `eas.json` ya configurado:
+
+```bash
+npm i -g eas-cli && eas login
+eas build:configure
+eas build -p android --profile production
+```
+
+Necesita una cuenta Expo (gratis) y la cuenta de Google Play Developer (pago
+único de USD 25).
 
 ## La prueba que hay que hacer sí o sí
 
@@ -73,8 +102,14 @@ permiso en "Sólo mientras se usa la app".
 - `app.json` — `ACCESS_BACKGROUND_LOCATION`, `FOREGROUND_SERVICE`,
   `FOREGROUND_SERVICE_LOCATION`, `WAKE_LOCK`, y el plugin de `expo-location`
   con los textos de permiso en castellano.
-- `eas.json` — los tres perfiles (`preview` para el APK de prueba,
-  `development`, `production` para Play).
+- `.github/workflows/android.yml` — el build completo desde GitHub, con un
+  chequeo que falla si los permisos de background location o del foreground
+  service desaparecen del manifest. Sin ese chequeo, perder la grabación con
+  pantalla apagada sería un build verde.
+- `eas.json` — los tres perfiles, para el día que vaya a Play Store.
+- `assets/icon.png`, `adaptive-icon.png`, `splash.png` — no existían y el
+  prebuild fallaba por eso; el logo queda centrado dentro de la zona segura
+  para que Android no lo recorte con la máscara circular.
 - `src/services/backgroundCapability.ts` — el build nativo se declara
   `guaranteed`, y por eso la pantalla de caminata dice "podés guardar el
   teléfono" en vez del aviso del navegador.

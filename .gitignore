@@ -39,3 +39,11 @@ nativewind-env.d.ts
 
 # graphify knowledge-graph output (generated locally, no need to version)
 graphify-out/
+
+# Native projects are generated from app.json by `expo prebuild`, so they are
+# build output, not source. Editing android/ by hand would be silently undone
+# by the next prebuild — change app.json or a config plugin instead.
+/android
+/ios
+*.apk
+*.aab
