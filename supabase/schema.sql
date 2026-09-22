@@ -363,3 +363,41 @@ drop policy if exists "Guide photos are publicly viewable" on storage.objects;
 create policy "Guide photos are publicly viewable"
   on storage.objects for select
   using (bucket_id = 'guide-photos');
+
+-- ──────────────────────────────────────────────────────────────────────────
+-- app_errors: somewhere for a crash to land.
+--
+-- The app is live and used out of signal, and until this table existed a
+-- crash reached us only if it happened to someone who could tell us. On a
+-- mountain there is nobody to tell. Applied 2026-09-22; the client queues
+-- reports on the device and uploads them when a connection returns.
+--
+-- Write-only by design: anyone may file a report, including a signed-out
+-- visitor — a crash on the sign-in screen is exactly the one that never gets
+-- reported otherwise — and no policy grants select, so a client can never
+-- read back what anyone else reported. The rows are visible through the
+-- dashboard or the service role only.
+-- ──────────────────────────────────────────────────────────────────────────
+create table if not exists public.app_errors (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users(id) on delete set null,
+  kind        text not null,   -- error | unhandled-rejection | render | manual
+  message     text not null,
+  stack       text,
+  route       text,            -- pathname only: a query string can carry a share token
+  user_agent  text,
+  app_version text,
+  online      boolean,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists app_errors_created_at_idx on public.app_errors (created_at desc);
+create index if not exists app_errors_message_idx on public.app_errors (message);
+
+alter table public.app_errors enable row level security;
+
+drop policy if exists "anyone can report an error" on public.app_errors;
+create policy "anyone can report an error"
+  on public.app_errors for insert
+  -- Anonymously, or under your own id, never under someone else's.
+  with check (user_id is null or user_id = auth.uid());

@@ -39,6 +39,10 @@ jobs:
       - name: Solar almanac vs SunCalc
         run: npm run validate:solar
 
+      # An inflated climb is worse than none: a hiker plans a day around it.
+      - name: Elevation and pace against known profiles
+        run: npm run validate:track
+
       - name: Build the web bundle
         run: npx expo export -p web
 

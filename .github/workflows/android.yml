@@ -26,6 +26,12 @@ on:
   push:
     tags:
       - 'android-v*'
+    # Every merge to the default branch, so the APK is known to build at all
+    # times rather than only when someone happens to press the button. Four
+    # separate incompatible packages got in while nothing was checking, and
+    # each was found the hard way — twenty minutes into a build someone needed.
+    branches:
+      - sliabh-index
   # Anything that can break the native build is built on the pull request that
   # changes it, so a broken APK is found here and not the first time someone
   # presses the button. Ordinary PRs do not pay the twenty minutes.
@@ -75,6 +81,9 @@ jobs:
 
       - name: Check the sun almanac
         run: npm run validate:solar
+
+      - name: Check elevation and pace
+        run: npm run validate:track
 
       - name: Generate the Android project
         # android/ is not in the repo: app.json is the source of truth, so the

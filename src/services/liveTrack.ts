@@ -10,9 +10,13 @@ import type { TrackPoint } from './supabase';
  * accepted fix is now appended to device storage, so the worst case is losing
  * the last few seconds rather than the last six hours.
  *
- * Points are stored as flat [lat, lon, t] triples: a nine-hour hike at one fix
- * per second is roughly 700 KB that way, which fits in localStorage (~5 MB per
- * origin) with room to spare, and is nothing to MMKV on native.
+ * Points are stored as flat [lat, lon, t, alt?] tuples: a nine-hour hike at one
+ * fix per second is roughly 700 KB that way, which fits in localStorage (~5 MB
+ * per origin) with room to spare, and is nothing to MMKV on native. The
+ * altitude is a fourth slot rather than a key so the cost stays a number, and
+ * it is dropped entirely when the device did not report one — which is common
+ * enough that readers must handle a 3-element tuple forever, including every
+ * session recorded before altitude was captured at all.
  */
 
 const KEY = 'live-hike-v1';
@@ -45,7 +49,7 @@ interface StoredSession {
   startedAt: string;
   updatedAt: string;
   status?: 'recording' | 'stopped';
-  p: Array<[number, number, number]>;
+  p: Array<[number, number, number] | [number, number, number, number]>;
 }
 
 function metresBetween(a: TrackPoint, b: TrackPoint): number {
@@ -66,11 +70,15 @@ function write(session: LiveSession): void {
     startedAt: session.startedAt,
     updatedAt: session.updatedAt,
     status: session.status,
-    p: session.points.map((pt) => [
-      Math.round(pt.lat * 1e6) / 1e6,
-      Math.round(pt.lon * 1e6) / 1e6,
-      pt.t,
-    ]),
+    p: session.points.map((pt) => {
+      // Six decimals is about 10 cm of latitude — far finer than any phone
+      // GPS — and altitude to the metre is finer than its vertical error.
+      const lat = Math.round(pt.lat * 1e6) / 1e6;
+      const lon = Math.round(pt.lon * 1e6) / 1e6;
+      return typeof pt.alt === 'number' && Number.isFinite(pt.alt)
+        ? ([lat, lon, pt.t, Math.round(pt.alt)] as [number, number, number, number])
+        : ([lat, lon, pt.t] as [number, number, number]);
+    }),
   };
   try {
     storage.set(KEY, JSON.stringify(stored));
@@ -150,8 +158,13 @@ export function readLiveSession(): LiveSession | null {
       updatedAt: stored.updatedAt ?? stored.startedAt,
       status: stored.status ?? 'recording',
       points: stored.p
-        .filter((pt) => Array.isArray(pt) && pt.length === 3)
-        .map(([lat, lon, t]) => ({ lat, lon, t })),
+        // `>= 3`, not `=== 3`: a session written before altitude was captured
+        // has three slots and must keep loading, and one with altitude has
+        // four. Pinning the length would have silently dropped every point.
+        .filter((pt) => Array.isArray(pt) && pt.length >= 3)
+        .map(([lat, lon, t, alt]) =>
+          typeof alt === 'number' ? { lat, lon, t, alt } : { lat, lon, t },
+        ),
     };
   } catch {
     return null;

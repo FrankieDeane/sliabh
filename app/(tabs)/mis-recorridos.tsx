@@ -23,6 +23,7 @@ import { findTrailForHike } from '../../src/data/trailLookup';
 import { FREE_TRACK_ID } from '../../src/components/hike/HikeMode';
 import { ShareTrackRow } from '../../src/components/hike/ShareTrackRow';
 import { TrackMapPreview } from '../../src/components/hike/TrackMapPreview';
+import { TrackStatsRow } from '../../src/components/hike/TrackStatsRow';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 
@@ -168,10 +169,14 @@ export default function MisRecorridosScreen() {
                   <Text style={{ color: c.text, fontSize: 12.5, flex: 1 }} numberOfLines={1}>
                     {trackLabel(p.trailId)}
                   </Text>
-                  <Text style={{ color: c.muted, fontSize: 12 }}>
-                    {fmtDistance(p.distanceKm)} · {fmtDuration(p.durationS)}
-                  </Text>
                 </View>
+                <TrackStatsRow
+                  points={p.points}
+                  distanceKm={p.distanceKm}
+                  durationS={p.durationS}
+                  colors={c}
+                  compact
+                />
                 <TrackMapPreview
                   points={p.points}
                   colors={c}
@@ -242,12 +247,14 @@ export default function MisRecorridosScreen() {
                     {new Date(track.started_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                   </Text>
                 </View>
-                <Text style={{ color: c.muted, fontSize: 12, textAlign: 'right' }}>
-                  {fmtDistance(track.distance_km)}
-                  {'\n'}
-                  {fmtDuration(track.duration_s)}
-                </Text>
               </View>
+              <TrackStatsRow
+                points={track.points}
+                distanceKm={track.distance_km}
+                durationS={track.duration_s}
+                colors={c}
+                compact
+              />
               <TrackMapPreview
                 points={track.points}
                 colors={c}
