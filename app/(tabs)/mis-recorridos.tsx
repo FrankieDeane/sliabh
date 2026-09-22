@@ -61,6 +61,9 @@ export default function MisRecorridosScreen() {
   const [loading, setLoading] = React.useState(true);
   const [authed, setAuthed] = React.useState(false);
   const [syncing, setSyncing] = React.useState(false);
+  const [fromCache, setFromCache] = React.useState(false);
+
+  const CACHE_KEY = 'sliabh-tracks-cache-v1';
 
   const load = React.useCallback(async () => {
     setLive(readLiveSession());
@@ -68,7 +71,23 @@ export default function MisRecorridosScreen() {
     const { data } = await supabase.auth.getSession();
     const signedIn = !!data.session?.user;
     setAuthed(signedIn);
-    setTracks(signedIn ? await fetchMyTrailTracks(undefined, 50) : []);
+    if (signedIn) {
+      try {
+        const fetched = await fetchMyTrailTracks(undefined, 50);
+        setTracks(fetched);
+        setFromCache(false);
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(fetched)); } catch {}
+      } catch {
+        // Offline or network error — serve from local cache
+        try {
+          const raw = localStorage.getItem(CACHE_KEY);
+          if (raw) { setTracks(JSON.parse(raw)); setFromCache(true); }
+        } catch {}
+      }
+    } else {
+      setTracks([]);
+      setFromCache(false);
+    }
     setLoading(false);
   }, []);
 
@@ -200,10 +219,15 @@ export default function MisRecorridosScreen() {
         {/* In the account — the part that travels between devices */}
         <View style={{ backgroundColor: c.surface, borderColor: c.border, borderWidth: 1, borderRadius: 16, padding: 16, gap: 10 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Ionicons name="cloud-done-outline" size={16} color={c.accent} />
+            <Ionicons name={fromCache ? 'cloud-offline-outline' : 'cloud-done-outline'} size={16} color={fromCache ? '#f59e0b' : c.accent} />
             <Text style={{ color: c.text, fontWeight: '800', fontSize: 14, flex: 1 }}>
               {t('En tu cuenta', 'In your account')}
             </Text>
+            {fromCache && (
+              <Text style={{ color: '#f59e0b', fontSize: 10, fontWeight: '600' }}>
+                {t('sin señal', 'offline')}
+              </Text>
+            )}
             {loading && <ActivityIndicator size="small" color={c.muted} />}
           </View>
 

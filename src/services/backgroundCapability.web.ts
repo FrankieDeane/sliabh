@@ -149,28 +149,28 @@ export function captureAdvice(cap: BackgroundCapability): { es: string; en: stri
   switch (cap.level) {
     case 'guaranteed':
       return {
-        es: 'Podés guardar el teléfono: la grabación sigue con la pantalla apagada y con música.',
-        en: 'Pocket the phone: recording continues with the screen off and with music playing.',
+        es: 'Podés guardar el teléfono: la grabación sigue con la pantalla apagada y con música. No hace falta que hagas nada.',
+        en: 'Pocket the phone: recording continues with the screen off and with music playing. Nothing to do.',
       };
     case 'best-effort':
       return {
-        es: `${cap.browser} mantiene la grabación con la pantalla apagada mientras la app siga sonando en segundo plano — no siempre lo permite el ahorro de batería. Si algo se pierde, abajo te decimos cuántos minutos.`,
-        en: `${cap.browser} can keep recording with the screen off while the app stays alive in the background — battery saver does not always allow it. If anything is missed, the app says how many minutes below.`,
+        es: `Podés apagar la pantalla — ${cap.browser} sigue grabando en segundo plano. Solo hay una regla: no cierres ${cap.browser} ni lo saques de las apps recientes. Si Android lo congela por batería, te avisamos cuántos minutos se perdieron.`,
+        en: `You can turn off the screen — ${cap.browser} keeps recording in the background. One rule: don't close ${cap.browser} or swipe it away from recents. If Android freezes it for battery, the app tells you how many minutes were missed.`,
       };
     case 'screen-on':
       return cap.os === 'ios'
         ? {
-            es: `En ${cap.browser} la pantalla se mantiene encendida sola mientras grabás. Si pasás a otra app o bloqueás el teléfono a mano, la grabación se corta: volvé acá y seguí.`,
-            en: `In ${cap.browser} the screen is held awake while you record. If you switch apps or lock the phone by hand, recording stops: come back here and continue.`,
+            es: `${cap.browser} mantiene la pantalla encendida sola. No cierres ${cap.browser} ni cambies de app — si lo hacés, la grabación se corta y tenés que volver acá para seguir.`,
+            en: `${cap.browser} is keeping the screen awake on its own. Don't close ${cap.browser} or switch apps — if you do, recording stops and you need to come back here to continue.`,
           }
         : {
-            es: `${cap.browser} mantiene la pantalla encendida mientras grabás. Si bloqueás el teléfono o pasás a otra app, la grabación se corta.`,
-            en: `${cap.browser} keeps the screen awake while you record. If you lock the phone or switch apps, recording stops.`,
+            es: `${cap.browser} mantiene la pantalla encendida sola. No cierres ${cap.browser} ni lo saques de las apps recientes — eso sí corta la grabación. Podés silenciar el volumen o poner otra pestaña encima, pero ${cap.browser} tiene que seguir abierto.`,
+            en: `${cap.browser} is keeping the screen awake on its own. Don't close ${cap.browser} or swipe it away from recents — that stops recording. You can mute or put another tab on top, but ${cap.browser} must stay open.`,
           };
     default:
       return {
-        es: `${cap.browser} congela la página apenas se oculta. Dejá esta pantalla abierta y el teléfono desbloqueado mientras grabás.`,
-        en: `${cap.browser} freezes the page as soon as it is hidden. Keep this screen open and the phone unlocked while recording.`,
+        es: `No cierres ${cap.browser} ni lo saques de las apps recientes mientras grabás — la grabación se corta. Dejá esta pantalla visible y el teléfono desbloqueado.`,
+        en: `Don't close ${cap.browser} or swipe it away from recents while recording — that stops it. Keep this screen visible and the phone unlocked.`,
       };
   }
 }
