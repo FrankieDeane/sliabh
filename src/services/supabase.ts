@@ -165,6 +165,17 @@ export interface TrackPoint {
   lat: number;
   lon: number;
   t: number; // ms epoch
+  /**
+   * Metres above the ellipsoid, when the device reported it.
+   *
+   * Optional because it genuinely is: a phone indoors, or one whose GPS has
+   * only a 2D fix, returns null for altitude while still giving a good
+   * position. Hikes recorded before this was captured have none at all, which
+   * is why every reader has to cope with its absence rather than assume it.
+   *
+   * `points` is a jsonb column, so this rides along with no migration.
+   */
+  alt?: number;
 }
 
 export type TrackVisibility = 'private' | 'public';
@@ -199,7 +210,7 @@ export async function currentUserId(): Promise<string | null> {
 }
 
 /** Rejects instead of hanging when the network accepts but never answers. */
-function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
+export function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('timeout')), ms);
     Promise.resolve(promise).then(

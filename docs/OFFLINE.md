@@ -23,6 +23,8 @@ on every pull request via `.github/workflows/tests.yml`.
 | A hike interrupted by a crash is recoverable | The unfinished session is offered back on next launch |
 | A hike recorded offline reaches the account | Queued on the device first, uploaded when a session and signal exist |
 | Uploading twice cannot duplicate a hike | A hike already filed under the same start instant is treated as the same hike |
+| The climb is measured, never invented | Altitude is median-filtered and credited only past a threshold; a track with none says so instead of showing zero |
+| A crash reaches us even from a trail | Reports queue on the device and upload when signal returns — see [TELEMETRY.md](./TELEMETRY.md) |
 
 ## The failure modes this is built against
 
@@ -123,8 +125,11 @@ is [`NATIVE-BUILD.md`](./NATIVE-BUILD.md).
 ## Running the checks
 
 ```bash
-npm run build:web      # or: npx expo export -p web
-npm run test:offline   # service worker, offline revisit, recording, recovery
-npm run validate:solar # the sun almanac against SunCalc
-npm test               # both
+npm run build:web       # or: npx expo export -p web
+npm run test:offline    # service worker, offline revisit, recording, recovery
+npm run validate:solar  # the sun almanac against SunCalc
+npm run validate:track  # elevation and pace against known profiles
+npm run check:sdk       # every package builds against this Expo SDK
+npm run check:newarch   # nothing needs the New Architecture (after prebuild)
+npm test                # all of them
 ```

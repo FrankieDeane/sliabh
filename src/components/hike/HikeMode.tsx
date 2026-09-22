@@ -26,6 +26,7 @@ import {
   BACKGROUND_TRACKING_SUPPORTED,
 } from '../../services/backgroundTrack';
 import { readLiveSession } from '../../services/liveTrack';
+import { elevationStats, paceMinPerKm, formatPace, formatGain } from '../../utils/trackStats';
 import {
   backgroundCapability,
   captureAdvice,
@@ -134,14 +135,18 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     return track && track.length >= 2 ? track.map((p) => ({ lat: p.lat, lon: p.lon })) : undefined;
   }, [trail]);
 
-  const updatePosition = useCallback((lat: number, lon: number) => {
+  const updatePosition = useCallback((lat: number, lon: number, alt?: number | null) => {
     setGpsProblem(null); // a fix arrived, so clear any earlier GPS warning
     setUserPos({ lat, lon });
     const session = sessionRef.current;
     if (!session) return;
     // Persist before rendering: what the screen shows is recoverable only
     // because it reached storage first.
-    const kept = appendLivePoint(session, { lat, lon, t: Date.now() });
+    const point =
+      typeof alt === 'number' && Number.isFinite(alt)
+        ? { lat, lon, t: Date.now(), alt }
+        : { lat, lon, t: Date.now() };
+    const kept = appendLivePoint(session, point);
     if (kept) setPosHistory([...session.points]);
   }, []);
 
@@ -180,7 +185,10 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     if (Platform.OS === 'web') {
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
         watchIdRef.current = navigator.geolocation.watchPosition(
-          (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude),
+          // Altitude is what makes elevation gain possible, and a hike is
+          // defined by its climb more than its length. The device returns null
+          // for it on a 2D fix, which the point simply goes without.
+          (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude, pos.coords.altitude),
           (err) => {
             // A cold GPS fix under tree cover routinely takes longer than the
             // timeout. Only a denied permission is a dead end; the rest means
@@ -265,6 +273,13 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const distanceCovered = posHistory.length >= 2
     ? posHistory.reduce((sum, p, i) => i === 0 ? 0 : sum + haversineKm(posHistory[i - 1], p), 0)
     : 0;
+
+  // The two numbers a walker actually checks mid-hike, after the clock: how
+  // much have I climbed, and am I going to make it back before dark. Both are
+  // recomputed from the filtered series rather than accumulated as we go, so a
+  // resumed hike shows the same figure as one that never stopped.
+  const elevation = React.useMemo(() => elevationStats(posHistory), [posHistory]);
+  const pace = paceMinPerKm(distanceCovered, Math.round(elapsed / 1000));
 
   // Recording is mandatory for signed-in users — never behind a toggle. When
   // there's no session or no connection the hike is queued locally and pushed
@@ -561,6 +576,24 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           />
           <View style={[hikeS.hudDivider, { backgroundColor: C.border }]} />
           <HikeStat
+            icon="trending-up-outline"
+            label={t('Desnivel', 'Climb')}
+            value={formatGain(elevation)}
+            accent={C.accent}
+            text={C.text}
+            muted={C.muted}
+          />
+          <View style={[hikeS.hudDivider, { backgroundColor: C.border }]} />
+          <HikeStat
+            icon="speedometer-outline"
+            label={t('Ritmo', 'Pace')}
+            value={formatPace(pace)}
+            accent={C.accent}
+            text={C.text}
+            muted={C.muted}
+          />
+          <View style={[hikeS.hudDivider, { backgroundColor: C.border }]} />
+          <HikeStat
             icon="location-outline"
             label={t('GPS', 'GPS')}
             value={userPos ? t('Activo', 'Active') : t('Buscando…', 'Searching…')}
@@ -595,8 +628,12 @@ function HikeStat({
   return (
     <View style={hikeS.statItem}>
       <Ionicons name={icon} size={18} color={accent} />
-      <Text style={[hikeS.statValue, { color: text }]}>{value}</Text>
-      <Text style={[hikeS.statLabel, { color: muted }]}>{label}</Text>
+      {/* One line each: a wrapped value reads as two numbers, and "Desnivel"
+          breaking after "Des" is worse than being clipped. */}
+      <Text style={[hikeS.statValue, { color: text }]} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
+      <Text style={[hikeS.statLabel, { color: muted }]} numberOfLines={1}>{label}</Text>
     </View>
   );
 }
@@ -622,14 +659,17 @@ const hikeS = StyleSheet.create({
     backgroundColor: 'rgba(239,68,68,0.1)',
   },
   stopBtnText: { fontSize: 13, fontWeight: '700', color: '#ef4444' },
+  // Five figures on a 390 px phone: the type shrinks and the dividers thin
+  // out rather than letting "12'30\"" wrap mid-value. Mobile is the case that
+  // matters — nobody checks their climb on a laptop halfway up a mountain.
   hud: {
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 4,
   },
-  hudDivider: { width: 1, height: 40, marginHorizontal: 4 },
+  hudDivider: { width: 1, height: 34, marginHorizontal: 1 },
   legend: {
     flexDirection: 'row', alignItems: 'center', gap: 16,
     paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1,
@@ -653,9 +693,9 @@ const hikeS = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 8, borderTopWidth: 1,
   },
   keepOpenTxt: { fontSize: 10.5, lineHeight: 14 },
-  statItem: { flex: 1, alignItems: 'center', gap: 4 },
-  statValue: { fontSize: 17, fontWeight: '800', letterSpacing: -0.5 },
-  statLabel: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5, textTransform: 'uppercase' },
+  statItem: { flex: 1, alignItems: 'center', gap: 3, minWidth: 0 },
+  statValue: { fontSize: 14.5, fontWeight: '800', letterSpacing: -0.4 },
+  statLabel: { fontSize: 8.5, fontWeight: '700', letterSpacing: 0.3, textTransform: 'uppercase' },
   footer: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 16, paddingVertical: 8,

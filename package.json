@@ -13,8 +13,9 @@
     "validate:solar": "node --experimental-strip-types scripts/validate-solar.mjs",
     "check:sdk": "node scripts/check-sdk-versions.mjs",
     "check:newarch": "node scripts/check-new-arch.mjs",
+    "validate:track": "node --experimental-strip-types scripts/validate-track-stats.mjs",
     "test:offline": "node tests/offline.mjs",
-    "test": "npm run check:sdk && npm run validate:solar && npm run test:offline"
+    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",

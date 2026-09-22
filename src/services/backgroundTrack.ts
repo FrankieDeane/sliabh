@@ -63,11 +63,18 @@ if (!TaskManager.isTaskDefined(HIKE_LOCATION_TASK)) {
 
     appendLivePoints(
       session,
-      locations.map((loc) => ({
-        lat: loc.coords.latitude,
-        lon: loc.coords.longitude,
-        t: loc.timestamp || Date.now(),
-      })),
+      locations.map((loc) => {
+        const base = {
+          lat: loc.coords.latitude,
+          lon: loc.coords.longitude,
+          t: loc.timestamp || Date.now(),
+        };
+        // Altitude is what elevation gain is computed from. A 2D fix reports
+        // none, so the point goes without rather than carrying a zero that
+        // would read as sea level.
+        const alt = loc.coords.altitude;
+        return typeof alt === 'number' && Number.isFinite(alt) ? { ...base, alt } : base;
+      }),
     );
   });
 }

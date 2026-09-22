@@ -173,6 +173,25 @@ try {
   });
   check('in-progress track is on disk mid-hike', !!live && live.p?.length >= 3,
     live ? `${live.p?.length ?? 0} points persisted` : 'nothing written');
+  // A point is [lat, lon, t] or [lat, lon, t, alt]. Anything else means the
+  // storage format drifted, and a reader pinned to one length would silently
+  // drop every point rather than fail loudly.
+  check('each stored point has a readable shape',
+    !!live && live.p.every((pt) => Array.isArray(pt) && (pt.length === 3 || pt.length === 4)),
+    'lat, lon, t, and altitude when the device reported one');
+  // The climb and the pace are on screen while walking, not only afterwards.
+  check('the hike screen shows the climb', (await page.getByText(/^Desnivel$/i).count()) > 0);
+  check('the hike screen shows the pace', (await page.getByText(/^Ritmo$/i).count()) > 0);
+  // Five figures where there were three. Mobile is the case that matters, and
+  // a stat strip that overflows a 390 px phone is worse than one stat fewer —
+  // the walker would have to scroll sideways mid-hike to read their climb.
+  const overflow = await page.evaluate(() => {
+    const doc = document.documentElement;
+    return { scroll: doc.scrollWidth, client: doc.clientWidth };
+  });
+  check('the hike screen does not scroll sideways on a phone',
+    overflow.scroll <= overflow.client + 1,
+    `${overflow.scroll}px of content in ${overflow.client}px`);
 
   // ── 4. Killing the browser mid-hike must not end the recording ────────
   //
@@ -285,7 +304,55 @@ try {
     (await page.getByText(/no está disponible|not available/i).count()) > 0,
     'it must never sit on a spinner');
 
-  // ── 8. Each browser is told what *it* can do, not what "the web" can ──
+  // ── 8. A climb is reported, and never invented ────────────────────────
+  //
+  // Elevation gain is the number a hiker plans a day around, and the seven
+  // hikes recorded before altitude was captured have none. Showing them a
+  // confident "+0 m" would be a lie the screen has no way to walk back, so the
+  // two cases are asserted against each other on the real page.
+  console.log('\nclimb and pace');
+  {
+    const seeded = await ctx.newPage();
+    await seeded.goto(base + '/mis-recorridos', { waitUntil: 'domcontentloaded' });
+    await seeded.evaluate(() => {
+      // A 300 m climb, sampled finely enough to clear the smoothing window,
+      // and a second walk with no altitude at all.
+      const climb = Array.from({ length: 120 }, (_, i) => [
+        -49.33 + i * 0.0002, -72.9, 1_700_000_000_000 + i * 5000, Math.round(600 + i * 2.5),
+      ]);
+      const flat = Array.from({ length: 120 }, (_, i) => [
+        -41.13 + i * 0.0002, -71.3, 1_700_000_000_000 + i * 5000,
+      ]);
+      const toPoints = (raw) => raw.map(([lat, lon, t, alt]) =>
+        alt === undefined ? { lat, lon, t } : { lat, lon, t, alt });
+      localStorage.setItem('track-queue', JSON.stringify({
+        version: 0,
+        state: {
+          pending: [
+            { id: 'climb', queuedAt: new Date().toISOString(), trailId: 'recorrido-libre',
+              points: toPoints(climb), distanceKm: 2.7, durationS: 3600,
+              startedAt: new Date(1_700_000_000_000).toISOString() },
+            { id: 'flat', queuedAt: new Date().toISOString(), trailId: 'recorrido-libre',
+              points: toPoints(flat), distanceKm: 2.7, durationS: 3600,
+              startedAt: new Date(1_700_000_100_000).toISOString() },
+          ],
+        },
+      }));
+    });
+    await seeded.reload({ waitUntil: 'domcontentloaded' });
+    await seeded.waitForTimeout(3000);
+    const body = await seeded.evaluate(() => document.body.innerText);
+
+    check('a hike with altitude reports its climb', /\+2\d\d m|\+3\d\d m/.test(body),
+      (body.match(/\+\d+ m/) || ['none'])[0]);
+    check('a hike without altitude shows a dash, not a zero', !/\+0 m/.test(body),
+      '"+0 m" would claim a mountain was flat');
+    check('pace is shown per hike', /\d+'\d\d"/.test(body),
+      (body.match(/\d+'\d\d"/) || ['none'])[0]);
+    await seeded.close();
+  }
+
+  // ── 9. Each browser is told what *it* can do, not what "the web" can ──
   //
   // A walker on an iPhone and one on Android hit different limits and need
   // different settings changed, so one sentence for both is wrong for at least

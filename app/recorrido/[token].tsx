@@ -15,6 +15,8 @@ const TrackMap = Platform.OS === 'web'
   ? require('../../src/components/map/MapLibreEsri.web').MapLibreEsri
   : require('../../src/components/map/MapLibreEsri.native').MapLibreEsri;
 
+import { elevationStats, paceMinPerKm, formatPace, formatGain } from '../../src/utils/trackStats';
+
 function fmtDistance(km: number): string {
   return km >= 1 ? `${km.toFixed(2)} km` : `${Math.round(km * 1000)} m`;
 }
@@ -71,7 +73,13 @@ export default function SharedTrackScreen() {
         title={track ? `${label} — Sliabh` : 'Recorrido — Sliabh'}
         description={
           track
-            ? `Recorrido de ${fmtDistance(track.distance_km)} en ${fmtDuration(track.duration_s)}, grabado con GPS en Sliabh.`
+            ? (() => {
+                const climb = elevationStats(track.points);
+                const base = `Recorrido de ${fmtDistance(track.distance_km)} en ${fmtDuration(track.duration_s)}`;
+                return climb
+                  ? `${base}, con ${climb.gain} m de desnivel, grabado con GPS en Sliabh.`
+                  : `${base}, grabado con GPS en Sliabh.`;
+              })()
             : 'Recorrido compartido en Sliabh.'
         }
         path={`/recorrido/${String(token ?? '')}`}
@@ -128,7 +136,11 @@ export default function SharedTrackScreen() {
               {[
                 { icon: 'walk-outline' as const, label: t('Distancia', 'Distance'), value: fmtDistance(track.distance_km) },
                 { icon: 'time-outline' as const, label: t('Tiempo', 'Time'), value: fmtDuration(track.duration_s) },
-                { icon: 'location-outline' as const, label: t('Puntos GPS', 'GPS points'), value: String(track.points.length) },
+                // Climb comes before the raw point count: it is what a reader
+                // wants to know about someone else's walk, and the point count
+                // never was.
+                { icon: 'trending-up-outline' as const, label: t('Desnivel', 'Climb'), value: formatGain(elevationStats(track.points)) },
+                { icon: 'speedometer-outline' as const, label: t('Ritmo', 'Pace'), value: formatPace(paceMinPerKm(track.distance_km, track.duration_s)) },
               ].map((stat) => (
                 <View
                   key={stat.label}

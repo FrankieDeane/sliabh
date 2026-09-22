@@ -28,6 +28,7 @@ import { HikeHost } from '../src/components/hike/HikeHost';
  * On web the file resolves to the no-op browser version.
  */
 import '../src/services/backgroundTrack';
+import { installErrorReporting, reportError } from '../src/services/errorLog';
 
 // Web bootstrap: PWA head tags + service worker. web.output "single" ignores
 // app/+html.tsx, so these must be injected at runtime.
@@ -73,6 +74,16 @@ class AppErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, info: unknown) {
     console.error('[Sliabh] render crash:', error, info);
+    // A console line reaches nobody: the app is live, the walker is on a
+    // trail, and the browser console is on their phone. File it so the crash
+    // is visible to us instead of only to them.
+    const componentStack = (info as { componentStack?: string })?.componentStack;
+    reportError(
+      Object.assign(error, {
+        stack: `${error.stack ?? ''}${componentStack ? `\n--- component stack ---${componentStack}` : ''}`,
+      }),
+      'render',
+    );
   }
 
   render() {
@@ -84,7 +95,14 @@ class AppErrorBoundary extends React.Component<
           <Text style={{ color: '#f0f9ff', fontWeight: '800', fontSize: 16, textAlign: 'center' }}>
             Algo salió mal / Something went wrong
           </Text>
-          <Text style={{ color: '#94a3b8', fontSize: 12, textAlign: 'center', maxWidth: 300 }} numberOfLines={4}>
+          {/* The one thing a walker needs to know when a screen dies mid-walk.
+              It is true: every accepted fix reached device storage as it
+              arrived, so a crash costs nothing but the reload. */}
+          <Text style={{ color: '#94a3b8', fontSize: 12.5, textAlign: 'center', maxWidth: 330, lineHeight: 18 }}>
+            Tu recorrido está guardado en el teléfono — no se perdió nada de lo que grabaste.
+            El error quedó registrado para que lo arreglemos.
+          </Text>
+          <Text style={{ color: '#475569', fontSize: 11, textAlign: 'center', maxWidth: 300 }} numberOfLines={3}>
             {msg}
           </Text>
           <TouchableOpacity
@@ -170,6 +188,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     injectWebStyles();
+  }, []);
+
+  useEffect(() => {
+    // Catches what no component sees: an exception that escaped the tree and a
+    // promise nobody handled. Both are silent by default — the user gets a
+    // blank screen and we get nothing at all. Also flushes anything a previous
+    // session queued while offline.
+    installErrorReporting();
   }, []);
 
   if (Platform.OS === 'web') {
