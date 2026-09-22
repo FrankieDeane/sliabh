@@ -1,5 +1,6 @@
 import { storage } from '../store/mmkv';
 import type { TrackPoint } from './supabase';
+import { filterFix, metresBetween } from '../utils/fixFilter';
 
 /**
  * The hike currently being recorded, written to disk as it happens.
@@ -20,11 +21,6 @@ import type { TrackPoint } from './supabase';
  */
 
 const KEY = 'live-hike-v1';
-
-/** Fixes closer together than this are jitter, not walking. */
-const MIN_MOVE_M = 4;
-/** …unless this long has passed, so a rest stop still leaves a trace. */
-const MAX_GAP_MS = 15_000;
 
 export interface LiveSession {
   id: string;
@@ -50,16 +46,6 @@ interface StoredSession {
   updatedAt: string;
   status?: 'recording' | 'stopped';
   p: Array<[number, number, number] | [number, number, number, number]>;
-}
-
-function metresBetween(a: TrackPoint, b: TrackPoint): number {
-  const R = 6371000;
-  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
-  const dLon = ((b.lon - a.lon) * Math.PI) / 180;
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 }
 
 function write(session: LiveSession): void {
@@ -109,11 +95,13 @@ export function beginLiveSession(trailId: string | null, trailName: string | nul
  * Returns the point when it was kept, so callers can mirror the same filtered
  * series they will eventually upload.
  */
-export function appendLivePoint(session: LiveSession, point: TrackPoint): TrackPoint | null {
-  const last = session.points[session.points.length - 1];
-  if (last && metresBetween(last, point) < MIN_MOVE_M && point.t - last.t < MAX_GAP_MS) {
-    return null;
-  }
+export function appendLivePoint(
+  session: LiveSession,
+  fix: TrackPoint,
+  accuracy?: number | null,
+): TrackPoint | null {
+  const point = filterFix(session.points[session.points.length - 1], fix, accuracy);
+  if (!point) return null;
   session.points.push(point);
   session.updatedAt = new Date(point.t).toISOString();
   write(session);
@@ -130,11 +118,14 @@ export function appendLivePoint(session: LiveSession, point: TrackPoint): TrackP
  * control back, so a kill between wake-ups still loses only what the GPS had
  * not yet delivered.
  */
-export function appendLivePoints(session: LiveSession, points: TrackPoint[]): TrackPoint[] {
+export function appendLivePoints(
+  session: LiveSession,
+  fixes: Array<{ point: TrackPoint; accuracy?: number | null }>,
+): TrackPoint[] {
   const kept: TrackPoint[] = [];
-  for (const point of points) {
-    const last = session.points[session.points.length - 1];
-    if (last && metresBetween(last, point) < MIN_MOVE_M && point.t - last.t < MAX_GAP_MS) continue;
+  for (const fix of fixes) {
+    const point = filterFix(session.points[session.points.length - 1], fix.point, fix.accuracy);
+    if (!point) continue;
     session.points.push(point);
     session.updatedAt = new Date(point.t).toISOString();
     kept.push(point);

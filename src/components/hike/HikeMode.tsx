@@ -141,7 +141,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     return track && track.length >= 2 ? track.map((p) => ({ lat: p.lat, lon: p.lon })) : undefined;
   }, [trail]);
 
-  const updatePosition = useCallback((lat: number, lon: number, alt?: number | null) => {
+  const updatePosition = useCallback((lat: number, lon: number, alt?: number | null, accuracy?: number | null) => {
     setGpsProblem(null); // a fix arrived, so clear any earlier GPS warning
     setUserPos({ lat, lon });
     const session = sessionRef.current;
@@ -152,7 +152,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       typeof alt === 'number' && Number.isFinite(alt)
         ? { lat, lon, t: Date.now(), alt }
         : { lat, lon, t: Date.now() };
-    const kept = appendLivePoint(session, point);
+    const kept = appendLivePoint(session, point, accuracy);
     if (kept) setPosHistory([...session.points]);
   }, []);
 
@@ -194,7 +194,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           // Altitude is what makes elevation gain possible, and a hike is
           // defined by its climb more than its length. The device returns null
           // for it on a 2D fix, which the point simply goes without.
-          (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude, pos.coords.altitude),
+          (pos) => updatePosition(pos.coords.latitude, pos.coords.longitude, pos.coords.altitude, pos.coords.accuracy),
           (err) => {
             // A cold GPS fix under tree cover routinely takes longer than the
             // timeout. Only a denied permission is a dead end; the rest means

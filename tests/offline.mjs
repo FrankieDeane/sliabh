@@ -79,6 +79,18 @@ const ctx = await browser.newContext({
   geolocation: { latitude: -49.3369, longitude: -72.8956 }, // Fitz Roy trailhead
 });
 
+// At walking pace, from wherever the walker already is: the recorder drops
+// fixes that jump faster than a person can move (src/utils/fixFilter.ts), so a
+// simulated walk that teleports records nothing. ~6 m every 1.5 s is 4 m/s.
+let here = { latitude: -49.3369, longitude: -72.8956 };
+async function walk(page, steps, waitMs = 1500) {
+  for (let i = 0; i < steps; i += 1) {
+    here = { latitude: here.latitude + 0.00005, longitude: here.longitude - 0.00003 };
+    await ctx.setGeolocation(here);
+    await page.waitForTimeout(waitMs);
+  }
+}
+
 async function dismissBanners(page) {
   const accept = page.getByText(/^Acepto$/).first();
   if (await accept.count()) await accept.click().catch(() => {});
@@ -157,14 +169,7 @@ try {
   check('hike mode opens offline', (await page.getByText(/CAMINATA ACTIVA/).count()) > 0);
   check('shows it is recording without signal', (await page.getByText(/sin señal|offline/i).count()) > 0);
 
-  const LEGS = [
-    [-49.3283, -72.8982], [-49.3195, -72.9048], [-49.3108, -72.9148],
-    [-49.3058, -72.9228], [-49.2978, -72.9348],
-  ];
-  for (const [latitude, longitude] of LEGS) {
-    await ctx.setGeolocation({ latitude, longitude });
-    await page.waitForTimeout(700);
-  }
+  await walk(page, 5);
   await page.waitForTimeout(1000);
 
   const live = await page.evaluate(() => {
@@ -217,11 +222,7 @@ try {
     (await page.getByText(/retomada|resumed/i).count()) > 0);
 
   // Keep walking: the resumed screen must still be appending fixes.
-  const MORE = [[-49.2920, -72.9430], [-49.2880, -72.9520], [-49.2840, -72.9600]];
-  for (const [latitude, longitude] of MORE) {
-    await ctx.setGeolocation({ latitude, longitude });
-    await page.waitForTimeout(800);
-  }
+  await walk(page, 3);
   await page.waitForTimeout(1200);
   const afterResume = await page.evaluate(() => {
     const raw = localStorage.getItem('live-hike-v1');
@@ -273,10 +274,7 @@ try {
   await dismissBanners(page);
   await page.getByText(/Grabar recorrido/).first().click();
   await page.waitForTimeout(1800);
-  for (const [latitude, longitude] of LEGS) {
-    await ctx.setGeolocation({ latitude, longitude });
-    await page.waitForTimeout(600);
-  }
+  await walk(page, 5);
   await page.getByText(/Detener/).first().click();
   await page.waitForTimeout(3000);
 

@@ -12,6 +12,7 @@
  *   node --experimental-strip-types scripts/validate-track-stats.mjs
  */
 import { elevationStats, paceMinPerKm, formatPace, smoothAltitudes } from '../src/utils/trackStats.ts';
+import { filterFix, metresBetween, MAX_GAP_MS } from '../src/utils/fixFilter.ts';
 
 let checks = 0;
 let failures = 0;
@@ -126,6 +127,56 @@ console.log('\npace');
   check('zero duration returns null', paceMinPerKm(5, 0) === null);
   check('a rest stop averaged in is not shown as a pace', formatPace(126) === '—');
   check('null formats as a dash', formatPace(null) === '—');
+}
+
+console.log('\nwhich fixes become the track');
+{
+  // One degree of latitude is ~111 km, so 1e-5 degrees is ~1.1 m.
+  const at = (dLatM, t) => ({ lat: -41 + dLatM / 111_195, lon: -71, t });
+  const start = at(0, 0);
+
+  check('a wifi-grade fix is not drawn', filterFix(undefined, start, 80) === null, '±80 m');
+  check('a satellite fix starts the track', filterFix(undefined, start, 8) !== null);
+  check('a fix with no reported accuracy is still usable', filterFix(undefined, start) !== null);
+  check('a 60 m jump in 2 s is a spike, not a sprint', filterFix(start, at(60, 2000), 10) === null);
+  check('walking 12 m in 8 s is kept', filterFix(start, at(12, 8000), 5) !== null, '±5 m');
+  check('moving less than the fix\'s own error is not movement', filterFix(start, at(8, 4000), 12) === null,
+    '8 m apart at ±12 m');
+  check('the speed gate heals once time has passed', filterFix(start, at(60, 20_000), 10) !== null,
+    'a real position far from a bad one is accepted a few seconds on');
+  const rest = filterFix(start, at(3, MAX_GAP_MS + 1000), 10);
+  check('a rest stop leaves a trace', rest !== null);
+  check('…at the last position, so standing still adds no distance',
+    rest !== null && metresBetween(start, rest) === 0, rest ? `${metresBetween(start, rest).toFixed(1)} m` : 'dropped');
+
+  // Standing still for ten minutes with ±15 m of wander, one fix a second.
+  const rand = seeded(11);
+  let last;
+  const kept = [];
+  for (let s = 0; s < 600; s += 1) {
+    const fix = { lat: -41 + (rand() * 20) / 111_195, lon: -71 + (rand() * 20) / 84_000, t: s * 1000 };
+    const point = filterFix(last, fix, 15);
+    if (point) { kept.push(point); last = point; }
+  }
+  let drift = 0;
+  for (let i = 1; i < kept.length; i += 1) drift += metresBetween(kept[i - 1], kept[i]);
+  check('ten minutes standing still does not walk anywhere', drift < 60, `${Math.round(drift)} m`);
+
+  // And the other side of the trade: a real kilometre, ±5 m of noise, 1.3 m/s.
+  // Noise drawn fresh every second is the worst case — real GPS error drifts
+  // slowly between fixes — so this reads ~17% long. The recorder before these
+  // gates measured the same trace as 3.6 km, and standing still as 6 km.
+  const walkRand = seeded(23);
+  let prev;
+  const walked = [];
+  for (let s = 0; s <= 770; s += 1) {
+    const fix = { lat: -41 + (s * 1.3 + walkRand() * 10) / 111_195, lon: -71 + (walkRand() * 10) / 84_000, t: s * 1000 };
+    const point = filterFix(prev, fix, 5);
+    if (point) { walked.push(point); prev = point; }
+  }
+  let measured = 0;
+  for (let i = 1; i < walked.length; i += 1) measured += metresBetween(walked[i - 1], walked[i]);
+  near(Math.round(measured), 1000, 200, 'a kilometre walked still measures about a kilometre');
 }
 
 console.log(`\n${failures === 0 ? 'PASS' : 'FAIL'} — ${checks - failures}/${checks} checks passed`);
