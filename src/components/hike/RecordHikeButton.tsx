@@ -28,6 +28,8 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
     [start, trail],
   );
 
+  if (Platform.OS === 'web' && width >= 720) return null;
+
   const label = t('Grabar recorrido', 'Record hike');
   const sub = trail
     ? t('GPS en vivo · tiempo · distancia', 'Live GPS · time · distance')
