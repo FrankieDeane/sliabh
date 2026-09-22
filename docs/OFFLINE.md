@@ -60,12 +60,43 @@ denied permission. Only `PERMISSION_DENIED` says that now; the rest says it is
 still looking, and the watch stays alive. A screen wake lock is requested while
 recording, because a sleeping screen freezes the page and stops the track.
 
-## Known limits
+## Recording with the screen off
 
-* **Background recording.** The track only advances while the app is in the
-  foreground. Locking the phone or switching apps pauses it — the wake lock
-  helps, but real background recording needs a foreground service
-  (`expo-location`), which is a separate change.
+This is the one thing a browser genuinely cannot do, and it is worth being
+precise about, because it is what a walker notices first.
+
+A page is **frozen the moment it is hidden**. Lock the phone, or switch to a
+music app, and `watchPosition` stops delivering. No flag, no permission and no
+API changes that; on iOS Safari there is no lever at all. Apps that record a
+walk from a pocket — Google Fit among them — are native apps running a
+**foreground service**: the ongoing notification is what buys the process the
+right to keep reading the GPS.
+
+| | Browser (PWA) | Native app |
+| --- | --- | --- |
+| Screen on, app in front | records | records |
+| Screen off / another app | **may stop** | records |
+| Music playing | **may stop** | records |
+| Guarantee | none | foreground service |
+
+* **Native** (`src/services/backgroundTrack.ts`) starts
+  `Location.startLocationUpdatesAsync` with a foreground service, and its task
+  appends each fix to the same on-disk session the rest of the app uses, so
+  resuming, queueing, syncing and sharing work unchanged. It needs the "Allow
+  all the time" location grant; without it the hike screen says so instead of
+  failing quietly. Requires a native build — the PWA cannot load it.
+* **Web** (`src/services/backgroundTrack.web.ts`) plays a tone far below
+  hearing through Web Audio while recording. Chrome on Android exempts a tab
+  that is playing audio from being frozen, which is the only lever a page has;
+  the gain is 0.0001 and it goes through Web Audio rather than a media element,
+  so it does not take audio focus and the walker's own music keeps playing. It
+  is a workaround, not a promise: it depends on the phone, the browser and its
+  battery settings.
+* Either way the app **measures what it missed**. Coming back after more than
+  20 seconds away, the hike screen says how many minutes went unrecorded,
+  rather than leaving a silent hole in the line.
+
+## Known limits
 * **Remote images** are not precached, so a trail photo may be missing offline
   while everything functional is present.
 * **iOS Safari** evicts site data after weeks of not visiting; installing to

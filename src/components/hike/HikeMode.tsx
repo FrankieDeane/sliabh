@@ -20,6 +20,12 @@ import {
   type LiveSession,
 } from '../../services/liveTrack';
 import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
+import {
+  startBackgroundTrack,
+  stopBackgroundTrack,
+  BACKGROUND_TRACKING_SUPPORTED,
+} from '../../services/backgroundTrack';
+import { readLiveSession } from '../../services/liveTrack';
 
 // Platform-specific flat map — both platforms use MapLibreEsri
 const HikeMap = Platform.OS === 'web'
@@ -94,7 +100,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'searching'>(null);
+  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'background-denied' | 'searching'>(null);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
   const [recovered, setRecovered] = useState(false);
   /** How long the app was in the background, when that gap cost us fixes. */
@@ -155,7 +161,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     }, 1000);
 
     let cancelled = false;
-    let retryId: ReturnType<typeof setTimeout> | null = null;
+    let mirrorId: ReturnType<typeof setInterval> | null = null;
 
     if (Platform.OS === 'web') {
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
@@ -169,6 +175,9 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           },
           { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 },
         );
+        // A hidden tab is frozen, so the page also plays an inaudible tone:
+        // on Android that keeps Chrome from freezing it. See backgroundTrack.web.
+        startBackgroundTrack().catch(() => {});
         // Without a wake lock the screen sleeps, the page is frozen and the
         // track simply stops — silently, mid-walk.
         (navigator as any).wakeLock?.request?.('screen')
@@ -178,17 +187,23 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
         setGpsProblem('denied');
       }
     } else {
-      // Android WebView geolocation stays silent unless the app itself holds
-      // the runtime permission, so ask before handing tracking to the map.
-      requestLocationPermission().then((granted) => {
+      // Native: a foreground service keeps reading the GPS with the screen
+      // off, writing straight to the session on disk. The screen then mirrors
+      // that file rather than owning the track itself.
+      startBackgroundTrack(trail?.name ?? null).then((res: { started: boolean; reason?: string }) => {
         if (cancelled) return;
-        if (!granted) { setGpsProblem('denied'); return; }
-        (mapRef.current as any)?.startHikeTracking?.();
-        // The WebView may still be loading; the second call is a no-op once
-        // tracking is already running.
-        retryId = setTimeout(() => {
-          if (!cancelled) (mapRef.current as any)?.startHikeTracking?.();
-        }, 1500);
+        if (!res.started) {
+          setGpsProblem(res.reason === 'background-denied' ? 'background-denied' : 'denied');
+          return;
+        }
+        mirrorId = setInterval(() => {
+          const stored = readLiveSession();
+          if (!stored || !stored.points.length) return;
+          setPosHistory([...stored.points]);
+          const last = stored.points[stored.points.length - 1];
+          setUserPos({ lat: last.lat, lon: last.lon });
+          setGpsProblem(null);
+        }, 2000);
       });
     }
 
@@ -217,13 +232,13 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       if (Platform.OS === 'web' && typeof document !== 'undefined') {
         document.removeEventListener('visibilitychange', onVisible);
       }
-      if (retryId) clearTimeout(retryId);
+      if (mirrorId) clearInterval(mirrorId);
       if (timerRef.current) clearInterval(timerRef.current);
       if (Platform.OS === 'web' && watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
       } else {
-        (mapRef.current as any)?.stopHikeTracking?.();
+        stopBackgroundTrack().catch(() => {});
       }
       wakeLockRef.current?.release?.().catch?.(() => {});
       wakeLockRef.current = null;
@@ -438,6 +453,11 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
                     'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
                     'No GPS access. Turn on location and restart the hike to record your track.',
                   )
+                : gpsProblem === 'background-denied'
+                ? t(
+                    'Falta el permiso de ubicación "Permitir siempre". Sin eso la grabación se corta al apagar la pantalla.',
+                    'The "Allow all the time" location permission is missing. Without it recording stops when the screen goes off.',
+                  )
                 : t(
                     'Buscando señal GPS. Puede tardar un minuto bajo el bosque o entre paredones; seguimos intentando.',
                     'Searching for a GPS fix. Under tree cover or between walls this can take a minute; still trying.',
@@ -464,10 +484,15 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
         <View style={[hikeS.keepOpen, { borderTopColor: C.border, backgroundColor: C.surface }]}>
           <Ionicons name="phone-portrait-outline" size={13} color={C.muted} />
           <Text style={[hikeS.keepOpenTxt, { color: C.muted }]}>
-            {t(
-              'Dejá esta pantalla abierta. Si cambiás de app o bloqueás el teléfono, la grabación se pausa hasta que vuelvas.',
-              'Keep this screen open. Switching apps or locking the phone pauses the recording until you come back.',
-            )}
+            {BACKGROUND_TRACKING_SUPPORTED
+              ? t(
+                  'Seguí con el teléfono en el bolsillo: la grabación continúa con la pantalla apagada y mientras escuchás música. Vas a ver la notificación de Sliabh mientras graba.',
+                  'Pocket the phone: recording continues with the screen off and while you play music. Sliabh keeps a notification up while it records.',
+                )
+              : t(
+                  'En el navegador, la grabación puede cortarse si bloqueás la pantalla o pasás a otra app. Dejá esta pantalla abierta; si algo se pierde, acá abajo te decimos cuántos minutos.',
+                  'In a browser, recording can stop if you lock the screen or switch apps. Keep this screen open; if anything is missed, the app says how many minutes below.',
+                )}
           </Text>
         </View>
 
