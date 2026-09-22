@@ -85,20 +85,46 @@ async function dismissBanners(page) {
   await page.waitForTimeout(300);
 }
 
+/**
+ * Wait for what the check is actually about, rather than for the network to
+ * fall silent.
+ *
+ * `networkidle` made this suite depend on every external service the page
+ * touches — Supabase, remote images — answering within the timeout. It passed
+ * where those hosts were unreachable and failed on a runner where they were
+ * not, which is the wrong way round and tells us nothing about the worker.
+ */
+async function waitFor(page, condition, timeoutMs = 25_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await page.evaluate(condition).catch(() => false)) return true;
+    await page.waitForTimeout(250);
+  }
+  return false;
+}
+
 try {
   // ── 1. The service worker installs and takes control ──────────────────
   console.log('service worker');
   let page = await ctx.newPage();
-  await page.goto(base + TRAIL, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(2500);
-  const registered = await page.evaluate(async () => !!(await navigator.serviceWorker?.getRegistration()));
+  await page.goto(base + TRAIL, { waitUntil: 'domcontentloaded' });
+  const registered = await waitFor(page, async () => !!(await navigator.serviceWorker?.getRegistration()));
   check('registers on first visit', registered);
 
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForTimeout(1500);
-  const controlled = await page.evaluate(() => !!navigator.serviceWorker?.controller);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const controlled = await waitFor(page, () => !!navigator.serviceWorker?.controller);
   check('controls the page after a reload', controlled);
 
+  // Precaching happens after the worker takes over, so wait for the bundle to
+  // land rather than assuming a fixed number of seconds is enough on a slow
+  // runner.
+  await waitFor(page, async () => {
+    const names = await caches.keys();
+    const shell = names.find((n) => n.startsWith('sliabh-v'));
+    if (!shell) return false;
+    const keys = await (await caches.open(shell)).keys();
+    return keys.some((r) => /\/_expo\/.*\.js$/.test(new URL(r.url).pathname));
+  });
   const cached = await page.evaluate(async () => {
     const names = await caches.keys();
     const shell = names.find((n) => n.startsWith('sliabh-v'));
