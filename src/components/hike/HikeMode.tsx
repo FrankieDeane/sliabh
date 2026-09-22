@@ -52,6 +52,12 @@ export interface HikeTrail {
 /** Hikes recorded without picking a trail are filed under this id. */
 export const FREE_TRACK_ID = 'recorrido-libre';
 
+// Opaque on purpose: a translucent amber over whatever sits beneath left light
+// text on a light wash, unreadable in daylight.
+const WARN_BG = '#fef3c7';
+const WARN_TEXT = '#78350f';
+const WARN_ICON = '#b45309';
+
 function formatElapsed(ms: number): string {
   const s = Math.floor(ms / 1000);
   const h = Math.floor(s / 3600);
@@ -197,9 +203,6 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
           },
           { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 },
         );
-        // A hidden tab is frozen, so the page also plays an inaudible tone:
-        // on Android that keeps Chrome from freezing it. See backgroundTrack.web.
-        startBackgroundTrack().catch(() => {});
         // Without a wake lock the screen sleeps, the page is frozen and the
         // track simply stops — silently, mid-walk.
         (navigator as any).wakeLock?.request?.('screen')
@@ -477,8 +480,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
 
         {gpsProblem && (
           <View style={[hikeS.gpsWarn, { borderTopColor: C.border }]}>
-            <Ionicons name="warning-outline" size={14} color="#f59e0b" />
-            <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
+            <Ionicons name="warning-outline" size={14} color={WARN_ICON} />
+            <Text style={hikeS.gpsWarnText}>
               {gpsProblem === 'denied'
                 ? t(
                     'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
@@ -499,15 +502,15 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
 
         {pausedGapMs !== null && (
           <View style={[hikeS.gapWarn, { borderTopColor: C.border }]}>
-            <Ionicons name="alert-circle" size={15} color="#f59e0b" />
-            <Text style={[hikeS.gpsWarnText, { color: C.text }]}>
+            <Ionicons name="alert-circle" size={15} color={WARN_ICON} />
+            <Text style={hikeS.gpsWarnText}>
               {t(
                 `Estuviste ${Math.round(pausedGapMs / 60000) || 1} min fuera de la app: en ese rato no se grabó nada. El tramo queda cortado.`,
                 `You were away from the app for ${Math.round(pausedGapMs / 60000) || 1} min: nothing was recorded then. That stretch is missing.`,
               )}
             </Text>
             <TouchableOpacity onPress={() => setPausedGapMs(null)} accessibilityLabel={t('Entendido', 'Got it')}>
-              <Ionicons name="close" size={15} color={C.muted} />
+              <Ionicons name="close" size={15} color={WARN_TEXT} />
             </TouchableOpacity>
           </View>
         )}
@@ -680,13 +683,13 @@ const hikeS = StyleSheet.create({
   gpsWarn: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1,
-    backgroundColor: 'rgba(245,158,11,0.12)',
+    backgroundColor: WARN_BG,
   },
-  gpsWarnText: { fontSize: 11.5, flex: 1, lineHeight: 16 },
+  gpsWarnText: { fontSize: 11.5, flex: 1, lineHeight: 16, color: WARN_TEXT, fontWeight: '600' },
   gapWarn: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1,
-    backgroundColor: 'rgba(245,158,11,0.16)',
+    backgroundColor: WARN_BG,
   },
   keepOpen: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 7,

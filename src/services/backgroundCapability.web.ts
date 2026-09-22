@@ -9,7 +9,7 @@
  * So capabilities are **feature-detected** (that is the only honest way to know
  * whether a lever exists), and the browser is **named** only to phrase the
  * instruction — "Ajustes → Pantalla y brillo" means nothing on Android, and
- * "Batería → Sin restricciones" means nothing on an iPhone.
+ * "Tiempo de espera de la pantalla" means nothing on an iPhone.
  */
 
 export type Engine =
@@ -24,13 +24,17 @@ export type Engine =
  * How strong a promise this environment supports, worst to best:
  * - `foreground-only`: recording holds only while this screen is in front and
  *   the screen is awake, and nothing can keep the screen awake for the walker.
- * - `best-effort`: a lever exists that often survives the screen going off,
- *   but it is not a guarantee on every phone or battery setting.
  * - `screen-on`: the page can hold the screen awake, so it is never hidden and
  *   never frozen — recording holds as long as the walker stays in the app.
  * - `guaranteed`: an OS foreground service records from a pocket. Native only.
+ *
+ * There is no web grade above `screen-on`. Every mobile browser stops
+ * delivering `watchPosition` the moment the page is hidden — Chrome included,
+ * by design (crbug.com/506435) — so no trick that keeps a hidden page alive
+ * can keep it recording. A walker who locked the phone on our word lost
+ * minutes of track to that.
  */
-export type CaptureLevel = 'foreground-only' | 'best-effort' | 'screen-on' | 'guaranteed';
+export type CaptureLevel = 'foreground-only' | 'screen-on' | 'guaranteed';
 
 export interface BackgroundCapability {
   engine: Engine;
@@ -41,15 +45,6 @@ export interface BackgroundCapability {
   installed: boolean;
   /** Screen Wake Lock API — the page can stop the screen from sleeping. */
   wakeLock: boolean;
-  /**
-   * Whether the inaudible-tone trick is worth doing here. True only on
-   * Chromium/Android, where a tab that plays audio is exempt from freezing
-   * *and* Web Audio does not take audio focus. Everywhere else it is either
-   * useless (desktop, where the tab is not frozen this way) or risky (iOS,
-   * where an audio context can interrupt the walker's own music — which is
-   * exactly the failure we are trying to fix).
-   */
-  audioKeepAlive: boolean;
   level: CaptureLevel;
 }
 
@@ -121,16 +116,11 @@ export function detectBackgroundCapability(): BackgroundCapability {
     os = 'unknown';
   }
 
-  const audioKeepAlive = engine === 'chromium-android';
-
-  let level: CaptureLevel;
-  if (audioKeepAlive) level = 'best-effort';
-  else if (wakeLock) level = 'screen-on';
-  else level = 'foreground-only';
   // A desktop tab is not frozen for having the lid open, but a sleeping laptop
   // stops it just the same, so the wake lock still decides the grade.
+  const level: CaptureLevel = wakeLock ? 'screen-on' : 'foreground-only';
 
-  return { engine, browser, os, installed, wakeLock, audioKeepAlive, level };
+  return { engine, browser, os, installed, wakeLock, level };
 }
 
 /** Cached: the environment cannot change mid-hike, and this runs on render. */
@@ -152,25 +142,15 @@ export function captureAdvice(cap: BackgroundCapability): { es: string; en: stri
         es: 'Podés guardar el teléfono: la grabación sigue con la pantalla apagada y con música. No hace falta que hagas nada.',
         en: 'Pocket the phone: recording continues with the screen off and with music playing. Nothing to do.',
       };
-    case 'best-effort':
-      return {
-        es: `Podés apagar la pantalla — ${cap.browser} sigue grabando en segundo plano. Solo hay una regla: no cierres ${cap.browser} ni lo saques de las apps recientes. Si Android lo congela por batería, te avisamos cuántos minutos se perdieron.`,
-        en: `You can turn off the screen — ${cap.browser} keeps recording in the background. One rule: don't close ${cap.browser} or swipe it away from recents. If Android freezes it for battery, the app tells you how many minutes were missed.`,
-      };
     case 'screen-on':
-      return cap.os === 'ios'
-        ? {
-            es: `${cap.browser} mantiene la pantalla encendida sola. No cierres ${cap.browser} ni cambies de app — si lo hacés, la grabación se corta y tenés que volver acá para seguir.`,
-            en: `${cap.browser} is keeping the screen awake on its own. Don't close ${cap.browser} or switch apps — if you do, recording stops and you need to come back here to continue.`,
-          }
-        : {
-            es: `${cap.browser} mantiene la pantalla encendida sola. No cierres ${cap.browser} ni lo saques de las apps recientes — eso sí corta la grabación. Podés silenciar el volumen o poner otra pestaña encima, pero ${cap.browser} tiene que seguir abierto.`,
-            en: `${cap.browser} is keeping the screen awake on its own. Don't close ${cap.browser} or swipe it away from recents — that stops recording. You can mute or put another tab on top, but ${cap.browser} must stay open.`,
-          };
+      return {
+        es: `${cap.browser} mantiene la pantalla encendida sola. No bloquees el teléfono, no cambies de app ni de pestaña: ${cap.browser} deja de recibir el GPS apenas esta pantalla queda atrás, y ese tramo no se graba. Podés bajar el brillo, y la música de otra app sigue sonando.`,
+        en: `${cap.browser} is keeping the screen awake on its own. Don't lock the phone or switch apps or tabs: ${cap.browser} stops receiving GPS as soon as this screen is behind something, and that stretch isn't recorded. You can dim the brightness, and music from another app keeps playing.`,
+      };
     default:
       return {
-        es: `No cierres ${cap.browser} ni lo saques de las apps recientes mientras grabás — la grabación se corta. Dejá esta pantalla visible y el teléfono desbloqueado.`,
-        en: `Don't close ${cap.browser} or swipe it away from recents while recording — that stops it. Keep this screen visible and the phone unlocked.`,
+        es: `Dejá esta pantalla visible y el teléfono desbloqueado: si se apaga la pantalla o cambiás de app, ${cap.browser} deja de recibir el GPS y ese tramo no se graba.`,
+        en: `Keep this screen visible and the phone unlocked: if the screen goes off or you switch apps, ${cap.browser} stops receiving GPS and that stretch isn't recorded.`,
       };
   }
 }
@@ -183,9 +163,12 @@ export function captureAdvice(cap: BackgroundCapability): { es: string; en: stri
 export function captureSetting(cap: BackgroundCapability): { es: string; en: string } | null {
   if (cap.level === 'guaranteed') return null;
   if (cap.os === 'android') {
+    // Battery settings do not help here: the GPS stops because the page is
+    // hidden, not because Android froze it. What helps is the screen staying on
+    // when the wake lock is refused (battery saver does that).
     return {
-      es: `Ajustes → Aplicaciones → ${cap.browser} → Batería → Sin restricciones. Sin eso Android congela la pestaña igual.`,
-      en: `Settings → Apps → ${cap.browser} → Battery → Unrestricted. Without it Android freezes the tab anyway.`,
+      es: 'Si igual se apaga la pantalla: Ajustes → Pantalla → Tiempo de espera de la pantalla → el máximo.',
+      en: 'If the screen still sleeps: Settings → Display → Screen timeout → the longest option.',
     };
   }
   if (cap.os === 'ios') {

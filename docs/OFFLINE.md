@@ -79,15 +79,15 @@ levers it leaves a page, and which setting the walker can change**. Answering
 that with one sentence for "the browser" is wrong for most of them, so the app
 grades the environment in front of it (`src/services/backgroundCapability.web.ts`).
 
-| Environment | Wake lock | Audio keep-alive | Grade | What the app says |
-| --- | --- | --- | --- | --- |
-| Chromium on Android (Chrome, Edge, Samsung Internet, Opera) | yes | **yes** | `best-effort` | may survive the screen going off; set Battery → Unrestricted |
-| Firefox on Android | 126+ | no | `screen-on` | the screen is held awake; switching apps stops it |
-| Safari on iOS/iPadOS 16.4+ | yes | **no, on purpose** | `screen-on` | the screen is held awake; Auto-Lock → Never as backup |
-| Chrome/Edge/Firefox on iOS | yes | no | `screen-on` | same as Safari — they are all Safari's engine |
-| Safari on iOS < 16.4 | no | no | `foreground-only` | keep the screen on; Auto-Lock → Never |
-| Desktop browsers | yes | no | `screen-on` | a sleeping laptop stops it just the same |
-| **Android native build** | — | — | **`guaranteed`** | pocket the phone |
+| Environment | Wake lock | Grade | What the app says |
+| --- | --- | --- | --- |
+| Chromium on Android (Chrome, Edge, Samsung Internet, Opera) | yes | `screen-on` | the screen is held awake; locking or switching apps stops GPS; Screen timeout → max as backup |
+| Firefox on Android | 126+ | `screen-on` | same as Chromium |
+| Safari on iOS/iPadOS 16.4+ | yes | `screen-on` | the screen is held awake; Auto-Lock → Never as backup |
+| Chrome/Edge/Firefox on iOS | yes | `screen-on` | same as Safari — they are all Safari's engine |
+| Safari on iOS < 16.4 | no | `foreground-only` | keep the screen on; Auto-Lock → Never |
+| Desktop browsers | yes | `screen-on` | a sleeping laptop stops it just the same |
+| **Android native build** | — | **`guaranteed`** | pocket the phone |
 
 Three decisions behind that table:
 
@@ -96,12 +96,13 @@ Three decisions behind that table:
   differently depending on the version the walker actually has. Only the
   *instruction* is chosen by name, because "Settings → Battery" does not exist
   on an iPhone and "Auto-Lock" does not exist on Android.
-* **The tone runs on Chromium/Android only.** Chrome exempts a tab that is
-  playing audio from being frozen, and Web Audio at 0.0001 gain does not take
-  audio focus, so the walker's own music keeps playing. On iOS it would buy
-  nothing — Safari suspends the page on lock regardless — and an audio context
-  there can interrupt what the walker is listening to, which is the exact
-  failure this is meant to fix. On desktop it is battery for nothing.
+* **No audio keep-alive.** An inaudible tone used to keep Chrome on Android
+  from freezing a hidden tab, and the app promised recording with the screen
+  off on the strength of it. The tab did stay alive — but Chrome stops
+  delivering geolocation to any hidden page by design
+  ([crbug.com/506435](https://bugs.chromium.org/p/chromium/issues/detail?id=506435)),
+  so walkers who locked the phone lost minutes of track. The tone is gone and
+  no web grade promises the screen can go off.
 * **iPadOS reports itself as a Mac.** A touch-capable "Macintosh" is an iPad
   and suspends pages like an iPhone, so it is graded as iOS, not as a desktop.
 

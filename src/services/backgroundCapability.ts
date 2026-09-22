@@ -7,7 +7,7 @@
  */
 
 export type Engine = 'native-android';
-export type CaptureLevel = 'foreground-only' | 'best-effort' | 'screen-on' | 'guaranteed';
+export type CaptureLevel = 'foreground-only' | 'screen-on' | 'guaranteed';
 
 export interface BackgroundCapability {
   engine: Engine;
@@ -15,7 +15,6 @@ export interface BackgroundCapability {
   os: 'android' | 'ios' | 'desktop' | 'unknown';
   installed: boolean;
   wakeLock: boolean;
-  audioKeepAlive: boolean;
   level: CaptureLevel;
 }
 
@@ -25,7 +24,6 @@ const NATIVE: BackgroundCapability = {
   os: 'android',
   installed: true,
   wakeLock: true,
-  audioKeepAlive: false,
   level: 'guaranteed',
 };
 
