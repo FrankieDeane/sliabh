@@ -81,6 +81,12 @@ jobs:
         # project is regenerated here and cannot drift from it.
         run: npx expo prebuild -p android --no-install
 
+      # Needs the generated project, since prebuild is what writes the flag.
+      # A module that can only compile with the New Architecture on fails four
+      # minutes into Gradle with "cannot find symbol" on a class nobody wrote.
+      - name: Check nothing requires the New Architecture
+        run: npm run check:newarch
+
       - name: Confirm the foreground service survived the merge
         # If this ever stops matching, recording with the screen off is gone
         # and nothing else in the build would say so.
