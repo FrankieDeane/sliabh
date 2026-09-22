@@ -164,8 +164,8 @@ export function formatPace(minPerKm: number | null): string {
   return secs === 60 ? `${mins + 1}'00"` : `${mins}'${String(secs).padStart(2, '0')}"`;
 }
 
-/** `+420 m` / `—` when the track carries no altitude. */
+/** `+420 m` / `—` when the track carries no altitude or gain is zero. */
 export function formatGain(stats: ElevationStats | null): string {
-  if (!stats) return '—';
+  if (!stats || stats.gain === 0) return '—';
   return `+${stats.gain} m`;
 }
