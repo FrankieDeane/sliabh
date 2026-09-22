@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { isAreaCached, isTileCachingSupported } from '../../utils/offlineTiles';
+import { BACKGROUND_TRACKING_SUPPORTED as backgroundOk } from '../../services/backgroundTrack';
 import { useLangStore } from '../../store/langStore';
 
 interface Colors { surface: string; elevated: string; border: string; text: string; muted: string; accent: string }
@@ -95,10 +96,15 @@ export function OfflineReadiness({
     {
       key: 'gps',
       label: t('Grabar tu recorrido', 'Recording your hike'),
-      detail: t(
-        'El GPS del celular no usa datos: graba igual sin señal y el recorrido queda en el dispositivo hasta que vuelva la conexión. Eso sí: la grabación se pausa si cambiás de app o bloqueás la pantalla, así que dejá la pantalla de caminata abierta.',
-        "The phone's GPS needs no data: it records without signal and the track stays on the device until the connection returns. One caveat: recording pauses if you switch apps or lock the screen, so leave the hike screen open.",
-      ),
+      detail: backgroundOk
+        ? t(
+            'El GPS no usa datos: graba sin señal, con la pantalla apagada y mientras escuchás música. El recorrido queda en el teléfono hasta que vuelva la conexión.',
+            "GPS needs no data: it records with no signal, with the screen off and while you play music. The track stays on the phone until a connection returns.",
+          )
+        : t(
+            'El GPS no usa datos: graba igual sin señal y el recorrido queda en el teléfono. Pero en el navegador la grabación se corta si bloqueás la pantalla o pasás a otra app — para eso está la app instalada.',
+            "GPS needs no data: it records without signal and the track stays on the phone. But in a browser, recording stops if you lock the screen or switch apps — that is what the installed app is for.",
+          ),
       state: 'ready',
     },
   ];

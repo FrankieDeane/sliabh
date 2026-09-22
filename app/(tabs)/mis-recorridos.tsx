@@ -22,6 +22,7 @@ import {
 import { findTrailForHike } from '../../src/data/trailLookup';
 import { FREE_TRACK_ID } from '../../src/components/hike/HikeMode';
 import { ShareTrackRow } from '../../src/components/hike/ShareTrackRow';
+import { TrackMapPreview } from '../../src/components/hike/TrackMapPreview';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 
@@ -161,14 +162,21 @@ export default function MisRecorridosScreen() {
               )}
             </Text>
             {pending.map((p) => (
-              <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                <Ionicons name="time-outline" size={15} color="#f59e0b" />
-                <Text style={{ color: c.text, fontSize: 12.5, flex: 1 }} numberOfLines={1}>
-                  {trackLabel(p.trailId)}
-                </Text>
-                <Text style={{ color: c.muted, fontSize: 12 }}>
-                  {fmtDistance(p.distanceKm)} · {fmtDuration(p.durationS)}
-                </Text>
+              <View key={p.id} style={{ gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Ionicons name="time-outline" size={15} color="#f59e0b" />
+                  <Text style={{ color: c.text, fontSize: 12.5, flex: 1 }} numberOfLines={1}>
+                    {trackLabel(p.trailId)}
+                  </Text>
+                  <Text style={{ color: c.muted, fontSize: 12 }}>
+                    {fmtDistance(p.distanceKm)} · {fmtDuration(p.durationS)}
+                  </Text>
+                </View>
+                <TrackMapPreview
+                  points={p.points}
+                  colors={c}
+                  routePoints={findTrailForHike(p.trailId)?.gpxTrack}
+                />
               </View>
             ))}
             <TouchableOpacity
@@ -240,6 +248,11 @@ export default function MisRecorridosScreen() {
                   {fmtDuration(track.duration_s)}
                 </Text>
               </View>
+              <TrackMapPreview
+                points={track.points}
+                colors={c}
+                routePoints={findTrailForHike(track.trail_id)?.gpxTrack}
+              />
               <ShareTrackRow
                 track={track}
                 colors={c}
