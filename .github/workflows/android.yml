@@ -67,6 +67,12 @@ jobs:
 
       # The app's own guarantees, checked before anything is shipped to a
       # phone. The offline suite needs the web export, so it runs here too.
+      # Seconds, and it catches the class of failure that otherwise shows up
+      # two minutes into Gradle as a missing plugin: an Expo package from the
+      # wrong SDK, which the web bundle happily ignores.
+      - name: Check the Expo packages match the SDK
+        run: npm run check:sdk
+
       - name: Check the sun almanac
         run: npm run validate:solar
 

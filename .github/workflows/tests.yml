@@ -31,6 +31,11 @@ jobs:
 
       - run: npm ci
 
+      # A package from the wrong Expo SDK passes the web build and breaks the
+      # native one, so it is caught here rather than in Gradle.
+      - name: Expo packages match the SDK
+        run: npm run check:sdk
+
       - name: Solar almanac vs SunCalc
         run: npm run validate:solar
 
