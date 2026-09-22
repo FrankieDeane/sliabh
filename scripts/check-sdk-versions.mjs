@@ -32,9 +32,6 @@ const { dependencies = {}, devDependencies = {} } = require('../package.json');
 const declared = { ...dependencies, ...devDependencies };
 const sdk = require('../node_modules/expo/package.json').version.split('.')[0];
 
-/** The major is what decides ABI and Gradle plugin compatibility. */
-const major = (range) => (String(range).match(/(\d+)/) || [])[1];
-
 const problems = [];
 for (const [name, want] of Object.entries(expected)) {
   if (!declared[name]) continue;
@@ -45,9 +42,29 @@ for (const [name, want] of Object.entries(expected)) {
     problems.push(`${name}: declared as ${declared[name]} but not installed`);
     continue;
   }
-  if (major(want) !== major(installed)) {
+  if (semver.satisfies(installed, want, { loose: true })) continue;
+
+  // Two different failures, and only these two are worth stopping a build:
+  //
+  // *Behind* the expected range pins an older toolchain. react-native 0.76.3
+  // passed a major-only check where the SDK expects 0.76.9, and those two
+  // patch releases pin different Kotlin versions — so expo-modules-core chose
+  // a Compose compiler for a Kotlin the build was not using, and the APK died
+  // in compileReleaseKotlin after four minutes.
+  //
+  // A *major* ahead is a package from a later SDK, which is how expo-linking
+  // 56 landed in an SDK 52 project and asked for a Gradle plugin that did not
+  // exist yet.
+  //
+  // A patch or minor ahead inside the same major is neither, and failing on it
+  // would make this check something people learn to skip.
+  const min = semver.minVersion(want, { loose: true });
+  const behind = min && semver.lt(installed, min);
+  const majorAhead = min && semver.major(installed) > semver.major(min);
+  if (behind || majorAhead) {
     problems.push(
-      `${name}: installed ${installed} (declared ${declared[name]}), SDK ${sdk} expects ${want}`,
+      `${name}: installed ${installed} (declared ${declared[name]}), SDK ${sdk} expects ${want}` +
+        ` — ${behind ? 'behind, pins an older toolchain' : 'from a later SDK'}`,
     );
   }
 }
