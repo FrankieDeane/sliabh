@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopWidth: 1,
     paddingBottom: 0,
+    zIndex: 20,
     // env() for safe-area insets — only set on web where it's CSS
     ...({ paddingBottom: 'env(safe-area-inset-bottom, 0px)' } as object),
   },
