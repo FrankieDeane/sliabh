@@ -1,10 +1,13 @@
-/* Sliabh — Service Worker v28
+/* Sliabh — Service Worker v29
    - Precache the offline map shell (parques.html + vendored MapLibre/jsPDF)
      so the map works on the very first offline visit.
    - Tile caching now matches the providers the map actually uses (ESRI World
      Imagery + terrarium DEM), and retains any tile fetched while online so
-     browsing an area online makes it available offline. */
-const CACHE = 'sliabh-v28';
+     browsing an area online makes it available offline.
+   - v29: SPA navigation fallback skips per-route lookup — every non-.html
+     navigation request falls directly back to cached '/', which is correct
+     for a single-output SPA and avoids serving a stale or missing route. */
+const CACHE = 'sliabh-v29';
 const TILE_CACHE = 'sliabh-tiles-v1';
 
 // Same-origin assets the offline map needs. Kept small and stable; the
@@ -96,20 +99,34 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // HTML pages and navigation — ALWAYS network-first, never serve stale HTML.
-  // Fall back to the precached copy (ignoreSearch so /parques.html?v=… hits).
+  // HTML pages and navigation — network-first; SPA-aware offline fallback.
+  // For explicit .html requests (parques.html, etc.) try the specific URL first.
+  // For all other navigation (SPA routes like /mis-recorridos, /rutas, etc.)
+  // skip straight to the cached shell — those paths have no separate HTML file.
   const isHtml =
     e.request.mode === 'navigate' ||
     url.pathname.endsWith('.html') ||
     url.pathname === '/' ||
     url.pathname === '';
   if (isHtml) {
+    const isExplicitHtmlFile = url.pathname.endsWith('.html');
     e.respondWith(
-      fetch(e.request).catch(() =>
-        caches.match(e.request, { ignoreSearch: true }).then(
-          (r) => r || caches.match('/', { ignoreSearch: true })
-        )
-      )
+      fetch(e.request).catch(() => {
+        if (isExplicitHtmlFile) {
+          return (
+            caches.match(e.request, { ignoreSearch: true }).then(
+              (r) => r || caches.match('/', { ignoreSearch: true }),
+            )
+          );
+        }
+        // SPA route: always serve the app shell from cache.
+        return caches.match('/', { ignoreSearch: true }).then(
+          (r) => r || new Response(
+            '<h1>Offline</h1><p>Abrí la app una vez con señal para activar el modo offline.</p>',
+            { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } },
+          ),
+        );
+      })
     );
     return;
   }

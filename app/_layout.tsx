@@ -16,6 +16,7 @@ import { supabase } from '../src/services/supabase';
 import { syncPendingTracks } from '../src/services/trackSync';
 import { InstallPrompt } from '../src/components/offline/InstallPrompt';
 import { HikeHost } from '../src/components/hike/HikeHost';
+import { MobileWebNav } from '../src/components/layout/MobileWebNav';
 /**
  * Side-effect import, and it must stay one.
  *
@@ -216,6 +217,7 @@ export default function RootLayout() {
               }}
             />
           </View>
+          <MobileWebNav />
           <CookieBanner />
           <HikeHost />
           <InstallPrompt />
