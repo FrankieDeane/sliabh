@@ -1,1 +1,3 @@
-export const LOGO_URI = '/SLIABH_Logo_Transparent.png';
+import { asset } from './asset';
+
+export const LOGO_URI = asset('/SLIABH_Logo_Transparent.png');

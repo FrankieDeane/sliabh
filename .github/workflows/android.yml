@@ -5,14 +5,12 @@
 # Actions tab and an installable APK comes out the other end, roughly twenty
 # minutes later, attached to the run.
 #
-# No Expo account, no EAS queue, no secrets, no Play Store. The build runs
-# entirely on the GitHub runner and is signed with the keystore Expo's own
-# template ships, which is stable across builds — so each new APK installs
-# over the previous one instead of being refused as a different app.
-#
-# That keystore is public and is fine for a phone in your pocket. It is NOT
-# fine for the Play Store: that needs a private keystore of your own, which is
-# what the `production` path in eas.json and docs/NATIVE-BUILD.md are for.
+# No Expo account, no EAS queue, no Play Store. The build runs entirely on the
+# GitHub runner. Releases (android-v* tags) are signed with Sliabh's private
+# key from the ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD secrets, and
+# refuse to build without it; the same key every time, so each new APK
+# installs over the previous one. Other builds fall back to the template's
+# public key, which is fine for proving the app compiles and nothing else.
 
 name: Android APK
 
@@ -106,17 +104,62 @@ jobs:
           grep -q 'android.permission.FOREGROUND_SERVICE_LOCATION' "$MANIFEST"
           echo "background location + foreground service permissions present"
 
+      # A release is installed by the public, so it is signed with Sliabh's own
+      # private key. The template's key is public: anyone could sign an APK
+      # with it that Android would accept as an update to this app. Other
+      # builds only prove the app compiles and may use the template key.
+      - name: Load the release signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          set -e
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$KEYSTORE_PASSWORD" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/sliabh-release.keystore"
+            {
+              echo "SIGNING_ARGS<<EOF"
+              echo "-Pandroid.injected.signing.store.file=$RUNNER_TEMP/sliabh-release.keystore"
+              echo "-Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD"
+              echo "-Pandroid.injected.signing.key.alias=sliabh"
+              echo "-Pandroid.injected.signing.key.password=$KEYSTORE_PASSWORD"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+            echo "signing with the Sliabh release key"
+          elif [[ "$GITHUB_REF" == refs/tags/android-v* ]]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD are not set. A public release must not ship signed with the template's public key."
+            exit 1
+          else
+            echo "no release key configured; this build uses the template key and is not for distribution"
+          fi
+
       - name: Build the APK
         working-directory: android
         # The template asks for 2 GB, which is tight for a Hermes release
         # build and shows up as a Gradle daemon killed with no useful error.
-        run: ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
+        run: ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g" $SIGNING_ARGS
+
+      - name: Confirm the APK carries the release key
+        if: env.SIGNING_ARGS != ''
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          set -e
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          want=$(keytool -list -keystore "$RUNNER_TEMP/sliabh-release.keystore" -storepass "$KEYSTORE_PASSWORD" -alias sliabh -v \
+            | grep -m1 'SHA256:' | sed 's/.*SHA256: *//; s/://g' | tr 'A-F' 'a-f')
+          got=$("$APKSIGNER" verify --print-certs "$APK" | grep -m1 'SHA-256 digest' | sed 's/.*: *//')
+          echo "expected $want"; echo "signed   $got"
+          [ -n "$want" ] && [ "$want" = "$got" ]
 
       - name: Name it after the commit
         id: name
         run: |
           SHA=$(git rev-parse --short HEAD)
           cp android/app/build/outputs/apk/release/app-release.apk "sliabh-${SHA}.apk"
+          # Same file under a fixed name, so /app can link to
+          # releases/latest/download/sliabh.apk and download in one tap.
+          cp "sliabh-${SHA}.apk" sliabh.apk
           echo "apk=sliabh-${SHA}.apk" >> "$GITHUB_OUTPUT"
           echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
           ls -lh "sliabh-${SHA}.apk"
@@ -134,7 +177,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/android-v')
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.name.outputs.apk }}
+          files: |
+            ${{ steps.name.outputs.apk }}
+            sliabh.apk
           name: Sliabh Android ${{ github.ref_name }}
           body: |
             APK instalable de Sliabh (commit `${{ steps.name.outputs.sha }}`).
