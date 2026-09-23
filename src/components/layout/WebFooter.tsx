@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
+import { appPromoAudience } from '../../utils/appPromo';
 import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
 import { subscribeNewsletter } from '../../services/supabase';
 import { SUBSCRIBED_KEY } from '../ui/NewsletterPopup';
@@ -40,6 +41,7 @@ export function WebFooter() {
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(20, (width - contentW) / 2);
   const isWide = width >= 720;
+  const appAudience = appPromoAudience(width);
 
   return (
     <View
@@ -64,6 +66,24 @@ export function WebFooter() {
               <Ionicons name="call-outline" size={12} color="#ef4444" />
               <Text style={[styles.emergencyTxt, { color: c.muted }]}>Emergencias APN: 105</Text>
             </View>
+            {appAudience && (
+              <TouchableOpacity
+                style={styles.appCta}
+                onPress={() => router.push('/(tabs)/app')}
+                activeOpacity={0.85}
+                accessibilityRole="link"
+              >
+                <Ionicons name="logo-android" size={18} color="#04210f" />
+                <View style={{ flexShrink: 1 }}>
+                  <Text style={styles.appCtaTitle}>
+                    {appAudience === 'android'
+                      ? t('Descargá la app', 'Get the app')
+                      : t('Probala en tu Android', 'Try it on your Android')}
+                  </Text>
+                  <Text style={styles.appCtaSub}>{t('Graba con la pantalla apagada', 'Records with the screen off')}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
             <NewsletterSignup c={c} />
           </View>
 
@@ -302,6 +322,13 @@ const styles = StyleSheet.create({
   brandName: { fontSize: 18, fontWeight: '800', letterSpacing: -0.4 },
   brandSub: { fontSize: 9, fontWeight: '600', letterSpacing: 2.5, textTransform: 'uppercase' },
   tagline: { fontSize: 13, lineHeight: 20 },
+  appCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 10, alignSelf: 'flex-start',
+    backgroundColor: '#22c55e', borderRadius: 12,
+    paddingHorizontal: 14, paddingVertical: 10, marginTop: 12,
+  },
+  appCtaTitle: { color: '#04210f', fontSize: 13.5, fontWeight: '800' },
+  appCtaSub: { color: '#14532d', fontSize: 11, fontWeight: '600', marginTop: 1 },
   emergencyBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6,
