@@ -15,13 +15,22 @@
 
 export type BackgroundStartResult =
   | { started: true }
-  | { started: false; reason: 'foreground-denied' | 'background-denied' | 'unavailable' | 'not-applicable' };
+  | { started: false; reason: 'foreground-denied' | 'services-off' | 'unavailable' | 'not-applicable' };
 
 export async function startBackgroundTrack(_trailName?: string | null): Promise<BackgroundStartResult> {
   return { started: false, reason: 'not-applicable' };
 }
 
 export async function stopBackgroundTrack(): Promise<void> {}
+
+export async function ensureLocationServices(): Promise<boolean> {
+  return true;
+}
+
+/** The web page reads the position itself (HikeMode's watchPosition). */
+export async function watchScreenPosition(_onFix: (lat: number, lon: number) => void): Promise<() => void> {
+  return () => {};
+}
 
 export async function isBackgroundTrackRunning(): Promise<boolean> {
   return false;

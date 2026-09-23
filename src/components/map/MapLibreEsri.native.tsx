@@ -38,6 +38,8 @@ interface Props {
   showPolyline?: boolean;
   /** Reference route of the trail (the suggested path), drawn in green. */
   routePoints?: LatLon[];
+  /** The hiker's own walked track, drawn in blue. */
+  trackPoints?: LatLon[];
   onLocationError?: () => void;
 }
 
@@ -86,6 +88,11 @@ body{font-family:-apple-system,system-ui,sans-serif;}
   window.__hikePending=false;
   window.startHikeTracking=function(){window.__hikePending=true;};
   window.stopHikeTracking=function(){window.__hikePending=false;};
+  // The app owns the GPS (a foreground service in hike mode) and pushes the
+  // position and the walked track in; hold the latest until the map is ready.
+  window.__pendingUser=null;window.__pendingTrack=null;
+  window.setUserPos=function(lat,lng){window.__pendingUser=[lng,lat];};
+  window.setUserTrack=function(c){window.__pendingTrack=c;};
 
   var esriStyle = {
     version:8,
@@ -184,6 +191,33 @@ body{font-family:-apple-system,system-ui,sans-serif;}
       return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
     }
 
+    function placeUser(lng,lat){
+      if(!hikeMarker){
+        var el=document.createElement('div');
+        el.style.cssText='position:relative;width:34px;height:34px;';
+        el.innerHTML='<div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.3);animation:hp 1.8s ease-out infinite;"></div>'
+          +'<div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 1.5px rgba(2,6,23,0.75),0 3px 10px rgba(0,0,0,0.55);"></div>'
+          +'<style>@keyframes hp{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.4);opacity:0}}</style>';
+        hikeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng,lat]).addTo(map);
+        // First fix: bring the walker into view, close enough to read the trail.
+        map.jumpTo({center:[lng,lat],zoom:Math.max(map.getZoom(),15)});
+        return;
+      }
+      hikeMarker.setLngLat([lng,lat]);
+      if(following) map.panTo([lng,lat],{animate:true,duration:500});
+    }
+    window.setUserPos=function(lat,lng){
+      if(!isFinite(lat)||!isFinite(lng)) return;
+      placeUser(lng,lat);
+    };
+    window.setUserTrack=function(coords){
+      hikeTrack=(coords||[]).filter(function(c){return c&&isFinite(c[0])&&isFinite(c[1]);});
+      var src=map.getSource('user-track');
+      if(src) src.setData(lineFeature(hikeTrack));
+    };
+    if(window.__pendingTrack){window.setUserTrack(window.__pendingTrack);window.__pendingTrack=null;}
+    if(window.__pendingUser){placeUser(window.__pendingUser[0],window.__pendingUser[1]);window.__pendingUser=null;}
+
     // Panning by hand releases the camera so the live fix stops yanking the
     // map back while the walker reads the terrain ahead.
     function releaseFollow(e){
@@ -216,17 +250,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
           var src=map.getSource('user-track');
           if(src) src.setData(lineFeature(hikeTrack));
         }
-        if(!hikeMarker){
-          var el=document.createElement('div');
-          el.style.cssText='position:relative;width:34px;height:34px;';
-          el.innerHTML='<div style="position:absolute;inset:0;border-radius:50%;background:rgba(59,130,246,0.3);animation:hp 1.8s ease-out infinite;"></div>'
-            +'<div style="position:absolute;top:8px;left:8px;width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 1.5px rgba(2,6,23,0.75),0 3px 10px rgba(0,0,0,0.55);"></div>'
-            +'<style>@keyframes hp{0%{transform:scale(1);opacity:.65}100%{transform:scale(2.4);opacity:0}}</style>';
-          hikeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng,lat]).addTo(map);
-        } else {
-          hikeMarker.setLngLat([lng,lat]);
-        }
-        if(following) map.panTo([lng,lat],{animate:true,duration:500});
+        placeUser(lng,lat);
         try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationUpdate',lat:lat,lon:lng}));}catch(e){}
       },function(err){
         try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationError',code:err&&err.code}));}catch(e){}
@@ -270,6 +294,8 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   height = 400,
   layer = 'esri-topo',
   routePoints,
+  userPosition,
+  trackPoints,
 }: Props, ref) {
   const webviewRef = useRef<WebView>(null);
   const loaded = useRef(false);
@@ -314,12 +340,37 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
     }
   }
 
+  // The latest position and track, replayed after every (re)load of the page.
+  const userRef = useRef(userPosition);
+  userRef.current = userPosition;
+  const trackRef = useRef(trackPoints);
+  trackRef.current = trackPoints;
+
+  const pushUser = useCallback(() => {
+    const u = userRef.current;
+    if (!loaded.current || !u || !Number.isFinite(u.lat) || !Number.isFinite(u.lon)) return;
+    webviewRef.current?.injectJavaScript(`window.setUserPos && window.setUserPos(${u.lat},${u.lon}); true;`);
+  }, []);
+
+  const pushTrack = useCallback(() => {
+    if (!loaded.current) return;
+    const coords = (trackRef.current ?? [])
+      .filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lon))
+      .map((p) => [p.lon, p.lat]);
+    webviewRef.current?.injectJavaScript(`window.setUserTrack && window.setUserTrack(${JSON.stringify(coords)}); true;`);
+  }, []);
+
   function handleLoad() {
     loaded.current = true;
     if (markers.length) pendingMarkers.current = markers;
     if (flyTo) pendingFly.current = flyTo;
     flush();
+    pushTrack();
+    pushUser();
   }
+
+  React.useEffect(() => { pushUser(); }, [userPosition?.lat, userPosition?.lon, pushUser]);
+  React.useEffect(() => { pushTrack(); }, [trackPoints, pushTrack]);
 
   // Send markers whenever they change
   React.useEffect(() => {

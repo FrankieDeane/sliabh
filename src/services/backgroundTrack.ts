@@ -82,20 +82,20 @@ if (!TaskManager.isTaskDefined(HIKE_LOCATION_TASK)) {
 
 export type BackgroundStartResult =
   | { started: true }
-  | { started: false; reason: 'foreground-denied' | 'background-denied' | 'unavailable' };
+  | { started: false; reason: 'foreground-denied' | 'services-off' | 'unavailable' };
 
 export async function startBackgroundTrack(trailName?: string | null): Promise<BackgroundStartResult> {
   try {
     const fg = await Location.requestForegroundPermissionsAsync();
     if (fg.status !== 'granted') return { started: false, reason: 'foreground-denied' };
+    if (!(await ensureLocationServices())) return { started: false, reason: 'services-off' };
 
-    // "Allow all the time" — without it Android stops the updates as soon as
-    // the app leaves the screen, which is exactly the case this exists for.
-    // Android 11+ will not grant it in the same prompt as the foreground one,
-    // so this is deliberately a second, separate ask.
-    const bg = await Location.requestBackgroundPermissionsAsync();
-    if (bg.status !== 'granted') return { started: false, reason: 'background-denied' };
-
+    // No "Allow all the time" needed: a foreground service started while the
+    // app is on screen keeps its while-in-use location access after the screen
+    // goes off (Android's own rule, and expo-location skips the background
+    // check when a foregroundService is given). Asking for it anyway sent the
+    // walker to a settings page, and backing out of it cancelled the whole
+    // recording, map dot included.
     if (await Location.hasStartedLocationUpdatesAsync(HIKE_LOCATION_TASK)) {
       return { started: true };
     }
@@ -125,6 +125,42 @@ export async function startBackgroundTrack(trailName?: string | null): Promise<B
     return { started: true };
   } catch {
     return { started: false, reason: 'unavailable' };
+  }
+}
+
+/**
+ * The phone's location switch being off is the commonest "the app can't find
+ * me": permission is granted, yet no fix ever comes. Android can show its own
+ * one-tap "turn on location" dialog; accept its answer.
+ */
+export async function ensureLocationServices(): Promise<boolean> {
+  try {
+    if (await Location.hasServicesEnabledAsync()) return true;
+    await Location.enableNetworkProviderAsync();
+    return await Location.hasServicesEnabledAsync();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Where the walker is, for the screen only. The recorded track keeps only
+ * fixes that pass the accuracy filter, so under trees or indoors the first one
+ * can take minutes, and a map that waits for it looks like a map that cannot
+ * find you. This shows every fix as it comes, starting with the last known
+ * one, and never writes to the track. Returns the function that stops it.
+ */
+export async function watchScreenPosition(onFix: (lat: number, lon: number) => void): Promise<() => void> {
+  try {
+    const last = await Location.getLastKnownPositionAsync({ maxAge: 5 * 60_000 });
+    if (last) onFix(last.coords.latitude, last.coords.longitude);
+    const sub = await Location.watchPositionAsync(
+      { accuracy: Location.Accuracy.High, timeInterval: 3000, distanceInterval: 2 },
+      (loc) => onFix(loc.coords.latitude, loc.coords.longitude),
+    );
+    return () => sub.remove();
+  } catch {
+    return () => {};
   }
 }
 

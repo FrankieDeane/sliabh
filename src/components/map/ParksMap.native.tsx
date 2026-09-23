@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Linking, ActivityIndicator, StyleSheet } 
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { useRouter } from 'expo-router';
 import { SITE } from './trailMapHtml';
+import { getQuickFix } from '../../services/quickFix';
 
 // Same page and version the website embeds on /mapas, so the app shows the
 // exact same general map: 3D terrain, trail clusters visible from all of
@@ -12,11 +13,37 @@ const PAGE = `${SITE}/parques.html?v=20260923a&ctx=mapas`;
 // parques.html talks to its host through window.parent (an iframe on the
 // web). A WebView page is its own parent, so it would never speak: route
 // window.parent.postMessage to React Native before the page's scripts run.
+//
+// It also replaces navigator.geolocation with the phone's own location (see
+// getQuickFix): the WebView's often times out on Android before any fix.
 export const BRIDGE = `(function(){
   try {
     window.parent = { postMessage: function(m){
       try { window.ReactNativeWebView.postMessage(JSON.stringify(m)); } catch(e){}
     } };
+  } catch(e) {}
+  try {
+    var pending = {}, seq = 0, watches = {};
+    window.__rnGeoReply = function(id, r){
+      var cb = pending[id]; if (!cb) return; delete pending[id];
+      if (r && r.ok) cb.s({ coords: r.coords, timestamp: r.timestamp });
+      else if (cb.e) cb.e({ code: (r && r.code) || 2, message: (r && r.message) || '',
+        PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 });
+    };
+    var geo = {
+      getCurrentPosition: function(s, e){
+        var id = ++seq; pending[id] = { s: s, e: e };
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'geo', id: id }));
+      },
+      watchPosition: function(s, e){
+        var id = ++seq;
+        var tick = function(){ geo.getCurrentPosition(s, e); };
+        tick(); watches[id] = setInterval(tick, 5000);
+        return id;
+      },
+      clearWatch: function(id){ clearInterval(watches[id]); delete watches[id]; }
+    };
+    Object.defineProperty(navigator, 'geolocation', { configurable: true, get: function(){ return geo; } });
   } catch(e) {}
 })(); true;`;
 
@@ -68,6 +95,11 @@ export const ParksMap = forwardRef<ParksMapHandle, Props>(function ParksMap({ la
     let data: any;
     try { data = JSON.parse(e.nativeEvent.data); } catch { return; }
     if (data?.type === 'mapReady') pushState();
+    else if (data?.type === 'geo' && Number.isFinite(data.id)) {
+      getQuickFix().then((r) => {
+        webRef.current?.injectJavaScript(`window.__rnGeoReply && window.__rnGeoReply(${Number(data.id)}, ${JSON.stringify(r)}); true;`);
+      });
+    }
     else if (data?.type === 'gpx' && data.id) openTrail(String(data.id));
   }
 
