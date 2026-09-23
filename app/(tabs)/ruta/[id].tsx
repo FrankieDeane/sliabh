@@ -48,6 +48,7 @@ import { EarthquakeRiskBanner } from '../../../src/components/contribute/Earthqu
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 import { SeoHead } from '../../../src/components/ui/SeoHead';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
+import { asset } from '../../../src/constants/asset';
 
 // Base Argentina trails plus the richer Bariloche treks. Bariloche entries add
 // optional detail fields (long_description, namedWaypoints, logistics, …); the
@@ -636,7 +637,7 @@ export default function TrailDetailScreen() {
           {...(Platform.OS === 'web' ? ({ 'data-trail-hero': true } as any) : {})}
         >
           <ImageBackground
-            source={{ uri: trail.photo_uri }}
+            source={{ uri: asset(trail.photo_uri) }}
             style={{ flex: 1, justifyContent: 'flex-end' }}
             resizeMode="cover"
           >

@@ -39,14 +39,22 @@ GitHub, que ya tenés.
 Andá a **Actions → Android APK → Run workflow**. Pones una nota (opcional) y
 listo. A los ~20 minutos el APK queda colgado de esa corrida, en "Artifacts".
 
-No hace falta cuenta de Expo, ni EAS, ni secretos, ni Play Store: el build
-corre entero en el runner de GitHub. Se firma con el keystore que trae la
-plantilla de Expo, que es **el mismo en cada build**, así que cada APK nuevo se
-instala encima del anterior en vez de ser rechazado como si fuera otra app.
+No hace falta cuenta de Expo, ni EAS, ni Play Store: el build corre entero en
+el runner de GitHub.
 
-Ese keystore es público y está perfecto para un teléfono tuyo. **No** sirve
-para Play Store: eso necesita un keystore privado propio, que es para lo que
-está el perfil `production` de `eas.json`, más abajo.
+**La firma.** Un release (tag `android-v*`) se firma con la clave privada de
+Sliabh, guardada en dos secretos del repo: `ANDROID_KEYSTORE_BASE64` (el
+keystore en base64) y `ANDROID_KEYSTORE_PASSWORD`, con alias `sliabh`. Sin
+esos secretos el release **no se construye**: la clave de la plantilla de Expo
+es pública, y cualquiera podría firmar con ella un APK que Android aceptaría
+como actualización de Sliabh. El workflow además comprueba que el APK salió
+firmado con esa clave. Los builds de PR y de `sliabh-index` usan la clave de
+la plantilla si no hay secretos: solo prueban que compila.
+
+Guardá el keystore y su contraseña fuera de GitHub también (un gestor de
+contraseñas o Drive privado). **Si se pierden, ningún APK nuevo se va a poder
+instalar encima del anterior** y todos van a tener que desinstalar y volver a
+instalar. Es la misma clave que va a necesitar Play Store.
 
 ### Para tener un link permanente
 

@@ -5,6 +5,7 @@ import type { ArgentinaTrail } from '../../data/argentinaTrails';
 import { difficultyLabel, activityLabel, seasonLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
 import { fetchWikiImage } from '../../utils/wikiImage';
 import { useLangStore, Lang } from '../../store/langStore';
+import { asset } from '../../constants/asset';
 
 /** Translate a trail duration unit ('horas'/'dias') for display. */
 function unitLabel(unit: string, lang: Lang): string {
@@ -24,7 +25,7 @@ function useWikiPhoto(trail: ArgentinaTrail): string {
     fetchWikiImage(query).then((u) => { if (alive && u) setUrl(u); });
     return () => { alive = false; };
   }, [trail.name]);
-  return url || trail.photo_uri;
+  return url || asset(trail.photo_uri);
 }
 
 // ── Featured card — full-bleed hero, AllTrails-style ────────────────────────

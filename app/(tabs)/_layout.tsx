@@ -135,6 +135,10 @@ export default function TabLayout() {
         options={{ href: null }}
       />
       <Tabs.Screen
+        name="app"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
         name="faq"
         options={{
           tabBarIcon: ({ focused }) => (
