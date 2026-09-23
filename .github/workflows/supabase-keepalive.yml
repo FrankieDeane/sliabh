@@ -3,32 +3,86 @@ name: Supabase keep-alive
 # The Free-tier Supabase project auto-pauses after 7 days with no database
 # activity — which silently breaks login/logout/registration and every other
 # Supabase-backed feature until someone notices and restores it from the
-# dashboard. This runs a trivial read against a public table daily so the
-# project never goes 7 days idle.
+# dashboard. This reads a public table twice a day so the project never goes
+# 7 days idle, and checks that Auth answers too.
+#
+# A second, independent ping runs on Netlify (netlify/functions/
+# supabase-keepalive.mjs), because GitHub switches scheduled workflows off in
+# a public repo after 60 days without commits.
+#
+# If the ping fails, an issue is opened (GitHub notifies the owner); the next
+# good run closes it.
 #
 # Uses the same public anon key committed in netlify.toml (safe to commit —
 # it's embedded in the client bundle and gated by Row Level Security).
 on:
   schedule:
-    - cron: '0 12 * * *' # daily at 12:00 UTC
+    - cron: '0 6,18 * * *' # twice a day, 03:00 and 15:00 Argentina
   workflow_dispatch: {}
+
+permissions:
+  issues: write
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
       SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
     steps:
-      - name: Ping Supabase (read one row from trail_reports)
+      - name: Ping Supabase (database read + Auth health)
+        id: ping
         run: |
-          status=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
-            "$SUPABASE_URL/rest/v1/trail_reports?select=id&limit=1" \
-            -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
-          echo "HTTP $status"
-          cat /tmp/resp.json
-          if [ "$status" -ge 300 ]; then
-            echo "::error::Supabase ping failed with HTTP $status — project may be paused or unreachable."
-            exit 1
-          fi
+          check() {
+            local name=$1 url=$2 status
+            status=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 30 \
+              --retry 3 --retry-delay 20 --retry-all-errors \
+              "$url" -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+            echo "$name: HTTP $status"; head -c 300 /tmp/resp.json; echo
+            if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+              echo "::error::$name failed with HTTP $status — the project may be paused or down."
+              return 1
+            fi
+          }
+          ok=0
+          check "Database" "$SUPABASE_URL/rest/v1/trail_reports?select=id&limit=1" || ok=1
+          check "Auth" "$SUPABASE_URL/auth/v1/health" || ok=1
+          exit $ok
+
+      - name: Open an issue when Supabase is down
+        if: failure() && steps.ping.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Supabase no responde';
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: all } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', per_page: 100 });
+            const open = all.filter((i) => !i.pull_request && i.title === 'Supabase no responde');
+            const body = [
+              `El ping de Supabase falló: ${run}`,
+              '',
+              'Qué hacer:',
+              '1. Entrá a https://supabase.com/dashboard/project/pfwazngwcvirdeyamvsd',
+              '2. Si dice **Paused**, tocá **Restore project** (tarda unos minutos).',
+              '3. Si no está pausado, mirá https://status.supabase.com',
+              '',
+              'Este issue se cierra solo cuando el próximo ping salga bien.',
+            ].join('\n');
+            if (open.length) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: open[0].number, body: `Sigue fallando: ${run}` });
+            } else {
+              await github.rest.issues.create({ ...context.repo, title, body });
+            }
+
+      - name: Close the issue once Supabase is back
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: all } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', per_page: 100 });
+            const open = all.filter((i) => !i.pull_request && i.title === 'Supabase no responde');
+            for (const issue of open) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number, body: 'Supabase volvió a responder. Cierro el issue.' });
+              await github.rest.issues.update({ ...context.repo, issue_number: issue.number, state: 'closed', state_reason: 'completed' });
+            }

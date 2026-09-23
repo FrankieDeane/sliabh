@@ -160,6 +160,21 @@ jobs:
           echo "expected $want"; echo "signed   $got"
           [ -n "$want" ] && [ "$want" = "$got" ]
 
+      - name: Confirm the app points at the real Supabase project
+        # EXPO_PUBLIC_* are baked in at bundle time; without them the client
+        # falls back to placeholder.supabase.co and login silently fails.
+        run: |
+          set -e
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          REF=$(echo "$EXPO_PUBLIC_SUPABASE_URL" | sed -E 's#https://([^.]+)\..*#\1#')
+          [ -n "$REF" ] || { echo "::error::EXPO_PUBLIC_SUPABASE_URL is not set"; exit 1; }
+          unzip -p "$APK" assets/index.android.bundle > "$RUNNER_TEMP/bundle"
+          if ! grep -q "$REF" "$RUNNER_TEMP/bundle"; then
+            echo "::error::The APK bundle does not contain the Supabase project ($REF); login would not work."
+            exit 1
+          fi
+          echo "bundle points at $REF"
+
       - name: Name it after the commit
         id: name
         run: |
