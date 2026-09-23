@@ -72,13 +72,15 @@ body{font-family:-apple-system,system-ui,sans-serif;}
   display:none;position:absolute;left:12px;bottom:18px;z-index:25;
   align-items:center;gap:6px;background:rgba(15,23,42,0.88);
   border:1px solid rgba(255,255,255,0.22);border-radius:999px;
-  padding:9px 15px;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;
+  padding:11px 16px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,0.35);
 }
+#recenter.off{background:#2563eb;border-color:#93c5fd;}
 </style>
 </head>
 <body>
 <div id="map"></div>
-<div id="recenter">◎ Centrar</div>
+<div id="recenter">◎ Centrar en mí</div>
 <script>
 (function(){
   var trailRoute = ${trailRouteJson};
@@ -93,6 +95,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
   window.__pendingUser=null;window.__pendingTrack=null;
   window.setUserPos=function(lat,lng){window.__pendingUser=[lng,lat];};
   window.setUserTrack=function(c){window.__pendingTrack=c;};
+  window.setBaseLayer=function(u){window.__pendingLayer=u;};
 
   var esriStyle = {
     version:8,
@@ -116,7 +119,15 @@ body{font-family:-apple-system,system-ui,sans-serif;}
     attributionControl:true
   });
 
-  map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
+  // Top-left: the hike screen puts its map/satellite switch top-right.
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
+
+  // Swap topo/satellite in place: rebuilding the page would drop the camera,
+  // the walker's dot and the track for a few seconds every time.
+  window.setBaseLayer=function(u){
+    var src=map.getSource('esri');
+    if(src&&src.setTiles) src.setTiles([u]); else window.__pendingLayer=u;
+  };
 
   function mkEl(css,html){
     var d=document.createElement('div');
@@ -201,10 +212,23 @@ body{font-family:-apple-system,system-ui,sans-serif;}
         hikeMarker=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng,lat]).addTo(map);
         // First fix: bring the walker into view, close enough to read the trail.
         map.jumpTo({center:[lng,lat],zoom:Math.max(map.getZoom(),15)});
+        var rb=document.getElementById('recenter');
+        if(rb) rb.style.display='flex';
+        drawTrack();
         return;
       }
       hikeMarker.setLngLat([lng,lat]);
+      drawTrack();
       if(following) map.panTo([lng,lat],{animate:true,duration:500});
+    }
+    // The recorded track only keeps good fixes, so on its own it trails behind
+    // the dot; drawing it through the current position keeps the line on you.
+    function drawTrack(){
+      var src=map.getSource('user-track');
+      if(!src) return;
+      var c=hikeTrack.slice();
+      if(hikeMarker){var p=hikeMarker.getLngLat();c.push([p.lng,p.lat]);}
+      src.setData(lineFeature(c.length>1?c:[]));
     }
     window.setUserPos=function(lat,lng){
       if(!isFinite(lat)||!isFinite(lng)) return;
@@ -212,9 +236,9 @@ body{font-family:-apple-system,system-ui,sans-serif;}
     };
     window.setUserTrack=function(coords){
       hikeTrack=(coords||[]).filter(function(c){return c&&isFinite(c[0])&&isFinite(c[1]);});
-      var src=map.getSource('user-track');
-      if(src) src.setData(lineFeature(hikeTrack));
+      drawTrack();
     };
+    if(window.__pendingLayer){window.setBaseLayer(window.__pendingLayer);window.__pendingLayer=null;}
     if(window.__pendingTrack){window.setUserTrack(window.__pendingTrack);window.__pendingTrack=null;}
     if(window.__pendingUser){placeUser(window.__pendingUser[0],window.__pendingUser[1]);window.__pendingUser=null;}
 
@@ -224,7 +248,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
       if(!e || !e.originalEvent || !following) return;
       following=false;
       var btn=document.getElementById('recenter');
-      if(btn) btn.style.display='flex';
+      if(btn) btn.classList.add('off');
     }
     map.on('dragstart',releaseFollow);
     map.on('zoomstart',releaseFollow);
@@ -234,9 +258,10 @@ body{font-family:-apple-system,system-ui,sans-serif;}
     if(recenterBtn){
       recenterBtn.addEventListener('click',function(){
         following=true;
-        recenterBtn.style.display='none';
-        var last=hikeTrack[hikeTrack.length-1];
-        if(last) map.easeTo({center:last,duration:600});
+        recenterBtn.classList.remove('off');
+        var here=hikeMarker?hikeMarker.getLngLat():null;
+        var last=here?[here.lng,here.lat]:hikeTrack[hikeTrack.length-1];
+        if(last) map.easeTo({center:last,zoom:Math.max(map.getZoom(),16),bearing:0,duration:600});
       });
     }
 
@@ -245,11 +270,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
       hikeWatchId=navigator.geolocation.watchPosition(function(pos){
         var lat=pos.coords.latitude,lng=pos.coords.longitude;
         var last=hikeTrack[hikeTrack.length-1];
-        if(!last || metersBetween(last,[lng,lat])>=4){
-          hikeTrack.push([lng,lat]);
-          var src=map.getSource('user-track');
-          if(src) src.setData(lineFeature(hikeTrack));
-        }
+        if(!last || metersBetween(last,[lng,lat])>=4) hikeTrack.push([lng,lat]);
         placeUser(lng,lat);
         try{window.ReactNativeWebView.postMessage(JSON.stringify({type:'locationUpdate',lat:lat,lon:lng}));}catch(e){}
       },function(err){
@@ -318,11 +339,17 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
 
   const routeKey = routePoints?.length ? `${routePoints.length}:${routePoints[0].lat},${routePoints[0].lon}` : '';
   // Rebuilding the string remounts the WebView, so keep it stable across renders.
+  // The base layer is swapped in place (setBaseLayer), so it is not a
+  // dependency: changing it must not rebuild the page.
+  const layerRef = useRef(layer);
+  layerRef.current = layer;
   const html = React.useMemo(
-    () => buildHTML(effectiveCenter, effectiveZoom, layer, routePoints ?? []),
+    () => buildHTML(effectiveCenter, effectiveZoom, layerRef.current, routePoints ?? []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [effectiveCenter[0], effectiveCenter[1], effectiveZoom, layer, routeKey],
+    [effectiveCenter[0], effectiveCenter[1], effectiveZoom, routeKey],
   );
+  // A rebuilt page must announce itself (onLoad) before anything is sent to it.
+  React.useEffect(() => () => { loaded.current = false; }, [html]);
 
   function flush() {
     if (!loaded.current || !webviewRef.current) return;
@@ -365,9 +392,16 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
     if (markers.length) pendingMarkers.current = markers;
     if (flyTo) pendingFly.current = flyTo;
     flush();
+    pushLayer();
     pushTrack();
     pushUser();
   }
+
+  function pushLayer() {
+    if (!loaded.current) return;
+    webviewRef.current?.injectJavaScript(`window.setBaseLayer && window.setBaseLayer(${JSON.stringify(ESRI_TILES[layerRef.current])}); true;`);
+  }
+  React.useEffect(() => { pushLayer(); }, [layer]);
 
   React.useEffect(() => { pushUser(); }, [userPosition?.lat, userPosition?.lon, pushUser]);
   React.useEffect(() => { pushTrack(); }, [trackPoints, pushTrack]);
@@ -429,7 +463,6 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
     <View style={containerStyle}>
       <WebView
         ref={webviewRef}
-        key={layer}
         source={{ html, baseUrl: 'https://unpkg.com' }}
         onMessage={handleMessage}
         onLoad={handleLoad}
