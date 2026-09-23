@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { gpxTrackToGeoJSON, trackToSlopeSegments } from '../../utils/geojson';
 import { useMapFullscreen, FullscreenButton } from './MapFullscreen';
+import { MAP_SKY } from './mapSky';
 
 interface GpxPoint {
   lat: number;
@@ -229,6 +230,7 @@ export default function TrailMap3DCinematic({
 
           map.addSource('terrain-dem', terrainSrc as any);
           map.setTerrain({ source: 'terrain-dem', exaggeration: effExaggeration });
+          map.setSky?.(MAP_SKY as any);
 
           // ── Trail layers ─────────────────────────────────────────────────
           const geoJSON = gpxTrackToGeoJSON(track);

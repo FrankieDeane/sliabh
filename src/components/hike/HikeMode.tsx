@@ -428,7 +428,6 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
             height="100%"
             layer={satelliteView ? 'esri-satellite' : 'esri-topo'}
             showPolyline={false}
-            showHikingRoute={false}
             userPosition={userPos}
             routePoints={routePoints}
             trackPoints={posHistory}

@@ -16,6 +16,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
+import { appPromoAudience } from '../../utils/appPromo';
 import { deleteAccount, signOut as supabaseSignOut } from '../../services/supabase';
 import { showAlert, showConfirm } from '../../utils/alert';
 
@@ -133,6 +134,7 @@ export function WebHeader() {
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
   const isCompact = width < 720;
+  const appAudience = appPromoAudience(width);
 
   function navigate(href: string, scrollTo?: string | null) {
     setDrawerOpen(false);
@@ -283,6 +285,23 @@ export function WebHeader() {
 
               {/* Nav items */}
               <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.drawerNav}>
+                {appAudience === 'android' && !pathname.includes('/app') && (
+                  <TouchableOpacity
+                    style={styles.drawerApp}
+                    onPress={() => navigate('/(tabs)/app')}
+                    activeOpacity={0.85}
+                    accessibilityRole="link"
+                  >
+                    <Ionicons name="logo-android" size={20} color="#04210f" />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.drawerAppTitle}>{t('Descargá la app', 'Get the app')}</Text>
+                      <Text style={styles.drawerAppSub}>
+                        {t('Grabá con la pantalla apagada', 'Record with the screen off')}
+                      </Text>
+                    </View>
+                    <Ionicons name="download-outline" size={18} color="#04210f" />
+                  </TouchableOpacity>
+                )}
                 {NAV.map((n) => {
                   const active = !n.scrollTo && pathname.includes(n.href.replace('/(tabs)', ''));
                   return (
@@ -509,6 +528,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 4,
   },
+  drawerApp: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#22c55e', borderRadius: 14,
+    paddingHorizontal: 14, paddingVertical: 12, marginBottom: 10,
+  },
+  drawerAppTitle: { color: '#04210f', fontSize: 15, fontWeight: '800' },
+  drawerAppSub: { color: '#14532d', fontSize: 12, fontWeight: '600', marginTop: 1 },
   drawerItem: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -60,7 +60,6 @@ export function TrackMapPreview({
             height={280}
             layer="esri-topo"
             showPolyline={false}
-            showHikingRoute={false}
             trackPoints={points}
             routePoints={routePoints}
           />

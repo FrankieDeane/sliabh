@@ -994,6 +994,9 @@
       // 1.8 is the value the desktop map has always used with this exact
       // fly-in, proven safe; the cinematic look comes from the pitch.
       map.setTerrain({ source: 'dem', exaggeration: 1.8 });
+      // Sky + haze: without it the space above the tilted horizon is black
+      // (same values as src/components/map/mapSky.ts).
+      if (map.setSky) map.setSky({'sky-color':'#5b8fc7','sky-horizon-blend':0.6,'horizon-color':'#d6e4f0','horizon-fog-blend':0.5,'fog-color':'#c9d8e6','fog-ground-blend':0.6,'atmosphere-blend':['interpolate',['linear'],['zoom'],0,1,10,1,13,0]});
 
       // Province boundaries — Natural Earth 10m admin-1, filtered to
       // Argentina and simplified (~110 m precision). Drawn under the park
@@ -1639,6 +1642,7 @@
             encoding: 'terrarium', tileSize: 256, maxzoom: 14,
           });
           gm.setTerrain({ source: 'dem', exaggeration: 2.8 });
+          if (gm.setSky) gm.setSky({'sky-color':'#5b8fc7','sky-horizon-blend':0.6,'horizon-color':'#d6e4f0','horizon-fog-blend':0.5,'fog-color':'#c9d8e6','fog-ground-blend':0.6,'atmosphere-blend':['interpolate',['linear'],['zoom'],0,1,10,1,13,0]});
 
           // Trail line
           if (coords) {

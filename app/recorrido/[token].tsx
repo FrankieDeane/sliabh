@@ -162,7 +162,6 @@ export default function SharedTrackScreen() {
                 height={360}
                 layer="esri-topo"
                 showPolyline={false}
-                showHikingRoute={false}
                 trackPoints={track.points}
                 routePoints={trail?.gpxTrack}
               />

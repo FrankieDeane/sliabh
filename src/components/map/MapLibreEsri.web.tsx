@@ -32,7 +32,6 @@ interface Props {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  showHikingRoute?: boolean;
   showPolyline?: boolean;
   layer?: EsriLayer;
   userPosition?: { lat: number; lon: number } | null;

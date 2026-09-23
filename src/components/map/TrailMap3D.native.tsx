@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Modal, StatusBar } from 'react-native';
 import WebView from 'react-native-webview';
-import { gpxTrackToGeoJSON } from '../../utils/geojson';
+import { buildTrailMapHtml, SITE } from './trailMapHtml';
 
 interface GpxPoint {
   lat: number;
@@ -18,77 +18,70 @@ interface TrailMap3DProps {
   mapTilerKey?: string;
 }
 
-/**
- * Native 3D trail map — renders MapLibre GL JS inside a WebView.
- * The GeoJSON route data is injected via postMessage after the page loads.
- */
+function TrailWebView({ html, onMessage }: { html: string; onMessage: (type: string) => void }) {
+  return (
+    <WebView
+      source={{ html, baseUrl: SITE }}
+      style={{ flex: 1, backgroundColor: '#070b14' }}
+      originWhitelist={['*']}
+      javaScriptEnabled
+      domStorageEnabled
+      scrollEnabled={false}
+      // Stops the trail page's ScrollView from stealing the gesture: without
+      // it every vertical drag or two-finger twist on the map scrolled the page.
+      nestedScrollEnabled
+      overScrollMode="never"
+      onMessage={(e) => {
+        try {
+          onMessage(JSON.parse(e.nativeEvent.data).type);
+        } catch {
+          // not ours
+        }
+      }}
+    />
+  );
+}
+
 export default function TrailMap3D({
   track,
   trailName,
-  height = 300,
-  exaggeration = 1.5,
-  mapTilerKey,
+  height = 320,
+  exaggeration = 1.8,
 }: TrailMap3DProps) {
-  const webviewRef = React.useRef<WebView>(null);
-  const containerH = typeof height === 'number' ? height : 300;
+  const [fullscreen, setFullscreen] = React.useState(false);
+  const containerH = typeof height === 'number' ? height : 320;
 
-  const midIdx = Math.floor(track.length / 2);
-  const center: [number, number] = [track[midIdx].lon, track[midIdx].lat];
-  const lons = track.map((p) => p.lon);
-  const lats = track.map((p) => p.lat);
-  const bounds = {
-    sw: [Math.min(...lons) - 0.05, Math.min(...lats) - 0.05],
-    ne: [Math.max(...lons) + 0.05, Math.max(...lats) + 0.05],
-  };
-
-  const geoJSON = gpxTrackToGeoJSON(track);
-  const terrainSource = mapTilerKey
-    ? `{ type:'raster-dem', url:'https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=${mapTilerKey}', tileSize:512 }`
-    : `{ type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, encoding:'terrarium', maxzoom:15 }`;
-  const styleUrl = mapTilerKey
-    ? `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${mapTilerKey}`
-    : 'https://tiles.openfreemap.org/styles/liberty';
-
-  const html = `<!DOCTYPE html><html><head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-<style>*{margin:0;padding:0}body,#map{width:100%;height:100vh;}</style>
-</head><body><div id="map"></div><script>
-const map = new maplibregl.Map({
-  container:'map',
-  style:'${styleUrl}',
-  center:${JSON.stringify(center)},
-  zoom:9, pitch:55, bearing:0, antialias:true, maxTileCacheSize:30,
-});
-map.on('load',()=>{
-  map.addSource('terrain-dem',${terrainSource});
-  map.setTerrain({source:'terrain-dem',exaggeration:${exaggeration}});
-  const geoJSON=${JSON.stringify(geoJSON)};
-  map.addSource('trail',{type:'geojson',data:geoJSON});
-  map.addLayer({id:'trail-glow',type:'line',source:'trail',paint:{'line-color':'#22c55e','line-width':8,'line-opacity':0.25,'line-blur':4}});
-  map.addLayer({id:'trail-line',type:'line',source:'trail',paint:{'line-color':'#22c55e','line-width':3,'line-opacity':0.95}});
-  map.fitBounds([${JSON.stringify(bounds.sw)},${JSON.stringify(bounds.ne)}],{padding:40,pitch:55,duration:1200});
-});
-</script></body></html>`;
+  const trackKey = track.length ? `${track.length}:${track[0].lat},${track[0].lon}` : '';
+  // A new string remounts the WebView (and replays the intro), so build once.
+  const inlineHtml = React.useMemo(
+    () => (track.length >= 2 ? buildTrailMapHtml(track, trailName, exaggeration, false) : ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [trackKey, trailName, exaggeration],
+  );
+  const fullHtml = React.useMemo(
+    () => (fullscreen && track.length >= 2 ? buildTrailMapHtml(track, trailName, exaggeration, true) : ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fullscreen, trackKey, trailName, exaggeration],
+  );
 
   if (track.length < 2) return null;
 
   return (
-    <View style={{ borderRadius: 16, overflow: 'hidden', height: containerH }}>
-      <WebView
-        ref={webviewRef}
-        source={{ html }}
-        style={{ flex: 1 }}
-        javaScriptEnabled
-        domStorageEnabled
-        startInLoadingState
-        renderLoading={() => (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f1724' }}>
-            <Text style={{ color: '#64748b', fontSize: 13 }}>Cargando mapa 3D…</Text>
-          </View>
-        )}
-      />
+    <View style={{ borderRadius: 16, overflow: 'hidden', height: containerH, backgroundColor: '#070b14' }}>
+      <TrailWebView html={inlineHtml} onMessage={(type) => { if (type === 'fullscreen') setFullscreen(true); }} />
+      <Modal
+        visible={fullscreen}
+        animationType="fade"
+        onRequestClose={() => setFullscreen(false)}
+        statusBarTranslucent
+      >
+        <StatusBar hidden />
+        <View style={{ flex: 1, backgroundColor: '#070b14' }}>
+          {fullscreen && (
+            <TrailWebView html={fullHtml} onMessage={(type) => { if (type === 'close') setFullscreen(false); }} />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }

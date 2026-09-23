@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
+import { appPromoAudience } from '../../utils/appPromo';
 
 // A slim, occasional announcement strip under the header — rotates through
 // a small pool of messages (new trails, tips, FAQ, community invite) and
@@ -16,9 +17,14 @@ const LAST_SHOWN_KEY = 'sliabh-promo-banner-last-shown';
 const LAST_ID_KEY = 'sliabh-promo-banner-last-id';
 const COOLDOWN_MS = 1000 * 60 * 60 * 8; // 8h between appearances
 // The app is the one message worth repeating: it is the only way to record
-// with the phone in a pocket. It jumps the queue unless shown in the last 3 days.
+// with the phone in a pocket. It jumps the queue and ignores the 8 h rest the
+// other messages take. On an Android phone, where it can be installed right
+// now, it comes back a day after being dismissed; on a computer, after three.
 const APP_LAST_SHOWN_KEY = 'sliabh-promo-app-last-shown';
-const APP_COOLDOWN_MS = 1000 * 60 * 60 * 24 * 3;
+const APP_COOLDOWN_MS: Record<'android' | 'desktop', number> = {
+  android: 1000 * 60 * 60 * 24,
+  desktop: 1000 * 60 * 60 * 24 * 3,
+};
 
 type Action = { path: string; labelEs: string; labelEn: string };
 
@@ -84,15 +90,6 @@ const APP_DESKTOP: PromoMessage = {
   action: { path: '/app', labelEs: 'Ver cómo', labelEn: 'See how' },
 };
 
-/** Which app message fits this device, or null where there is no app to offer (iPhone). */
-function appMessage(width: number): PromoMessage | null {
-  const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent || '';
-  if (/Android/i.test(ua)) return APP_ANDROID;
-  const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && (navigator as any).maxTouchPoints > 1);
-  if (ios || width < 720) return null;
-  return APP_DESKTOP;
-}
-
 export function PromoBanner() {
   const { theme } = useThemeStore();
   const { t, lang } = useLangStore();
@@ -115,23 +112,24 @@ export function PromoBanner() {
     } catch {
       // localStorage unavailable — fall through, show once this load
     }
-    if (Date.now() - lastShown < COOLDOWN_MS) return;
-
     let appShown = 0;
     try {
       appShown = Number(localStorage.getItem(APP_LAST_SHOWN_KEY) ?? 0);
     } catch {}
-    const app = appMessage(width);
+    const audience = appPromoAudience(width);
+    const appDue = !!audience && Date.now() - appShown >= APP_COOLDOWN_MS[audience];
+
+    if (!appDue && Date.now() - lastShown < COOLDOWN_MS) return;
 
     // Pick at random, skipping the message shown last time if there's more
     // than one to choose from — avoids an immediate repeat once the cooldown
     // has passed.
     const pool = MESSAGES.length > 1 ? MESSAGES.filter((m) => m.id !== lastId) : MESSAGES;
-    const pick = app && Date.now() - appShown >= APP_COOLDOWN_MS
-      ? app
+    const pick = appDue
+      ? (audience === 'android' ? APP_ANDROID : APP_DESKTOP)
       : pool[Math.floor(Math.random() * pool.length)];
 
-    const timer = setTimeout(() => setMessage(pick), 2500);
+    const timer = setTimeout(() => setMessage(pick), appDue ? 1200 : 2500);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps -- picked once per load, at the width it opened with
   }, []);

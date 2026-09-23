@@ -1112,8 +1112,7 @@ export default function MapasScreen() {
   // by a short fixed height. Floor keeps it usable on short laptop screens.
   const desktopMapHeight = Math.max(900, Math.round(height - 100));
   const [downloadOpen, setDownloadOpen] = useState(false);
-  const [flyTo, setFlyTo] = useState<{ lat: number; lon: number } | null>(null);
-  const [esriLayer, setEsriLayer] = useState<'esri-topo' | 'esri-satellite' | 'esri-streets'>('esri-topo');
+  const parksMapRef = useRef<{ flyTo: (lat: number, lng: number, zoom?: number) => void } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const iframeLoaded = useRef(false);
   const pendingFlyTo = useRef<{ lat: number; lng: number; zoom: number } | null>(null);
@@ -1167,57 +1166,17 @@ export default function MapasScreen() {
   const mapFs = useMapFullscreen();
 
   function handleViewMap(lat: number, lon: number) {
-    setFlyTo({ lat, lon });
+    parksMapRef.current?.flyTo(lat, lon, 11);
     setDownloadOpen(false);
   }
 
-  // ── Native: ESRI MapLibre full-screen map + layer switcher + Download FAB ──
+  // ── Native: the website's own general map + Download FAB ──────────────────
   if (Platform.OS !== 'web') {
-    const { MapLibreEsri } = require('../../src/components/map/MapLibreEsri');
-    const ESRI_LAYERS: Array<{ key: 'esri-topo' | 'esri-satellite' | 'esri-streets'; label: string }> = [
-      { key: 'esri-topo',      label: t('Topo', 'Topo') },
-      { key: 'esri-satellite', label: t('Satélite', 'Satellite') },
-      { key: 'esri-streets',   label: t('Calles', 'Streets') },
-    ];
-    const parkMarkers = NATIONAL_PARKS.filter(p => p.coords).map(p => ({
-      id: p.id,
-      lat: p.coords.lat,
-      lon: p.coords.lon,
-      name: p.name,
-      subtitle: p.province,
-    }));
+    const { ParksMap } = require('../../src/components/map/ParksMap.native');
     return (
       <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <MapLibreEsri
-          center={flyTo ? [flyTo.lat, flyTo.lon] : [-31.970, -64.910]}
-          zoom={flyTo ? 11 : 12}
-          flyTo={flyTo ? { lat: flyTo.lat, lon: flyTo.lon, zoom: 11 } : null}
-          height="100%"
-          layer={esriLayer}
-          markers={parkMarkers}
-          showHikingRoute
-          onMarkerPress={(id: string) => {
-            const park = NATIONAL_PARKS.find(p => p.id === id);
-            if (park) setFlyTo({ lat: park.coords.lat, lon: park.coords.lon });
-          }}
-        />
-
-        {/* ESRI layer switcher — top-left */}
-        <SafeAreaView edges={['top']} style={nS.layerBar} pointerEvents="box-none">
-          <View style={[nS.layerPill, { backgroundColor: isDark ? 'rgba(15,23,36,0.88)' : 'rgba(248,250,252,0.92)', borderColor: c.border }]}>
-            {ESRI_LAYERS.map((l) => (
-              <TouchableOpacity
-                key={l.key}
-                style={[nS.layerBtn, esriLayer === l.key && nS.layerBtnActive]}
-                onPress={() => setEsriLayer(l.key)}
-                activeOpacity={0.75}
-              >
-                <Text style={[nS.layerTxt, esriLayer === l.key && nS.layerTxtActive, { color: esriLayer === l.key ? '#fff' : c.muted }]}>
-                  {l.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+          <ParksMap ref={parksMapRef} lang={lang} trails={MAP_TRAIL_PAYLOAD} colors={c} />
         </SafeAreaView>
 
         <RecordHikeButton colors={hikeColors} />
@@ -1304,7 +1263,7 @@ export default function MapasScreen() {
         {/* @ts-ignore */}
         <iframe
           ref={iframeRef as any}
-          src="/parques.html?v=20260630c&ctx=mapas"
+          src="/parques.html?v=20260923a&ctx=mapas"
           style={{ width: '100%', height: '100%', border: 'none' }}
           title="Mapa de Parques Nacionales de Argentina"
           loading="eager"
@@ -1431,20 +1390,6 @@ const nS = StyleSheet.create({
     shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 4 },
     elevation: 8,
   },
-  layerBar: {
-    position: 'absolute', top: 0, left: 12,
-    zIndex: 10, pointerEvents: 'box-none' as any,
-  },
-  layerPill: {
-    flexDirection: 'row', borderRadius: 999, borderWidth: 1,
-    overflow: 'hidden', marginTop: 8,
-    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 2 },
-    elevation: 4,
-  },
-  layerBtn: { paddingHorizontal: 14, paddingVertical: 8 },
-  layerBtnActive: { backgroundColor: '#16a34a' },
-  layerTxt: { fontSize: 12, fontWeight: '700' },
-  layerTxtActive: { color: '#fff' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
   sheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: '88%', paddingHorizontal: 16, paddingTop: 12 },
   handle: { width: 40, height: 4, borderRadius: 2, alignSelf: 'center', marginBottom: 16 },

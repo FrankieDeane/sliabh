@@ -33,7 +33,6 @@ interface Props {
   center?: [number, number];
   zoom?: number;
   height?: number | string;
-  showHikingRoute?: boolean;
   layer?: EsriLayer;
   userPosition?: { lat: number; lon: number } | null;
   showPolyline?: boolean;
@@ -42,66 +41,12 @@ interface Props {
   onLocationError?: () => void;
 }
 
-// Ruta al Pico San Miguel — route coordinates [lon, lat]
-const ROUTE: [number, number][] = [
-  [-64.9600, -31.9950],
-  [-64.9520, -31.9900],
-  [-64.9450, -31.9857],
-  [-64.9395, -31.9818],
-  [-64.9348, -31.9778],
-  [-64.9290, -31.9732],
-  [-64.9240, -31.9690],
-  [-64.9185, -31.9645],
-  [-64.9130, -31.9600],
-  [-64.9082, -31.9558],
-  [-64.9035, -31.9515],
-  [-64.8985, -31.9472],
-  [-64.8952, -31.9495],
-  [-64.8918, -31.9518],
-  [-64.8882, -31.9532],
-  [-64.8840, -31.9545],
-  [-64.8795, -31.9555],
-  [-64.8755, -31.9565],
-  [-64.8700, -31.9578],
-];
-
-const HIKING_WAYPOINTS = [
-  { c: [-64.9600, -31.9950], t: 'inicio', n: 'INICIO', s: 'Parking y Refugio · Alt. 1250m' },
-  { c: [-64.9348, -31.9778], t: 'wp',     n: 'Refugio de Montaña', s: 'Punto 1 · 1580m' },
-  { c: [-64.8998, -31.9555], t: 'peak',   n: 'Cerro del Águila', s: '2104m' },
-  { c: [-64.9130, -31.9600], t: 'wp',     n: 'Cresta de la Peña', s: '1950m' },
-  { c: [-64.8985, -31.9472], t: 'cumbre', n: 'CUMBRE', s: 'Pico San Miguel · Alt. 2314m' },
-  { c: [-64.8840, -31.9545], t: 'wp',     n: 'Mirador del Valle', s: 'Punto 2 · 1980m' },
-  { c: [-64.8700, -31.9578], t: 'final',  n: 'FINAL', s: 'Aparcamiento · Alt. 1420m' },
-];
-
-const GEO_LABELS = [
-  { c: [-64.9780, -31.9760], txt: 'Barranco Hondo',   col: '#4b5563', rot: '-25deg' },
-  { c: [-64.9850, -31.9575], txt: 'Bosque del Oso',   col: '#16a34a', rot: '0deg'   },
-  { c: [-64.9350, -31.9870], txt: 'Arroyo del Valle', col: '#2563eb', rot: '-12deg' },
-  { c: [-64.9620, -32.0080], txt: 'Río Valle',        col: '#2563eb', rot: '-5deg'  },
-  { c: [-64.9750, -32.0200], txt: 'Carretera de Acceso', col: '#6b7280', rot: '0deg' },
-  { c: [-64.8790, -31.9460], txt: 'Senda Cresta',     col: '#4b5563', rot: '-18deg' },
-  { c: [-64.8550, -31.9720], txt: 'Barranco Hondo',   col: '#4b5563', rot: '-25deg' },
-  { c: [-64.9260, -31.9720], txt: 'SENDERO PRINCIPAL',col: '#dc2626', rot: '-42deg' },
-];
-
-const DIST_LABELS = [
-  { c: [-64.9495, -31.9880], txt: '2km' },
-  { c: [-64.9175, -31.9640], txt: '2km' },
-];
-
 function buildHTML(
   center: [number, number],
   zoom: number,
-  showHikingRoute: boolean,
   layer: EsriLayer,
   routePoints: LatLon[] = [],
 ): string {
-  const routeJson = JSON.stringify(ROUTE);
-  const wpJson = JSON.stringify(HIKING_WAYPOINTS);
-  const geoJson = JSON.stringify(GEO_LABELS);
-  const distJson = JSON.stringify(DIST_LABELS);
   const trailRouteJson = JSON.stringify(
     routePoints
       .filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lon))
@@ -121,59 +66,6 @@ function buildHTML(
 html,body,#map{height:100vh;width:100vw;}
 body{font-family:-apple-system,system-ui,sans-serif;}
 
-#title-bar{
-  position:absolute;top:0;left:0;right:0;z-index:20;
-  background:rgba(255,255,255,0.94);border-bottom:1.5px solid rgba(0,0,0,0.12);
-  padding:8px 12px;text-align:center;
-}
-#title-bar span{font-size:11.5px;font-weight:800;color:#1e293b;letter-spacing:0.5px;}
-
-#north-arrow{
-  position:absolute;top:52px;left:10px;z-index:20;
-  background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.18);
-  border-radius:4px;padding:3px 6px;text-align:center;
-}
-#north-arrow .na{font-size:10px;font-weight:800;color:#1e293b;line-height:1;}
-#north-arrow .ns{font-size:18px;color:#1e293b;line-height:1;}
-
-#scale-bar{
-  position:absolute;bottom:64px;left:10px;z-index:20;
-  background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.18);
-  border-radius:4px;padding:3px 8px;
-}
-.sb-line{display:flex;}
-.sb-seg{height:5px;border:1px solid #1e293b;}
-.sb-blk{background:#1e293b;width:36px;}
-.sb-wht{background:white;width:36px;}
-.sb-labels{display:flex;justify-content:space-between;width:108px;}
-.sb-lbl{font-size:8px;font-weight:700;color:#1e293b;}
-
-#legend{
-  position:absolute;bottom:14px;right:10px;z-index:20;
-  background:rgba(255,255,255,0.94);border:1px solid rgba(0,0,0,0.18);
-  border-radius:6px;padding:7px 10px;
-}
-.li{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:10px;color:#1e293b;}
-.li:last-child{margin-bottom:0;}
-.ld-red{width:24px;border-top:2px dashed #dc2626;}
-.ld-gray{width:24px;border-top:1px dashed #9ca3af;}
-.larrow{width:24px;text-align:center;font-size:12px;}
-
-.ml{
-  display:inline-block;background:rgba(255,255,255,0.95);border-radius:3px;
-  padding:1px 4px;font-size:8.5px;font-weight:700;color:#1e293b;
-  margin-top:2px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.2);
-  line-height:1.3;text-align:center;
-}
-.ms{font-weight:400;color:#64748b;font-size:7.5px;}
-.geo-label{
-  font-size:9.5px;font-style:italic;font-weight:500;
-  white-space:nowrap;pointer-events:none;cursor:default;
-  text-shadow:0.5px 0.5px 0 rgba(255,255,255,0.9),-0.5px -0.5px 0 rgba(255,255,255,0.9),
-              0.5px -0.5px 0 rgba(255,255,255,0.9),-0.5px 0.5px 0 rgba(255,255,255,0.9);
-}
-.maplibregl-ctrl-bottom-right{bottom:50px;}
-
 #recenter{
   display:none;position:absolute;left:12px;bottom:18px;z-index:25;
   align-items:center;gap:6px;background:rgba(15,23,42,0.88);
@@ -185,30 +77,8 @@ body{font-family:-apple-system,system-ui,sans-serif;}
 <body>
 <div id="map"></div>
 <div id="recenter">◎ Centrar</div>
-${showHikingRoute ? `
-<div id="title-bar"><span>MAPA DE SENDERISMO: RUTA AL PICO SAN MIGUEL</span></div>
-<div id="north-arrow"><div class="na">N</div><div class="ns">↑</div></div>
-<div id="scale-bar">
-  <div class="sb-line">
-    <div class="sb-seg sb-blk"></div>
-    <div class="sb-seg sb-wht"></div>
-    <div class="sb-seg sb-blk"></div>
-  </div>
-  <div class="sb-labels">
-    <span class="sb-lbl">0</span><span class="sb-lbl">1km</span><span class="sb-lbl">2km</span>
-  </div>
-</div>
-<div id="legend">
-  <div class="li"><div class="ld-red"></div><span>Ruta de Senderismo</span></div>
-  <div class="li"><div class="ld-red"></div><span>Sendero Principal</span></div>
-  <div class="li"><div class="ld-gray"></div><span>Relieve sutil</span></div>
-  <div class="li"><div class="larrow">→</div><span>Flechas de dirección</span></div>
-</div>
-` : ''}
 <script>
 (function(){
-  var showRoute = ${showHikingRoute};
-  var route = ${routeJson};
   var trailRoute = ${trailRouteJson};
 
   // Hike mode can ask for tracking before the style is ready; remember the
@@ -216,9 +86,6 @@ ${showHikingRoute ? `
   window.__hikePending=false;
   window.startHikeTracking=function(){window.__hikePending=true;};
   window.stopHikeTracking=function(){window.__hikePending=false;};
-  var waypoints = ${wpJson};
-  var geoLabels = ${geoJson};
-  var distLabels = ${distJson};
 
   var esriStyle = {
     version:8,
@@ -282,74 +149,6 @@ ${showHikingRoute ? `
       paint:{'line-color':'#3b82f6','line-width':4.5}
     });
 
-    if(showRoute){
-      // ── Route line ──────────────────────────────────────────────────────────
-      map.addSource('route',{
-        type:'geojson',
-        data:{type:'Feature',geometry:{type:'LineString',coordinates:route},properties:{}}
-      });
-      map.addLayer({
-        id:'route-glow',type:'line',source:'route',
-        paint:{'line-color':'#ff0000','line-width':6,'line-opacity':0.12}
-      });
-      map.addLayer({
-        id:'route-line',type:'line',source:'route',
-        paint:{'line-color':'#dc2626','line-width':2.5,'line-dasharray':[3,3]}
-      });
-
-      // ── Direction arrows ─────────────────────────────────────────────────────
-      [2,5,8,11,14,17].forEach(function(i){
-        if(i>=route.length-1) return;
-        var prev=route[Math.max(0,i-1)];
-        var next=route[Math.min(i+1,route.length-1)];
-        var bearing=Math.atan2(next[0]-prev[0],next[1]-prev[1])*180/Math.PI;
-        var el=mkEl('font-size:13px;color:#1e293b;font-weight:bold;cursor:default;width:16px;height:16px;line-height:16px;text-align:center;transform:rotate('+bearing+'deg);','→');
-        new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(route[i]).addTo(map);
-      });
-
-      // ── Geographic labels ────────────────────────────────────────────────────
-      geoLabels.forEach(function(gl){
-        var el=document.createElement('div');
-        el.className='geo-label';
-        el.style.color=gl.col;
-        el.style.transform='rotate('+gl.rot+')';
-        el.textContent=gl.txt;
-        new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(gl.c).addTo(map);
-      });
-
-      // ── Distance labels ──────────────────────────────────────────────────────
-      distLabels.forEach(function(dl){
-        var el=mkEl('font-size:9px;color:#1e293b;font-weight:700;background:rgba(255,255,255,0.85);border-radius:3px;padding:1px 3px;white-space:nowrap;',dl.txt);
-        new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(dl.c).addTo(map);
-      });
-
-      // ── Hiking waypoints ─────────────────────────────────────────────────────
-      waypoints.forEach(function(wp){
-        var wrap=mkEl('display:flex;flex-direction:column;align-items:center;cursor:pointer;');
-        var icon;
-        if(wp.t==='inicio'||wp.t==='final'){
-          icon=mkEl('width:18px;height:18px;border-radius:50%;background:#16a34a;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);flex-shrink:0;');
-        } else if(wp.t==='cumbre'){
-          icon=mkEl('display:flex;flex-direction:column;align-items:center;gap:1px;');
-          icon.innerHTML='<div style="font-size:9px;font-weight:800;color:#f97316;letter-spacing:0.3px;">CUMBRE</div>'
-            +'<div style="position:relative;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:18px solid #f97316;"><div style="position:absolute;top:3px;left:50%;transform:translateX(-50%);color:white;font-size:8px;font-weight:bold;">✝</div></div>';
-        } else if(wp.t==='peak'){
-          icon=mkEl('font-size:13px;color:#6b7280;line-height:1;cursor:default;','▲');
-        } else {
-          icon=mkEl('width:10px;height:10px;border-radius:50%;background:#6b7280;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);flex-shrink:0;');
-        }
-        var lbl=mkEl('margin-top:2px;');
-        lbl.innerHTML='<div class="ml">'+wp.n+'<br><span class="ms">'+wp.s+'</span></div>';
-        wrap.appendChild(icon);
-        if(wp.t!=='cumbre') wrap.appendChild(lbl);
-        else {
-          var sub=mkEl('margin-top:2px;');
-          sub.innerHTML='<div class="ml"><span class="ms">'+wp.s+'</span></div>';
-          wrap.appendChild(sub);
-        }
-        new maplibregl.Marker({element:wrap,anchor:'bottom'}).setLngLat(wp.c).addTo(map);
-      });
-    } // end showRoute
 
     // ── Park markers (injected via postMessage) ──────────────────────────────
     var parkMarkers=[];
@@ -469,7 +268,6 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   center = [-31.970, -64.910],
   zoom = 12,
   height = 400,
-  showHikingRoute = true,
   layer = 'esri-topo',
   routePoints,
 }: Props, ref) {
@@ -495,9 +293,9 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   const routeKey = routePoints?.length ? `${routePoints.length}:${routePoints[0].lat},${routePoints[0].lon}` : '';
   // Rebuilding the string remounts the WebView, so keep it stable across renders.
   const html = React.useMemo(
-    () => buildHTML(effectiveCenter, effectiveZoom, showHikingRoute, layer, routePoints ?? []),
+    () => buildHTML(effectiveCenter, effectiveZoom, layer, routePoints ?? []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [effectiveCenter[0], effectiveCenter[1], effectiveZoom, showHikingRoute, layer, routeKey],
+    [effectiveCenter[0], effectiveCenter[1], effectiveZoom, layer, routeKey],
   );
 
   function flush() {

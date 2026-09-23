@@ -138,6 +138,13 @@ export default function TabLayout() {
         name="app"
         options={{ href: null }}
       />
+      {/* Every route in (tabs) not declared here gets an auto tab with the
+          library's ⏷ placeholder icon — this one sat right after Seguridad
+          and opened a trail page with no trail. */}
+      <Tabs.Screen
+        name="ruta/[id]"
+        options={{ href: null }}
+      />
       <Tabs.Screen
         name="faq"
         options={{
