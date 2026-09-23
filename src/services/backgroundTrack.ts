@@ -73,7 +73,8 @@ if (!TaskManager.isTaskDefined(HIKE_LOCATION_TASK)) {
         // none, so the point goes without rather than carrying a zero that
         // would read as sea level.
         const alt = loc.coords.altitude;
-        return typeof alt === 'number' && Number.isFinite(alt) ? { ...base, alt } : base;
+        const point = typeof alt === 'number' && Number.isFinite(alt) ? { ...base, alt } : base;
+        return { point, accuracy: loc.coords.accuracy };
       }),
     );
   });
