@@ -22,7 +22,7 @@ const trailIds = [
 ];
 
 const today = new Date().toISOString().slice(0, 10);
-const routes = ['/', '/inicio', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/contribuir', '/guias'];
+const routes = ['/', '/inicio', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/contribuir', '/guias', '/app'];
 
 // Trail pages exist in both languages (see scripts/prerender-trails.mjs) —
 // list both URLs with reciprocal xhtml:link hreflang annotations, same

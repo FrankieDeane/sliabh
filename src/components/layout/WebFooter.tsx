@@ -91,6 +91,7 @@ export function WebFooter() {
           <View style={styles.navCol}>
             <Text style={[styles.navTitle, { color: c.muted }]}>{t('PREPARAR', 'PREPARE')}</Text>
             {([
+              { labelEs: 'App para Android', labelEn: 'Android app', href: '/(tabs)/app' as const },
               { labelEs: 'Mapas offline', labelEn: 'Offline maps', href: '/(tabs)/mapas' as const },
               { labelEs: 'Planificar ruta', labelEn: 'Plan a route', href: '/(tabs)/planificar' as const },
               { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq' as const },

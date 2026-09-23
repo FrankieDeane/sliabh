@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
@@ -15,6 +15,10 @@ import { useLangStore } from '../../store/langStore';
 const LAST_SHOWN_KEY = 'sliabh-promo-banner-last-shown';
 const LAST_ID_KEY = 'sliabh-promo-banner-last-id';
 const COOLDOWN_MS = 1000 * 60 * 60 * 8; // 8h between appearances
+// The app is the one message worth repeating: it is the only way to record
+// with the phone in a pocket. It jumps the queue unless shown in the last 3 days.
+const APP_LAST_SHOWN_KEY = 'sliabh-promo-app-last-shown';
+const APP_COOLDOWN_MS = 1000 * 60 * 60 * 24 * 3;
 
 type Action = { path: string; labelEs: string; labelEn: string };
 
@@ -64,10 +68,36 @@ const MESSAGES: PromoMessage[] = [
   },
 ];
 
+const APP_ANDROID: PromoMessage = {
+  id: 'app-android',
+  icon: 'logo-android',
+  es: 'Grabá tu recorrido con el teléfono en el bolsillo: la app de Android sigue grabando con la pantalla apagada y con música.',
+  en: 'Record your hike with the phone in your pocket: the Android app keeps recording with the screen off and with music.',
+  action: { path: '/app', labelEs: 'Bajar la app', labelEn: 'Get the app' },
+};
+
+const APP_DESKTOP: PromoMessage = {
+  id: 'app-desktop',
+  icon: 'phone-portrait-outline',
+  es: '¿Tenés Android? Probá la app en tu celular: graba tus recorridos aunque bloquees la pantalla.',
+  en: 'Got Android? Try the app on your phone: it records your hikes even with the screen locked.',
+  action: { path: '/app', labelEs: 'Ver cómo', labelEn: 'See how' },
+};
+
+/** Which app message fits this device, or null where there is no app to offer (iPhone). */
+function appMessage(width: number): PromoMessage | null {
+  const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent || '';
+  if (/Android/i.test(ua)) return APP_ANDROID;
+  const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && (navigator as any).maxTouchPoints > 1);
+  if (ios || width < 720) return null;
+  return APP_DESKTOP;
+}
+
 export function PromoBanner() {
   const { theme } = useThemeStore();
   const { t, lang } = useLangStore();
   const router = useRouter();
+  const pathname = usePathname();
   const isDark = theme === 'dark';
   const { width } = useWindowDimensions();
   const isNarrow = width < 560;
@@ -87,14 +117,23 @@ export function PromoBanner() {
     }
     if (Date.now() - lastShown < COOLDOWN_MS) return;
 
+    let appShown = 0;
+    try {
+      appShown = Number(localStorage.getItem(APP_LAST_SHOWN_KEY) ?? 0);
+    } catch {}
+    const app = appMessage(width);
+
     // Pick at random, skipping the message shown last time if there's more
     // than one to choose from — avoids an immediate repeat once the cooldown
     // has passed.
     const pool = MESSAGES.length > 1 ? MESSAGES.filter((m) => m.id !== lastId) : MESSAGES;
-    const pick = pool[Math.floor(Math.random() * pool.length)];
+    const pick = app && Date.now() - appShown >= APP_COOLDOWN_MS
+      ? app
+      : pool[Math.floor(Math.random() * pool.length)];
 
     const timer = setTimeout(() => setMessage(pick), 2500);
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- picked once per load, at the width it opened with
   }, []);
 
   // Keep --sliabh-banner-h in sync with the bar's actual rendered height, so
@@ -130,6 +169,7 @@ export function PromoBanner() {
     try {
       localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()));
       if (message) localStorage.setItem(LAST_ID_KEY, message.id);
+      if (message?.id.startsWith('app-')) localStorage.setItem(APP_LAST_SHOWN_KEY, String(Date.now()));
     } catch {}
     setMessage(null);
   }
@@ -139,13 +179,15 @@ export function PromoBanner() {
     try {
       localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()));
       localStorage.setItem(LAST_ID_KEY, message.id);
+      if (message.id.startsWith('app-')) localStorage.setItem(APP_LAST_SHOWN_KEY, String(Date.now()));
     } catch {}
     const path = message.action.path;
     setMessage(null);
     router.push(path as any);
   }
 
-  if (!message) return null;
+  // Pointless on the page it links to.
+  if (!message || message.action.path === pathname) return null;
 
   const c = isDark
     ? { bg: '#0b1a12', border: 'rgba(34,197,94,0.35)', text: '#f0fdf4', muted: '#86efac' }

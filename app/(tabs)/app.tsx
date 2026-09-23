@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform, Linking,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, Platform, Linking, Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { asset } from '../../src/constants/asset';
 
 const MAX_CONTENT = 760;
 const GREEN = '#22c55e';
@@ -16,6 +17,54 @@ const APK_URL = 'https://github.com/FrankieDeane/sliabh/releases/latest/download
 
 type L = { es: string; en: string };
 type Cell = { ok: boolean | 'partial'; text: L };
+
+const BENEFITS: Array<{ icon: React.ComponentProps<typeof Ionicons>['name']; title: L; body: L }> = [
+  {
+    icon: 'lock-closed-outline',
+    title: { es: 'Grabá con la pantalla bloqueada', en: 'Record with the screen locked' },
+    body: {
+      es: 'Guardás el teléfono en el bolsillo y la línea sigue. Nada de caminar con el celular en la mano.',
+      en: 'Pocket the phone and the line keeps going. No walking with the phone in your hand.',
+    },
+  },
+  {
+    icon: 'musical-notes-outline',
+    title: { es: 'Con música y con otras apps', en: 'With music and other apps' },
+    body: {
+      es: 'Spotify, WhatsApp, la cámara: usá lo que quieras, la grabación no se corta.',
+      en: 'Spotify, WhatsApp, the camera: use anything, recording keeps going.',
+    },
+  },
+  {
+    icon: 'battery-half-outline',
+    title: { es: 'Menos batería', en: 'Less battery' },
+    body: {
+      es: 'La pantalla apagada es lo que más ahorra. En una caminata larga, eso es llegar con batería para una emergencia.',
+      en: 'A dark screen is the biggest saving. On a long walk, that means battery left for an emergency.',
+    },
+  },
+  {
+    icon: 'phone-portrait-outline',
+    title: { es: 'Siempre a mano', en: 'Always at hand' },
+    body: {
+      es: 'Un ícono en tu teléfono, sin buscar la web. Mismos datos y misma cuenta que en sliabh.com.ar.',
+      en: 'An icon on your phone, no need to find the website. Same data and account as sliabh.com.ar.',
+    },
+  },
+];
+
+const WEB_PROS: L[] = [
+  { es: 'No instalás nada: entrás y listo', en: 'Nothing to install: just open it' },
+  { es: 'Funciona en iPhone y en la computadora', en: 'Works on iPhone and on a computer' },
+  { es: 'Rutas, mapas offline, guías y planificación completas', en: 'Full trails, offline maps, guides and planning' },
+  { es: 'Graba bien si la pantalla queda encendida', en: 'Records well if the screen stays on' },
+];
+
+const WEB_CONS: L[] = [
+  { es: 'Si bloqueás el teléfono, el navegador deja de recibir el GPS', en: 'Lock the phone and the browser stops receiving GPS' },
+  { es: 'Si cambiás de app o de pestaña, ese tramo no se graba', en: 'Switch apps or tabs and that stretch is not recorded' },
+  { es: 'La pantalla prendida todo el recorrido gasta más batería', en: 'The screen on for the whole walk uses more battery' },
+];
 
 const COMPARE: Array<{ row: L; web: Cell; app: Cell }> = [
   {
@@ -152,6 +201,7 @@ export default function AppDownloadScreen() {
   const contentW = Math.min(width, MAX_CONTENT);
   const sidePad = Math.max(16, (width - contentW) / 2);
   const pick = (l: L) => (lang === 'en' ? l.en : l.es);
+  const wide = width >= 720;
 
   const c = isDark
     ? { bg: '#070b14', surface: '#0f1724', border: '#1e2d42', text: '#f0f9ff', muted: '#94a3b8' }
@@ -181,7 +231,8 @@ export default function AppDownloadScreen() {
         path="/app"
       />
 
-      <View style={[s.hero, { backgroundColor: c.surface, borderBottomColor: c.border, paddingHorizontal: sidePad }]}>
+      <View style={[s.hero, { backgroundColor: c.surface, borderBottomColor: c.border, paddingHorizontal: sidePad }, wide && s.heroWide]}>
+        <View style={[{ gap: 12 }, wide && { flex: 1 }]}>
         <Text style={s.eyebrow}>{t('APP PARA ANDROID', 'ANDROID APP')}</Text>
         <Text style={[s.title, { color: c.text }]}>
           {t('Grabá tu recorrido con el teléfono en el bolsillo', 'Record your hike with the phone in your pocket')}
@@ -199,9 +250,58 @@ export default function AppDownloadScreen() {
         <Text style={[s.small, { color: c.muted }]}>
           {t('Gratis · Android 8 o superior · ¿iPhone? Usá la web: sliabh.com.ar', 'Free · Android 8 or later · iPhone? Use the website: sliabh.com.ar')}
         </Text>
+        </View>
+        {wide && (
+          // On a computer the APK is no use: the phone is where it goes.
+          <View style={[s.qrCard, { borderColor: c.border }]}>
+            <Image source={{ uri: asset('/qr-app.svg') }} style={s.qr} accessibilityLabel={t('Código QR para abrir esta página en el celular', 'QR code to open this page on your phone')} />
+            <Text style={[s.small, { color: '#334155', textAlign: 'center', fontWeight: '600' }]}>
+              {t('Escaneá con la cámara de tu Android', 'Scan with your Android camera')}
+            </Text>
+          </View>
+        )}
       </View>
 
       <View style={{ paddingHorizontal: sidePad, paddingTop: 28, gap: 28 }}>
+        <View>
+          <Text style={[s.h2, { color: c.text }]}>{t('Por qué bajar la app', 'Why get the app')}</Text>
+          <View style={[s.grid, wide && s.gridWide]}>
+            {BENEFITS.map((b) => (
+              <View key={b.title.es} style={[s.card, s.benefit, wide && s.benefitWide, { borderColor: c.border, backgroundColor: c.surface }]}>
+                <Ionicons name={b.icon} size={22} color={GREEN} />
+                <Text style={[s.q, { color: c.text }]}>{pick(b.title)}</Text>
+                <Text style={[s.body, { color: c.muted }]}>{pick(b.body)}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        <View>
+          <Text style={[s.h2, { color: c.text }]}>{t('¿Y si sigo usando la web?', 'What if I keep using the website?')}</Text>
+          <View style={[s.grid, wide && s.gridWide]}>
+            {([
+              { title: t('A favor', 'Pros'), items: WEB_PROS, ok: true },
+              { title: t('En contra', 'Cons'), items: WEB_CONS, ok: false },
+            ] as const).map((col) => (
+              <View key={col.title} style={[s.card, wide && s.benefitWide, { borderColor: c.border, backgroundColor: c.surface, gap: 10 }]}>
+                <Text style={[s.th, { color: col.ok ? GREEN : '#ef4444' }]}>{col.title.toUpperCase()}</Text>
+                {col.items.map((it) => (
+                  <View key={it.es} style={s.cell}>
+                    <Mark ok={col.ok} />
+                    <Text style={[s.body, { color: c.muted, flex: 1 }]}>{pick(it)}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+          <Text style={[s.small, { color: c.muted, marginTop: 10 }]}>
+            {t(
+              'La web sigue siendo Sliabh completo: para planificar, ver rutas y grabar con la pantalla encendida es perfecta. La app suma lo único que un navegador no puede hacer.',
+              'The website is still all of Sliabh: for planning, browsing trails and recording with the screen on it is perfect. The app adds the one thing a browser cannot do.',
+            )}
+          </Text>
+        </View>
+
         <View>
           <Text style={[s.h2, { color: c.text }]}>{t('Web o app: qué cambia', 'Website or app: what changes')}</Text>
           <View style={[s.table, { borderColor: c.border, backgroundColor: c.surface }]}>
@@ -254,6 +354,13 @@ export default function AppDownloadScreen() {
 
 const s = StyleSheet.create({
   hero: { borderBottomWidth: 1, paddingTop: 36, paddingBottom: 28, gap: 12 },
+  heroWide: { flexDirection: 'row', alignItems: 'center', gap: 32 },
+  qrCard: { borderWidth: 1, borderRadius: 16, padding: 14, gap: 8, alignItems: 'center', backgroundColor: '#fff' },
+  qr: { width: 168, height: 168 },
+  grid: { gap: 10 },
+  gridWide: { flexDirection: 'row', flexWrap: 'wrap' },
+  benefit: { gap: 6 },
+  benefitWide: { flexBasis: '48%', flexGrow: 1 },
   eyebrow: { color: GREEN, fontSize: 11, fontWeight: '800', letterSpacing: 2 },
   title: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5, lineHeight: 34 },
   lead: { fontSize: 15, lineHeight: 23 },
