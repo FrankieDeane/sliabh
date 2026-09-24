@@ -133,8 +133,8 @@ const FIRST_HIKE: L[] = [
     en: 'Open the **Sliabh** app (the icon, not Chrome) and tap **Record hike**.',
   },
   {
-    es: 'Cuando pida ubicación, elegí **Permitir siempre**. Si solo ofrece "Mientras se usa la app", elegila y después cambiala a **Permitir siempre** cuando te lo pida. Sin esto no graba con la pantalla apagada.',
-    en: 'When it asks for location, choose **Allow all the time**. If it only offers "While using the app", pick it and then switch to **Allow all the time** when asked. Without this it cannot record with the screen off.',
+    es: 'Cuando pida ubicación, elegí **Mientras se usa la app** (o **Permitir siempre**). Cualquiera de las dos sigue grabando con la pantalla apagada, porque la grabación arranca con la app abierta.',
+    en: 'When it asks for location, choose **While using the app** (or **Allow all the time**). Either keeps recording with the screen off, because recording starts with the app open.',
   },
   {
     es: 'Arriba, en las notificaciones, vas a ver **"Sliabh — grabando"**. Eso es lo que mantiene la grabación viva.',
@@ -150,8 +150,8 @@ const TROUBLE: Array<{ q: L; a: L }> = [
   {
     q: { es: 'Se cortó la grabación con la pantalla apagada', en: 'Recording stopped with the screen off' },
     a: {
-      es: 'Ajustes → Aplicaciones → Sliabh → Ubicación → **Permitir siempre**. Y en la misma pantalla: Batería → **Sin restricciones** (Samsung, Xiaomi y Motorola cierran apps para ahorrar batería).',
-      en: 'Settings → Apps → Sliabh → Location → **Allow all the time**. On the same screen: Battery → **Unrestricted** (Samsung, Xiaomi and Motorola close apps to save battery).',
+      es: 'Ajustes → Aplicaciones → Sliabh → Batería → **Sin restricciones** (Samsung, Xiaomi y Motorola cierran apps para ahorrar batería). En Ubicación tiene que decir **Mientras se usa la app** o **Permitir siempre**, y **Ubicación precisa** activada.',
+      en: 'Settings → Apps → Sliabh → Battery → **Unrestricted** (Samsung, Xiaomi and Motorola close apps to save battery). Location must read **While using the app** or **Allow all the time**, with **Precise location** on.',
     },
   },
   {

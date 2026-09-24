@@ -59,10 +59,26 @@ jobs:
       # designed to be embedded in the client and is guarded by row-level
       # security.
       EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
+      # Shown on the hike screen, so the phone says which build it runs.
+      EXPO_PUBLIC_BUILD_ID: ${{ github.run_number }}-${{ github.sha }}
       EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
 
     steps:
       - uses: actions/checkout@v4
+
+      # A tag made a moment too early ships yesterday's app: android-v4 and
+      # android-v5 were both tagged before the fix they were meant to carry
+      # had merged. A release tag must point at the tip of sliabh-index.
+      - name: Refuse a tag that is behind sliabh-index
+        if: startsWith(github.ref, 'refs/tags/android-v')
+        run: |
+          set -e
+          git fetch --no-tags --depth=1 origin sliabh-index
+          tip=$(git rev-parse FETCH_HEAD); here=$(git rev-parse HEAD)
+          if [ "$tip" != "$here" ]; then
+            echo "::error::${GITHUB_REF_NAME} apunta a ${here:0:7}, pero sliabh-index está en ${tip:0:7}. Este APK no tendría los últimos cambios. No hace falta crear tags: cada merge a sliabh-index publica el APK solo."
+            exit 1
+          fi
 
       - uses: actions/setup-node@v4
         with:
@@ -194,22 +210,32 @@ jobs:
           path: ${{ steps.name.outputs.apk }}
           retention-days: 30
 
-      # A tag also publishes a Release, so the APK has a permanent link that
-      # can be opened straight from a phone instead of a zip behind a login.
+      # Every merge to sliabh-index publishes the APK it just built, marked as
+      # the latest release, so /app's releases/latest/download/sliabh.apk is
+      # always the newest code. No tag to create by hand, and so no tag made
+      # before the merge it was meant to include. A manual android-v* tag
+      # still publishes, but only if it points at the tip (checked above).
       - name: Publish a release
-        if: startsWith(github.ref, 'refs/tags/android-v')
+        if: >-
+          env.SIGNING_ARGS != '' && (
+            startsWith(github.ref, 'refs/tags/android-v') ||
+            (github.event_name == 'push' && github.ref == 'refs/heads/sliabh-index'))
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('android-build-{0}', github.run_number) }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: |
             ${{ steps.name.outputs.apk }}
             sliabh.apk
-          name: Sliabh Android ${{ github.ref_name }}
+          name: Sliabh Android — build ${{ github.run_number }} (${{ steps.name.outputs.sha }})
           body: |
-            APK instalable de Sliabh (commit `${{ steps.name.outputs.sha }}`).
+            APK instalable de Sliabh, build **${{ github.run_number }}** (commit `${{ steps.name.outputs.sha }}`).
+            En la app, la pantalla de caminata muestra abajo a la derecha el mismo número: así sabés qué versión tenés instalada.
 
-            **Instalar:** abrí este link desde el teléfono, tocá el `.apk` y
-            aceptá "instalar de orígenes desconocidos" si lo pide.
+            **Instalar:** abrí este link desde el teléfono, tocá `sliabh.apk` y
+            aceptá "instalar de orígenes desconocidos" si lo pide. Se instala encima de la anterior.
 
-            **Al iniciar la primera caminata, elegí "Permitir siempre"** en el
-            permiso de ubicación. Sin eso Android corta la grabación al apagar
-            la pantalla — que es justo lo que esta app viene a arreglar.
+            **Al iniciar la primera caminata**, cuando pida ubicación elegí
+            "Mientras se usa la app" (o "Permitir siempre"). Cualquiera de las
+            dos sigue grabando con la pantalla apagada.
