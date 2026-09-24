@@ -93,7 +93,8 @@ export function SiteHead() {
     // the generic fallback instead of the current page's.
     // Same for the prerendered canonical/keywords: they stay in the DOM across
     // client-side navigation, so after hub → trail the page had two canonicals.
-    const SELECTORS = ['meta[name="description"]', 'meta[name="keywords"]', 'link[rel="canonical"]'];
+    // The prerendered page JSON-LD (data-page-ld) likewise duplicated SeoHead's.
+    const SELECTORS = ['meta[name="description"]', 'meta[name="keywords"]', 'link[rel="canonical"]', 'script[data-page-ld]'];
     let frame = 0;
     let raf: number;
     const tryCleanup = () => {

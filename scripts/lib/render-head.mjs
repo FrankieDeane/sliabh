@@ -40,7 +40,7 @@ export function renderPage(template, seo, label = 'prerender') {
   // Additive: the site-wide WebSite/Organization JSON-LD stays; this is a
   // second, page-specific graph — multiple JSON-LD blocks per page is valid.
   const graph = { '@context': 'https://schema.org', '@graph': seo.jsonLd };
-  const script = `    <script type="application/ld+json">${JSON.stringify(graph).replace(/</g, '\\u003c')}</script>\n`;
+  const script = `    <script type="application/ld+json" data-page-ld>${JSON.stringify(graph).replace(/</g, '\\u003c')}</script>\n`;
   setTag(/<\/head>/, `${script}  </head>`);
   return html;
 }

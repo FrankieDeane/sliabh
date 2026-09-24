@@ -56,7 +56,7 @@ export function SeoHead({ title, description, path, image, jsonLd, keywords }: S
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
 
-      {graph && <script type="application/ld+json">{JSON.stringify(graph)}</script>}
+      {graph && <script type="application/ld+json" data-page-ld="true">{JSON.stringify(graph)}</script>}
     </Head>
   );
 }

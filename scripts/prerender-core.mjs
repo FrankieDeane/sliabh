@@ -23,11 +23,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { esc } from './lib/render-head.mjs';
+import { loadTs } from './lib/load-ts.mjs';
 
 const SITE_URL = 'https://sliabh.com.ar';
 const DIST_INDEX = 'dist/index.html';
 
 const PAGES = ['rutas', 'mapas', 'planificar', 'faq', 'supervivencia', 'contribuir', 'guias', 'app'];
+
+// /supervivencia renders each guide's full text only when its card is
+// expanded, so crawlers would never see it. Bake the whole guide set into the
+// static HTML: keywords, FAQPage JSON-LD and a <noscript> copy.
+function survivalExtras() {
+  const { GUIDES, survivalJsonLd, SURVIVAL_KEYWORDS_ES } = loadTs('src/data/survivalGuides.ts');
+  const para = (text) => text.split('\n').filter(Boolean).map((l) => `<p>${esc(l)}</p>`).join('');
+  const body = GUIDES.map((g) =>
+    `<section><h2>${esc(g.titleEs)}</h2><p>${esc(g.taglineEs)}</p><ul>${g.quickEs.map((q) => `<li>${esc(q)}</li>`).join('')}</ul>` +
+    `${para(g.bodyEs)}${g.warningEs ? `<p><strong>${esc(g.warningEs)}</strong></p>` : ''}</section>`,
+  ).join('');
+  const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': survivalJsonLd('es') }).replace(/</g, '\\u003c');
+  return {
+    keywords: SURVIVAL_KEYWORDS_ES,
+    head: `<script type="application/ld+json" data-page-ld>${jsonLd}</script>`,
+    noscript: `<noscript><main><h1>Guías de supervivencia en Argentina</h1>${body}</main></noscript>`,
+  };
+}
+const EXTRAS = { supervivencia: survivalExtras };
 
 // Reads title/description from the first <SeoHead ...> in the page source:
 // a plain string prop, or the Spanish (else-branch) string of a
@@ -68,9 +88,17 @@ for (const route of PAGES) {
     .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${esc(description)}" />`)
     .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${esc(title)}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${esc(description)}" />`);
+  let out = html;
+  const extra = EXTRAS[route]?.();
+  if (extra) {
+    out = out
+      .replace(/<meta name="keywords" content="[^"]*"\s*\/?>/, `<meta name="keywords" content="${esc(extra.keywords)}" />`)
+      .replace('</head>', () => `${extra.head}</head>`)
+      .replace(/<body([^>]*)>/, (m) => `${m}${extra.noscript}`);
+  }
   const outDir = path.join('dist', route);
   fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, 'index.html'), html);
+  fs.writeFileSync(path.join(outDir, 'index.html'), out);
 }
 
 const shell = template
