@@ -23,6 +23,7 @@ import type { MapLibreEsriHandle } from '../map/MapLibreEsri.native';
 import {
   startBackgroundTrack,
   stopBackgroundTrack,
+  watchScreenPosition,
   BACKGROUND_TRACKING_SUPPORTED,
 } from '../../services/backgroundTrack';
 import { readLiveSession } from '../../services/liveTrack';
@@ -112,7 +113,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const [posHistory, setPosHistory] = useState<Array<{ lat: number; lon: number; t: number }>>([]);
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
-  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'background-denied' | 'searching'>(null);
+  const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'services-off' | 'searching'>(null);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
   const [recovered, setRecovered] = useState(false);
   /** How long the app was in the background, when that gap cost us fixes. */
@@ -187,6 +188,8 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
 
     let cancelled = false;
     let mirrorId: ReturnType<typeof setInterval> | null = null;
+    let stopDot: (() => void) | null = null;
+    let lastDotAt = 0;
 
     if (Platform.OS === 'web') {
       if (typeof navigator !== 'undefined' && navigator.geolocation) {
@@ -218,15 +221,29 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       startBackgroundTrack(trail?.name ?? null).then((res: { started: boolean; reason?: string }) => {
         if (cancelled) return;
         if (!res.started) {
-          setGpsProblem(res.reason === 'background-denied' ? 'background-denied' : 'denied');
+          setGpsProblem(res.reason === 'services-off' ? 'services-off' : 'denied');
           return;
         }
+        // The dot follows every fix; the track (below) only the good ones.
+        watchScreenPosition((lat, lon) => {
+          if (cancelled) return;
+          lastDotAt = Date.now();
+          setUserPos({ lat, lon });
+          setGpsProblem(null);
+        }).then((stop) => {
+          if (cancelled) stop();
+          else stopDot = stop;
+        });
         mirrorId = setInterval(() => {
           const stored = readLiveSession();
           if (!stored || !stored.points.length) return;
           setPosHistory([...stored.points]);
-          const last = stored.points[stored.points.length - 1];
-          setUserPos({ lat: last.lat, lon: last.lon });
+          // With the screen off only the service gets fixes; on waking, show
+          // its latest until the live watch speaks again.
+          if (Date.now() - lastDotAt > 10_000) {
+            const last = stored.points[stored.points.length - 1];
+            setUserPos({ lat: last.lat, lon: last.lon });
+          }
           setGpsProblem(null);
         }, 2000);
       });
@@ -260,6 +277,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
         document.removeEventListener('visibilitychange', onVisible);
       }
       if (mirrorId) clearInterval(mirrorId);
+      stopDot?.();
       if (timerRef.current) clearInterval(timerRef.current);
       if (Platform.OS === 'web' && watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
@@ -316,9 +334,11 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     }
   }, [posHistory, distanceCovered, elapsed, trail]);
 
+  // In the app a new center rebuilds the map page, so it must not follow the
+  // walker: the page itself moves to them on the first fix and pans after.
   const mapCenter: [number, number] | undefined = trail?.coordinates
     ? [trail.coordinates.lat, trail.coordinates.lon]
-    : userPos ? [userPos.lat, userPos.lon] : undefined;
+    : Platform.OS === 'web' && userPos ? [userPos.lat, userPos.lon] : undefined;
 
   if (result) {
     const copy =
@@ -486,10 +506,10 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
                     'Sin acceso al GPS. Activá la ubicación y volvé a iniciar la caminata para grabar tu recorrido.',
                     'No GPS access. Turn on location and restart the hike to record your track.',
                   )
-                : gpsProblem === 'background-denied'
+                : gpsProblem === 'services-off'
                 ? t(
-                    'Falta el permiso de ubicación "Permitir siempre". Sin eso la grabación se corta al apagar la pantalla.',
-                    'The "Allow all the time" location permission is missing. Without it recording stops when the screen goes off.',
+                    'La ubicación del teléfono está apagada. Activala en los ajustes rápidos y volvé a iniciar la caminata.',
+                    "Your phone's location is off. Turn it on from quick settings and restart the hike.",
                   )
                 : t(
                     'Buscando señal GPS. Puede tardar un minuto bajo el bosque o entre paredones; seguimos intentando.',
