@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Platform } from 'react-native';
+import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
 import { difficultyLabel, activityLabel, seasonLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
@@ -88,19 +89,32 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
 
 interface ListProps {
   trail: ArgentinaTrail;
-  onPress: () => void;
+  onPress?: () => void;
   colors: { surface: string; border: string; text: string; muted: string; elevated: string };
+  /** When set, the card is a real <a href> on web (crawlable), navigating via
+   *  expo-router's Link instead of onPress. */
+  href?: string;
 }
 
-export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
+export function TrailListCard({ trail, onPress, colors: c, href }: ListProps) {
+  const card = <TrailListCardBody trail={trail} onPress={href ? undefined : onPress} colors={c} />;
+  return href ? <Link href={href as any} asChild>{card}</Link> : card;
+}
+
+const TrailListCardBody = React.forwardRef<any, ListProps>(function TrailListCardBody(
+  { trail, onPress, colors: c, ...rest },
+  ref,
+) {
   const diff = DIFFICULTY_COLOR[trail.difficulty];
   const photo = useWikiPhoto(trail);
   const { lang } = useLangStore();
 
   return (
     <TouchableOpacity
+      ref={ref}
+      {...rest}
       style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }]}
-      onPress={onPress}
+      onPress={onPress ?? (rest as any).onPress}
       activeOpacity={0.85}
     >
       {/* Photo */}
@@ -153,7 +167,7 @@ export function TrailListCard({ trail, onPress, colors: c }: ListProps) {
       </View>
     </TouchableOpacity>
   );
-}
+});
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, useWindowDimensions, Linking } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
@@ -15,13 +15,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_CONTENT = 1200;
 const INSTAGRAM_URL = 'https://www.instagram.com/sliabh_arg/';
 
+// Each links to its region hub page (src/data/hubs.ts) — a real, crawlable
+// <a href> on every page of the site, where /rutas?region= was one URL
+// for Google no matter the filter.
 const REGION_LINKS = [
-  { labelEs: 'Patagonia Sur', labelEn: 'Patagonia Sur', region: 'Patagonia Sur' },
-  { labelEs: 'Patagonia Norte', labelEn: 'Patagonia Norte', region: 'Patagonia Norte' },
-  { labelEs: 'Cuyo & Aconcagua', labelEn: 'Cuyo & Aconcagua', region: 'Cuyo' },
-  { labelEs: 'Norte (NOA)', labelEn: 'North (NOA)', region: 'Norte' },
-  { labelEs: 'Sierras Centrales', labelEn: 'Central Ranges', region: 'Sierras Centrales' },
-  { labelEs: 'Litoral', labelEn: 'Litoral', region: 'Litoral' },
+  { labelEs: 'Patagonia Sur', labelEn: 'Southern Patagonia', slug: 'patagonia-sur' },
+  { labelEs: 'Patagonia Norte', labelEn: 'Northern Patagonia', slug: 'patagonia-norte' },
+  { labelEs: 'Cuyo & Aconcagua', labelEn: 'Cuyo & Aconcagua', slug: 'cuyo' },
+  { labelEs: 'Norte (NOA)', labelEn: 'North (NOA)', slug: 'norte' },
+  { labelEs: 'Sierras Centrales', labelEn: 'Central Ranges', slug: 'sierras-centrales' },
+  { labelEs: 'Litoral', labelEn: 'Litoral', slug: 'litoral' },
+  { labelEs: 'Buenos Aires', labelEn: 'Buenos Aires', slug: 'buenos-aires' },
 ];
 
 export function WebFooter() {
@@ -95,15 +99,12 @@ export function WebFooter() {
               <Text style={[styles.navLabel, { color: c.muted }]}>{t('Todas las rutas', 'All trails')}</Text>
             </TouchableOpacity>
             {REGION_LINKS.map((r) => (
-              <TouchableOpacity
-                key={r.region}
-                style={styles.navItem}
-                onPress={() => router.push({ pathname: '/(tabs)/rutas', params: { region: r.region } } as any)}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-                <Text style={[styles.navLabel, { color: c.muted }]}>{t(r.labelEs, r.labelEn)}</Text>
-              </TouchableOpacity>
+              <Link key={r.slug} href={`${t('', '/en')}/region/${r.slug}` as any} asChild>
+                <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+                  <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+                  <Text style={[styles.navLabel, { color: c.muted }]}>{t(r.labelEs, r.labelEn)}</Text>
+                </TouchableOpacity>
+              </Link>
             ))}
           </View>
 

@@ -91,15 +91,21 @@ export function SiteHead() {
     // effect pass is enough) until it shows up, then drop the static one —
     // otherwise any tool that just reads "the first meta description" sees
     // the generic fallback instead of the current page's.
+    // Same for the prerendered canonical/keywords: they stay in the DOM across
+    // client-side navigation, so after hub → trail the page had two canonicals.
+    const SELECTORS = ['meta[name="description"]', 'meta[name="keywords"]', 'link[rel="canonical"]'];
     let frame = 0;
     let raf: number;
     const tryCleanup = () => {
-      const helmetTag = document.querySelector('meta[name="description"][data-rh]');
-      if (helmetTag) {
-        document.querySelectorAll('meta[name="description"]:not([data-rh])').forEach((el) => el.remove());
-        return;
+      let pending = false;
+      for (const sel of SELECTORS) {
+        if (document.querySelector(`${sel}[data-rh]`)) {
+          document.querySelectorAll(`${sel}:not([data-rh])`).forEach((el) => el.remove());
+        } else {
+          pending = true;
+        }
       }
-      if (frame++ < 30) raf = requestAnimationFrame(tryCleanup);
+      if (pending && frame++ < 30) raf = requestAnimationFrame(tryCleanup);
     };
     raf = requestAnimationFrame(tryCleanup);
     return () => cancelAnimationFrame(raf);

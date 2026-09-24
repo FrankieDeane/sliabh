@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuthStore } from '../../src/store/authStore';
@@ -329,10 +329,19 @@ export default function InicioScreen() {
         contentContainerStyle={styles.scrollContent}
         {...(Platform.OS === 'web' ? ({ 'data-page-content': true } as any) : {})}
       >
+        {/* Canonical is the homepage itself ("/" or "/en"), not /inicio —
+            "/" redirects here, and two canonicals split the homepage's
+            ranking. Keep the EN copy in sync with scripts/prerender-home.mjs. */}
         <SeoHead
-          title="Sliabh — Senderismo y trekking en Argentina | Rutas, mapas 3D y GPS offline"
-          description="Sliabh: la plataforma de senderismo para explorar los Parques Nacionales de Argentina. Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia. El Chaltén, Bariloche, Tierra del Fuego y más."
-          path="/inicio"
+          title={t(
+            'Sliabh — Senderismo y trekking en Argentina | Rutas, mapas 3D y GPS offline',
+            'Sliabh — Hiking & Trekking in Argentina | Trails, 3D Maps & Offline GPS',
+          )}
+          description={t(
+            'Sliabh: la plataforma de senderismo para explorar los Parques Nacionales de Argentina. Rutas y senderos con mapas 3D, GPS y mapas offline, planificación y guías de supervivencia. El Chaltén, Bariloche, Tierra del Fuego y más.',
+            'Sliabh: plan your hike through Argentina’s National Parks — Patagonia, El Chaltén, Bariloche and Tierra del Fuego. Trail guides with 3D maps, offline GPS tracks, and survival planning, built for hikers travelling from Europe and the US.',
+          )}
+          path={t('/', '/en')}
         />
 
         {/* ── HERO ── */}
@@ -648,16 +657,13 @@ export default function InicioScreen() {
 
           <View style={[styles.regionGrid, { paddingHorizontal: sidePad }]}>
             {REGIONS.map((region) => (
+              // Region hub page (src/data/hubs.ts) as a real <a href>.
+              <Link key={region.id} href={`${t('', '/en')}/region/${region.id}` as any} asChild>
               <TouchableOpacity
-                key={region.id}
-                style={[styles.regionGridCard, isWide ? styles.regionGridCardWide : styles.regionGridCardNarrow]}
+                // Flattened: Link asChild hands this style to the DOM <a> on web,
+                // which can't take an array.
+                style={StyleSheet.flatten([styles.regionGridCard, isWide ? styles.regionGridCardWide : styles.regionGridCardNarrow])}
                 activeOpacity={0.88}
-                onPress={() =>
-                  router.push({
-                    pathname: '/(tabs)/rutas',
-                    params: { region: region.nameEs.replace(' (NOA)', '') },
-                  } as any)
-                }
                 {...(Platform.OS === 'web' ? ({ 'data-interactive-card': true, 'data-reveal-card': true } as any) : {})}
               >
                 <ImageBackground
@@ -676,6 +682,7 @@ export default function InicioScreen() {
                   <Text style={styles.regionSub}>{t(region.regionEs, region.regionEn)}</Text>
                 </View>
               </TouchableOpacity>
+              </Link>
             ))}
           </View>
         </View>

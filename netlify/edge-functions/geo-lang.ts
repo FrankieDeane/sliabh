@@ -24,21 +24,42 @@ import type { Context } from 'https://edge.netlify.com';
  * after hydration.
  */
 
+// Search-engine and AI crawlers. Googlebot crawls almost entirely from US
+// IPs, so geo alone would hand it English on every Spanish URL: after its
+// JS render, /ruta/<id> would carry the English text of /en/ruta/<id>, two
+// "different" URLs with the same content, and the Spanish page indexed in
+// English. A crawler gets the language its URL is for, never its IP's.
+const CRAWLER_UA =
+  /googlebot|google-inspectiontool|googleother|bingbot|slurp|duckduckbot|baiduspider|yandex|applebot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|perplexitybot|ccbot|facebookexternalhit|twitterbot|linkedinbot/i;
+
 const SPANISH_SPEAKING_COUNTRIES = new Set([
   'AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'SV', 'GQ',
   'GT', 'HN', 'MX', 'NI', 'PA', 'PY', 'PE', 'PR', 'ES', 'UY', 'VE',
 ]);
 
-export default async (_request: Request, context: Context) => {
+export default async (request: Request, context: Context) => {
   const response = await context.next();
 
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html')) return response;
 
-  const countryCode = context.geo?.country?.code;
-  // Unknown country (local dev, geo lookup failure) → keep the site's
-  // existing default (Spanish) rather than guessing.
-  const lang = !countryCode || SPANISH_SPEAKING_COUNTRIES.has(countryCode) ? 'es' : 'en';
+  const { pathname } = new URL(request.url);
+  const isEnPath = pathname === '/en' || pathname.startsWith('/en/');
+  const isCrawler = CRAWLER_UA.test(request.headers.get('user-agent') || '');
+
+  let lang: 'es' | 'en';
+  if (isEnPath) {
+    // /en/* is the English version by definition, for everyone.
+    lang = 'en';
+  } else if (isCrawler) {
+    // Every other bilingual URL is the Spanish one (see CRAWLER_UA).
+    lang = 'es';
+  } else {
+    const countryCode = context.geo?.country?.code;
+    // Unknown country (local dev, geo lookup failure) → keep the site's
+    // existing default (Spanish) rather than guessing.
+    lang = !countryCode || SPANISH_SPEAKING_COUNTRIES.has(countryCode) ? 'es' : 'en';
+  }
 
   const html = await response.text();
   const injected = html.replace(
