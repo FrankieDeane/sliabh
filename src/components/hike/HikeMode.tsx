@@ -34,6 +34,14 @@ import {
   captureSetting,
 } from '../../services/backgroundCapability';
 
+// Which build this phone runs (set by the Android workflow), so a field
+// report can be matched to the code: "b41 · 2b7c7aa".
+const BUILD_ID = process.env.EXPO_PUBLIC_BUILD_ID ?? '';
+const BUILD_LABEL =
+  Platform.OS !== 'web' && /^\d+-[0-9a-f]{7,}$/.test(BUILD_ID)
+    ? `b${BUILD_ID.split('-')[0]} · ${BUILD_ID.split('-')[1].slice(0, 7)}`
+    : '';
+
 // Platform-specific flat map — both platforms use MapLibreEsri
 const HikeMap = Platform.OS === 'web'
   ? require('../map/MapLibreEsri.web').MapLibreEsri
@@ -628,9 +636,12 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
         {/* Trail name footer */}
         <View style={[hikeS.footer, { backgroundColor: C.bg }]}>
           <Ionicons name="map-outline" size={13} color={C.muted} />
-          <Text style={[hikeS.footerText, { color: C.muted }]} numberOfLines={1}>
+          <Text style={[hikeS.footerText, { color: C.muted, flex: 1 }]} numberOfLines={1}>
             {trail?.name ?? t('Recorrido libre — sin sendero', 'Free track — no trail')}
           </Text>
+          {BUILD_LABEL ? (
+            <Text style={[hikeS.footerText, { color: C.muted, opacity: 0.7 }]}>{BUILD_LABEL}</Text>
+          ) : null}
         </View>
       </SafeAreaView>
     </Modal>
