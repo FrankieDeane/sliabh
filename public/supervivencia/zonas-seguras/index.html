@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapa de zonas seguras de Argentina: nuclear, volcanes, sismos | Sliabh</title>
+<meta name="description" content="Mapa 3D de riesgos y zonas refugio de Argentina. Simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos, data centers de IA, agua segura y qué hacer en un apagón.">
+<meta name="keywords" content="zonas seguras Argentina, refugio nuclear Argentina, simulador bomba nuclear Buenos Aires, ceniza volcánica Bariloche, terremoto San Juan, nube tóxica Bahía Blanca, data centers IA Argentina, agua segura emergencia, apagón qué hacer, Sliabh">
+<link rel="canonical" href="https://sliabh.com.ar/supervivencia/zonas-seguras">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sliabh">
+<meta property="og:locale" content="es_AR">
+<meta property="og:url" content="https://sliabh.com.ar/supervivencia/zonas-seguras">
+<meta property="og:title" content="Mapa de zonas seguras de Argentina | Sliabh">
+<meta property="og:description" content="Riesgos, refugios y simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos sobre un mapa 3D de Argentina.">
+<meta property="og:image" content="https://sliabh.com.ar/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mapa de zonas seguras de Argentina | Sliabh">
+<meta name="twitter:description" content="Riesgos, refugios y simuladores sobre un mapa 3D de Argentina.">
+<meta name="twitter:image" content="https://sliabh.com.ar/og-image.jpg">
+<link rel="icon" href="/favicon.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://sliabh.com.ar/supervivencia/zonas-seguras#page", "url": "https://sliabh.com.ar/supervivencia/zonas-seguras", "name": "Mapa de zonas seguras de Argentina", "inLanguage": "es", "description": "Mapa 3D de riesgos y zonas refugio de Argentina con simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos.", "isPartOf": {"@type": "WebSite", "name": "Sliabh", "url": "https://sliabh.com.ar/"}, "about": ["Protección civil", "Zonas seguras", "Riesgo volcánico", "Riesgo sísmico", "Emergencia nuclear"]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Sliabh", "item": "https://sliabh.com.ar/"}, {"@type": "ListItem", "position": 2, "name": "Supervivencia", "item": "https://sliabh.com.ar/supervivencia"}, {"@type": "ListItem", "position": 3, "name": "Mapa de zonas seguras", "item": "https://sliabh.com.ar/supervivencia/zonas-seguras"}]}]}</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="/vendor/maplibre-gl-4.7.1.css">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #060a12;
+    --surface: #0d1522;
+    --raised: #142034;
+    --border: #1f2e45;
+    --text: #eef5ff;
+    --muted: #8c9bb3;
+    --faint: #56667f;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f97316;
+    --amber: #f59e0b;
+    --yellow: #fde047;
+    --violet: #a78bfa;
+    --sky: #38bdf8;
+    --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.55; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; border-radius: 6px; }
+  .mono { font-family: var(--mono); }
+  .sitenav { display: flex; gap: 18px; align-items: center; padding: 10px 16px; background: #04070d; border-bottom: 1px solid var(--border); font: 600 13px var(--sans); }
+  .sitenav a { color: var(--muted); text-decoration: none; }
+  .sitenav a:hover { color: var(--text); }
+  .sitenav .brand { color: var(--text); font-weight: 800; letter-spacing: .02em; }
+  .mock-bar { overflow-wrap: anywhere; background: #171204; color: #fcd34d; border-bottom: 1px solid #3a2d08; font-size: 12.5px; padding: 7px 16px; text-align: center; }
+
+  /* ================= SITUATION ROOM ================= */
+  .room { display: grid; grid-template-columns: minmax(0, 1fr) 390px; height: 760px; border-bottom: 1px solid var(--border); }
+  .mapwrap { position: relative; height: 100%; min-height: 0; background: #04070d; }
+  @media (max-width: 900px) { .room { grid-template-columns: 1fr; height: auto; } .mapwrap { height: 540px; } }
+  #map { position: absolute; inset: 0; }
+  .hud-title { position: absolute; left: 20px; top: 18px; right: 20px; pointer-events: none; display: grid; gap: 6px; max-width: 560px; }
+  .eyebrow { font: 600 11px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .hud-title h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.6vw, 58px); line-height: 1; letter-spacing: -.01em; text-shadow: 0 2px 24px rgba(0,0,0,.8); }
+  .hud-title h1 em { color: var(--green); }
+  .hud-read { position: absolute; left: 20px; bottom: 34px; display: flex; flex-wrap: wrap; gap: 8px; pointer-events: none; }
+  .readout { background: rgba(6,10,18,.78); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font: 600 11.5px var(--mono); letter-spacing: .04em; color: #cbd5e1; backdrop-filter: blur(6px); }
+  .readout b { color: var(--sky); font-weight: 700; }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font: 600 12px var(--mono); letter-spacing: .15em; }
+
+  .panel { background: var(--surface); border-left: 1px solid var(--border); display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; overflow: hidden; }
+  .pane { min-height: 0; }
+  @media (max-width: 900px) { .panel { border-left: 0; border-top: 1px solid var(--border); } }
+  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--border); }
+  .tab { background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 12px 2px 10px; font: 700 11.5px var(--sans); line-height: 1.2; cursor: pointer; display: grid; justify-items: center; gap: 4px; }
+  .tab svg { width: 20px; height: 20px; }
+  .tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--tabc, var(--green)); background: rgba(255,255,255,.02); }
+  .pane { padding: 18px; display: grid; gap: 16px; align-content: start; overflow: auto; }
+  .pane[hidden] { display: none !important; }
+  .pane h2 { font-family: var(--serif); font-weight: 400; font-size: 27px; line-height: 1.08; }
+  .pane .intro { color: var(--muted); font-size: 13.5px; }
+  .ctl { display: grid; gap: 7px; }
+  .ctl > .lbl { font: 600 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button, .chipbtn { background: var(--raised); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 8px 10px; font: 600 12.5px var(--sans); cursor: pointer; flex: 1 1 auto; }
+  .seg button[aria-pressed="true"] { background: var(--selbg, #2a1606); border-color: var(--selbd, #9a3412); color: var(--selfg, #fdba74); }
+  select { width: 100%; background: var(--raised); color: var(--text); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; font: 600 14px var(--sans); }
+  input[type=range] { width: 100%; accent-color: var(--amber); }
+
+  .legend { display: grid; gap: 2px; }
+  .lg { display: grid; grid-template-columns: 16px 1fr auto; gap: 10px; padding: 9px 0; border-top: 1px solid var(--border); align-items: start; }
+  .lg:first-child { border-top: 0; }
+  .lg .sw { width: 14px; height: 14px; border-radius: 50%; margin-top: 3px; border: 2px solid; }
+  .lg .t { font-weight: 700; font-size: 13.5px; }
+  .lg .d { color: var(--muted); font-size: 12.5px; }
+  .lg .towns { font-size: 12px; color: #cbd5e1; margin-top: 3px; }
+  .lg .towns b { color: var(--text); }
+  .lg .km { font: 700 13px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .clock { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+  .clock-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .clock-top .big { font: 700 24px var(--mono); font-variant-numeric: tabular-nums; }
+  .clock-top .pct { font: 700 12.5px var(--mono); color: var(--amber); text-align: right; }
+  .advice { font-size: 13.5px; }
+  .note { font-size: 11.5px; color: var(--faint); }
+  .poi-card { background: var(--raised); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
+  .poi-card h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; line-height: 1.1; }
+  .tag { justify-self: start; display: inline-block; font: 700 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; }
+  .tag.red { background: rgba(239,68,68,.14); color: #fca5a5; } .tag.violet { background: rgba(167,139,250,.16); color: #c4b5fd; } .tag.green { background: rgba(34,197,94,.14); color: #86efac; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: 13px; margin: 0; }
+  .facts dt { color: var(--muted); } .facts dd { margin: 0; }
+  .cta { background: var(--green); color: #04240f; border: 0; border-radius: 10px; padding: 10px 14px; font: 800 13px var(--sans); cursor: pointer; justify-self: start; }
+  .layers { display: flex; flex-wrap: wrap; gap: 6px; }
+  .layer { display: inline-flex; gap: 7px; align-items: center; background: var(--raised); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 6px 11px; font: 600 12px var(--sans); cursor: pointer; }
+  .layer i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+  .layer[aria-pressed="false"] { opacity: .4; }
+
+  /* markers */
+  .mk { display: flex; align-items: center; gap: 6px; cursor: pointer; transform: translateY(-2px); }
+  .mk .pin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #060a12; box-shadow: 0 0 0 4px var(--halo); }
+  .mk.ai .pin { border-radius: 2px; transform: rotate(45deg); }
+  .mk.volcano .pin { width: 0; height: 0; border-radius: 0; border: 7px solid transparent; border-bottom: 12px solid #fb923c; border-top: 0; box-shadow: none; background: none !important; filter: drop-shadow(0 0 4px rgba(251,146,60,.8)); }
+  .mk.minor .nm { display: none; }
+  .mk.minor:hover .nm, .mk.minor:focus .nm { display: inline; }
+  .mk.tbd .pin { box-shadow: 0 0 0 4px var(--halo), 0 0 0 10px rgba(167,139,250,.14); }
+  .mk .nm, .town .nm, .ringlbl { font: 700 11px var(--sans); color: #fff; text-shadow: 0 1px 3px #000, 0 0 8px #000; white-space: nowrap; }
+  .town { display: flex; align-items: center; gap: 5px; pointer-events: none; }
+  .town i { width: 5px; height: 5px; border-radius: 50%; background: #e2e8f0; display: block; box-shadow: 0 0 0 2px rgba(0,0,0,.6); }
+  .town .nm { font-weight: 600; color: #e2e8f0; font-size: 10.5px; }
+  .ringlbl { background: rgba(6,10,18,.82); border: 1px solid var(--rc); color: var(--rc); border-radius: 6px; padding: 2px 7px; font: 700 10.5px var(--mono); pointer-events: none; }
+  .gz { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle, #fff 0 30%, #fde047 45%, rgba(253,224,71,0) 72%); }
+  .arrow { width: 44px; height: 44px; pointer-events: none; }
+  .maplibregl-ctrl-attrib { font-size: 10px; }
+  #map.far .mk .nm { display: none; }
+  @media (max-width: 600px) {
+    .hud-title h1 { font-size: 30px; }
+    .hud-title .eyebrow { display: none; }
+    .readout:nth-child(n+2) { display: none; }
+    .hud-read { bottom: 30px; }
+    .mock-bar { font-size: 11px; }
+  }
+
+  /* ================= SECTIONS ================= */
+  .wrap { max-width: 1140px; margin: 0 auto; padding-inline: 20px; padding-block: 0 72px; }
+  section.block { margin-top: 72px; display: grid; gap: 22px; }
+  .head { display: grid; gap: 8px; max-width: 72ch; }
+  .head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 4.6vw, 52px); line-height: 1.03; }
+  .head p { color: var(--muted); }
+
+  /* water */
+  .have { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 760px) { .have { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .have button { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 14px; padding: 14px; display: grid; gap: 6px; justify-items: start; text-align: left; cursor: pointer; }
+  .have button svg { width: 30px; height: 30px; }
+  .have button b { font-size: 14px; }
+  .have button span { font-size: 12px; color: var(--muted); }
+  .have button[aria-pressed="true"] { border-color: #0ea5e9; background: #07243a; box-shadow: 0 0 0 3px rgba(14,165,233,.18); }
+  .stage { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+  @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
+  .scene { position: relative; background: #081322; }
+  .scene svg { display: block; width: 100%; height: auto; }
+  .scene * { transition: all .7s cubic-bezier(.2,.7,.2,1); }
+  .stepper { padding: 26px; display: grid; gap: 16px; align-content: start; }
+  .method-name { font: 700 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--sky); }
+  .stepper h3 { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1.05; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { height: 5px; flex: 1; border-radius: 99px; background: var(--border); }
+  .dots i.on { background: var(--sky); }
+  .step-n { font: 700 12px var(--mono); color: var(--muted); }
+  .step-t { font-size: 20px; font-weight: 700; line-height: 1.3; }
+  .step-d { color: var(--muted); font-size: 14.5px; }
+  .nav { display: flex; gap: 8px; }
+  .nav button { border-radius: 10px; padding: 10px 16px; font: 700 13.5px var(--sans); cursor: pointer; border: 1px solid var(--border); background: var(--raised); color: var(--text); }
+  .nav button.next { background: var(--sky); color: #03263a; border-color: var(--sky); }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stat { background: var(--raised); border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; font-size: 12px; color: var(--muted); }
+  .stat b { display: block; color: var(--text); font: 700 13px var(--mono); }
+  .warn { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.3); color: #fcd34d; border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+
+  /* blackout */
+  .bo { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; display: grid; gap: 20px; }
+  .bo-top { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  @media (max-width: 640px) { .bo-top { grid-template-columns: 1fr; } }
+  .bo-clock { font: 700 44px var(--mono); font-variant-numeric: tabular-nums; line-height: 1; }
+  .bo-clock small { display: block; font: 600 11px var(--mono); letter-spacing: .14em; color: var(--muted); margin-top: 6px; }
+  .ticks { display: flex; justify-content: space-between; font: 600 11px var(--mono); color: var(--faint); margin-top: 4px; }
+  .sys { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 760px) { .sys { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .sy { border: 1px solid var(--border); border-radius: 14px; padding: 12px; display: grid; gap: 6px; background: var(--raised); transition: background .4s, border-color .4s; }
+  .sy .nm { font-weight: 700; font-size: 13.5px; }
+  .sy .st { font: 700 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+  .sy[data-s="ok"] .st { color: #86efac; } .sy[data-s="warn"] { border-color: rgba(245,158,11,.45); } .sy[data-s="warn"] .st { color: #fcd34d; }
+  .sy[data-s="down"] { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.45); } .sy[data-s="down"] .st { color: #fca5a5; }
+  .sy .why { font-size: 12px; color: var(--muted); }
+  .bo-do { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; background: #07243a; border: 1px solid #0c4a6e; border-radius: 14px; padding: 14px 16px; }
+  .bo-do b { font: 700 11px var(--mono); letter-spacing: .14em; color: var(--sky); padding-top: 3px; }
+
+  /* timeline */
+  .timeline { display: grid; border-left: 2px solid var(--border); margin-left: 6px; }
+  .ev { position: relative; padding: 0 0 22px 24px; display: grid; gap: 4px; }
+  .ev::before { content: ""; position: absolute; left: -8px; top: 5px; width: 14px; height: 14px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 4px var(--bg); }
+  .ev time { font: 700 12px var(--mono); color: var(--violet); }
+  .ev h3 { font-size: 16px; font-weight: 700; }
+  .ev p { font-size: 14px; color: var(--muted); max-width: 72ch; }
+  .ev a { color: var(--violet); }
+  .soon { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 640px) { .soon { grid-template-columns: 1fr; } }
+  .soon > div { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: grid; gap: 8px; }
+  .soon h3 { font-size: 16px; }
+  .soon p { font-size: 13.5px; color: var(--muted); }
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); display: grid; gap: 6px; }
+  @media (prefers-reduced-motion: reduce) { .scene * { transition: none !important; } }
+</style>
+
+</head>
+<body>
+<nav class="sitenav" aria-label="Sliabh"><a href="/" class="brand">Sliabh</a><a href="/supervivencia">← Guías de supervivencia</a></nav>
+
+<div class="room">
+  <div class="mapwrap">
+    <div id="map" role="region" aria-label="Mapa 3D de Argentina"></div>
+    <div class="loading" id="loading">CARGANDO RELIEVE…</div>
+    <div class="hud-title">
+      <div class="eyebrow">Sliabh · Sala de situación</div>
+      <h1>Mapa de zonas <em>seguras</em> de Argentina</h1>
+    </div>
+    <div class="hud-read" id="hud"></div>
+  </div>
+
+  <aside class="panel">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-mode="map" style="--tabc:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>Riesgos</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="nuke" style="--tabc:var(--amber)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M12 10V3a9 9 0 0 1 7.8 4.5L13.7 11M10.3 13 4.2 16.5A9 9 0 0 1 3 12h7M13.7 13l6.1 3.5A9 9 0 0 1 12 21v-7"/></svg>Nuclear</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="gas" style="--tabc:#a3e635">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15a4 4 0 0 1 4-4 5 5 0 0 1 9.6-1.2A3.5 3.5 0 0 1 19.5 17H8a4 4 0 0 1-4-2Z"/><path d="M7 21h10"/></svg>Nube tóxica</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="ash" style="--tabc:#fb923c">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 21 7-11 3 4 2-3 8 10Z"/><path d="M11 7q1-3 4-3 2 0 3-2"/></svg>Volcán</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="quake" style="--tabc:#f43f5e">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l2-6 3 12 3-9 2 3h6"/></svg>Sismo</button>
+    </div>
+
+    <div class="pane" id="pane-map">
+      <h2>¿Dónde conviene estar?</h2>
+      <p class="intro">Tocá un punto del mapa. Rojo es riesgo, violeta son los data centers de IA anunciados y verde, las zonas con más chances de resistir.</p>
+      <div class="layers" id="layers">
+        <button class="layer" data-l="risk" aria-pressed="true"><i style="background:var(--red)"></i>Riesgos</button>
+        <button class="layer" data-l="ai" aria-pressed="true"><i style="background:var(--violet)"></i>Data centers IA</button>
+        <button class="layer" data-l="refuge" aria-pressed="true"><i style="background:var(--green)"></i>Refugios</button>
+        <button class="layer" data-l="volcano" aria-pressed="true"><i style="background:#fb923c"></i>Volcanes</button>
+      </div>
+      <div class="poi-card" id="poi" aria-live="polite"></div>
+      <p class="note">Ningún lugar es 100% seguro. Criterios: distancia a blancos probables, viento dominante del oeste, agua propia, cultivo y baja población.</p>
+    </div>
+
+    <div class="pane" id="pane-nuke" hidden style="--selbg:#2a1606;--selbd:#b45309;--selfg:#fcd34d">
+      <h2>Qué pasaría con una explosión nuclear</h2>
+      <div class="ctl"><span class="lbl">Ciudad</span>
+        <select id="n-city"><option value="ba">Buenos Aires</option><option value="cba">Córdoba</option><option value="ros">Rosario</option><option value="mza">Mendoza</option><option value="bb">Bahía Blanca</option></select></div>
+      <div class="ctl"><span class="lbl">Potencia</span>
+        <div class="seg" id="n-kt"><button data-v="15" aria-pressed="true">15 kt · Hiroshima</button><button data-v="100" aria-pressed="false">100 kt</button><button data-v="300" aria-pressed="false">300 kt · actual</button><button data-v="1000" aria-pressed="false">1 Mt</button></div></div>
+      <div class="ctl"><span class="lbl">Explosión</span>
+        <div class="seg" id="n-burst"><button data-v="ground" aria-pressed="true">Al nivel del suelo</button><button data-v="air" aria-pressed="false">En altura</button></div></div>
+      <div class="ctl"><span class="lbl">Viento</span>
+        <div class="seg" id="n-wind"><button data-v="90" aria-pressed="true">Del oeste (el más común)</button><button data-v="45" aria-pressed="false">Del sudoeste</button><button data-v="180" aria-pressed="false">Del norte</button></div></div>
+      <button class="chipbtn" id="n-zoom" type="button" style="justify-self:start;flex:none;border-color:#a16207;color:#fde68a">Ver toda la lluvia radiactiva</button>
+      <div class="legend" id="n-legend"></div>
+      <div class="clock">
+        <div class="clock-top"><span class="big" id="n-h">1 h</span><span class="pct" id="n-pct"></span></div>
+        <input type="range" id="n-time" min="1" max="72" value="1" aria-label="Horas después de la explosión">
+        <p class="advice" id="n-adv"></p>
+      </div>
+      <p class="note">Simulación educativa aproximada con las escalas públicas de efectos nucleares (Glasstone y Dolan, las que usa NUKEMAP). La forma de la lluvia radiactiva es ilustrativa: depende del viento de ese día. En una emergencia real seguí a Protección Civil y a la ARN.</p>
+    </div>
+
+    <div class="pane" id="pane-gas" hidden style="--selbg:#1a2a06;--selbd:#4d7c0f;--selfg:#d9f99d">
+      <h2>Una fuga en un polo químico</h2>
+      <p class="intro">Una nube tóxica viaja a favor del viento y se ensancha. Las flechas muestran hacia dónde conviene alejarse: en perpendicular al viento, nunca con él.</p>
+      <div class="ctl"><span class="lbl">Polo industrial</span>
+        <select id="g-site"><option value="bbp">Polo petroquímico Bahía Blanca</option><option value="cz">Campana–Zárate</option><option value="sl">San Lorenzo–Puerto San Martín</option></select></div>
+      <div class="ctl"><span class="lbl">Viento</span>
+        <div class="seg" id="g-wind"><button data-v="90" aria-pressed="true">Del oeste</button><button data-v="45" aria-pressed="false">Del sudoeste</button><button data-v="180" aria-pressed="false">Del norte</button><button data-v="270" aria-pressed="false">Del este</button></div></div>
+      <div class="legend" id="g-legend"></div>
+      <p class="note">Escenario ilustrativo para aprender a reaccionar. Las distancias reales dependen de qué se escapa y cuánto, del viento y del terreno. Seguí siempre a Bomberos y Protección Civil.</p>
+    </div>
+
+    <div class="pane" id="pane-ash" hidden style="--selbg:#2a1206;--selbd:#c2410c;--selfg:#fdba74">
+      <h2>Una erupción del otro lado de la cordillera</h2>
+      <p class="intro">Los volcanes activos que más afectan a la Argentina están en Chile. El viento del oeste trae la ceniza hacia nuestro lado y la puede llevar cientos de kilómetros.</p>
+      <div class="ctl"><span class="lbl">Volcán</span>
+        <select id="a-volc"><option value="caulle">Cordón Caulle · como en 2011</option><option value="calbuco">Calbuco · como en 2015</option><option value="chaiten">Chaitén · como en 2008</option><option value="copahue">Copahue · Neuquén</option></select></div>
+      <div class="ctl"><span class="lbl">Tamaño de la erupción</span>
+        <div class="seg" id="a-size"><button data-v="1" aria-pressed="false">Chica</button><button data-v="2" aria-pressed="true">Mediana</button><button data-v="3" aria-pressed="false">Grande</button></div></div>
+      <div class="ctl"><span class="lbl">Viento</span>
+        <div class="seg" id="a-wind"><button data-v="90" aria-pressed="true">Del oeste</button><button data-v="120" aria-pressed="false">Del noroeste</button><button data-v="60" aria-pressed="false">Del sudoeste</button></div></div>
+      <div class="poi-card" id="a-story"></div>
+      <div class="legend" id="a-legend"></div>
+      <p class="note">Escenario ilustrativo. La extensión real depende de la erupción y del viento en altura. Los avisos oficiales los da el Observatorio Argentino de Vigilancia Volcánica (SEGEMAR).</p>
+    </div>
+
+    <div class="pane" id="pane-quake" hidden style="--selbg:#2a0a12;--selbd:#be123c;--selfg:#fda4af">
+      <h2>Un terremoto en Cuyo</h2>
+      <p class="intro">San Juan y Mendoza son la zona sísmica más activa del país. Los anillos muestran hasta dónde llegaría cada nivel de daño.</p>
+      <div class="ctl"><span class="lbl">Escenario</span>
+        <select id="q-scn"><option value="sj44">San Juan 1944 · M 7,0</option><option value="cau77">Caucete 1977 · M 7,4</option><option value="mza61">Mendoza 1861 · M ≈ 7</option></select></div>
+      <div class="ctl"><span class="lbl">Magnitud</span>
+        <div class="seg" id="q-mag"><button data-v="6.5" aria-pressed="false">6,5</button><button data-v="0" aria-pressed="true">Histórica</button><button data-v="7.8" aria-pressed="false">7,8</button></div></div>
+      <div class="poi-card" id="q-story"></div>
+      <div class="legend" id="q-legend"></div>
+      <div class="poi-card"><span class="tag red">Durante y después</span><p><b>Durante:</b> agachate, cubrite bajo una mesa firme y agarrate. Alejate de ventanas y no uses ascensores.</p><p><b>Después:</b> cortá el gas y la luz, ponete calzado y salí con cuidado. Mandá SMS en lugar de llamar y esperá réplicas.</p></div>
+      <p class="note">Estimación aproximada de intensidad (escala de Mercalli) para un sismo poco profundo. El daño real depende mucho de la construcción: el adobe fue la principal causa de muertes en 1944. Referencias: INPRES y registros históricos provinciales.</p>
+    </div>
+  </aside>
+</div>
+
+<div class="wrap">
+  <section class="block" id="agua">
+    <div class="head">
+      <div class="eyebrow">Guía visual · Agua segura</div>
+      <h2>¿Qué tenés a mano? Te decimos cómo conseguir agua segura</h2>
+      <p>Sin agua potable el cuerpo aguanta unos tres días. Elegí lo que tenés y seguí los pasos.</p>
+    </div>
+    <div class="have" id="have" role="group" aria-label="Qué tenés a mano">
+      <button data-m="sodis" aria-pressed="true"><svg viewBox="0 0 32 32" fill="none"><circle cx="23" cy="9" r="5" fill="#fbbf24"/><rect x="5" y="14" width="16" height="9" rx="3" stroke="#7dd3fc" stroke-width="2" fill="rgba(125,211,252,.25)"/></svg><b>Botellas y sol</b><span>Desinfección solar</span></button>
+      <button data-m="boil" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none"><path d="M7 14h18l-2 11H9z" fill="#64748b"/><path d="M11 30q2-5 4 0M17 30q2-5 4 0" stroke="#f97316" stroke-width="2"/><path d="M12 10q2-3 0-6M17 10q2-3 0-6" stroke="#cbd5e1" stroke-width="2"/></svg><b>Fuego y olla</b><span>Hervir</span></button>
+      <button data-m="chlor" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none"><rect x="9" y="8" width="12" height="20" rx="3" fill="#e2e8f0"/><rect x="12" y="4" width="6" height="5" rx="1" fill="#3b82f6"/><path d="M25 12q2 3 0 5-2-2 0-5Z" fill="#7dd3fc"/></svg><b>Lavandina</b><span>Potabilizar</span></button>
+      <button data-m="dew" aria-pressed="false"><svg viewBox="0 0 32 32" fill="none"><circle cx="9" cy="20" r="6" fill="#fb923c"/><path d="M2 22h28" stroke="#22c55e" stroke-width="3"/><path d="M20 8q3 4 0 7-3-3 0-7Z" fill="#7dd3fc"/></svg><b>Nada, solo el campo</b><span>Rocío de la mañana</span></button>
+    </div>
+    <div class="stage">
+      <div class="scene" id="scene"></div>
+      <div class="stepper">
+        <div class="method-name" id="w-name"></div>
+        <h3 id="w-title"></h3>
+        <div class="dots" id="w-dots"></div>
+        <div class="step-n" id="w-n"></div>
+        <div class="step-t" id="w-t"></div>
+        <div class="step-d" id="w-d"></div>
+        <div class="nav"><button id="w-prev">Anterior</button><button id="w-next" class="next">Siguiente paso</button></div>
+        <div class="stats" id="w-stats"></div>
+        <div class="warn" id="w-warn" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="apagon">
+    <div class="head">
+      <div class="eyebrow">Simulador · Ciberataque o apagón</div>
+      <h2>Un día sin luz ni internet, hora por hora</h2>
+      <p>El 16 de junio de 2019 un apagón dejó sin luz a casi toda la Argentina y a Uruguay. Mové el reloj y mirá qué deja de funcionar si un ciberataque tira la red eléctrica y las comunicaciones.</p>
+    </div>
+    <div class="bo">
+      <div class="bo-top">
+        <div class="bo-clock" id="bo-clock">0 h<small>DESDE EL ATAQUE</small></div>
+        <div><input type="range" id="bo-t" min="0" max="7" value="0" step="1" aria-label="Horas desde el ataque" style="accent-color:var(--sky)"><div class="ticks"><span>0</span><span>1 h</span><span>3 h</span><span>6 h</span><span>12 h</span><span>24 h</span><span>48 h</span><span>72 h</span></div></div>
+      </div>
+      <div class="sys" id="bo-sys"></div>
+      <div class="bo-do"><b>QUÉ HACER</b><p id="bo-do"></p></div>
+      <p class="note">Escenario ilustrativo basado en lo que pasa en apagones grandes. Los tiempos cambian según la ciudad y la duración.</p>
+    </div>
+  </section>
+
+  <section class="block" id="ia">
+    <div class="head">
+      <div class="eyebrow">Riesgos de la IA · casos documentados</div>
+      <h2>Lo que ya pasó, con fecha y fuente</h2>
+      <p>Para entender el riesgo sin exagerarlo.</p>
+    </div>
+    <div class="timeline">
+      <div class="ev"><time>MAYO 2023</time><h3>Líderes de la IA advierten sobre el riesgo de extinción</h3><p>La declaración del Center for AI Safety, firmada por directivos de OpenAI, Google DeepMind y Anthropic, pide tratar el riesgo de extinción por IA como prioridad global, al nivel de las pandemias y la guerra nuclear. <a href="https://www.safe.ai/work/statement-on-ai-risk" rel="noopener" target="_blank">Fuente</a></p></div>
+      <div class="ev"><time>FEBRERO 2024</time><h3>Una videollamada falsa roba USD 25 millones</h3><p>Un empleado de la firma Arup en Hong Kong hizo 15 transferencias por USD 25,6 millones después de una videollamada en la que todos los "directivos" eran deepfakes creados con IA. <a href="https://www.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk" rel="noopener" target="_blank">Fuente</a></p></div>
+      <div class="ev"><time>2024</time><h3>Modelos con código malicioso en Hugging Face</h3><p>La empresa de seguridad JFrog encontró unos 100 modelos subidos a la plataforma que ejecutaban código oculto en la computadora de quien los descargaba. En mayo la empresa también informó un acceso no autorizado a claves privadas de su servicio Spaces. <a href="https://thehackernews.com/2024/03/over-100-malicious-aiml-models-found-on.html" rel="noopener" target="_blank">Fuente</a> · <a href="https://techcrunch.com/2024/05/31/hugging-face-says-it-detected-unauthorized-access-to-its-ai-model-hosting-platform/" rel="noopener" target="_blank">Fuente</a></p></div>
+    </div>
+  </section>
+
+
+
+  <footer>
+    <span>Sliabh · Imagen satelital: Esri, Maxar, Earthstar Geographics · Relieve: Terrain Tiles (Mapzen / AWS) · Límites: IGN · Proyectos de IA a septiembre de 2026 (Reuters, BNamericas, Infobae, La Nación).</span>
+    <span>Esta página es preparación e información, no una garantía.</span>
+  </footer>
+</div>
+
+<script src="/vendor/maplibre-gl-4.7.1.js"></script>
+<script>
+(function () {
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function $(id) { return document.getElementById(id); }
+  function fmtKm(v) { return (v < 1 ? v.toFixed(2) : v < 10 ? v.toFixed(1) : Math.round(v)).toString().replace('.', ',') + ' km'; }
+
+  /* ---------- geo helpers ---------- */
+  function offset(lon, lat, dxKm, dyKm) { return [lon + dxKm / (111.32 * Math.cos(lat * Math.PI / 180)), lat + dyKm / 110.574]; }
+  function circle(lon, lat, r, n) { n = n || 96; var c = []; for (var i = 0; i <= n; i++) { var a = i / n * 2 * Math.PI; c.push(offset(lon, lat, r * Math.cos(a), r * Math.sin(a))); } return c; }
+  // teardrop along a bearing (deg, 0 = north, 90 = east), length L km, max half-width W km
+  function plume(lon, lat, bearing, L, W, back) {
+    var b = bearing * Math.PI / 180, ux = Math.sin(b), uy = Math.cos(b), px = -uy, py = ux, left = [], right = [], n = 48;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n, along = -back + t * (L + back);
+      var w = W * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.08)), 0.7) * (0.55 + 0.45 * t);
+      if (i === 0 || i === n) w = 0;
+      left.push(offset(lon, lat, along * ux + w * px, along * uy + w * py));
+      right.unshift(offset(lon, lat, along * ux - w * px, along * uy - w * py));
+    }
+    var ring = left.concat(right); ring.push(ring[0]); return ring;
+  }
+  function distKm(a, b) { var dx = (a[0] - b[0]) * 111.32 * Math.cos(a[1] * Math.PI / 180), dy = (a[1] - b[1]) * 110.574; return Math.sqrt(dx * dx + dy * dy); }
+  function inPoly(pt, ring) { var x = pt[0], y = pt[1], ins = false; for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) { var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1]; if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins; } return ins; }
+  function fc(features) { return { type: 'FeatureCollection', features: features }; }
+  function poly(ring, props) { return { type: 'Feature', properties: props || {}, geometry: { type: 'Polygon', coordinates: [ring] } }; }
+
+  /* ---------- data ---------- */
+  var POIS = [
+    { l:'risk', n:'Buenos Aires', c:[-58.38,-34.60], k:'Ciudad, puerto y gobierno', w:'La mayor concentración de población del país, puertos y la central Atucha a 100 km.' },
+    { l:'risk', n:'Rosario', c:[-60.64,-32.95], k:'Ciudad y puertos', w:'Polo agroexportador y portuario sobre el Paraná.' },
+    { l:'risk', n:'Córdoba', c:[-64.18,-31.42], k:'Ciudad', w:'Segunda ciudad del país, a 100 km de la central Embalse.' },
+    { l:'risk', n:'Mendoza', c:[-68.83,-32.89], k:'Ciudad', w:'Gran ciudad y paso internacional a Chile.' },
+    { l:'risk', n:'Bahía Blanca', c:[-62.27,-38.72], k:'Puerto, polo petroquímico y base naval', w:'Puerto de aguas profundas, polo petroquímico y la base naval Puerto Belgrano.' },
+    { l:'risk', minor:true, n:'Atucha I y II', c:[-59.21,-33.97], k:'Central nuclear', w:'Lima, Buenos Aires. Tiene plan de emergencia con zonas de protección.' },
+    { l:'risk', minor:true, n:'Embalse', c:[-64.44,-32.23], k:'Central nuclear', w:'Córdoba. Tiene plan de emergencia con zonas de protección.' },
+    { l:'ai', n:'Pampa Energía (Neuquén)', c:[-68.43,-39.01], k:'Data center IA · en estudio', w:'Hasta 500 MW junto a Loma de la Lata, con gas de Vaca Muerta. Zonas evaluadas en el departamento Confluencia, cerca del río Limay.' },
+    { l:'ai', n:'Green Capital (Chubut)', c:[-65.3,-43.7], k:'Data center IA · busca inversores', w:'300 MW en la primera etapa (ampliable a 3.000 MW) al sur de Trelew, con parques eólicos y solares propios.' },
+    { l:'ai', minor:true, n:'Zona franca Bahía Blanca', c:[-61.95,-38.55], k:'Data center IA · parque tecnológico', w:'Pampa Energía aportaría 30 MW. Ahí también estaba el "Proyecto Tango" de Amazon, frenado desde 2020.' },
+    { l:'ai', n:'Stargate Argentina', c:[-67.0,-41.3], k:'OpenAI + Sur Energy · sin terreno', w:'Hasta 500 MW y unos USD 25.000 millones en la Patagonia. Solo carta de intención (octubre de 2025), sin sitio confirmado. El punto es ilustrativo.', tbd:true },
+    { l:'refuge', n:'Comarca Andina', c:[-71.53,-41.96], k:'Zona refugio', w:'El Bolsón, Lago Puelo y El Hoyo: agua de deshielo, chacras, leña y viento a favor desde la cordillera.', f:[['Agua','Ríos y lagos de deshielo'],['Alimento','Chacras, frutas finas, huertas'],['Salud','Hospital de El Bolsón'],['Contras','Inviernos duros, una sola ruta (RN 40), incendios forestales (2021) y ceniza de volcanes chilenos']] },
+    { l:'refuge', n:'Esquel y Trevelin', c:[-71.31,-42.91], k:'Zona refugio', w:'Valle 16 de Octubre: agua, producción agrícola y muy poca población.', f:[['Agua','Ríos y PN Los Alerces'],['Alimento','Valle agrícola'],['Salud','Hospital zonal de Esquel'],['Contras','Frío extremo y ceniza: el volcán Chaitén la cubrió en 2008']] },
+    { l:'refuge', n:'San Martín de los Andes', c:[-71.35,-40.16], k:'Zona refugio', w:'Lagos, bosques y poca población, al oeste de todos los blancos probables.', f:[['Agua','Lago Lácar y ríos'],['Alimento','Limitado, depende de las rutas'],['Salud','Hospital de San Martín'],['Contras','Mucho turismo y ceniza: Cordón Caulle en 2011']] }
+  ];
+  POIS.push(
+    { l:'volcano', n:'Cordón Caulle', c:[-72.117,-40.59], k:'Volcán activo · Chile', w:'Su erupción de 2011 cubrió de ceniza Villa La Angostura y Bariloche y obligó a cancelar vuelos en toda la región.' },
+    { l:'volcano', n:'Calbuco', c:[-72.614,-41.33], k:'Volcán activo · Chile', w:'En 2015 la ceniza llegó a Neuquén y Río Negro.' },
+    { l:'volcano', n:'Chaitén', c:[-72.646,-42.833], k:'Volcán activo · Chile', w:'En 2008 la ceniza cubrió Esquel, Trevelin y buena parte de Chubut.' },
+    { l:'volcano', n:'Copahue', c:[-71.17,-37.85], k:'Volcán activo · Neuquén', w:'Tiene actividad frecuente. Caviahue y Copahue son los pueblos más expuestos.' }
+  );
+  var COLORS = { risk:'#ef4444', ai:'#a78bfa', refuge:'#22c55e', volcano:'#fb923c' };
+  var CITIES = {
+    ba:  { n:'Buenos Aires', c:[-58.3816,-34.6037], towns:[['Obelisco',-58.3816,-34.6037],['Avellaneda',-58.365,-34.662],['Quilmes',-58.254,-34.724],['La Plata',-57.954,-34.921],['San Isidro',-58.527,-34.471],['Tigre',-58.579,-34.426],['Morón',-58.619,-34.653],['Ezeiza',-58.536,-34.815],['Pilar',-58.914,-34.458],['Colonia (UY)',-57.84,-34.471],['Luján',-59.105,-34.57],['Berazategui',-58.212,-34.763]] },
+    cba: { n:'Córdoba', c:[-64.1888,-31.4201], towns:[['Centro',-64.1888,-31.4201],['Villa Carlos Paz',-64.497,-31.424],['Alta Gracia',-64.43,-31.66],['Jesús María',-64.096,-30.981],['Río Segundo',-63.91,-31.652],['Aeropuerto',-64.208,-31.31],['Malagueño',-64.358,-31.465],['Río Ceballos',-64.33,-31.165],['Pilar (Cba)',-63.879,-31.679],['Villa del Rosario',-63.535,-31.555]] },
+    ros: { n:'Rosario', c:[-60.6393,-32.9468], towns:[['Monumento',-60.6305,-32.9477],['Funes',-60.81,-32.918],['V. G. Gálvez',-60.605,-33.03],['San Lorenzo',-60.737,-32.745],['Victoria (ER)',-60.155,-32.618],['Roldán',-60.906,-32.898],['Pérez',-60.767,-32.998],['Arroyo Seco',-60.51,-33.155],['Casilda',-61.168,-33.044],['Cañada de Gómez',-61.395,-32.816]] },
+    mza: { n:'Mendoza', c:[-68.8272,-32.8895], towns:[['Centro',-68.8272,-32.8895],['Godoy Cruz',-68.845,-32.928],['Las Heras',-68.843,-32.85],['Maipú',-68.786,-32.983],['Luján de Cuyo',-68.879,-33.04],['Potrerillos',-69.207,-32.955],['San Martín',-68.468,-33.081],['Lavalle',-68.595,-32.72],['Tupungato',-69.147,-33.37],['Uspallata',-69.332,-32.593]] },
+    bb:  { n:'Bahía Blanca', c:[-62.2663,-38.7196], towns:[['Centro',-62.2663,-38.7196],['Ing. White',-62.265,-38.785],['Punta Alta',-62.075,-38.876],['Base Puerto Belgrano',-62.105,-38.895],['Médanos',-62.695,-38.828],['Tornquist',-62.221,-38.101],['Sierra de la Ventana',-61.793,-38.137],['Cabildo',-61.894,-38.483],['Villarino Viejo',-62.35,-38.95],['Coronel Dorrego',-61.29,-38.718]] }
+  };
+  var SITES = {
+    bbp: { n:'Polo petroquímico Bahía Blanca', c:[-62.245,-38.765], towns: CITIES.bb.towns },
+    cz:  { n:'Campana–Zárate', c:[-59.03,-34.17], towns:[['Campana',-58.958,-34.164],['Zárate',-59.028,-34.098],['Escobar',-58.796,-34.349],['Pilar',-58.914,-34.458],['Exaltación de la Cruz',-59.23,-34.32],['Lima (Atucha)',-59.2,-34.04],['Garín',-58.76,-34.42],['Baradero',-59.508,-33.81],['Brazo Largo',-58.73,-33.99]] },
+    sl:  { n:'San Lorenzo–Puerto San Martín', c:[-60.73,-32.72], towns:[['San Lorenzo',-60.737,-32.745],['Puerto San Martín',-60.73,-32.717],['Capitán Bermúdez',-60.72,-32.822],['Fray Luis Beltrán',-60.728,-32.787],['Timbúes',-60.79,-32.67],['Rosario',-60.6393,-32.9468],['Ricardone',-60.781,-32.772],['Oliveros',-60.855,-32.574]] }
+  };
+
+  var map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        dem: { type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], tileSize:256, encoding:'terrarium', maxzoom:13 },
+        relief: { type:'raster', tiles:['https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom:18, attribution:'Imagen © Esri, Maxar, Earthstar Geographics' }
+      },
+      layers: [
+        { id:'bg', type:'background', paint:{ 'background-color':'#0a1a2c' } },
+        { id:'hs', type:'raster', source:'relief', paint:{ 'raster-fade-duration':150, 'raster-brightness-max':0.82, 'raster-saturation':-0.12, 'raster-contrast':0.06 } }
+      ]
+    },
+    center: [-64, -38.5], zoom: 2.6, pitch: 0, bearing: 0, maxPitch: 72,
+    attributionControl: { compact: true, customAttribution: 'Relieve: Terrain Tiles (Mapzen/AWS) · Límites: IGN' }
+  });
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+  // The viewer can resize the frame while the page loads; keep the canvas the size of its box.
+  if (window.ResizeObserver) new ResizeObserver(function () { map.resize(); }).observe($('map'));
+  window.addEventListener('load', function () { map.resize(); });
+
+  var markers = { risk: [], ai: [], refuge: [], volcano: [] }, tmp = [];
+  function clearTmp() { tmp.forEach(function (m) { m.remove(); }); tmp = []; }
+  function addTmp(el, ll, anchor) { var m = new maplibregl.Marker({ element: el, anchor: anchor || 'center' }).setLngLat(ll).addTo(map); tmp.push(m); return m; }
+  function div(cls, html, style) { var d = document.createElement('div'); d.className = cls; if (html) d.innerHTML = html; if (style) d.setAttribute('style', style); return d; }
+
+  var ready = false, pendingMode = null;
+  map.once('style.load', function () {
+    $('loading').remove();
+    map.setTerrain({ source:'dem', exaggeration: 1.5 });
+    var lblSync = function () { $('map').classList.toggle('far', map.getZoom() < 3.6); }; map.on('zoom', lblSync); lblSync();
+    fetch('/provincias-argentina.geojson').then(function (r) { return r.json(); }).then(function (g) {
+      map.addSource('prov', { type:'geojson', data:g });
+      map.addLayer({ id:'prov-line', type:'line', source:'prov', paint:{ 'line-color':'#f1f5f9', 'line-width':['interpolate',['linear'],['zoom'],3,0.4,8,1.2], 'line-opacity':0.35 } }, 'fall-fill');
+    });
+    ['fall','rings','gas','ash','quake'].forEach(function (s) { map.addSource(s, { type:'geojson', data: fc([]) }); });
+    map.addLayer({ id:'fall-fill', type:'fill', source:'fall', paint:{ 'fill-color':['get','col'], 'fill-opacity':0.4 } });
+    map.addLayer({ id:'gas-fill', type:'fill', source:'gas', paint:{ 'fill-color':['get','col'], 'fill-opacity':0.34 } });
+    map.addLayer({ id:'gas-line', type:'line', source:'gas', paint:{ 'line-color':['get','col'], 'line-width':1.5 } });
+    map.addLayer({ id:'ash-fill', type:'fill', source:'ash', paint:{ 'fill-color':['get','col'], 'fill-opacity':0.36 } });
+    map.addLayer({ id:'ash-line', type:'line', source:'ash', paint:{ 'line-color':['get','col'], 'line-width':1.2, 'line-opacity':0.8 } });
+    map.addLayer({ id:'quake-fill', type:'fill', source:'quake', paint:{ 'fill-color':['get','col'], 'fill-opacity':0.13 } });
+    map.addLayer({ id:'quake-line', type:'line', source:'quake', paint:{ 'line-color':['get','col'], 'line-width':2 } });
+    map.addLayer({ id:'rings-fill', type:'fill', source:'rings', paint:{ 'fill-color':['get','col'], 'fill-opacity':['get','op'] } });
+    map.addLayer({ id:'rings-line', type:'line', source:'rings', filter:['!=',['get','k'],'thermal'], paint:{ 'line-color':['get','col'], 'line-width':2.2 } });
+    map.addLayer({ id:'rings-dash', type:'line', source:'rings', filter:['==',['get','k'],'thermal'], paint:{ 'line-color':['get','col'], 'line-width':2, 'line-dasharray':[2,1.5] } });
+
+    POIS.forEach(function (p, i) {
+      var el = div('mk ' + p.l + (p.tbd ? ' tbd' : '') + (p.minor ? ' minor' : ''), '<span class="pin" style="background:' + COLORS[p.l] + ';--halo:' + COLORS[p.l] + '33"></span><span class="nm">' + p.n + '</span>');
+      el.tabIndex = 0; el.setAttribute('role', 'button'); el.setAttribute('aria-label', p.n);
+      el.addEventListener('click', function () { showPoi(i, true); });
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPoi(i, true); } });
+      markers[p.l].push(new maplibregl.Marker({ element: el, anchor:'left', offset:[-6, 0] }).setLngLat(p.c).addTo(map));
+    });
+    showPoi(11, false);
+    var intro = { center:[-64.5,-39.5], zoom: window.innerWidth < 700 ? 3.3 : 3.75, pitch: 58, bearing: -18 };
+    if (reduce) map.jumpTo(intro); else map.flyTo(Object.assign({ duration: 4200, essential: true }, intro));
+    hud([['VISTA','ARGENTINA 3D'], ['VIENTO DOMINANTE','OESTE → ESTE'], ['RELIEVE','×1,5']]);
+    ready = true;
+    if (pendingMode) { var pm = pendingMode; pendingMode = null; setMode(pm); }
+  });
+
+  function hud(items) { $('hud').innerHTML = items.map(function (i) { return '<span class="readout">' + i[0] + ' <b>' + i[1] + '</b></span>'; }).join(''); }
+
+  function showPoi(i, fly) {
+    var p = POIS[i], cls = p.l === 'risk' || p.l === 'volcano' ? 'red' : p.l === 'ai' ? 'violet' : 'green';
+    var f = p.f ? '<dl class="facts">' + p.f.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + x[1] + '</dd>'; }).join('') + '</dl>' : '';
+    $('poi').innerHTML = '<span class="tag ' + cls + '">' + p.k + '</span><h3>' + p.n + '</h3><p>' + p.w + '</p>' + f + (p.l === 'refuge' ? '<button class="cta" type="button">Planificar ruta y bajar mapa offline</button>' : '');
+    if (fly) map.flyTo({ center: p.c, zoom: p.l === 'refuge' ? 8.4 : 7.2, pitch: 62, bearing: p.l === 'refuge' ? 70 : -10, duration: reduce ? 0 : 2600, essential: true });
+  }
+  document.querySelectorAll('#layers .layer').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on));
+      markers[b.dataset.l].forEach(function (m) { m.getElement().style.display = on ? '' : 'none'; });
+    });
+  });
+
+  /* ---------- modes ---------- */
+  var mode = 'map';
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () { setMode(t.dataset.mode); });
+  });
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.mode === m)); });
+    ['map','nuke','gas','ash','quake'].forEach(function (k) { $('pane-' + k).hidden = k !== m; });
+    if (!ready) { pendingMode = m; return; }
+    ['risk','ai','refuge','volcano'].forEach(function (l) { markers[l].forEach(function (mk) { mk.getElement().style.visibility = m === 'map' ? 'visible' : 'hidden'; }); });
+    clearTmp();
+    map.getSource('rings').setData(fc([])); map.getSource('fall').setData(fc([])); map.getSource('gas').setData(fc([])); map.getSource('ash').setData(fc([])); map.getSource('quake').setData(fc([])); ringLbls = [];
+    if (m === 'map') { map.flyTo({ center:[-64.5,-39.5], zoom: window.innerWidth < 700 ? 3.3 : 3.75, pitch:58, bearing:-18, duration: reduce ? 0 : 2200 }); hud([['VISTA','ARGENTINA 3D'], ['VIENTO DOMINANTE','OESTE → ESTE']]); }
+    if (m === 'nuke') drawNuke(true);
+    if (m === 'gas') drawGas(true);
+    if (m === 'ash') drawAsh(true);
+    if (m === 'quake') drawQuake(true);
+  }
+  function seg(id, cb) {
+    var bs = document.querySelectorAll('#' + id + ' button');
+    bs.forEach(function (b) { b.addEventListener('click', function () { bs.forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); }); cb(b.dataset.v); }); });
+  }
+
+  /* ---------- nuclear ---------- */
+  var N = { city:'ba', kt:15, burst:'ground', wind:90 }, ringLbls = [];
+  function fitLbls() {
+    var kmPx = 40075 * Math.cos((ringLbls[0] ? ringLbls[0].lat : 0) * Math.PI / 180) / (512 * Math.pow(2, map.getZoom()));
+    ringLbls.forEach(function (x) { x.m.getElement().style.opacity = x.r / kmPx < 26 ? '0' : '1'; });
+  }
+  map.on('zoom', function () { if (ringLbls.length) fitLbls(); });
+  var RINGS = [
+    { k:'fire', col:'#fde047', t:'Bola de fuego', d:'Todo lo que está adentro se vaporiza.' },
+    { k:'heavy', col:'#ef4444', t:'Destrucción total', d:'Caen hasta los edificios de hormigón. Casi nadie sobrevive.' },
+    { k:'thermal', col:'#fb923c', t:'Quemaduras graves', d:'Quemaduras de tercer grado en piel expuesta. Incendios por todos lados.' },
+    { k:'moderate', col:'#f59e0b', t:'Daño grave', d:'Las casas colapsan. Muchos heridos por vidrios y escombros.' },
+    { k:'light', col:'#cbd5e1', t:'Vidrios rotos', d:'Ventanas estalladas: alejate de los vidrios y refugiate adentro.' }
+  ];
+  var FALL = [
+    { col:'#7c3aed', t:'Mortal sin refugio', d:'En pocas horas al aire libre la dosis es mortal.', f:0.28, w:0.05 },
+    { col:'#dc2626', t:'Enfermedad grave por radiación', d:'Refugio obligatorio de al menos 2 días.', f:0.5, w:0.085 },
+    { col:'#f97316', t:'Riesgo alto', d:'Quedate adentro 24 a 48 horas.', f:0.75, w:0.12 },
+    { col:'#facc15', t:'Precaución', d:'Adentro y atento a la radio.', f:1, w:0.16 }
+  ];
+  function radii() {
+    var y = N.kt / 15, s = Math.cbrt(y), g = N.burst === 'ground' ? 0.8 : 1;
+    return { fire: 0.2 * Math.pow(y, 0.4) * (N.burst === 'ground' ? 1.25 : 1), heavy: 0.55 * s * g, moderate: 1.25 * s * g, thermal: 1.9 * Math.pow(y, 0.41) * g, light: 3.3 * s * g };
+  }
+  function townsIn(towns, test) { return towns.filter(function (t) { return test([t[1], t[2]]); }).map(function (t) { return t[0]; }); }
+  function drawNuke(fly) {
+    var C = CITIES[N.city], c = C.c, r = radii(), ground = N.burst === 'ground';
+    var L = 30 * Math.pow(N.kt / 15, 0.45);
+    clearTmp();
+    // rings
+    var order = ['light','moderate','thermal','heavy','fire'];
+    map.getSource('rings').setData(fc(order.map(function (k) {
+      var meta = RINGS.filter(function (x) { return x.k === k; })[0];
+      return poly(circle(c[0], c[1], r[k]), { k:k, col:meta.col, op: k === 'fire' ? 0.75 : 0.1 });
+    })));
+    // fallout bands (largest first so smaller draw on top)
+    var bands = ground ? FALL.slice().reverse().map(function (b) { return { b:b, ring: plume(c[0], c[1], N.wind, L * b.f, L * b.w, r.light * 0.35) }; }) : [];
+    map.getSource('fall').setData(fc(bands.map(function (x) { return poly(x.ring, { col:x.b.col }); })));
+    // ground zero + ring labels + towns
+    addTmp(div('gz'), c);
+    ringLbls = [];
+    var ANG = { heavy: 90, moderate: 270, thermal: 180, light: 0 };
+    RINGS.forEach(function (m) {
+      if (m.k === 'fire') return;
+      var a = ANG[m.k] * Math.PI / 180, pos = offset(c[0], c[1], Math.sin(a) * r[m.k], Math.cos(a) * r[m.k]);
+      ringLbls.push({ m: addTmp(div('ringlbl', m.t + ' · ' + fmtKm(r[m.k]), '--rc:' + m.col), pos, 'bottom'), r: r[m.k], lat: c[1] });
+    });
+    fitLbls();
+    C.towns.forEach(function (t, i) { if (i === 0) return; addTmp(div('town', '<i></i><span class="nm">' + t[0] + '</span>'), [t[1], t[2]], 'left'); });
+    // legend with towns reached
+    var reached = {}, taken = {};
+    RINGS.slice(1).forEach(function (m) {
+      reached[m.k] = townsIn(C.towns, function (p) { return distKm(p, c) <= r[m.k]; }).filter(function (n) { return !taken[n]; });
+      reached[m.k].forEach(function (n) { taken[n] = 1; });
+    });
+    var html = RINGS.map(function (m) {
+      var tw = reached[m.k] && reached[m.k].length ? '<div class="towns">Llega a: <b>' + reached[m.k].join(', ') + '</b></div>' : '';
+      return '<div class="lg"><span class="sw" style="border-color:' + m.col + ';background:' + m.col + '33"></span><div><div class="t">' + m.t + '</div><div class="d">' + m.d + '</div>' + tw + '</div><span class="km">' + fmtKm(r[m.k]) + '</span></div>';
+    }).join('');
+    if (ground) {
+      html += '<div class="lg" style="border-top:1px solid var(--border);padding-top:12px"><span></span><div><div class="t" style="color:#fde68a">Lluvia radiactiva</div><div class="d">El polvo contaminado cae a favor del viento durante horas.</div></div><span class="km">' + fmtKm(L) + '</span></div>';
+      html += FALL.map(function (b) {
+        var ring = plume(c[0], c[1], N.wind, L * b.f, L * b.w, r.light * 0.35);
+        var tw = townsIn(C.towns, function (p) { return inPoly(p, ring) && distKm(p, c) > r.light; });
+        return '<div class="lg"><span class="sw" style="border-color:' + b.col + ';background:' + b.col + '55;border-radius:3px"></span><div><div class="t">' + b.t + '</div><div class="d">' + b.d + '</div>' + (tw.length ? '<div class="towns">Afecta: <b>' + tw.join(', ') + '</b></div>' : '') + '</div><span></span></div>';
+      }).join('');
+    } else {
+      html += '<div class="lg"><span></span><div><div class="t">Sin lluvia radiactiva local</div><div class="d">En altura la bola de fuego no toca el suelo: casi no levanta polvo contaminado.</div></div><span></span></div>';
+    }
+    $('n-legend').innerHTML = html;
+    var zoomFor = function (span) { return Math.max(6, Math.min(12.8, Math.log2(40000 * Math.cos(c[1] * Math.PI / 180) / span) - 1.1)); };
+    var b = N.wind * Math.PI / 180;
+    nukeViews = {
+      rings: { center: offset(c[0], c[1], Math.sin(b) * r.light * 0.5, Math.cos(b) * r.light * 0.5), zoom: zoomFor(r.light * 2.4), pitch: 50, bearing: 0 },
+      fall: { center: offset(c[0], c[1], Math.sin(b) * L * 0.4, Math.cos(b) * L * 0.4), zoom: zoomFor(L * 1.25), pitch: 45, bearing: 0 }
+    };
+    $('n-zoom').hidden = !ground; fallView = false; $('n-zoom').textContent = 'Ver toda la lluvia radiactiva';
+    if (fly) map.flyTo(Object.assign({ duration: reduce ? 0 : 2400, essential: true }, nukeViews.rings));
+    hud([['BLANCO', C.n.toUpperCase()], ['POTENCIA', N.kt >= 1000 ? '1 Mt' : N.kt + ' kt'], ['VIENTO', ({90:'DEL OESTE',45:'DEL SUDOESTE',180:'DEL NORTE'})[N.wind]]]);
+    nukeTime();
+  }
+  function nukeTime() {
+    var h = +$('n-time').value, pct = Math.pow(h, -1.2) * 100;
+    $('n-h').textContent = h + ' h después';
+    $('n-pct').textContent = (N.burst === 'ground' ? (pct >= 10 ? Math.round(pct) : pct.toFixed(1)).toString().replace('.', ',') + '% de la radiación de la hora 1' : 'sin lluvia radiactiva local');
+    $('n-adv').textContent = h < 24 ? 'Quedate adentro: sótano o centro de un edificio de hormigón, lejos de ventanas. Radio a pilas prendida.'
+      : h < 48 ? 'Seguí adentro salvo que Protección Civil ordene evacuar. Agua y comida envasada.'
+      : 'La radiación bajó cerca del 99%. Esperá la orden oficial para salir o evacuar en perpendicular al viento.';
+    if (map.getLayer('fall-fill')) map.setPaintProperty('fall-fill', 'fill-opacity', Math.max(0.1, 0.55 * Math.pow(h, -0.55)));
+  }
+  $('n-city').addEventListener('change', function (e) { N.city = e.target.value; drawNuke(true); });
+  seg('n-kt', function (v) { N.kt = +v; drawNuke(true); });
+  seg('n-burst', function (v) { N.burst = v; drawNuke(true); });
+  seg('n-wind', function (v) { N.wind = +v; drawNuke(true); });
+  $('n-time').addEventListener('input', nukeTime);
+  var nukeViews = null, fallView = false;
+  $('n-zoom').addEventListener('click', function () {
+    fallView = !fallView;
+    map.flyTo(Object.assign({ duration: reduce ? 0 : 2000, essential: true }, fallView ? nukeViews.fall : nukeViews.rings));
+    this.textContent = fallView ? 'Volver a los anillos' : 'Ver toda la lluvia radiactiva';
+  });
+
+  /* ---------- toxic cloud ---------- */
+  var G = { site:'bbp', wind:90 };
+  var GB = [
+    { col:'#ef4444', t:'Evacuá ya', d:'Salí caminando o en auto en perpendicular al viento, con la boca tapada con un trapo mojado.', L:3.5, W:0.9 },
+    { col:'#f97316', t:'Refugiate adentro', d:'Cerrá puertas y ventanas, sellá rendijas con cinta y toallas mojadas, apagá el aire acondicionado y subí a un piso alto.', L:8, W:1.9 },
+    { col:'#a3e635', t:'Atento a la radio', d:'Preparate para salir o refugiarte según lo que indiquen Bomberos y Protección Civil.', L:15, W:3.2 }
+  ];
+  function arrowEl(rot) { var d = div('arrow', '<svg viewBox="0 0 44 44"><g transform="rotate(' + rot + ' 22 22)"><path d="M22 36V10M13 18l9-9 9 9" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g></svg>'); return d; }
+  function drawGas(fly) {
+    var S = SITES[G.site], c = S.c;
+    clearTmp();
+    var rings = GB.slice().reverse().map(function (b) { return { b:b, ring: plume(c[0], c[1], G.wind, b.L, b.W, 0.6) }; });
+    map.getSource('gas').setData(fc(rings.map(function (x) { return poly(x.ring, { col:x.b.col }); })));
+    var src = div('gz', '', 'background:radial-gradient(circle,#fff 0 30%,#a3e635 45%,rgba(163,230,53,0) 72%)'); addTmp(src, c);
+    // escape arrows perpendicular to the wind, placed beside the red band
+    var b = G.wind * Math.PI / 180, ux = Math.sin(b), uy = Math.cos(b);
+    [[1, 90], [-1, -90]].forEach(function (s) {
+      var p = offset(c[0], c[1], ux * 2 + s[0] * -uy * 2.6, uy * 2 + s[0] * ux * 2.6);
+      addTmp(arrowEl(G.wind + s[1]), p);
+    });
+    S.towns.forEach(function (t) { addTmp(div('town', '<i></i><span class="nm">' + t[0] + '</span>'), [t[1], t[2]], 'left'); });
+    var taken = {};
+    $('g-legend').innerHTML = GB.map(function (bnd) {
+      var ring = plume(c[0], c[1], G.wind, bnd.L, bnd.W, 0.6);
+      var tw = townsIn(S.towns, function (p) { return inPoly(p, ring); }).filter(function (n) { return !taken[n]; });
+      tw.forEach(function (n) { taken[n] = 1; });
+      return '<div class="lg"><span class="sw" style="border-color:' + bnd.col + ';background:' + bnd.col + '44;border-radius:3px"></span><div><div class="t">' + bnd.t + '</div><div class="d">' + bnd.d + '</div>' + (tw.length ? '<div class="towns">Incluye: <b>' + tw.join(', ') + '</b></div>' : '') + '</div><span class="km">' + fmtKm(bnd.L) + '</span></div>';
+    }).join('') + '<div class="lg"><span class="sw" style="border-color:#38bdf8;background:#38bdf833"></span><div><div class="t" style="color:#7dd3fc">Hacia dónde escapar</div><div class="d">Las flechas azules: en perpendicular al viento, para salir de la nube lo antes posible.</div></div><span></span></div>';
+    var ctr = offset(c[0], c[1], ux * 6, uy * 6);
+    if (fly) map.flyTo({ center: ctr, zoom: 10.2, pitch: 55, bearing: -20, duration: reduce ? 0 : 2400, essential: true });
+    hud([['FUGA', S.n.toUpperCase()], ['VIENTO', ({90:'DEL OESTE',45:'DEL SUDOESTE',180:'DEL NORTE',270:'DEL ESTE'})[G.wind]]]);
+  }
+  $('g-site').addEventListener('change', function (e) { G.site = e.target.value; drawGas(true); });
+  seg('g-wind', function (v) { G.wind = +v; drawGas(true); });
+
+  /* ---------- volcanic ash ---------- */
+  var VOLC = {
+    caulle:  { n:'Cordón Caulle', c:[-72.117,-40.59], story:'El 4 de junio de 2011 cayeron unos 20 cm de ceniza en Villa La Angostura y 4 cm en Bariloche, que quedó a oscuras en pleno día. Se cerraron el aeropuerto y el paso a Chile, y la nube llegó hasta Buenos Aires y Montevideo.' },
+    calbuco: { n:'Calbuco', c:[-72.614,-41.33], story:'En abril de 2015 hizo erupción casi sin aviso. La ceniza cruzó la cordillera y cayó sobre Neuquén y Río Negro.' },
+    chaiten: { n:'Chaitén', c:[-72.646,-42.833], story:'El 1 de mayo de 2008 despertó después de unos 9.000 años. La nube viajó hacia el este y en Esquel se cerraron escuelas y el aeropuerto; del lado chileno, en Futaleufú, cayeron más de 20 cm de ceniza.' },
+    copahue: { n:'Copahue', c:[-71.17,-37.85], story:'Es el volcán activo del lado argentino, junto a Caviahue. Tiene emisiones de ceniza frecuentes y alertas del SEGEMAR.' }
+  };
+  var ASH_TOWNS = [['Villa La Angostura',-71.646,-40.762],['Bariloche',-71.308,-41.133],['Dina Huapi',-71.157,-41.071],['Villa Traful',-71.40,-40.65],['Pilcaniyeu',-70.72,-41.12],['Comallo',-70.27,-41.03],['Ing. Jacobacci',-69.55,-41.33],['Maquinchao',-68.70,-41.25],['Los Menucos',-68.08,-40.84],['San Martín de los Andes',-71.35,-40.157],['Junín de los Andes',-71.07,-39.95],['Piedra del Águila',-70.08,-40.05],['El Bolsón',-71.53,-41.964],['Esquel',-71.31,-42.911],['Trevelin',-71.46,-43.09],['Tecka',-70.81,-43.49],['Gdor. Costa',-70.05,-44.05],['Caviahue',-71.05,-37.87],['Loncopué',-70.61,-38.07],['Chos Malal',-70.27,-37.38],['Zapala',-70.06,-38.9],['Neuquén',-68.06,-38.95]];
+  var AB = [
+    { col:'#ef4444', t:'Más de 10 cm de ceniza', d:'Los techos pueden colapsar por el peso. Casas y rutas quedan inutilizables por días.', f:0.22, w:0.1 },
+    { col:'#f97316', t:'1 a 10 cm', d:'Rutas cortadas, agua y luz con problemas, animales sin pasto. Hay que limpiar techos.', f:0.55, w:0.16 },
+    { col:'#fde68a', t:'Menos de 1 cm', d:'Molesta ojos y respiración. Aeropuertos cerrados y vuelos cancelados.', f:1, w:0.24 }
+  ];
+  var A = { v:'caulle', size:2, wind:90 };
+  function drawAsh(fly) {
+    var V = VOLC[A.v], c = V.c, L = [0, 90, 220, 420][A.size];
+    clearTmp();
+    map.getSource('ash').setData(fc(AB.slice().reverse().map(function (b) { return poly(plume(c[0], c[1], A.wind, L * b.f, L * b.w, 3), { col:b.col }); })));
+    addTmp(div('mk volcano', '<span class="pin"></span><span class="nm">' + V.n + '</span>'), c, 'left');
+    ASH_TOWNS.forEach(function (t) { addTmp(div('town', '<i></i><span class="nm">' + t[0] + '</span>'), [t[1], t[2]], 'left'); });
+    $('a-story').innerHTML = '<span class="tag red">Caso real</span><p>' + V.story + '</p>';
+    var taken = {};
+    $('a-legend').innerHTML = AB.map(function (b) {
+      var ring = plume(c[0], c[1], A.wind, L * b.f, L * b.w, 3);
+      var tw = townsIn(ASH_TOWNS, function (p) { return inPoly(p, ring); }).filter(function (n) { return !taken[n]; });
+      tw.forEach(function (n) { taken[n] = 1; });
+      return '<div class="lg"><span class="sw" style="border-color:' + b.col + ';background:' + b.col + '66;border-radius:3px"></span><div><div class="t">' + b.t + '</div><div class="d">' + b.d + '</div>' + (tw.length ? '<div class="towns">Afecta: <b>' + tw.join(', ') + '</b></div>' : '') + '</div><span class="km">' + fmtKm(L * b.f) + '</span></div>';
+    }).join('') + '<div class="lg"><span class="sw" style="border-color:#38bdf8;background:#38bdf833"></span><div><div class="t" style="color:#7dd3fc">Si cae ceniza</div><div class="d">Quedate adentro con barbijo N95 y anteojos (no lentes de contacto). Tapá tanques y tomas de agua, no manejes y sacá la ceniza del techo antes de que se acumule.</div></div><span></span></div>';
+    var b = A.wind * Math.PI / 180, ctr = offset(c[0], c[1], Math.sin(b) * L * 0.42, Math.cos(b) * L * 0.42);
+    var zoom = Math.max(5.2, Math.min(9, Math.log2(40000 * Math.cos(c[1] * Math.PI / 180) / (L * 0.95)) - 1.1));
+    if (fly) map.flyTo({ center: ctr, zoom: zoom, pitch: 58, bearing: -25, duration: reduce ? 0 : 2600, essential: true });
+    hud([['VOLCÁN', V.n.toUpperCase()], ['CENIZA HASTA', fmtKm(L).toUpperCase()], ['VIENTO', ({90:'DEL OESTE',120:'DEL NOROESTE',60:'DEL SUDOESTE'})[A.wind]]]);
+  }
+  $('a-volc').addEventListener('change', function (e) { A.v = e.target.value; drawAsh(true); });
+  seg('a-size', function (v) { A.size = +v; drawAsh(true); });
+  seg('a-wind', function (v) { A.wind = +v; drawAsh(true); });
+
+  /* ---------- earthquake ---------- */
+  var QS = {
+    sj44:  { n:'San Juan 1944', c:[-68.48,-31.42], M:7.0, story:'El 15 de enero de 1944 un sismo destruyó el 80% de la ciudad de San Juan y causó alrededor de 9.000 muertes, la peor catástrofe natural de la historia argentina. El 98% de las construcciones eran de adobe. Las estimaciones de magnitud van de 7,0 a 7,4 según la fuente.' },
+    cau77: { n:'Caucete 1977', c:[-67.78,-31.05], M:7.4, story:'El 23 de noviembre de 1977 el terremoto de Caucete causó 65 muertes y destruyó casas en toda la región, sobre todo las de adobe. El suelo se licuó en varias zonas. Algunas fuentes estiman la magnitud en 7,7.' },
+    mza61: { n:'Mendoza 1861', c:[-68.83,-32.9], M:7.0, story:'El 20 de marzo de 1861 un terremoto y los incendios posteriores destruyeron la ciudad de Mendoza. La reconstruyeron en otro lugar, con calles anchas y plazas para refugiarse.' }
+  };
+  var Q_TOWNS = [['San Juan',-68.536,-31.537],['Caucete',-68.28,-31.65],['Albardón',-68.52,-31.44],['Pocito',-68.58,-31.68],['Jáchal',-68.75,-30.24],['Valle Fértil',-67.48,-30.63],['Media Agua',-68.43,-31.98],['Mendoza',-68.827,-32.89],['Lavalle',-68.59,-32.72],['San Martín',-68.468,-33.08],['Luján de Cuyo',-68.879,-33.04],['Uspallata',-69.33,-32.59],['Tupungato',-69.147,-33.37],['La Rioja',-66.85,-29.41],['San Luis',-66.34,-33.3]];
+  var QR = [
+    { col:'#be123c', t:'Destrucción (IX)', d:'Colapsan casas de adobe y edificios sin diseño sismorresistente.', r:14 },
+    { col:'#f43f5e', t:'Daños graves (VIII)', d:'Caen paredes y chimeneas. Grietas en rutas y puentes.', r:32 },
+    { col:'#fb7185', t:'Daños moderados (VII)', d:'Revoques y tejas caídos, vidrios rotos. Cuesta mantenerse de pie.', r:65 },
+    { col:'#fecdd3', t:'Se siente fuerte (VI)', d:'Todos lo sienten y se asustan. Caen objetos de los estantes.', r:125 }
+  ];
+  var Q = { s:'sj44', mag:0 };
+  function drawQuake(fly) {
+    var S = QS[Q.s], M = Q.mag || S.M, k = Math.pow(10, 0.45 * (M - 7)), c = S.c;
+    clearTmp(); ringLbls = [];
+    map.getSource('quake').setData(fc(QR.slice().reverse().map(function (x) { return poly(circle(c[0], c[1], x.r * k), { col:x.col }); })));
+    addTmp(div('gz', '', 'background:radial-gradient(circle,#fff 0 30%,#f43f5e 45%,rgba(244,63,94,0) 72%)'), c);
+    Q_TOWNS.forEach(function (t) { addTmp(div('town', '<i></i><span class="nm">' + t[0] + '</span>'), [t[1], t[2]], 'left'); });
+    var QA = [270, 90, 180, 0];
+    QR.forEach(function (x, i) { var a = QA[i] * Math.PI / 180; addTmp(div('ringlbl', x.t.split(' (')[0] + ' · ' + fmtKm(x.r * k), '--rc:' + x.col), offset(c[0], c[1], Math.sin(a) * x.r * k, Math.cos(a) * x.r * k), 'bottom'); });
+    $('q-story').innerHTML = '<span class="tag red">Caso real · M ' + S.M.toFixed(1).replace('.', ',') + '</span><p>' + S.story + '</p>';
+    var taken = {};
+    $('q-legend').innerHTML = QR.map(function (x) {
+      var tw = townsIn(Q_TOWNS, function (p) { return distKm(p, c) <= x.r * k; }).filter(function (n) { return !taken[n]; });
+      tw.forEach(function (n) { taken[n] = 1; });
+      return '<div class="lg"><span class="sw" style="border-color:' + x.col + ';background:' + x.col + '33"></span><div><div class="t">' + x.t + '</div><div class="d">' + x.d + '</div>' + (tw.length ? '<div class="towns">Llega a: <b>' + tw.join(', ') + '</b></div>' : '') + '</div><span class="km">' + fmtKm(x.r * k) + '</span></div>';
+    }).join('');
+    var zoom = Math.max(5.5, Math.min(9.5, Math.log2(40000 * Math.cos(c[1] * Math.PI / 180) / (QR[3].r * k * 1.7)) - 1.1));
+    if (fly) map.flyTo({ center: c, zoom: zoom, pitch: 55, bearing: 20, duration: reduce ? 0 : 2600, essential: true });
+    hud([['EPICENTRO', S.n.toUpperCase()], ['MAGNITUD', 'M ' + M.toFixed(1).replace('.', ',')], ['PROFUNDIDAD', 'SUPERFICIAL']]);
+  }
+  $('q-scn').addEventListener('change', function (e) { Q.s = e.target.value; drawQuake(true); });
+  seg('q-mag', function (v) { Q.mag = +v; drawQuake(true); });
+
+  /* ================= WATER ================= */
+  var W = {
+    sodis: { name:'Desinfección solar · SODIS', title:'Botellas y sol', stats:[['6 h','al sol'],['2 L','por botella'],['OMS','fuente']],
+      steps:[['Conseguí botellas PET transparentes','Hasta 2 litros, sin etiqueta y sin rayones. El vidrio no sirve: frena los rayos UV.'],
+             ['Llenalas con agua clara','Si el agua está turbia, pasala antes por una tela. La turbidez protege a los microbios del sol.'],
+             ['6 horas acostadas al sol','Sobre una chapa o un techo, de 9 a 15 h. Si está nublado, dejalas 2 días seguidos.'],
+             ['Tomá directo de la botella','No la pases a otro recipiente: así no se vuelve a contaminar. Dura 1 o 2 días.']] },
+    boil: { name:'Hervir', title:'Fuego y olla', stats:[['1 min','de hervor fuerte'],['3 min','arriba de 2000 m'],['OMS','fuente']],
+      steps:[['Filtrá el agua con una tela','Sacá la tierra y las hojas. Un buff o una remera limpia doblada en cuatro sirve.'],
+             ['Llevala a hervor fuerte','Burbujas grandes que no paran, no el primer hervor tímido.'],
+             ['Dejala hervir 1 minuto','3 minutos si estás arriba de los 2000 metros, porque el agua hierve a menos temperatura.'],
+             ['Tapala y dejala enfriar','Guardala tapada en un recipiente limpio. Para mejorar el gusto, pasala de una botella a otra.']] },
+    chlor: { name:'Potabilizar con lavandina', title:'Lavandina común', stats:[['2 gotas','por litro'],['30 min','de espera'],['Min. Salud','fuente']],
+      steps:[['Usá lavandina común','Sin perfume ni detergente. Revisá que no esté vencida.'],
+             ['2 gotas por litro de agua','Si el agua está turbia, primero filtrala con una tela.'],
+             ['Mezclá y esperá 30 minutos','Con la botella tapada y a la sombra.'],
+             ['Tiene que oler apenas a cloro','Si no huele, repetí la dosis y esperá otros 15 minutos.']] },
+    dew: { name:'Rocío de la mañana', title:'Solo el campo', stats:[['1 vaso a 1 L','por mañana'],['Antes','del amanecer'],['Emergencia','no alcanza para vivir']],
+      warn:'El rocío rinde poco. Usalo para aguantar, nunca como fuente principal. Si podés, desinfectalo después con sol (SODIS) o hirviéndolo.',
+      steps:[['Salí antes de que salga el sol','El rocío se evapora en cuanto calienta. El mejor momento es el amanecer, con cielo despejado.'],
+             ['Pasá un paño por el pasto','Algodón limpio o una remera, atado a los tobillos mientras caminás. Evitá banquinas y cultivos fumigados.'],
+             ['Escurrilo en un recipiente','Retorcé el paño sobre un jarro o una botella y repetí todas las veces que puedas.'],
+             ['Desinfectalo si podés','Botella al sol 6 horas o 1 minuto de hervor. Si no podés, tomala igual antes que deshidratarte.']] }
+  };
+  var wm = 'sodis', ws = 0;
+  function sceneSVG(m, s) {
+    var sky = m === 'dew' ? ['#1e1b4b', '#7c2d12', '#fb923c'] : m === 'boil' || m === 'chlor' ? ['#0b1a2f', '#10233d', '#16304f'] : ['#0c4a6e', '#0ea5e9', '#7dd3fc'];
+    var o = '<svg viewBox="0 0 640 400" role="img" aria-label="Ilustración del paso">' +
+      '<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + sky[0] + '"/><stop offset=".6" stop-color="' + sky[1] + '"/><stop offset="1" stop-color="' + sky[2] + '"/></linearGradient>' +
+      '<linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bae6fd" stop-opacity=".9"/><stop offset="1" stop-color="#0284c7" stop-opacity=".85"/></linearGradient>' +
+      '<radialGradient id="sun"><stop offset="0" stop-color="#fff7cc"/><stop offset=".45" stop-color="#fcd34d"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>' +
+      '<filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".45"/></filter></defs>' +
+      '<rect width="640" height="400" fill="url(#sk)"/>';
+    if (m === 'sodis') {
+      var sunX = [520, 500, 330, 470][s], sunY = [70, 70, 58, 90][s];
+      o += '<circle cx="' + sunX + '" cy="' + sunY + '" r="110" fill="url(#sun)" opacity=".9"/><circle cx="' + sunX + '" cy="' + sunY + '" r="34" fill="#fff4b8"/>';
+      o += '<path d="M0 300 L640 262 L640 400 L0 400Z" fill="#475569"/>';
+      for (var i = 0; i < 16; i++) o += '<path d="M' + (i * 42) + ' ' + (300 - i * 2.4) + ' l0 110" stroke="#334155" stroke-width="6"/>';
+      var fill = s === 0 ? 0 : 1, lying = s >= 2;
+      var bottle = function (x, y, rot) {
+        return '<g filter="url(#sh)" transform="translate(' + x + ' ' + y + ') rotate(' + rot + ')">' +
+          '<rect x="-78" y="-30" width="156" height="60" rx="24" fill="rgba(224,242,254,.18)" stroke="#e0f2fe" stroke-width="3"/>' +
+          '<rect x="-74" y="' + (-26 + 52 * (1 - fill)) + '" width="148" height="' + (52 * fill) + '" rx="20" fill="url(#wt)"/>' +
+          '<path d="M78 -16 h16 a6 6 0 0 1 6 6 v20 a6 6 0 0 1 -6 6 h-16z" fill="#e0f2fe"/><rect x="100" y="-12" width="12" height="24" rx="3" fill="#2563eb"/>' +
+          '<path d="M-60 -18 q60 -10 120 0" stroke="#fff" stroke-opacity=".6" stroke-width="4" fill="none" stroke-linecap="round"/></g>';
+      }
+      if (!lying) o += bottle(300, 200, -90);
+      else { o += bottle(220, 262, -3.5) + bottle(430, 250, -3.5); }
+      if (s === 0) o += '<g transform="translate(410 190) rotate(18)"><rect x="-40" y="-16" width="80" height="32" rx="6" fill="#ef4444"/><text x="0" y="6" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="14" fill="#fff">ETIQUETA</text></g><path d="M370 160 q20 -30 60 -20" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>';
+      if (s === 1) o += '<path d="M300 40 q10 60 0 90" stroke="#7dd3fc" stroke-width="10" stroke-linecap="round" fill="none"/><rect x="250" y="20" width="100" height="26" rx="8" fill="#f1f5f9" opacity=".9"/><text x="300" y="38" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#0f172a">tela filtrante</text>';
+      if (s === 2) o += '<g transform="translate(90 90)"><circle r="46" fill="rgba(6,10,18,.72)"/><circle r="38" fill="none" stroke="#334155" stroke-width="8"/><circle r="38" fill="none" stroke="#fcd34d" stroke-width="8" stroke-dasharray="239" stroke-dashoffset="0" transform="rotate(-90)" stroke-linecap="round"/><text y="8" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="24" fill="#fff">6 h</text></g>';
+      if (s === 3) o += '<g transform="translate(470 200)" filter="url(#sh)"><path d="M-30 -40 h60 l-8 90 h-44z" fill="rgba(224,242,254,.25)" stroke="#e0f2fe" stroke-width="3"/><path d="M-26 -10 h52 l-6 58 h-40z" fill="url(#wt)"/></g><text x="470" y="290" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="14" fill="#fff">agua segura</text>';
+    }
+    if (m === 'boil') {
+      o += '<rect x="0" y="300" width="640" height="100" fill="#1f2937"/><rect x="0" y="296" width="640" height="8" fill="#374151"/>';
+      var flame = s >= 1 ? 1 : 0.35;
+      o += '<g transform="translate(320 300)"><path d="M-110 0 q20 -60 40 0 M-50 0 q25 -80 50 0 M10 0 q22 -70 44 0 M64 0 q20 -55 40 0" fill="#f97316" opacity="' + flame + '"/><path d="M-40 0 q15 -45 30 0 M20 0 q15 -40 30 0" fill="#fde047" opacity="' + flame + '"/></g>';
+      o += '<g filter="url(#sh)"><path d="M190 170 h260 l-18 120 h-224z" fill="#64748b"/><rect x="178" y="160" width="284" height="18" rx="8" fill="#94a3b8"/><rect x="150" y="166" width="34" height="10" rx="5" fill="#475569"/><rect x="456" y="166" width="34" height="10" rx="5" fill="#475569"/></g>';
+      o += '<rect x="200" y="182" width="240" height="30" fill="url(#wt)" opacity=".85"/>';
+      if (s === 0) o += '<path d="M260 60 h120 l-20 70 h-80z" fill="#e2e8f0" opacity=".85"/><text x="320" y="100" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="13" fill="#0f172a">TELA</text><path d="M320 130 v40" stroke="#7dd3fc" stroke-width="8" stroke-linecap="round"/>';
+      if (s >= 1 && s <= 2) { for (var j = 0; j < 9; j++) o += '<circle cx="' + (218 + j * 26) + '" cy="' + (192 + (j % 3) * 5) + '" r="' + (4 + (j % 3) * 2) + '" fill="#e0f2fe" opacity=".8"/>'; o += '<path d="M250 150 q14 -30 0 -60 q-14 -30 0 -60 M320 150 q14 -30 0 -60 q-14 -30 0 -60 M390 150 q14 -30 0 -60 q-14 -30 0 -60" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round" fill="none" opacity=".45"/>'; }
+      if (s === 2) o += '<g transform="translate(540 90)"><circle r="46" fill="rgba(6,10,18,.72)"/><circle r="38" fill="none" stroke="#334155" stroke-width="8"/><circle r="38" fill="none" stroke="#f97316" stroke-width="8" stroke-dasharray="239" transform="rotate(-90)"/><text y="8" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="22" fill="#fff">1 min</text></g>';
+      if (s === 3) o += '<rect x="178" y="150" width="284" height="16" rx="8" fill="#cbd5e1" filter="url(#sh)"/><circle cx="320" cy="146" r="10" fill="#94a3b8"/><text x="540" y="100" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="14" fill="#fff">tapada</text>';
+    }
+    if (m === 'chlor') {
+      o += '<rect x="0" y="300" width="640" height="100" fill="#1e293b"/>';
+      o += '<g filter="url(#sh)" transform="translate(250 60)"><rect x="0" y="40" width="120" height="200" rx="26" fill="rgba(224,242,254,.14)" stroke="#e0f2fe" stroke-width="3"/><rect x="6" y="80" width="108" height="154" rx="22" fill="url(#wt)"/><rect x="36" y="10" width="48" height="36" rx="8" fill="#e0f2fe"/><text x="60" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="22" fill="#fff">1 L</text></g>';
+      o += '<g filter="url(#sh)" transform="translate(440 110) rotate(' + (s === 1 ? -35 : 0) + ')"><rect x="0" y="30" width="90" height="150" rx="16" fill="#f8fafc"/><rect x="24" y="0" width="42" height="34" rx="6" fill="#2563eb"/><rect x="12" y="80" width="66" height="44" rx="6" fill="#dbeafe"/><text x="45" y="108" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="12" fill="#1e3a8a">LAVANDINA</text></g>';
+      if (s === 1) o += '<path d="M410 110 q6 12 0 18 q-6 -6 0 -18Z M395 150 q6 12 0 18 q-6 -6 0 -18Z" fill="#7dd3fc"/><text x="140" y="120" font-family="JetBrains Mono,monospace" font-weight="700" font-size="30" fill="#fff">× 2</text>';
+      if (s === 2) o += '<g transform="translate(110 110)"><circle r="46" fill="rgba(6,10,18,.72)"/><circle r="38" fill="none" stroke="#334155" stroke-width="8"/><circle r="38" fill="none" stroke="#38bdf8" stroke-width="8" stroke-dasharray="239" transform="rotate(-90)"/><text y="8" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="20" fill="#fff">30 min</text></g>';
+      if (s === 3) o += '<path d="M150 150 q20 -20 0 -40 q-20 -20 0 -40 M185 150 q20 -20 0 -40 q-20 -20 0 -40" stroke="#bae6fd" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/><text x="168" y="185" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="14" fill="#fff">leve olor a cloro</text>';
+      if (s === 0) o += '<text x="485" y="330" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="13" fill="#fff">sin perfume ni detergente</text>';
+    }
+    if (m === 'dew') {
+      var sy = [330, 300, 270, 240][s];
+      o += '<circle cx="150" cy="' + sy + '" r="130" fill="url(#sun)" opacity=".85"/><circle cx="150" cy="' + sy + '" r="40" fill="#fed7aa"/>';
+      o += '<rect x="0" y="300" width="640" height="100" fill="#14532d"/>';
+      for (var k = 0; k < 60; k++) { var gx = k * 11 + (k % 3) * 3, gh = 26 + (k * 7 % 18); o += '<path d="M' + gx + ' 400 q' + ((k % 2) ? 6 : -6) + ' -' + gh + ' ' + ((k % 2) ? 2 : -2) + ' -' + (gh + 60) + '" stroke="' + ((k % 4) ? '#22c55e' : '#16a34a') + '" stroke-width="4" fill="none" stroke-linecap="round"/>'; if (k % 3 === 0 && s <= 1) o += '<circle cx="' + (gx + ((k % 2) ? 2 : -2)) + '" cy="' + (340 - gh) + '" r="4" fill="#e0f2fe"/>'; }
+      if (s === 1) o += '<g filter="url(#sh)"><path d="M300 300 h150 l-10 40 h-130z" fill="#f1f5f9"/><path d="M300 300 q-30 -40 -10 -80 M450 300 q30 -40 10 -80" stroke="#f1f5f9" stroke-width="5" fill="none"/></g><text x="375" y="210" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="14" fill="#fff">paño atado a los tobillos</text>';
+      if (s >= 2) o += '<g filter="url(#sh)" transform="translate(400 150)"><path d="M-40 -30 q40 20 80 0 l-6 30 q-34 16 -68 0z" fill="#f1f5f9"/><path d="M0 10 v40" stroke="#7dd3fc" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + (s === 2 ? '4 8' : '0') + '"/><path d="M-36 60 h72 l-8 80 h-56z" fill="rgba(224,242,254,.22)" stroke="#e0f2fe" stroke-width="3"/><path d="M-32 ' + (s === 2 ? 110 : 80) + ' h64 l-5 ' + (s === 2 ? 26 : 56) + ' h-54z" fill="url(#wt)"/></g>';
+      if (s === 3) o += '<g transform="translate(560 90)"><circle r="44" fill="rgba(6,10,18,.72)"/><circle cx="0" cy="-4" r="14" fill="#fcd34d"/><text y="30" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="11" fill="#fff">SODIS</text></g>';
+    }
+    return o + '</svg>';
+  }
+  function renderWater() {
+    var M = W[wm];
+    $('scene').innerHTML = sceneSVG(wm, ws);
+    $('w-name').textContent = M.name;
+    $('w-title').textContent = M.title;
+    $('w-dots').innerHTML = M.steps.map(function (_, i) { return '<i class="' + (i <= ws ? 'on' : '') + '"></i>'; }).join('');
+    $('w-n').textContent = 'PASO ' + (ws + 1) + ' DE ' + M.steps.length;
+    $('w-t').textContent = M.steps[ws][0];
+    $('w-d').textContent = M.steps[ws][1];
+    $('w-prev').disabled = ws === 0;
+    $('w-next').textContent = ws === M.steps.length - 1 ? 'Empezar de nuevo' : 'Siguiente paso';
+    $('w-stats').innerHTML = M.stats.map(function (x) { return '<div class="stat"><b>' + x[0] + '</b>' + x[1] + '</div>'; }).join('');
+    $('w-warn').hidden = !M.warn; if (M.warn) $('w-warn').textContent = M.warn;
+  }
+  document.querySelectorAll('#have button').forEach(function (b) {
+    b.addEventListener('click', function () { document.querySelectorAll('#have button').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); }); wm = b.dataset.m; ws = 0; renderWater(); });
+  });
+  $('w-prev').addEventListener('click', function () { if (ws > 0) { ws--; renderWater(); } });
+  $('w-next').addEventListener('click', function () { ws = ws < W[wm].steps.length - 1 ? ws + 1 : 0; renderWater(); });
+  renderWater();
+
+  /* ================= BLACKOUT ================= */
+  var HOURS = [0, 1, 3, 6, 12, 24, 48, 72];
+  var SYS = [
+    ['Luz', [0,'down','Cae la red eléctrica.']],
+    ['Internet y apps', [0,'down','Sin red: no hay mensajes, mapas online ni redes.']],
+    ['Tarjetas y transferencias', [0,'down','Sin sistema no hay pagos electrónicos. Solo efectivo.']],
+    ['Celular', [0,'warn','Llamadas saturadas: mandá SMS.'], [3,'down','Las antenas agotan sus baterías.']],
+    ['Agua en edificios', [0,'ok','Queda la del tanque.'], [6,'warn','Sin bombas, el tanque se vacía.'], [24,'down','Sin agua en pisos altos.']],
+    ['Heladera', [0,'ok','Cerrada aguanta.'], [12,'warn','Lo fresco empieza a echarse a perder.'], [48,'down','Comida congelada perdida.']],
+    ['Combustible', [0,'ok','Los surtidores tienen stock.'], [1,'warn','Surtidores sin luz: filas.'], [24,'down','Estaciones cerradas.']],
+    ['Radio AM/FM a pilas', [0,'ok','Sigue funcionando: es tu fuente oficial.']]
+  ];
+  var DO = {
+    0: 'Desenchufá los electrodomésticos, sacá efectivo que tengas en casa a mano y prendé la radio a pilas.',
+    1: 'Avisá a tu familia por SMS dónde está cada uno y confirmá el punto de encuentro.',
+    3: 'Ahorrá batería: modo avión y brillo mínimo. Usá la linterna frontal, no la del celular.',
+    6: 'Llená bidones y ollas con el agua que quede en el tanque antes de que se vacíe.',
+    12: 'Comé primero lo de la heladera. Abrila lo menos posible.',
+    24: 'Empezá con tu kit de 72 horas: agua (unos 4 L por persona por día), comida envasada, botiquín.',
+    48: 'Cociná con garrafa o anafe solo en lugares ventilados. Nunca un brasero en un ambiente cerrado.',
+    72: 'Si la situación sigue, seguí las indicaciones oficiales por radio sobre centros de asistencia.'
+  };
+  function statusAt(def, h) { var st = def[1]; for (var i = 1; i < def.length; i++) if (def[i][0] <= h) st = def[i]; return st; }
+  function renderBo() {
+    var h = HOURS[+$('bo-t').value];
+    $('bo-clock').innerHTML = h + ' h<small>DESDE EL ATAQUE</small>';
+    $('bo-sys').innerHTML = SYS.map(function (s) { var st = statusAt(s, h); var lbl = { ok:'Funciona', warn:'Con problemas', down:'Caído' }[st[1]]; return '<div class="sy" data-s="' + st[1] + '"><span class="st">' + lbl + '</span><span class="nm">' + s[0] + '</span><span class="why">' + st[2] + '</span></div>'; }).join('');
+    $('bo-do').textContent = DO[h];
+  }
+  $('bo-t').addEventListener('input', renderBo);
+  renderBo();
+})();
+</script>
+</body>
+</html>

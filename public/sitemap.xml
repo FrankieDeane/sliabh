@@ -5,7 +5,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -14,55 +14,61 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/rutas</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/mapas</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/planificar</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/faq</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/supervivencia</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/supervivencia/zonas-seguras</loc>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/contribuir</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/guias</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/app</loc>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -71,7 +77,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/patagonia-sur"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/patagonia-sur"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/patagonia-sur"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -80,7 +86,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/patagonia-sur"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/patagonia-sur"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/patagonia-sur"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -89,7 +95,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/patagonia-norte"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/patagonia-norte"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/patagonia-norte"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -98,7 +104,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/patagonia-norte"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/patagonia-norte"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/patagonia-norte"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -107,7 +113,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/cuyo"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/cuyo"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/cuyo"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -116,7 +122,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/cuyo"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/cuyo"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/cuyo"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -125,7 +131,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/norte"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/norte"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/norte"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -134,7 +140,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/norte"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/norte"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/norte"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -143,7 +149,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/sierras-centrales"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/sierras-centrales"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/sierras-centrales"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -152,7 +158,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/sierras-centrales"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/sierras-centrales"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/sierras-centrales"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -161,7 +167,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/litoral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/litoral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/litoral"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -170,7 +176,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/litoral"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/litoral"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/litoral"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -179,7 +185,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/buenos-aires"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/buenos-aires"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/buenos-aires"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -188,7 +194,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/region/buenos-aires"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/region/buenos-aires"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/region/buenos-aires"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -197,7 +203,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-los-glaciares"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-los-glaciares"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-los-glaciares"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -206,7 +212,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-los-glaciares"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-los-glaciares"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-los-glaciares"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -215,7 +221,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-nahuel-huapi"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-nahuel-huapi"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-nahuel-huapi"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -224,7 +230,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-nahuel-huapi"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-nahuel-huapi"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-nahuel-huapi"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -233,7 +239,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-tierra-del-fuego"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-tierra-del-fuego"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-tierra-del-fuego"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -242,7 +248,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-tierra-del-fuego"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-tierra-del-fuego"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-tierra-del-fuego"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -251,7 +257,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-lanin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-lanin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-lanin"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -260,7 +266,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-lanin"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-lanin"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-lanin"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -269,7 +275,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/sierra-alvear-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/sierra-alvear-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/sierra-alvear-ushuaia"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -278,7 +284,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/sierra-alvear-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/sierra-alvear-ushuaia"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/sierra-alvear-ushuaia"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -287,7 +293,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-el-rey"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-el-rey"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-el-rey"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -296,7 +302,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-nacional-el-rey"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-nacional-el-rey"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-nacional-el-rey"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -305,7 +311,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/vallecitos-cordon-del-plata"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/vallecitos-cordon-del-plata"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/vallecitos-cordon-del-plata"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -314,7 +320,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/vallecitos-cordon-del-plata"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/vallecitos-cordon-del-plata"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/vallecitos-cordon-del-plata"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -323,7 +329,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-municipal-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-municipal-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-municipal-llao-llao"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -332,7 +338,7 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/parque/parque-municipal-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/parque/parque-municipal-llao-llao"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/parque/parque-municipal-llao-llao"/>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -345,7 +351,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-aconcagua-.webp</image:loc>
       <image:title>Aconcagua — Ruta Normal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -358,7 +364,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-aconcagua-.webp</image:loc>
       <image:title>Aconcagua — Ruta Normal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -371,7 +377,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Fitz Roy — Laguna de los Tres</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -384,7 +390,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Fitz Roy — Laguna de los Tres</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -397,7 +403,7 @@
       <image:loc>https://www.voyagers.travel/_ipx/w_1200&amp;f_webp&amp;q_85/google/travel-web-app-1.appspot.com/flamelink/media/Cerro%20Torre%207.jpg%3Falt=media</image:loc>
       <image:title>Cerro Torre — Laguna Torre</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -410,7 +416,7 @@
       <image:loc>https://www.voyagers.travel/_ipx/w_1200&amp;f_webp&amp;q_85/google/travel-web-app-1.appspot.com/flamelink/media/Cerro%20Torre%207.jpg%3Falt=media</image:loc>
       <image:title>Cerro Torre — Laguna Torre</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -423,7 +429,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Loma del Pliegue Tumbado</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -436,7 +442,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Loma del Pliegue Tumbado</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -449,7 +455,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Capri — El Chaltén</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -462,7 +468,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Capri — El Chaltén</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -475,7 +481,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero Madre e Hija — Conector</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -488,7 +494,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero Madre e Hija — Conector</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -501,7 +507,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Miradores Cóndores y Águilas</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -514,7 +520,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Miradores Cóndores y Águilas</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -527,7 +533,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Chorrillo del Salto</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -540,7 +546,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Chorrillo del Salto</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -553,7 +559,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2019/02/refugio-frey-bariloche.jpg</image:loc>
       <image:title>Refugio Frey — Cerro Catedral</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -566,7 +572,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2019/02/refugio-frey-bariloche.jpg</image:loc>
       <image:title>Refugio Frey — Cerro Catedral</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -579,7 +585,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2018/02/refugio-lopez-trekking-bariloche.jpg</image:loc>
       <image:title>Cerro López — Refugio López</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -592,7 +598,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2018/02/refugio-lopez-trekking-bariloche.jpg</image:loc>
       <image:title>Cerro López — Refugio López</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -605,7 +611,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2024/02/tronador-bariloche-febrero2024-franciscoraggio-barilocheorg.jpg</image:loc>
       <image:title>Cerro Tronador — Glaciar Negro</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -618,7 +624,7 @@
       <image:loc>https://bariloche.org/wp-content/uploads/2024/02/tronador-bariloche-febrero2024-franciscoraggio-barilocheorg.jpg</image:loc>
       <image:title>Cerro Tronador — Glaciar Negro</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -631,7 +637,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Volcán Lanín — Vía Normal Argentina</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -644,7 +650,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Volcán Lanín — Vía Normal Argentina</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -657,7 +663,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Colo Huincul</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -670,7 +676,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Colo Huincul</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -683,7 +689,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Puerto Arturo — Auquinco (Lago Lolog)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -696,7 +702,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Puerto Arturo — Auquinco (Lago Lolog)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -709,7 +715,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Rosales — San Martín de los Andes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -722,7 +728,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Rosales — San Martín de los Andes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -735,7 +741,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Colorado desde Trompul</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -748,7 +754,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Colorado desde Trompul</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -761,7 +767,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Verde desde Lago Rucachoroy</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -774,7 +780,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Verde desde Lago Rucachoroy</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -787,7 +793,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada Arroyo Grande — Quila Quina</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -800,7 +806,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada Arroyo Grande — Quila Quina</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -813,7 +819,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Acol</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -826,7 +832,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Acol</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -839,7 +845,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Lanín Extremo — 13K</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -852,7 +858,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Lanín Extremo — 13K</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -865,7 +871,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/34/ae/25/photo3jpg.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Cerro Champaquí — Cima</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -878,7 +884,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/34/ae/25/photo3jpg.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Cerro Champaquí — Cima</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -891,7 +897,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/c3/f4/d9/el-paso-por-un-lugar.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Los Gigantes — Pared Sur</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -904,7 +910,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/c3/f4/d9/el-paso-por-un-lugar.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Los Gigantes — Pared Sur</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -917,7 +923,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/a2/2f/58/cerro-ventana.jpg?w=700&amp;h=-1&amp;s=1</image:loc>
       <image:title>Cerro La Ventana</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -930,7 +936,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/a2/2f/58/cerro-ventana.jpg?w=700&amp;h=-1&amp;s=1</image:loc>
       <image:title>Cerro La Ventana</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -943,7 +949,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Quebrada de Humahuaca — Circuito Cultural</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -956,7 +962,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/a5/19/21/quebrada-de-humahuaca.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Quebrada de Humahuaca — Circuito Cultural</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -969,7 +975,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/9a/3e/fe/vista-do-final-da-trilha.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Lago del Desierto — Circuito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -982,7 +988,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/9a/3e/fe/vista-do-final-da-trilha.jpg?w=700&amp;h=400&amp;s=1</image:loc>
       <image:title>Lago del Desierto — Circuito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -995,7 +1001,7 @@
       <image:loc>https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Los Alerces — Cascada Arrayanes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1008,7 +1014,7 @@
       <image:loc>https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Los Alerces — Cascada Arrayanes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1021,7 +1027,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-lago-puelo.webp</image:loc>
       <image:title>Lago Puelo — Los Hitos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1034,7 +1040,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-lago-puelo.webp</image:loc>
       <image:title>Lago Puelo — Los Hitos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1047,7 +1053,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/4a/26/62/cerro-la-calle-lugar.jpg?w=600&amp;h=-1&amp;s=1</image:loc>
       <image:title>PN Patagonia — La Ascensión</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1060,7 +1066,7 @@
       <image:loc>https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/4a/26/62/cerro-la-calle-lugar.jpg?w=600&amp;h=-1&amp;s=1</image:loc>
       <image:title>PN Patagonia — La Ascensión</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1073,7 +1079,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Península Mitre — Travesía Costera Atlántica</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1086,7 +1092,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Península Mitre — Travesía Costera Atlántica</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1099,7 +1105,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero Laguna Esmeralda</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1112,7 +1118,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero Laguna Esmeralda</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1125,7 +1131,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Laguna Negra</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1138,7 +1144,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Laguna Negra</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1151,7 +1157,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Sendero Hito XXIV</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1164,7 +1170,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Sendero Hito XXIV</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1177,7 +1183,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Laguna Verde</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1190,7 +1196,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Laguna Verde</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1203,7 +1209,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda del Mirador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1216,7 +1222,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda del Mirador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1229,7 +1235,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda de la Baliza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1242,7 +1248,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda de la Baliza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1255,7 +1261,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda del Turbal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1268,7 +1274,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda del Turbal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1281,7 +1287,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Costera — Bahía Lapataia</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1294,7 +1300,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Costera — Bahía Lapataia</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1307,7 +1313,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-bahia-ensenada.webp</image:loc>
       <image:title>Senda Ensenada Zaratiegui</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1320,7 +1326,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-bahia-ensenada.webp</image:loc>
       <image:title>Senda Ensenada Zaratiegui</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1333,7 +1339,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Río Pipo</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1346,7 +1352,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Senda Río Pipo</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1359,7 +1365,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Laguna del Caminante</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1372,7 +1378,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Laguna del Caminante</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1385,7 +1391,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Lagunas de los Cinco Hermanos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1398,7 +1404,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Lagunas de los Cinco Hermanos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1411,7 +1417,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Laguna Submarino</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1424,7 +1430,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Laguna Submarino</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1437,7 +1443,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Tierra del Fuego — Costera</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1450,7 +1456,7 @@
       <image:loc>https://sliabh.com.ar/tierra-del-fuego.webp</image:loc>
       <image:title>Tierra del Fuego — Costera</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1463,7 +1469,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-bahia-ensenada.webp</image:loc>
       <image:title>Senda Costera — Ensenada Zaratiegui</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1476,7 +1482,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-bahia-ensenada.webp</image:loc>
       <image:title>Senda Costera — Ensenada Zaratiegui</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1489,7 +1495,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-dientes-de-navarino.webp</image:loc>
       <image:title>Dientes de Navarino — Circuito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1502,7 +1508,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-dientes-de-navarino.webp</image:loc>
       <image:title>Dientes de Navarino — Circuito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1515,7 +1521,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-circuito-sierra-valdivieso.webp</image:loc>
       <image:title>Circuito Sierra Valdivieso</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1528,7 +1534,7 @@
       <image:loc>https://sliabh.com.ar/sliabh-circuito-sierra-valdivieso.webp</image:loc>
       <image:title>Circuito Sierra Valdivieso</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1541,7 +1547,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Sendero Pozo Verde</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1554,7 +1560,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Sendero Pozo Verde</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1567,7 +1573,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Sendero Chorro de los Loros</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1580,7 +1586,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Sendero Chorro de los Loros</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1593,7 +1599,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Laguna de los Patitos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1606,7 +1612,7 @@
       <image:loc>https://sliabh.com.ar/calilegua.webp</image:loc>
       <image:title>El Rey — Laguna de los Patitos</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1619,7 +1625,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Los Monjes — Picos Central y Oeste</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1632,7 +1638,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Los Monjes — Picos Central y Oeste</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1645,7 +1651,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Falkner (Filo Hua Hum)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1658,7 +1664,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Falkner (Filo Hua Hum)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1671,7 +1677,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Cerro Piltriquitrón</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1684,7 +1690,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Cerro Piltriquitrón</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1697,7 +1703,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Sendero Macuco — Salto Arrechea</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1710,7 +1716,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Sendero Macuco — Salto Arrechea</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1723,7 +1729,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Huella Impenetrable</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1736,7 +1742,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Huella Impenetrable</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1749,7 +1755,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Funke — Naposta — Tres Picos (Encadenamiento)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1762,7 +1768,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Funke — Naposta — Tres Picos (Encadenamiento)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1775,7 +1781,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero de las Señoritas</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1788,7 +1794,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Sendero de las Señoritas</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1801,7 +1807,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Inca Cueva</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1814,7 +1820,7 @@
       <image:loc>https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Inca Cueva</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1827,7 +1833,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>PN Río Pilcomayo — Portal Estero Poí</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1840,7 +1846,7 @@
       <image:loc>https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>PN Río Pilcomayo — Portal Estero Poí</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1853,7 +1859,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Uritorco</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1866,7 +1872,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Uritorco</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1879,7 +1885,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Pozo del Indio — Cascada del Indio Miguel</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1892,7 +1898,7 @@
       <image:loc>https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Pozo del Indio — Cascada del Indio Miguel</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1905,7 +1911,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada del Ángel — Quebrada del 55</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1918,7 +1924,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada del Ángel — Quebrada del 55</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1931,7 +1937,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Arenales y Cerro Andresito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1944,7 +1950,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Arenales y Cerro Andresito</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1957,7 +1963,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Plata</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1970,7 +1976,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Plata</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -1983,7 +1989,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Lomas Amarillas (5159 m)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1996,7 +2002,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Lomas Amarillas (5159 m)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2009,7 +2015,7 @@
       <image:loc>https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey vía Cancha de Fútbol</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2022,7 +2028,7 @@
       <image:loc>https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey vía Cancha de Fútbol</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2035,7 +2041,7 @@
       <image:loc>https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey — Picada Eslovena</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2048,7 +2054,7 @@
       <image:loc>https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey — Picada Eslovena</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2061,7 +2067,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro López vía Refugio López</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2074,7 +2080,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro López vía Refugio López</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2087,7 +2093,7 @@
       <image:loc>https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Tronador — Ventisquero Negro y Garganta del Diablo</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2100,7 +2106,7 @@
       <image:loc>https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Tronador — Ventisquero Negro y Garganta del Diablo</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2113,7 +2119,7 @@
       <image:loc>https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Negra — Refugio Italia (Manfredo Segre)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2126,7 +2132,7 @@
       <image:loc>https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Negra — Refugio Italia (Manfredo Segre)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2139,7 +2145,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Campanario — Sendero Peatonal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2152,7 +2158,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Campanario — Sendero Peatonal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2165,7 +2171,7 @@
       <image:loc>https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Otto desde Bariloche</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2178,7 +2184,7 @@
       <image:loc>https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Otto desde Bariloche</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2191,7 +2197,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada y Lago Los Cántaros (Puerto Blest)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2204,7 +2210,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada y Lago Los Cántaros (Puerto Blest)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2217,7 +2223,7 @@
       <image:loc>https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna de los Témpanos — Mirador Ventisquero Negro</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2230,7 +2236,7 @@
       <image:loc>https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna de los Témpanos — Mirador Ventisquero Negro</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2243,7 +2249,7 @@
       <image:loc>https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Challhuaco</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2256,7 +2262,7 @@
       <image:loc>https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Challhuaco</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2269,7 +2275,7 @@
       <image:loc>https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Travesía Frey–Jakob (2 días)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2282,7 +2288,7 @@
       <image:loc>https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Travesía Frey–Jakob (2 días)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2295,7 +2301,7 @@
       <image:loc>https://images.unsplash.com/photo-1511497584788-876760111969?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Circuito Colonia Suiza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2308,7 +2314,7 @@
       <image:loc>https://images.unsplash.com/photo-1511497584788-876760111969?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Circuito Colonia Suiza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2321,7 +2327,7 @@
       <image:loc>https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Lago Gutiérrez — Costa Sur</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2334,7 +2340,7 @@
       <image:loc>https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Lago Gutiérrez — Costa Sur</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2347,7 +2353,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro San Martín (La Vieja)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2360,7 +2366,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro San Martín (La Vieja)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2373,7 +2379,7 @@
       <image:loc>https://images.unsplash.com/photo-1482685945432-29a7abf2f466?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Jakob (San Martín) desde Tambo Báez</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2386,7 +2392,7 @@
       <image:loc>https://images.unsplash.com/photo-1482685945432-29a7abf2f466?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Jakob (San Martín) desde Tambo Báez</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2399,7 +2405,7 @@
       <image:loc>https://images.unsplash.com/photo-1540390769625-2fc3f8b1d50c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Ilón desde Pampa Linda</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2412,7 +2418,7 @@
       <image:loc>https://images.unsplash.com/photo-1540390769625-2fc3f8b1d50c?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Laguna Ilón desde Pampa Linda</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2425,7 +2431,7 @@
       <image:loc>https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Otto Meiling — Cerro Tronador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2438,7 +2444,7 @@
       <image:loc>https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Otto Meiling — Cerro Tronador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2451,7 +2457,7 @@
       <image:loc>https://images.unsplash.com/photo-1469521669194-babb45599def?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Llao Llao — Parque Municipal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2464,7 +2470,7 @@
       <image:loc>https://images.unsplash.com/photo-1469521669194-babb45599def?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Llao Llao — Parque Municipal</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2477,7 +2483,7 @@
       <image:loc>https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada de los Duendes y Mirador Lago Gutiérrez</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2490,7 +2496,7 @@
       <image:loc>https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cascada de los Duendes y Mirador Lago Gutiérrez</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2503,7 +2509,7 @@
       <image:loc>https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey por el Filo del Catedral</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2516,7 +2522,7 @@
       <image:loc>https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Refugio Frey por el Filo del Catedral</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2529,7 +2535,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cumbre Catedral Norte</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2542,7 +2548,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cumbre Catedral Norte</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2555,7 +2561,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Paso de las Nubes — Pampa Linda a Puerto Frías</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2568,7 +2574,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Paso de las Nubes — Pampa Linda a Puerto Frías</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2581,7 +2587,7 @@
       <image:loc>https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Travesía 5 Lagunas + Paso de las Nubes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2594,7 +2600,7 @@
       <image:loc>https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Travesía 5 Lagunas + Paso de las Nubes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2607,7 +2613,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Circuito de los 4 Refugios (4 días)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2620,7 +2626,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Circuito de los 4 Refugios (4 días)</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2633,7 +2639,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Villa Tacul — Puente Romano y Mirador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2646,7 +2652,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Villa Tacul — Puente Romano y Mirador</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2659,7 +2665,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Sendero de los Arrayanes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2672,7 +2678,7 @@
       <image:loc>https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Sendero de los Arrayanes</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2685,7 +2691,7 @@
       <image:loc>https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Goye desde Colonia Suiza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2698,7 +2704,7 @@
       <image:loc>https://images.unsplash.com/photo-1508614999368-9260051292e5?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Goye desde Colonia Suiza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2711,7 +2717,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Mirador Bahía López — Brazo Tristeza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2724,7 +2730,7 @@
       <image:loc>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Mirador Bahía López — Brazo Tristeza</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2737,7 +2743,7 @@
       <image:loc>https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Piedra del Habsburgo — Cerro Otto</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2750,7 +2756,7 @@
       <image:loc>https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Piedra del Habsburgo — Cerro Otto</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2763,7 +2769,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Ventana</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2776,7 +2782,7 @@
       <image:loc>https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&amp;q=80&amp;fit=crop&amp;auto=format</image:loc>
       <image:title>Cerro Ventana</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -2789,7 +2795,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Cerro Villegas — desde Ruta 23</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2802,7 +2808,7 @@
       <image:loc>https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&amp;q=80&amp;fit=crop</image:loc>
       <image:title>Cerro Villegas — desde Ruta 23</image:title>
     </image:image>
-    <lastmod>2026-09-24</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

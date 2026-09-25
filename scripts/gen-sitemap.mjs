@@ -16,7 +16,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 // "/inicio" is deliberately absent: "/" redirects there, and its canonical
 // is "/" — listing both would hand Google two homepages.
-const routes = ['/', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/contribuir', '/guias', '/app'];
+const routes = ['/', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/supervivencia/zonas-seguras', '/contribuir', '/guias', '/app'];
 
 function xmlEsc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
