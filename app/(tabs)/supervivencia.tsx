@@ -205,6 +205,28 @@ export default function SupervivenciaScreen() {
           </Text>
         </View>
 
+        {/* Link to the standalone 3D risk map (static page in public/, web only) */}
+        {Platform.OS === 'web' && (
+          <View style={{ paddingHorizontal: sidePad, paddingTop: 24 }}>
+            <Text
+              {...({ href: '/supervivencia/zonas-seguras' } as any)}
+              accessibilityRole="link"
+              style={[styles.mapCard, { backgroundColor: c.surface, borderColor: c.border }]}
+            >
+              <Text style={styles.mapCardEyebrow}>{t('NUEVO · MAPA 3D', 'NEW · 3D MAP')}</Text>
+              {'\n'}
+              <Text style={[styles.mapCardTitle, { color: c.text }]}>{t('Mapa de zonas seguras de Argentina', 'Safe-areas map of Argentina')}</Text>
+              {'\n'}
+              <Text style={[styles.mapCardBody, { color: c.muted }]}>
+                {t(
+                  'Riesgos, refugios y simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos →',
+                  'Risks, refuges and simulators for a nuclear blast, toxic cloud, volcanic ash and earthquakes →',
+                )}
+              </Text>
+            </Text>
+          </View>
+        )}
+
         {/* Guide cards */}
         <View style={[styles.guides, { paddingHorizontal: sidePad }]}>
           {GUIDES.map((guide) => (
@@ -307,6 +329,10 @@ const styles = StyleSheet.create({
 
   // Guides
   guides: { gap: 12, paddingTop: 24 },
+  mapCard: { display: 'flex' as any, borderWidth: 1, borderRadius: 18, padding: 18, lineHeight: 22 },
+  mapCardEyebrow: { fontSize: 11, fontWeight: '700', letterSpacing: 2, color: '#22c55e' },
+  mapCardTitle: { fontSize: 18, fontWeight: '800', lineHeight: 30 },
+  mapCardBody: { fontSize: 13.5, lineHeight: 20 },
 
   // Card
   card: {
