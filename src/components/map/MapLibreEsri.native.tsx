@@ -23,6 +23,15 @@ const ESRI_TILES: Record<EsriLayer, string> = {
   'esri-streets':   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
 };
 
+// Deepest level Esri actually serves in rural Argentina. Past it the tile
+// server answers with nothing and the map went blank white; with maxzoom set,
+// MapLibre stretches the last real tile instead.
+const ESRI_MAXZOOM: Record<EsriLayer, number> = {
+  'esri-topo': 16,
+  'esri-satellite': 17,
+  'esri-streets': 17,
+};
+
 export interface LatLon { lat: number; lon: number }
 
 interface Props {
@@ -41,6 +50,8 @@ interface Props {
   /** The hiker's own walked track, drawn in blue. */
   trackPoints?: LatLon[];
   onLocationError?: () => void;
+  /** Frame the whole walked track (and route) once it arrives, instead of `center`/`zoom`. */
+  fitToTrack?: boolean;
 }
 
 function buildHTML(
@@ -48,6 +59,7 @@ function buildHTML(
   zoom: number,
   layer: EsriLayer,
   routePoints: LatLon[] = [],
+  fitToTrack = false,
 ): string {
   const trailRouteJson = JSON.stringify(
     routePoints
@@ -66,6 +78,7 @@ function buildHTML(
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body,#map{height:100vh;width:100vw;}
+#map{touch-action:none;}
 body{font-family:-apple-system,system-ui,sans-serif;}
 
 #recenter{
@@ -95,7 +108,8 @@ body{font-family:-apple-system,system-ui,sans-serif;}
   window.__pendingUser=null;window.__pendingTrack=null;
   window.setUserPos=function(lat,lng){window.__pendingUser=[lng,lat];};
   window.setUserTrack=function(c){window.__pendingTrack=c;};
-  window.setBaseLayer=function(u){window.__pendingLayer=u;};
+  window.setBaseLayer=function(u,mz){window.__pendingLayer=[u,mz];};
+  var fitToTrack=${fitToTrack ? 'true' : 'false'};
 
   var esriStyle = {
     version:8,
@@ -104,6 +118,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
         type:'raster',
         tiles:['${tileUrl}'],
         tileSize:256,
+        maxzoom:${ESRI_MAXZOOM[layer]},
         attribution:'&copy; Esri, HERE, Garmin, FAO, NOAA, USGS'
       }
     },
@@ -124,9 +139,18 @@ body{font-family:-apple-system,system-ui,sans-serif;}
 
   // Swap topo/satellite in place: rebuilding the page would drop the camera,
   // the walker's dot and the track for a few seconds every time.
-  window.setBaseLayer=function(u){
+  // maxzoom cannot change on a live source, so a layer switch rebuilds just
+  // the raster source and layer under the lines.
+  window.setBaseLayer=function(u,mz){
+    if(!map.isStyleLoaded()){window.__pendingLayer=[u,mz];return;}
     var src=map.getSource('esri');
-    if(src&&src.setTiles) src.setTiles([u]); else window.__pendingLayer=u;
+    if(src&&src.tiles&&src.tiles[0]===u) return;
+    var before=map.getLayer('trail-route-casing')?'trail-route-casing':undefined;
+    if(map.getLayer('esri-layer')) map.removeLayer('esri-layer');
+    if(src) map.removeSource('esri');
+    map.addSource('esri',{type:'raster',tiles:[u],tileSize:256,maxzoom:mz||17,
+      attribution:'&copy; Esri, HERE, Garmin, FAO, NOAA, USGS'});
+    map.addLayer({id:'esri-layer',type:'raster',source:'esri'},before);
   };
 
   function mkEl(css,html){
@@ -234,11 +258,22 @@ body{font-family:-apple-system,system-ui,sans-serif;}
       if(!isFinite(lat)||!isFinite(lng)) return;
       placeUser(lng,lat);
     };
+    var framed=false;
+    function frameTrack(){
+      if(!fitToTrack||framed) return;
+      var all=hikeTrack.concat(trailRoute);
+      if(all.length<2) return;
+      var b=new maplibregl.LngLatBounds(all[0],all[0]);
+      all.forEach(function(c){b.extend(c);});
+      framed=true;
+      map.fitBounds(b,{padding:36,maxZoom:16,duration:0});
+    }
     window.setUserTrack=function(coords){
       hikeTrack=(coords||[]).filter(function(c){return c&&isFinite(c[0])&&isFinite(c[1]);});
       drawTrack();
+      frameTrack();
     };
-    if(window.__pendingLayer){window.setBaseLayer(window.__pendingLayer);window.__pendingLayer=null;}
+    if(window.__pendingLayer){window.setBaseLayer(window.__pendingLayer[0],window.__pendingLayer[1]);window.__pendingLayer=null;}
     if(window.__pendingTrack){window.setUserTrack(window.__pendingTrack);window.__pendingTrack=null;}
     if(window.__pendingUser){placeUser(window.__pendingUser[0],window.__pendingUser[1]);window.__pendingUser=null;}
 
@@ -317,6 +352,7 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   routePoints,
   userPosition,
   trackPoints,
+  fitToTrack = false,
 }: Props, ref) {
   const webviewRef = useRef<WebView>(null);
   const loaded = useRef(false);
@@ -344,7 +380,7 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
   const layerRef = useRef(layer);
   layerRef.current = layer;
   const html = React.useMemo(
-    () => buildHTML(effectiveCenter, effectiveZoom, layerRef.current, routePoints ?? []),
+    () => buildHTML(effectiveCenter, effectiveZoom, layerRef.current, routePoints ?? [], fitToTrack),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [effectiveCenter[0], effectiveCenter[1], effectiveZoom, routeKey],
   );
@@ -399,7 +435,8 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
 
   function pushLayer() {
     if (!loaded.current) return;
-    webviewRef.current?.injectJavaScript(`window.setBaseLayer && window.setBaseLayer(${JSON.stringify(ESRI_TILES[layerRef.current])}); true;`);
+    const l = layerRef.current;
+    webviewRef.current?.injectJavaScript(`window.setBaseLayer && window.setBaseLayer(${JSON.stringify(ESRI_TILES[l])},${ESRI_MAXZOOM[l]}); true;`);
   }
   React.useEffect(() => { pushLayer(); }, [layer]);
 
@@ -473,6 +510,9 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
         originWhitelist={['*']}
         mixedContentMode="always"
         scrollEnabled={false}
+        // Android: let pan/pinch reach the map when it sits inside a ScrollView
+        // instead of the page scroll stealing the gesture.
+        nestedScrollEnabled
         allowFileAccess
         allowUniversalAccessFromFileURLs
         allowFileAccessFromFileURLs
