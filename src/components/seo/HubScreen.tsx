@@ -7,7 +7,7 @@ import { useLangStore } from '../../store/langStore';
 import { regionMeta } from '../../data/hubs';
 import { hubSeo } from '../../utils/hubSeo';
 import { TrailListCard } from '../trails/TrailCard';
-import { SeoHead } from '../ui/SeoHead';
+import { SeoHead, NoIndex } from '../ui/SeoHead';
 import { WebFooter } from '../layout/WebFooter';
 
 const MAX_CONTENT = 900;
@@ -40,6 +40,7 @@ export function HubScreen({ kind, slug }: HubScreenProps) {
   if (!seo) {
     return (
       <View style={[styles.container, { backgroundColor: c.bg, alignItems: 'center', justifyContent: 'center', padding: 32 }]}>
+        <NoIndex />
         <Text style={{ color: c.text, fontSize: 16, fontWeight: '700', textAlign: 'center' }}>
           {t('No encontramos esta página', "We couldn't find this page")}
         </Text>
@@ -69,6 +70,7 @@ export function HubScreen({ kind, slug }: HubScreenProps) {
         image={seo.image}
         jsonLd={seo.jsonLd}
         keywords={seo.keywords}
+        alternates={{ es: seo.urlEs.replace('https://sliabh.com.ar', ''), en: seo.urlEn.replace('https://sliabh.com.ar', '') }}
       />
 
       <View style={styles.content}>
@@ -131,7 +133,7 @@ export function HubScreen({ kind, slug }: HubScreenProps) {
 
         <View style={{ marginTop: 28 }}>
           <Text accessibilityRole="header" {...H2} style={[styles.h2, { color: c.text }]}>
-            {kind === 'region' ? t(`Rutas en ${name}`, `Trails in ${name}`) : t(`Rutas en ${name}`, `Trails in ${name}`)}
+            {t(`Rutas en ${name}`, `Trails in ${name}`)}
           </Text>
           <View style={{ gap: 12, marginTop: 12 }}>
             {trails.map((tr) => (

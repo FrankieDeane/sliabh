@@ -7,6 +7,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 
 const MAX_CONTENT = 800;
 
@@ -628,9 +629,7 @@ export default function FaqScreen() {
       contentContainerStyle={{ paddingBottom: 64 }}
     >
       <SeoHead
-        title="Preguntas frecuentes — Sliabh"
-        description="Todo sobre Sliabh: qué es, si funciona sin conexión, mapas offline, cuentas, seguridad en montaña y más."
-        path="/faq"
+          {...coreSeo('faq', lang)}
         jsonLd={faqJsonLd}
       />
 
@@ -639,7 +638,7 @@ export default function FaqScreen() {
         <Text style={[fS.eyebrow, { color: c.muted }]}>
           {t('PREGUNTAS FRECUENTES', 'FREQUENTLY ASKED QUESTIONS')}
         </Text>
-        <Text style={[fS.title, { color: c.text }]}>
+        <Text accessibilityRole="header" style={[fS.title, { color: c.text }]}>
           {t('Todo lo que necesitás saber', 'Everything you need to know')}
         </Text>
         <Text style={[fS.subtitle, { color: c.muted }]}>

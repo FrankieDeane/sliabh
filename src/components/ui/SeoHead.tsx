@@ -16,6 +16,20 @@ interface SeoHeadProps {
   jsonLd?: object | object[];
   /** Comma-separated; overrides the site-wide keywords from SiteHead. */
   keywords?: string;
+  /** Paths of the page's Spanish and English versions → hreflang links. */
+  alternates?: { es: string; en: string };
+  /** Keep the page out of search results (private, auth or not-found pages). */
+  noindex?: boolean;
+}
+
+/** Robots noindex for pages that have no SEO copy of their own (auth, private, not-found). */
+export function NoIndex() {
+  if (Platform.OS !== 'web') return null;
+  return (
+    <Head>
+      <meta name="robots" content="noindex, follow" />
+    </Head>
+  );
 }
 
 /**
@@ -31,7 +45,7 @@ interface SeoHeadProps {
  * engines) won't see them — that needs the site's export mode to switch to
  * "static" (per-route prerendered HTML) to fully land.
  */
-export function SeoHead({ title, description, path, image, jsonLd, keywords }: SeoHeadProps) {
+export function SeoHead({ title, description, path, image, jsonLd, keywords, alternates, noindex }: SeoHeadProps) {
   if (Platform.OS !== 'web') return null;
 
   const url = `${SITE_URL}${path}`;
@@ -45,7 +59,10 @@ export function SeoHead({ title, description, path, image, jsonLd, keywords }: S
       <title>{title}</title>
       <meta name="description" content={description} />
       {keywords ? <meta name="keywords" content={keywords} /> : null}
-      <link rel="canonical" href={url} />
+      {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={url} />}
+      {alternates && !noindex ? <link rel="alternate" hrefLang="es" href={`${SITE_URL}${alternates.es}`} /> : null}
+      {alternates && !noindex ? <link rel="alternate" hrefLang="en" href={`${SITE_URL}${alternates.en}`} /> : null}
+      {alternates && !noindex ? <link rel="alternate" hrefLang="x-default" href={`${SITE_URL}${alternates.es}`} /> : null}
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />

@@ -342,6 +342,7 @@ export default function InicioScreen() {
             'Sliabh: plan your hike through Argentina’s National Parks — Patagonia, El Chaltén, Bariloche and Tierra del Fuego. Trail guides with 3D maps, offline GPS tracks, and survival planning, built for hikers travelling from Europe and the US.',
           )}
           path={t('/', '/en')}
+          alternates={{ es: '/', en: '/en' }}
         />
 
         {/* ── HERO ── */}
@@ -402,6 +403,7 @@ export default function InicioScreen() {
               </Text>
 
               <Text
+                accessibilityRole="header"
                 style={[
                   styles.heroTitle,
                   Platform.OS === 'web'

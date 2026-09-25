@@ -83,6 +83,7 @@ export default function SharedTrackScreen() {
             : 'Recorrido compartido en Sliabh.'
         }
         path={`/recorrido/${String(token ?? '')}`}
+        noindex
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: sidePad, paddingBottom: 60 }}>
         {loading && (

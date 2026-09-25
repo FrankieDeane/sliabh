@@ -7,6 +7,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 import { asset } from '../../src/constants/asset';
 
 const MAX_CONTENT = 760;
@@ -226,15 +227,13 @@ export default function AppDownloadScreen() {
       contentContainerStyle={{ paddingBottom: Platform.OS === 'web' && width < 720 ? 120 : 64 }}
     >
       <SeoHead
-        title="Sliabh para Android — grabá con el teléfono en el bolsillo"
-        description="Descargá la app de Sliabh para Android: graba tu recorrido con la pantalla bloqueada y con música. Paso a paso para instalarla."
-        path="/app"
+          {...coreSeo('app', lang)}
       />
 
       <View style={[s.hero, { backgroundColor: c.surface, borderBottomColor: c.border, paddingHorizontal: sidePad }, wide && s.heroWide]}>
         <View style={[{ gap: 12 }, wide && { flex: 1 }]}>
         <Text style={s.eyebrow}>{t('APP PARA ANDROID', 'ANDROID APP')}</Text>
-        <Text style={[s.title, { color: c.text }]}>
+        <Text accessibilityRole="header" style={[s.title, { color: c.text }]}>
           {t('Grabá tu recorrido con el teléfono en el bolsillo', 'Record your hike with the phone in your pocket')}
         </Text>
         <Text style={[s.lead, { color: c.muted }]}>

@@ -11,12 +11,14 @@ import { loadTs } from './lib/load-ts.mjs';
 const BASE = process.env.SITE_URL || 'https://sliabh.com.ar';
 
 const { ALL_HUB_TRAILS, REGIONS, PARKS } = loadTs('src/data/hubs.ts');
+const { CORE_ROUTES } = loadTs('src/data/coreSeo.ts');
 
 const today = new Date().toISOString().slice(0, 10);
 
 // "/inicio" is deliberately absent: "/" redirects there, and its canonical
 // is "/" — listing both would hand Google two homepages.
-const routes = ['/', '/rutas', '/mapas', '/planificar', '/faq', '/supervivencia', '/supervivencia/zonas-seguras', '/contribuir', '/guias', '/app'];
+// Core pages and the safe-areas map all have an /en twin.
+const routes = [...CORE_ROUTES.map((r) => `/${r}`), '/supervivencia/zonas-seguras'];
 
 function xmlEsc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -51,7 +53,7 @@ function imageTag(trail) {
 
 const urls = [
   ...pair('/', '/en', '1.0', '0.9', 'weekly'),
-  ...routes.filter((r) => r !== '/').map((r) => ({ loc: BASE + r, pri: '0.8', freq: 'weekly', alt: '', extra: '' })),
+  ...routes.flatMap((r) => pair(r, `/en${r}`, '0.8', '0.7', 'weekly')),
   ...REGIONS.flatMap((r) => pair(`/region/${r.slug}`, `/en/region/${r.slug}`, '0.9', '0.8', 'weekly')),
   ...PARKS.flatMap((p) => pair(`/parque/${p.slug}`, `/en/parque/${p.slug}`, '0.8', '0.7', 'weekly')),
   ...ALL_HUB_TRAILS.flatMap((t) => pair(`/ruta/${t.id}`, `/en/ruta/${t.id}`, '0.7', '0.6', 'monthly', imageTag(t))),
@@ -70,5 +72,5 @@ const xml =
 
 fs.writeFileSync('public/sitemap.xml', xml);
 console.log(
-  `sitemap.xml: ${urls.length} URLs (${ALL_HUB_TRAILS.length} trails, ${REGIONS.length} regions, ${PARKS.length} parks × es/en + ${routes.length} core pages)`,
+  `sitemap.xml: ${urls.length} URLs (${ALL_HUB_TRAILS.length} trails, ${REGIONS.length} regions, ${PARKS.length} parks, ${routes.length} core pages, all × es/en)`,
 );

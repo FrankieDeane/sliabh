@@ -124,6 +124,7 @@ export default function MisRecorridosScreen() {
         title="Mis recorridos — Sliabh"
         description="Todos tus recorridos grabados con GPS: el que estás grabando ahora, los que esperan señal y los guardados en tu cuenta."
         path="/mis-recorridos"
+        noindex
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: sidePad, paddingBottom: 60 }}>
         <View style={{ paddingTop: 24, paddingBottom: 12 }}>

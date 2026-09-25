@@ -7,6 +7,7 @@ Catálogo completo de rutas: https://sliabh.com.ar/rutas
 Mapas offline: https://sliabh.com.ar/mapas
 Guías de supervivencia de montaña: https://sliabh.com.ar/supervivencia
 Mapa de zonas seguras de Argentina (riesgos, refugios, simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos): https://sliabh.com.ar/supervivencia/zonas-seguras
+Safe-areas map of Argentina (English): https://sliabh.com.ar/en/supervivencia/zonas-seguras
 Preguntas frecuentes: https://sliabh.com.ar/faq
 
 ## Rutas (60)

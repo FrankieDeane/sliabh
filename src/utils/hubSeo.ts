@@ -64,10 +64,13 @@ export function hubSeo(kind: 'region' | 'park', slug: string, lang: 'es' | 'en')
       : `${trails.length} rutas de trekking en ${name}, ${provinces.join(', ')}: mapa 3D, GPS offline, track GPX gratis y planificación de cada ruta.`;
 
   const trailNames = trails.slice(0, 6).map((t) => t.name.split(' — ')[0]);
+  // "the North (Salta & Jujuy)" reads fine in a sentence but not as a search
+  // term: keywords use the bare place name.
+  const kwName = name.replace(/^the\s+/i, '').replace(/\s*\([^)]*\)/g, '').trim();
   const keywords = [
     ...(isEn
-      ? [`hiking ${name}`, `${name} trekking`, `${name} hiking trails`, `trekking ${name} Argentina`, `best hikes ${name}`, 'GPX tracks Argentina', 'offline hiking map']
-      : [`trekking ${name}`, `senderismo ${name}`, `rutas ${name}`, `rutas de montaña ${name}`, `qué hacer en ${name}`, 'tracks GPX Argentina', 'mapas offline trekking']),
+      ? [`hiking ${kwName}`, `${kwName} trekking`, `${kwName} hiking trails`, `trekking ${kwName} Argentina`, `best hikes ${kwName}`, 'GPX tracks Argentina', 'offline hiking map']
+      : [`trekking ${kwName}`, `senderismo ${kwName}`, `rutas ${kwName}`, `rutas de montaña ${kwName}`, `qué hacer en ${kwName}`, 'tracks GPX Argentina', 'mapas offline trekking']),
     ...provinces,
     ...trailNames,
   ].filter((v, i, a) => v && a.indexOf(v) === i).join(', ');
@@ -84,9 +87,9 @@ export function hubSeo(kind: 'region' | 'park', slug: string, lang: 'es' | 'en')
   const crumbs = [
     { name: 'Sliabh', item: `${SITE_URL}${isEn ? '/en' : '/'}` },
     ...(parentRegion
-      ? [{ name: isEn ? parentRegion.en.name : parentRegion.es.name, item: `${SITE_URL}${prefix}/region/${parentRegion.slug}` }]
+      ? [{ name: cap(isEn ? parentRegion.en.name : parentRegion.es.name), item: `${SITE_URL}${prefix}/region/${parentRegion.slug}` }]
       : []),
-    { name, item: url },
+    { name: cap(name), item: url },
   ];
 
   const jsonLd: object[] = [
@@ -117,4 +120,8 @@ export function hubSeo(kind: 'region' | 'park', slug: string, lang: 'es' | 'en')
     lang, kind, slug, name, intro, region, park, trails, childParks, faqs,
     title, description, keywords, image, path, url, urlEs, urlEn, jsonLd,
   };
+}
+
+function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }

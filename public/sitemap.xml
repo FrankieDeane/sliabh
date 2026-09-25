@@ -20,57 +20,165 @@
   </url>
   <url>
     <loc>https://sliabh.com.ar/rutas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/rutas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/rutas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/rutas"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/rutas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/rutas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/rutas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/rutas"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/mapas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/mapas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/mapas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/mapas"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/mapas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/mapas"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/mapas"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/mapas"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/planificar</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/planificar"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/planificar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/planificar"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/planificar</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/planificar"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/planificar"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/planificar"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/faq</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/faq"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/faq</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/faq"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/supervivencia</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/supervivencia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/supervivencia"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/supervivencia"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sliabh.com.ar/supervivencia/zonas-seguras</loc>
+    <loc>https://sliabh.com.ar/en/supervivencia</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/supervivencia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/supervivencia"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/supervivencia"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/contribuir</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/contribuir"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/contribuir"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/contribuir"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/contribuir</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/contribuir"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/contribuir"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/contribuir"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/guias</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/guias"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/guias"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/guias"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://sliabh.com.ar/en/guias</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/guias"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/guias"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/guias"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://sliabh.com.ar/app</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/app"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/app"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/app"/>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/app</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/app"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/app"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/app"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/supervivencia/zonas-seguras</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/supervivencia/zonas-seguras"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/supervivencia/zonas-seguras"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/supervivencia/zonas-seguras"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://sliabh.com.ar/en/supervivencia/zonas-seguras</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sliabh.com.ar/supervivencia/zonas-seguras"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/supervivencia/zonas-seguras"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/supervivencia/zonas-seguras"/>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://sliabh.com.ar/region/patagonia-sur</loc>

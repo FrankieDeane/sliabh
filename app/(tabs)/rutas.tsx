@@ -26,6 +26,7 @@ const ALL_TRAILS = [...ARGENTINA_TRAILS, ...(BARILOCHE_TRAILS as typeof ARGENTIN
 import { FeaturedTrailCard, TrailListCard } from '../../src/components/trails/TrailCard';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 import { RecordHikeButton } from '../../src/components/hike/RecordHikeButton';
 import { useMapFullscreen, FullscreenButton } from '../../src/components/map/MapFullscreen';
 import { MyTracksSection } from '../../src/components/trails/MyTracksSection';
@@ -338,9 +339,7 @@ export default function RutasScreen() {
         {...({ 'data-rutas-split': true } as any)}
       >
         <SeoHead
-          title="Rutas y senderos en Argentina — Sliabh"
-          description="Explorá todas las rutas de trekking y montaña de Sliabh: filtrá por región, dificultad y actividad. Distancia, desnivel, mapas y GPX descargable para cada sendero de Argentina."
-          path="/rutas"
+          {...coreSeo('rutas', lang)}
         />
 
         {/* Left panel: filters + trail list */}
@@ -353,7 +352,7 @@ export default function RutasScreen() {
         >
           {/* Left header */}
           <View style={[styles.splitHeader, { borderBottomColor: c.border }]}>
-            <Text style={[styles.headerTitle, { color: c.text }]}>
+            <Text accessibilityRole="header" style={[styles.headerTitle, { color: c.text }]}>
               {t('Rutas', 'Trails')}
             </Text>
             <Text style={[styles.headerSub, { color: c.muted }]}>
@@ -383,9 +382,7 @@ export default function RutasScreen() {
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
       <SeoHead
-        title="Rutas y senderos en Argentina — Sliabh"
-        description="Explorá todas las rutas de trekking y montaña de Sliabh: filtrá por región, dificultad y actividad. Distancia, desnivel, mapas y GPX descargable para cada sendero de Argentina."
-        path="/rutas"
+          {...coreSeo('rutas', lang)}
       />
 
       {/* Mobile map toggle button */}
@@ -438,7 +435,7 @@ export default function RutasScreen() {
         >
           {/* Header */}
           <View style={{ paddingTop: 24, paddingBottom: 8 }}>
-            <Text style={[styles.headerTitle, { color: c.text }]}>
+            <Text accessibilityRole="header" style={[styles.headerTitle, { color: c.text }]}>
               {t('Rutas', 'Trails')}
             </Text>
             <Text style={[styles.headerSub, { color: c.muted }]}>

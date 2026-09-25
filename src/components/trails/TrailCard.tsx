@@ -114,7 +114,7 @@ const TrailListCardBody = React.forwardRef<any, ListProps>(function TrailListCar
       ref={ref}
       {...rest}
       style={[styles.card, { backgroundColor: c.surface, borderColor: c.border }]}
-      onPress={onPress ?? (rest as any).onPress}
+      onPress={onPress}
       activeOpacity={0.85}
     >
       {/* Photo */}

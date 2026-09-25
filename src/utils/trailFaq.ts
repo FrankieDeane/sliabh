@@ -13,13 +13,12 @@ import type { ArgentinaTrail, TrailDifficulty } from '../data/argentinaTrails';
 import { difficultyLabel, seasonLabel, activityLabel } from '../data/argentinaTrails';
 import type { RegionMeta } from '../data/hubs';
 import type { ParkMeta } from '../data/hubs';
+import { formatDuration } from './duration';
 
 export interface Faq { q: string; a: string }
 
 function durationText(trail: ArgentinaTrail, lang: 'es' | 'en'): string {
-  const { min, max, unit } = trail.duration;
-  const u = lang === 'en' ? (unit === 'dias' ? (max === 1 ? 'day' : 'days') : 'hours') : unit;
-  return min === max ? `${min} ${u}` : `${min}–${max} ${u}`;
+  return formatDuration(trail.duration, lang, 'long');
 }
 
 export function trailFaqs(trail: ArgentinaTrail, lang: 'es' | 'en'): Faq[] {

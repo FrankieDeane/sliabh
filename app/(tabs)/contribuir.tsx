@@ -21,6 +21,7 @@ import { useContribStore } from '../../src/store/contributionStore';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 import type { ContribType } from '../../src/store/contributionStore';
 
 const MAX_CONTENT = 900;
@@ -169,9 +170,7 @@ export default function ContribuirScreen() {
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
       <SeoHead
-        title="Contribuir — Sliabh"
-        description="Sumá nuevas rutas, correcciones de senderos, puntos de interés y alertas a la comunidad de Sliabh. Ayudá a mantener actualizado el mapa de montaña de Argentina."
-        path="/contribuir"
+          {...coreSeo('contribuir', lang)}
       />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
@@ -188,7 +187,7 @@ export default function ContribuirScreen() {
               <Ionicons name="people" size={13} color="#22c55e" />
               <Text style={styles.heroBrandText}>{t('COMUNIDAD', 'COMMUNITY')}</Text>
             </View>
-            <Text style={styles.heroTitle}>{t('Sé parte del\nmapa vivo', 'Be part of\nthe living map')}</Text>
+            <Text accessibilityRole="header" style={styles.heroTitle}>{t('Sé parte del\nmapa vivo', 'Be part of\nthe living map')}</Text>
             <Text style={styles.heroSub}>
               {t(
                 'Tu conocimiento en la montaña tiene valor. Más de 1.800 senderistas ya contribuyeron a hacer este mapa mejor.',
