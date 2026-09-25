@@ -10,7 +10,7 @@ import {
   Platform,
   Linking,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, Link } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -47,6 +47,9 @@ import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanne
 import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 import { SeoHead } from '../../../src/components/ui/SeoHead';
+import { trailSeo } from '../../../src/utils/trailSeo';
+import { trailFaqs } from '../../../src/utils/trailFaq';
+import { regionMeta, parkMeta, slugifyArea } from '../../../src/data/hubs';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
 import { asset } from '../../../src/constants/asset';
 
@@ -575,46 +578,24 @@ export default function TrailDetailScreen() {
   const gearCategories = getGearList(trail.difficulty, trail.activity, lang);
   const logisticsLines = getLogisticsContent(trail, lang);
 
-  const seoTitle = `${trail.name} — ${trail.province} | Sliabh`;
-  const seoImage = trail.photo_uri.startsWith('http')
-    ? trail.photo_uri
-    : `https://sliabh.com.ar${trail.photo_uri}`;
-  const seoJsonLd = [
-    {
-      '@type': 'TouristAttraction',
-      name: trail.name,
-      description: trailDescription,
-      url: `https://sliabh.com.ar/ruta/${trail.id}`,
-      image: seoImage,
-      address: { '@type': 'PostalAddress', addressRegion: trail.province, addressCountry: 'AR' },
-      geo: { '@type': 'GeoCoordinates', latitude: trail.coordinates.lat, longitude: trail.coordinates.lon },
-      containedInPlace: { '@type': 'Place', name: trail.area },
-      additionalProperty: [
-        { '@type': 'PropertyValue', name: 'Dificultad', value: DIFFICULTY_LABEL[trail.difficulty] ?? trail.difficulty },
-        { '@type': 'PropertyValue', name: 'Distancia', value: `${trail.distance_km} km` },
-        { '@type': 'PropertyValue', name: 'Duración', value: `${trail.duration.min}–${trail.duration.max} ${trail.duration.unit}` },
-        { '@type': 'PropertyValue', name: lang === 'en' ? 'Best season' : 'Mejor época', value: seasonLabel(trail.best_season, lang) },
-      ],
-    },
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Sliabh', item: 'https://sliabh.com.ar/' },
-        { '@type': 'ListItem', position: 2, name: 'Rutas', item: 'https://sliabh.com.ar/rutas' },
-        { '@type': 'ListItem', position: 3, name: trail.name, item: `https://sliabh.com.ar/ruta/${trail.id}` },
-      ],
-    },
-  ];
+  // All SEO tags come from one shared builder (also used by
+  // scripts/prerender-trails.mjs), so the static HTML and the hydrated page
+  // agree — including the per-language canonical.
+  const seo = trailSeo(trail, lang);
+  const faqs = trailFaqs(trail, lang);
+  const hubRegion = regionMeta(trail.region);
+  const hubPark = parkMeta(slugifyArea(trail.area));
 
   return (
     <TrailThemeCtx.Provider value={C}>
     <View style={[styles.root, { backgroundColor: C.bg }]}>
       <SeoHead
-        title={seoTitle}
-        description={trailDescription}
-        path={`/ruta/${trail.id}`}
-        image={seoImage}
-        jsonLd={seoJsonLd}
+        title={seo.title}
+        description={seo.description}
+        path={seo.path}
+        image={seo.image}
+        jsonLd={seo.jsonLd}
+        keywords={seo.keywords}
       />
 
       {/* Floating back button — always visible above scroll */}
@@ -665,7 +646,7 @@ export default function TrailDetailScreen() {
               </View>
 
               {/* Large display title */}
-              <Text style={styles.heroTitle}>{trail.name}</Text>
+              <Text accessibilityRole="header" style={styles.heroTitle}>{trail.name}</Text>
               <Text style={styles.heroSub}>{trail.area}{trail.subarea ? ` · ${trail.subarea}` : ''}</Text>
 
               {/* Inline key stats in hero */}
@@ -728,6 +709,14 @@ export default function TrailDetailScreen() {
           {activeTab === 'gear' && (
             <GearTab categories={gearCategories} />
           )}
+          <TrailFaqAndHubs
+            faqs={faqs}
+            regionName={hubRegion ? (lang === 'en' ? hubRegion.en.name : hubRegion.es.name) : null}
+            regionSlug={hubRegion?.slug ?? null}
+            parkName={hubPark ? (lang === 'en' ? hubPark.en.name : hubPark.es.name) : null}
+            parkSlug={hubPark?.slug ?? null}
+            t={t}
+          />
           <View style={{ height: 60 }} />
         </View>
 
@@ -740,6 +729,60 @@ export default function TrailDetailScreen() {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+/**
+ * Visible FAQ (the same Q&A as the page's FAQPage schema — Google requires
+ * FAQ markup to match on-page content) plus crawlable links up to the
+ * trail's region and park hub pages.
+ */
+function TrailFaqAndHubs({
+  faqs, regionName, regionSlug, parkName, parkSlug, t,
+}: {
+  faqs: { q: string; a: string }[];
+  regionName: string | null;
+  regionSlug: string | null;
+  parkName: string | null;
+  parkSlug: string | null;
+  t: (es: string, en: string) => string;
+}) {
+  const c = useC();
+  const prefix = t('', '/en');
+  return (
+    <View style={{ marginTop: 36 }}>
+      <Text accessibilityRole="header" {...({ 'aria-level': 2 } as any)} style={{ color: c.text, fontSize: 18, fontWeight: '800', marginBottom: 14 }}>
+        {t('Preguntas frecuentes', 'Frequently asked questions')}
+      </Text>
+      <View style={{ gap: 14 }}>
+        {faqs.map((f, i) => (
+          <View key={i}>
+            <Text accessibilityRole="header" {...({ 'aria-level': 3 } as any)} style={{ color: c.text, fontSize: 14, fontWeight: '700', marginBottom: 3 }}>{f.q}</Text>
+            <Text style={{ color: c.muted, fontSize: 13.5, lineHeight: 20 }}>{f.a}</Text>
+          </View>
+        ))}
+      </View>
+      {(regionSlug || parkSlug) && (
+        <View style={{ marginTop: 26, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {parkSlug && parkName && (
+            <Link href={`${prefix}/parque/${parkSlug}` as any} asChild>
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: c.border, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
+                <Ionicons name="business-outline" size={13} color={c.accent} />
+                <Text style={{ color: c.text, fontSize: 12.5, fontWeight: '700' }}>{t(`Más rutas en ${parkName}`, `More trails in ${parkName}`)}</Text>
+              </TouchableOpacity>
+            </Link>
+          )}
+          {regionSlug && regionName && (
+            <Link href={`${prefix}/region/${regionSlug}` as any} asChild>
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: c.border, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
+                <Ionicons name="map-outline" size={13} color={c.accent} />
+                <Text style={{ color: c.text, fontSize: 12.5, fontWeight: '700' }}>{t(`Trekking en ${regionName}`, `Hiking in ${regionName}`)}</Text>
+              </TouchableOpacity>
+            </Link>
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
 
 function StatPill({ icon, value }: { icon: React.ComponentProps<typeof Ionicons>['name']; value: string }) {
   const C = useC();

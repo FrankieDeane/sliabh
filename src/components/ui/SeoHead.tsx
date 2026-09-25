@@ -14,6 +14,8 @@ interface SeoHeadProps {
   image?: string;
   /** One or more schema.org objects; rendered as a single JSON-LD @graph. */
   jsonLd?: object | object[];
+  /** Comma-separated; overrides the site-wide keywords from SiteHead. */
+  keywords?: string;
 }
 
 /**
@@ -29,7 +31,7 @@ interface SeoHeadProps {
  * engines) won't see them — that needs the site's export mode to switch to
  * "static" (per-route prerendered HTML) to fully land.
  */
-export function SeoHead({ title, description, path, image, jsonLd }: SeoHeadProps) {
+export function SeoHead({ title, description, path, image, jsonLd, keywords }: SeoHeadProps) {
   if (Platform.OS !== 'web') return null;
 
   const url = `${SITE_URL}${path}`;
@@ -42,6 +44,7 @@ export function SeoHead({ title, description, path, image, jsonLd }: SeoHeadProp
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
+      {keywords ? <meta name="keywords" content={keywords} /> : null}
       <link rel="canonical" href={url} />
 
       <meta property="og:title" content={title} />
@@ -53,7 +56,7 @@ export function SeoHead({ title, description, path, image, jsonLd }: SeoHeadProp
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
 
-      {graph && <script type="application/ld+json">{JSON.stringify(graph)}</script>}
+      {graph && <script type="application/ld+json" data-page-ld="true">{JSON.stringify(graph)}</script>}
     </Head>
   );
 }

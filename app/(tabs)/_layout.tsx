@@ -145,6 +145,15 @@ export default function TabLayout() {
         name="ruta/[id]"
         options={{ href: null }}
       />
+      {/* SEO hub pages (src/data/hubs.ts) — same reason as ruta/[id]. */}
+      <Tabs.Screen
+        name="region/[slug]"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="parque/[slug]"
+        options={{ href: null }}
+      />
       <Tabs.Screen
         name="faq"
         options={{

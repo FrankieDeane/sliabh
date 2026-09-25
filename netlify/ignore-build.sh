@@ -24,7 +24,7 @@
 set -uo pipefail
 
 # Paths whose changes should trigger a production rebuild.
-RELEVANT="app src public package.json package-lock.json netlify.toml netlify app.json metro.config.js babel.config.js tailwind.config.js global.css tsconfig.json"
+RELEVANT="app src scripts public package.json package-lock.json netlify.toml netlify app.json metro.config.js babel.config.js tailwind.config.js global.css tsconfig.json"
 
 PREVIEW_LABEL="deploy-preview"
 
