@@ -14,6 +14,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MAX_CONTENT = 1200;
 const INSTAGRAM_URL = 'https://www.instagram.com/sliabh_arg/';
+const TIKTOK_URL = 'https://www.tiktok.com/@sliabh_ar';
 
 // Each links to its region hub page (src/data/hubs.ts) — a real, crawlable
 // <a href> on every page of the site, where /rutas?region= was one URL
@@ -151,6 +152,15 @@ export function WebFooter() {
             >
               <Ionicons name="logo-instagram" size={12} color="#E1306C" />
               <Text style={[styles.copySmall, { color: c.muted }]}>Instagram</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.cafecitoLink, { borderColor: c.border }]}
+              onPress={() => Linking.openURL(TIKTOK_URL)}
+              activeOpacity={0.75}
+              accessibilityLabel="TikTok"
+            >
+              <Ionicons name="logo-tiktok" size={12} color={c.text} />
+              <Text style={[styles.copySmall, { color: c.muted }]}>TikTok</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.cafecitoLink, { borderColor: c.border }]}

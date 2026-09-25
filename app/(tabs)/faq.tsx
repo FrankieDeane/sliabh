@@ -239,8 +239,8 @@ const FAQ_DATA: Array<{
           en: 'How many routes does the app have?',
         },
         a: {
-          es: 'Sliabh cuenta con más de 30 rutas detalladas de trekking y montañismo en Argentina, distribuidas en 6 regiones geográficas: Patagonia Sur, Patagonia Norte, Cuyo, Norte NOA, Sierras Centrales y Litoral.',
-          en: 'Sliabh has over 30 detailed trekking and mountaineering routes in Argentina, spread across 6 geographical regions: Southern Patagonia, Northern Patagonia, Cuyo, NOA North, Central Sierras and Litoral.',
+          es: 'Sliabh cuenta con más de 60 rutas detalladas de trekking y montañismo en Argentina, distribuidas en 7 regiones geográficas: Patagonia Sur, Patagonia Norte, Cuyo, Norte NOA, Sierras Centrales, Litoral y Buenos Aires.',
+          en: 'Sliabh has over 60 detailed trekking and mountaineering routes in Argentina, spread across 7 geographical regions: Southern Patagonia, Northern Patagonia, Cuyo, NOA North, Central Sierras, Litoral and Buenos Aires.',
         },
       },
       {
@@ -561,6 +561,131 @@ const FAQ_DATA: Array<{
         a: {
           es: 'Sí. La versión web (sliabh.com.ar) funciona perfectamente en computadoras de escritorio y laptops. Desde el navegador tenés acceso a todas las funciones: mapas, descargas GPX, rutas y guías de supervivencia.',
           en: 'Yes. The web version (sliabh.com.ar) works perfectly on desktop computers and laptops. From the browser you have access to all features: maps, GPX downloads, routes and survival guides.',
+        },
+      },
+    ],
+  },
+  {
+    category: { es: 'SLIABH VS. OTRAS APPS', en: 'SLIABH VS. OTHER APPS' },
+    items: [
+      {
+        q: {
+          es: '¿En qué se diferencia Sliabh de AllTrails o Wikiloc?',
+          en: 'How is Sliabh different from AllTrails or Wikiloc?',
+        },
+        a: {
+          es: 'AllTrails y Wikiloc son catálogos globales con rutas de más de 190 países cargadas por usuarios. Sliabh se enfoca solo en Argentina: cada ruta está curada a mano e incluye datos técnicos (distancia, desnivel, dificultad, temporada), el contexto de cada Parque Nacional y guías de supervivencia que funcionan sin señal.',
+          en: 'AllTrails and Wikiloc are global catalogs with user-uploaded routes from over 190 countries. Sliabh focuses only on Argentina: every route is hand-curated and includes technical data (distance, elevation gain, difficulty, season), the context of each National Park and survival guides that work without signal.',
+        },
+      },
+      {
+        q: {
+          es: '¿Tengo que pagar para usar los mapas offline?',
+          en: 'Do I have to pay to use offline maps?',
+        },
+        a: {
+          es: 'No. En Sliabh los mapas offline y los tracks GPX son gratis y sin límites. En otras plataformas, como AllTrails+ o Wikiloc Premium, esa función suele requerir un plan pago.',
+          en: 'No. On Sliabh, offline maps and GPX tracks are free with no limits. On other platforms, such as AllTrails+ or Wikiloc Premium, this feature usually requires a paid plan.',
+        },
+      },
+      {
+        q: {
+          es: '¿Sliabh tiene publicidad?',
+          en: 'Does Sliabh show ads?',
+        },
+        a: {
+          es: 'No. Sliabh no muestra anuncios: es un proyecto independiente sostenido por la comunidad y por sponsors del mundo outdoor.',
+          en: 'No. Sliabh does not show ads: it is an independent project supported by the community and by outdoor sponsors.',
+        },
+      },
+      {
+        q: {
+          es: '¿Puedo usar Sliabh junto con otras apps de navegación?',
+          en: 'Can I use Sliabh together with other navigation apps?',
+        },
+        a: {
+          es: 'Sí. Descargá el GPX de cualquier ruta en Sliabh e importalo en OsmAnd, Gaia GPS, Garmin Connect, Komoot, Strava o tu dispositivo GPS. El formato GPX es estándar y funciona en todas.',
+          en: 'Yes. Download the GPX of any route on Sliabh and import it into OsmAnd, Gaia GPS, Garmin Connect, Komoot, Strava or your GPS device. GPX is a standard format that works in all of them.',
+        },
+      },
+    ],
+  },
+  {
+    category: { es: 'EL CHALTÉN Y FITZ ROY', en: 'EL CHALTÉN & FITZ ROY' },
+    items: [
+      {
+        q: {
+          es: '¿Cuánto mide el trekking al Fitz Roy (Laguna de los Tres)?',
+          en: 'How long is the Fitz Roy trek (Laguna de los Tres)?',
+        },
+        a: {
+          es: 'Son 20,7 km ida y vuelta, con 977 m de desnivel positivo, y se hace en 7 a 9 horas. Sale del final de la Av. San Martín, en El Chaltén, y llega a la Laguna de los Tres (1.177 msnm), con vista directa al Fitz Roy (3.405 m).',
+          en: 'It is 20.7 km round trip with 977 m of elevation gain and takes 7 to 9 hours. It starts at the end of Av. San Martín in El Chaltén and reaches Laguna de los Tres (1,177 masl), with a direct view of Fitz Roy (3,405 m).',
+        },
+      },
+      {
+        q: {
+          es: '¿Qué tan difícil es llegar a la Laguna de los Tres?',
+          en: 'How hard is it to reach Laguna de los Tres?',
+        },
+        a: {
+          es: 'Está clasificada como difícil. La mayor parte del sendero es progresiva, pero el último tramo sube unos 400 m en apenas 1 km. Conviene tener buen estado físico, calzado de trekking y salir temprano.',
+          en: 'It is rated difficult. Most of the trail climbs gradually, but the final stretch gains about 400 m in just 1 km. Good fitness, hiking boots and an early start are recommended.',
+        },
+      },
+      {
+        q: {
+          es: '¿Cuál es la mejor época para ir al Fitz Roy?',
+          en: 'When is the best time to hike to Fitz Roy?',
+        },
+        a: {
+          es: 'De noviembre a marzo. Fuera de esa temporada el tramo final suele tener nieve y hielo, y el clima patagónico cambia rápido en cualquier mes: llevá capas de abrigo y rompevientos.',
+          en: 'From November to March. Outside that season the final stretch often has snow and ice, and Patagonian weather changes quickly in any month: bring warm layers and a windbreaker.',
+        },
+      },
+      {
+        q: {
+          es: '¿Se puede ver el amanecer en el Fitz Roy?',
+          en: 'Can I see the sunrise at Fitz Roy?',
+        },
+        a: {
+          es: 'Sí. Muchos senderistas acampan en el Camping Poincenot, a pocos kilómetros del ascenso final, y salen de madrugada para llegar a la laguna al amanecer, cuando el Fitz Roy se tiñe de naranja. Subí con linterna frontal y chequeá el pronóstico antes.',
+          en: 'Yes. Many hikers camp at Camping Poincenot, a few kilometers from the final climb, and leave before dawn to reach the lagoon at sunrise, when Fitz Roy turns orange. Bring a headlamp and check the forecast first.',
+        },
+      },
+      {
+        q: {
+          es: '¿Qué otros trekkings hay en El Chaltén?',
+          en: 'What other treks are there in El Chaltén?',
+        },
+        a: {
+          es: 'Algunos de los más elegidos son Laguna Torre (17,6 km, moderado), Laguna Capri (12,3 km, ideal como primer día) y la Loma del Pliegue Tumbado (20,5 km, con vista de 360°). También podés unir los senderos Torre y Fitz Roy por el conector Madre e Hija. Todos tienen su GPX en Sliabh.',
+          en: 'Some favorites are Laguna Torre (17.6 km, moderate), Laguna Capri (12.3 km, a great first day) and Loma del Pliegue Tumbado (20.5 km, with a 360° view). You can also link the Torre and Fitz Roy trails via the Madre e Hija connector. All of them have a GPX on Sliabh.',
+        },
+      },
+    ],
+  },
+  {
+    category: { es: 'REDES Y COMUNIDAD', en: 'SOCIAL & COMMUNITY' },
+    items: [
+      {
+        q: {
+          es: '¿Dónde sigo a Sliabh en redes sociales?',
+          en: 'Where can I follow Sliabh on social media?',
+        },
+        a: {
+          es: 'Estamos en Instagram (@sliabh_arg) y en TikTok (@sliabh_ar). Ahí compartimos rutas, datos de cada sendero y videos de los Parques Nacionales de Argentina. Los links están en el pie de cada página.',
+          en: 'We are on Instagram (@sliabh_arg) and TikTok (@sliabh_ar), where we share routes, trail facts and videos of Argentina\'s National Parks. The links are in the footer of every page.',
+        },
+      },
+      {
+        q: {
+          es: '¿Puedo compartir mis fotos o videos de una ruta?',
+          en: 'Can I share my photos or videos of a route?',
+        },
+        a: {
+          es: '¡Sí! Etiquetanos en Instagram o TikTok con el nombre de la ruta. Así otros senderistas ven cómo está el sendero y podemos compartir tu contenido.',
+          en: 'Yes! Tag us on Instagram or TikTok with the route name. That way other hikers see what the trail looks like and we can share your content.',
         },
       },
     ],
