@@ -59,7 +59,7 @@ function Hero({ t }: { t: (es: string, en: string) => string }) {
       <View style={styles.heroOverlay} />
       <View style={styles.heroContent}>
         <Text style={styles.heroEyebrow}>{t('GUÍAS DE MONTAÑA', 'MOUNTAIN GUIDES')}</Text>
-        <Text style={styles.heroTitle}>{t('Publicá tu perfil en cada sendero', 'List your profile on every trail')}</Text>
+        <Text accessibilityRole="header" style={styles.heroTitle}>{t('Publicá tu perfil en cada sendero', 'List your profile on every trail')}</Text>
       </View>
     </ImageBackground>
   );

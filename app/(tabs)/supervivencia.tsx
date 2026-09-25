@@ -13,6 +13,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 import {
   GUIDES,
   survivalJsonLd,
@@ -121,13 +122,7 @@ export default function SupervivenciaScreen() {
   return (
     <View style={[styles.root, { backgroundColor: c.bg }]}>
       <SeoHead
-        title={lang === 'en'
-          ? 'Survival Guides for Argentina — Mountains, Nuclear, Blackouts | Sliabh'
-          : 'Guías de supervivencia en Argentina: montaña, nuclear y apagones | Sliabh'}
-        description={lang === 'en'
-          ? 'Offline survival guides for Argentina: hypothermia, navigation, the safest areas in a nuclear war, what to do in a nuclear emergency, cyberattack or AI blackouts, and pandemics.'
-          : 'Guías de supervivencia offline para Argentina: hipotermia, orientación, qué zonas son más seguras ante una guerra nuclear, qué hacer en una emergencia nuclear, apagones por ciberataques o IA y pandemias.'}
-        path="/supervivencia"
+          {...coreSeo('supervivencia', lang)}
         keywords={lang === 'en' ? SURVIVAL_KEYWORDS_EN : SURVIVAL_KEYWORDS_ES}
         jsonLd={survivalJsonLd(lang)}
       />
@@ -158,6 +153,7 @@ export default function SupervivenciaScreen() {
               {t('SEGURIDAD EN MONTAÑA — GUÍAS OFFLINE', 'MOUNTAIN SAFETY — OFFLINE GUIDES')}
             </Text>
             <Text
+              accessibilityRole="header"
               style={[
                 styles.heroTitle,
                 Platform.OS === 'web' ? ({ fontSize: 'clamp(38px, 6vw, 84px)' } as any) : { fontSize: 34 },
@@ -209,7 +205,7 @@ export default function SupervivenciaScreen() {
         {Platform.OS === 'web' && (
           <View style={{ paddingHorizontal: sidePad, paddingTop: 24 }}>
             <Text
-              {...({ href: '/supervivencia/zonas-seguras' } as any)}
+              {...({ href: t('/supervivencia/zonas-seguras', '/en/supervivencia/zonas-seguras') } as any)}
               accessibilityRole="link"
               style={[styles.mapCard, { backgroundColor: c.surface, borderColor: c.border }]}
             >

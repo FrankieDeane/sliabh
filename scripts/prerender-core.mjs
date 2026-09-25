@@ -1,110 +1,96 @@
-// Gives every core page (/rutas, /mapas, /faq, …) its own static HTML with
-// its own canonical, title and description, and makes the SPA fallback stop
-// claiming to be the homepage.
+// Gives every core page (/rutas, /mapas, /faq, …) and its English twin
+// (/en/rutas, …) its own static HTML: title, description, canonical,
+// hreflang pair, OG/Twitter and a small JSON-LD graph. Also writes the SPA
+// fallback (dist/app-shell.html) with no canonical/hreflang, so unknown
+// routes never claim to be the homepage.
 //
-// Why: Netlify answers any path without a file of its own with
-// dist/index.html (netlify.toml's `/* → /index.html` fallback), and that
-// file is the homepage — canonical "/", hreflang "/"+"/en", homepage title.
-// So /rutas, /mapas, /faq, … all told crawlers "I am a duplicate of the
-// homepage", and after Google's JS render they carried two conflicting
-// canonicals ("/" from the HTML, their own from SeoHead) — which Google
-// resolves by trusting neither.
-//
-//  1. Core pages: dist/<route>/index.html cloned from the homepage HTML with
-//     that page's own title/description/canonical, read straight from the
-//     page's <SeoHead ...> props so there is no second copy to keep in sync.
-//     No hreflang: these pages have no /en twin.
-//  2. SPA fallback: dist/app-shell.html = the homepage HTML without its
-//     canonical/hreflang, served for every other path (see netlify.toml), so
-//     unknown routes carry no wrong canonical and each page's SeoHead is the
-//     only one.
+// The copy comes from src/data/coreSeo.ts, the same module the screens pass
+// to SeoHead, so the static and hydrated tags can't drift. Tag swapping goes
+// through lib/render-head.mjs, which fails the build if a tag it expects in
+// dist/index.html is missing.
 //
 // Run with: node scripts/prerender-core.mjs (last, after prerender-hubs.mjs)
 import fs from 'node:fs';
 import path from 'node:path';
-import { esc } from './lib/render-head.mjs';
+import { esc, renderPage } from './lib/render-head.mjs';
 import { loadTs } from './lib/load-ts.mjs';
 
 const SITE_URL = 'https://sliabh.com.ar';
 const DIST_INDEX = 'dist/index.html';
+const IMAGE = `${SITE_URL}/og-image.jpg`;
 
-const PAGES = ['rutas', 'mapas', 'planificar', 'faq', 'supervivencia', 'contribuir', 'guias', 'app'];
+const { CORE_ROUTES, coreSeo } = loadTs('src/data/coreSeo.ts');
 
 // /supervivencia renders each guide's full text only when its card is
 // expanded, so crawlers would never see it. Bake the whole guide set into the
 // static HTML: keywords, FAQPage JSON-LD and a <noscript> copy.
-function survivalExtras() {
-  const { GUIDES, survivalJsonLd, SURVIVAL_KEYWORDS_ES } = loadTs('src/data/survivalGuides.ts');
+function survivalExtras(lang) {
+  const { GUIDES, survivalJsonLd, SURVIVAL_KEYWORDS_ES, SURVIVAL_KEYWORDS_EN } = loadTs('src/data/survivalGuides.ts');
+  const en = lang === 'en';
   const para = (text) => text.split('\n').filter(Boolean).map((l) => `<p>${esc(l)}</p>`).join('');
-  const body = GUIDES.map((g) =>
-    `<section><h2>${esc(g.titleEs)}</h2><p>${esc(g.taglineEs)}</p><ul>${g.quickEs.map((q) => `<li>${esc(q)}</li>`).join('')}</ul>` +
-    `${para(g.bodyEs)}${g.warningEs ? `<p><strong>${esc(g.warningEs)}</strong></p>` : ''}</section>`,
-  ).join('');
-  const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': survivalJsonLd('es') }).replace(/</g, '\\u003c');
+  const body = GUIDES.map((g) => {
+    const title = en ? g.titleEn : g.titleEs;
+    const tagline = en ? g.taglineEn : g.taglineEs;
+    const quick = en ? g.quickEn : g.quickEs;
+    const text = en ? g.bodyEn : g.bodyEs;
+    const warn = en ? g.warningEn : g.warningEs;
+    return `<section><h2>${esc(title)}</h2><p>${esc(tagline)}</p><ul>${quick.map((q) => `<li>${esc(q)}</li>`).join('')}</ul>` +
+      `${para(text)}${warn ? `<p><strong>${esc(warn)}</strong></p>` : ''}</section>`;
+  }).join('');
+  const map = en
+    ? '<p><a href="/en/supervivencia/zonas-seguras">Safe-areas map of Argentina</a></p>'
+    : '<p><a href="/supervivencia/zonas-seguras">Mapa de zonas seguras de Argentina</a></p>';
   return {
-    keywords: SURVIVAL_KEYWORDS_ES,
-    head: `<script type="application/ld+json" data-page-ld>${jsonLd}</script>`,
-    noscript: `<noscript><main><h1>Guías de supervivencia en Argentina</h1>${body}</main></noscript>`,
+    keywords: en ? SURVIVAL_KEYWORDS_EN : SURVIVAL_KEYWORDS_ES,
+    jsonLd: survivalJsonLd(lang),
+    noscript: `<noscript><main><h1>${en ? 'Survival guides for Argentina' : 'Guías de supervivencia en Argentina'}</h1>${map}${body}</main></noscript>`,
   };
 }
 const EXTRAS = { supervivencia: survivalExtras };
 
-// Reads title/description from the first <SeoHead ...> in the page source:
-// a plain string prop, or the Spanish (else-branch) string of a
-// `lang === 'en' ? '…' : '…'` prop.
-function seoProps(route) {
-  const src = fs.readFileSync(`app/(tabs)/${route}.tsx`, 'utf8');
-  const start = src.indexOf('<SeoHead');
-  if (start < 0) throw new Error(`prerender-core: no <SeoHead> in ${route}.tsx`);
-  const block = src.slice(start, src.indexOf('/>', start));
-  const prop = (name) => {
-    const plain = block.match(new RegExp(`${name}="([^"]*)"`));
-    if (plain) return plain[1];
-    const ternary = block.match(new RegExp(`${name}=\\{[\\s\\S]*?:\\s*'((?:[^'\\\\]|\\\\.)*)'\\s*\\}`));
-    if (ternary) return ternary[1].replace(/\\'/g, "'");
-    throw new Error(`prerender-core: can't read ${name} from <SeoHead> in ${route}.tsx`);
-  };
-  return { title: prop('title'), description: prop('description') };
+// prerender-hubs.mjs adds a Spanish homepage-only <noscript><nav> to
+// dist/index.html; core pages are cloned from it and must not carry it.
+const HOME_NAV = /<noscript><nav>[\s\S]*?<\/nav><\/noscript>/;
+
+const template = fs.readFileSync(DIST_INDEX, 'utf8').replace(HOME_NAV, '');
+
+let written = 0;
+for (const route of CORE_ROUTES) {
+  for (const lang of ['es', 'en']) {
+    const s = coreSeo(route, lang);
+    const url = `${SITE_URL}${s.path}`;
+    const urlEs = `${SITE_URL}${s.alternates.es}`;
+    const urlEn = `${SITE_URL}${s.alternates.en}`;
+    const extra = EXTRAS[route]?.(lang);
+    const jsonLd = [
+      { '@type': 'WebPage', '@id': `${url}#page`, url, name: s.title, description: s.description, inLanguage: lang, isPartOf: { '@type': 'WebSite', name: 'Sliabh', url: `${SITE_URL}/` } },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Sliabh', item: `${SITE_URL}${lang === 'en' ? '/en' : '/'}` },
+          { '@type': 'ListItem', position: 2, name: s.title.split(/ [—|:] /)[0], item: url },
+        ],
+      },
+      ...(extra ? extra.jsonLd : []),
+    ];
+    let html = renderPage(template, { lang, title: s.title, description: s.description, keywords: extra?.keywords, image: IMAGE, url, urlEs, urlEn, jsonLd }, 'prerender-core');
+    if (extra) html = html.replace(/<body([^>]*)>/, (m) => `${m}${extra.noscript}`);
+    const outDir = lang === 'en' ? path.join('dist', 'en', route) : path.join('dist', route);
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, 'index.html'), html);
+    written++;
+  }
 }
 
 const HREFLANG_BLOCK =
   /\s*<link rel="alternate" hreflang="es" href="[^"]*"\s*\/?>\s*<link rel="alternate" hreflang="en" href="[^"]*"\s*\/?>\s*<link rel="alternate" hreflang="x-default" href="[^"]*"\s*\/?>/;
-
-const template = fs.readFileSync(DIST_INDEX, 'utf8');
-for (const re of [HREFLANG_BLOCK, /<link rel="canonical" href="[^"]*"\s*\/?>/, /<title>.*?<\/title>/s]) {
+for (const re of [HREFLANG_BLOCK, /<link rel="canonical" href="[^"]*"\s*\/?>/, /<meta property="og:url" content="[^"]*"\s*\/?>/]) {
   if (!re.test(template)) throw new Error(`prerender-core: pattern not found in dist/index.html: ${re}`);
 }
-
-for (const route of PAGES) {
-  const { title, description } = seoProps(route);
-  const url = `${SITE_URL}/${route}`;
-  const html = template
-    .replace(/<title>.*?<\/title>/s, `<title>${esc(title)}</title>`)
-    .replace(/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${esc(description)}" />`)
-    .replace(/<link rel="canonical" href="[^"]*"\s*\/?>/, `<link rel="canonical" href="${url}" />`)
-    .replace(HREFLANG_BLOCK, '')
-    .replace(/<meta property="og:url" content="[^"]*"\s*\/?>/, `<meta property="og:url" content="${url}" />`)
-    .replace(/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${esc(title)}" />`)
-    .replace(/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${esc(description)}" />`)
-    .replace(/<meta name="twitter:title" content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${esc(title)}" />`)
-    .replace(/<meta name="twitter:description" content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${esc(description)}" />`);
-  let out = html;
-  const extra = EXTRAS[route]?.();
-  if (extra) {
-    out = out
-      .replace(/<meta name="keywords" content="[^"]*"\s*\/?>/, `<meta name="keywords" content="${esc(extra.keywords)}" />`)
-      .replace('</head>', () => `${extra.head}</head>`)
-      .replace(/<body([^>]*)>/, (m) => `${m}${extra.noscript}`);
-  }
-  const outDir = path.join('dist', route);
-  fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, 'index.html'), out);
-}
-
 const shell = template
   .replace(/<link rel="canonical" href="[^"]*"\s*\/?>\s*/, '')
   .replace(HREFLANG_BLOCK, '')
   .replace(/<meta property="og:url" content="[^"]*"\s*\/?>\s*/, '');
 fs.writeFileSync('dist/app-shell.html', shell);
 
-console.log(`prerender-core: wrote ${PAGES.length} core pages with their own canonical + dist/app-shell.html (SPA fallback, no canonical)`);
+console.log(`prerender-core: wrote ${written} core pages (${CORE_ROUTES.length} × es/en) with canonical + hreflang, and dist/app-shell.html (SPA fallback, no canonical)`);

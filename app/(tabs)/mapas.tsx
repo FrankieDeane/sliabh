@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SeoHead } from '../../src/components/ui/SeoHead';
+import { coreSeo } from '../../src/data/coreSeo';
 import { SenderoCorrection } from '../../src/components/contribute/SenderoCorrection';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useNetwork } from '../../src/hooks/useNetwork';
@@ -1233,16 +1234,14 @@ export default function MapasScreen() {
   return (
     <ScrollView style={[s.root, { backgroundColor: c.bg }]} showsVerticalScrollIndicator={false}>
       <SeoHead
-        title="Mapas offline de Argentina — Sliabh"
-        description="Descargá mapas offline de los Parques Nacionales de Argentina para navegar con GPS sin señal. Mapas interactivos con rutas, senderos y puntos de interés."
-        path="/mapas"
+          {...coreSeo('mapas', lang)}
       />
 
       <View style={[s.mapHeader, { borderBottomColor: c.border, backgroundColor: c.surface }]}>
         <View style={s.mapHeaderInner}>
           <View>
             <Text style={[s.eyebrow, { color: c.muted }]}>{t('MAPA INTERACTIVO', 'INTERACTIVE MAP')}</Text>
-            <Text style={[s.pageTitle, { color: c.text }]}>{t('Parques Nacionales de Argentina', 'National Parks of Argentina')}</Text>
+            <Text accessibilityRole="header" style={[s.pageTitle, { color: c.text }]}>{t('Parques Nacionales de Argentina', 'National Parks of Argentina')}</Text>
           </View>
           {isOffline && (
             <View style={[s.offlineBadge, { backgroundColor: 'rgba(251,191,36,0.12)', borderColor: 'rgba(251,191,36,0.3)' }]}>

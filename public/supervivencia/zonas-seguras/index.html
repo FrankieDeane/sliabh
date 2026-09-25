@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-AR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,6 +7,9 @@
 <meta name="description" content="Mapa 3D de riesgos y zonas refugio de Argentina. Simuladores de explosión nuclear, nube tóxica, ceniza volcánica y terremotos, data centers de IA, agua segura y qué hacer en un apagón.">
 <meta name="keywords" content="zonas seguras Argentina, refugio nuclear Argentina, simulador bomba nuclear Buenos Aires, ceniza volcánica Bariloche, terremoto San Juan, nube tóxica Bahía Blanca, data centers IA Argentina, agua segura emergencia, apagón qué hacer, Sliabh">
 <link rel="canonical" href="https://sliabh.com.ar/supervivencia/zonas-seguras">
+<link rel="alternate" hreflang="es" href="https://sliabh.com.ar/supervivencia/zonas-seguras">
+<link rel="alternate" hreflang="en" href="https://sliabh.com.ar/en/supervivencia/zonas-seguras">
+<link rel="alternate" hreflang="x-default" href="https://sliabh.com.ar/supervivencia/zonas-seguras">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sliabh">
@@ -59,6 +62,9 @@
   .sitenav a { color: var(--muted); text-decoration: none; }
   .sitenav a:hover { color: var(--text); }
   .sitenav .brand { color: var(--text); font-weight: 800; letter-spacing: .02em; }
+  .langs { margin-left: auto; display: flex; gap: 4px; }
+  .langs a { padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); font: 700 11.5px var(--mono); }
+  html[lang^="es"] .langs a[lang="es"], html[lang="en"] .langs a[lang="en"] { color: #04240f; background: var(--green); border-color: var(--green); }
   .mock-bar { overflow-wrap: anywhere; background: #171204; color: #fcd34d; border-bottom: 1px solid #3a2d08; font-size: 12.5px; padding: 7px 16px; text-align: center; }
 
   /* ================= SITUATION ROOM ================= */
@@ -221,7 +227,7 @@
 
 </head>
 <body>
-<nav class="sitenav" aria-label="Sliabh"><a href="/" class="brand">Sliabh</a><a href="/supervivencia">← Guías de supervivencia</a></nav>
+<nav class="sitenav" aria-label="Sliabh"><a href="/" class="brand" data-en-href="/en">Sliabh</a><a href="/supervivencia" data-en-href="/en/supervivencia">← Guías de supervivencia</a><span class="langs"><a href="/supervivencia/zonas-seguras" hreflang="es" lang="es" aria-label="Español">ES</a><a href="/en/supervivencia/zonas-seguras" hreflang="en" lang="en" aria-label="English">EN</a></span></nav>
 
 <div class="room">
   <div class="mapwrap">
@@ -392,6 +398,30 @@
 <script>
 (function () {
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- English: the /en build injects window.ZS_EN (ES → EN). Every
+     text the page renders goes through the DOM, so translate it there. ---------- */
+  var EN = window.ZS_EN || null;
+  function trNum(p) { return p.replace(/(\d),(\d)/g, '$1.$2'); }
+  function trKey(k) {
+    if (EN[k] !== undefined) return EN[k];
+    var m;
+    if (k.indexOf(' · ') > 0) return k.split(' · ').map(function (p) { return EN[p] !== undefined ? EN[p] : trNum(p); }).join(' · ');
+    if ((m = k.match(/^(\d+) h después$/))) return m[1] + ' h after';
+    if ((m = k.match(/^([\d,]+)% de la radiación de la hora 1$/))) return trNum(m[1]) + '% of the hour-1 radiation';
+    if ((m = k.match(/^PASO (\d+) DE (\d+)$/))) return 'STEP ' + m[1] + ' OF ' + m[2];
+    return trNum(k);
+  }
+  function tr(s) { var k = s.trim(); if (!k) return s; var v = trKey(k); return v === k ? s : s.replace(k, v); }
+  function trNode(n) {
+    if (n.nodeType === 3) { var t = tr(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; return; }
+    if (n.nodeType !== 1 || n.tagName === 'SCRIPT' || n.tagName === 'STYLE') return;
+    var al = n.getAttribute('aria-label'); if (al) { var t2 = tr(al); if (t2 !== al) n.setAttribute('aria-label', t2); }
+    for (var ch = n.firstChild; ch; ch = ch.nextSibling) trNode(ch);
+  }
+  if (EN) new MutationObserver(function (ms) {
+    ms.forEach(function (m) { if (m.type === 'characterData') trNode(m.target); else m.addedNodes.forEach(trNode); });
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
   function $(id) { return document.getElementById(id); }
   function fmtKm(v) { return (v < 1 ? v.toFixed(2) : v < 10 ? v.toFixed(1) : Math.round(v)).toString().replace('.', ',') + ' km'; }
 

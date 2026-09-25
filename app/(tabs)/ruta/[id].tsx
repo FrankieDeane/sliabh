@@ -46,9 +46,8 @@ import { RecordHikeButton } from '../../../src/components/hike/RecordHikeButton'
 import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
 import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
-import { SeoHead } from '../../../src/components/ui/SeoHead';
+import { SeoHead, NoIndex } from '../../../src/components/ui/SeoHead';
 import { trailSeo } from '../../../src/utils/trailSeo';
-import { trailFaqs } from '../../../src/utils/trailFaq';
 import { regionMeta, parkMeta, slugifyArea } from '../../../src/data/hubs';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
 import { asset } from '../../../src/constants/asset';
@@ -501,6 +500,7 @@ export default function TrailDetailScreen() {
   if (!trail) {
     return (
       <View style={[styles.notFound, { paddingTop: insets.top + 16, backgroundColor: C.bg }]}>
+        <NoIndex />
         <Ionicons name="map-outline" size={52} color={C.muted} />
         <Text style={[styles.notFoundTitle, { color: C.text }]}>
           {t('Ruta no encontrada', 'Trail not found')}
@@ -526,7 +526,6 @@ export default function TrailDetailScreen() {
   // English readers get the real translation where it exists (all 60 trails,
   // as of the bilingual SEO work) — never a silent fall-through to Spanish
   // prose under an English toggle.
-  const trailDescription = lang === 'en' ? (trail.description_en ?? trail.description) : trail.description;
 
   const diffColor = DIFFICULTY_COLOR[trail.difficulty] ?? {
     bg: 'rgba(100,116,139,0.18)',
@@ -582,7 +581,7 @@ export default function TrailDetailScreen() {
   // scripts/prerender-trails.mjs), so the static HTML and the hydrated page
   // agree — including the per-language canonical.
   const seo = trailSeo(trail, lang);
-  const faqs = trailFaqs(trail, lang);
+  const faqs = seo.faqs;
   const hubRegion = regionMeta(trail.region);
   const hubPark = parkMeta(slugifyArea(trail.area));
 
@@ -596,6 +595,7 @@ export default function TrailDetailScreen() {
         image={seo.image}
         jsonLd={seo.jsonLd}
         keywords={seo.keywords}
+        alternates={{ es: `/ruta/${trail.id}`, en: `/en/ruta/${trail.id}` }}
       />
 
       {/* Floating back button — always visible above scroll */}

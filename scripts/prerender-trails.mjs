@@ -31,6 +31,7 @@ const DIST_INDEX = 'dist/index.html';
 const { ALL_HUB_TRAILS: ALL_TRAILS } = loadTs('src/data/hubs.ts');
 const { trailSeo } = loadTs('src/utils/trailSeo.ts');
 const { trailFaqs } = loadTs('src/utils/trailFaq.ts');
+const { formatDuration } = loadTs('src/utils/duration.ts');
 const { regionMeta, parkMeta, slugifyArea } = loadTs('src/data/hubs.ts');
 const { difficultyLabel, seasonLabel } = loadTs('src/data/argentinaTrails.ts');
 
@@ -43,11 +44,11 @@ function noscriptBody(trail, lang) {
   const prefix = en ? '/en' : '';
   const body = en ? (trail.description_en ?? trail.description) : trail.description;
   const long = en ? (trail.long_description_en ?? '') : (trail.long_description ?? '');
-  const u = trail.duration.unit === 'dias' ? (en ? 'days' : 'días') : (en ? 'hours' : 'horas');
+
   const facts = [
     [en ? 'Difficulty' : 'Dificultad', difficultyLabel(trail.difficulty, lang)],
     [en ? 'Distance' : 'Distancia', `${trail.distance_km} km`],
-    [en ? 'Duration' : 'Duración', `${trail.duration.min}–${trail.duration.max} ${u}`],
+    [en ? 'Duration' : 'Duración', formatDuration(trail.duration, en ? 'en' : 'es', 'long')],
     [en ? 'Elevation gain' : 'Desnivel positivo', `${trail.elevation_gain_m} m`],
     [en ? 'Max altitude' : 'Altura máxima', `${trail.max_altitude_m} m`],
     [en ? 'Best season' : 'Mejor época', seasonLabel(trail.best_season, lang)],

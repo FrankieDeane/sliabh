@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/hooks/useTheme';
 import { useLangStore } from '../src/store/langStore';
+import { NoIndex } from '../src/components/ui/SeoHead';
 
 export default function NotFound() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function NotFound() {
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
+      <NoIndex />
       <Text style={styles.emoji}>⛰️</Text>
       <Text style={[styles.title, { color: text }]}>
         {t('Página no encontrada', 'Page not found')}

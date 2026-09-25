@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "build:web": "node scripts/gen-sitemap.mjs && npx expo export -p web && node scripts/inject-seo.mjs && node scripts/prerender-home.mjs && node scripts/prerender-trails.mjs && node scripts/prerender-hubs.mjs && node scripts/prerender-core.mjs",
+    "build:web": "node scripts/gen-sitemap.mjs && npx expo export -p web && node scripts/inject-seo.mjs && node scripts/prerender-home.mjs && node scripts/prerender-trails.mjs && node scripts/prerender-hubs.mjs && node scripts/prerender-core.mjs && node scripts/prerender-zonas.mjs",
     "ts": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx",
     "validate:solar": "node --experimental-strip-types scripts/validate-solar.mjs",

@@ -94,7 +94,7 @@ export function SiteHead() {
     // Same for the prerendered canonical/keywords: they stay in the DOM across
     // client-side navigation, so after hub → trail the page had two canonicals.
     // The prerendered page JSON-LD (data-page-ld) likewise duplicated SeoHead's.
-    const SELECTORS = ['meta[name="description"]', 'meta[name="keywords"]', 'link[rel="canonical"]', 'script[data-page-ld]'];
+    const SELECTORS = ['meta[name="description"]', 'meta[name="keywords"]', 'link[rel="canonical"]', 'link[rel="alternate"][hreflang]', 'meta[name="robots"]', 'script[data-page-ld]'];
     let frame = 0;
     let raf: number;
     const tryCleanup = () => {
@@ -112,7 +112,6 @@ export function SiteHead() {
     return () => cancelAnimationFrame(raf);
   }, [c.htmlLang]);
 
-  const url = lang === 'en' ? `${SITE_URL}/en` : `${SITE_URL}/`;
 
   return (
     <Head>
@@ -121,16 +120,11 @@ export function SiteHead() {
       <meta name="keywords" content={c.keywords} />
       <meta name="robots" content="index, follow, max-image-preview:large" />
       <meta name="author" content="Sliabh" />
-      <link rel="canonical" href={url} />
-      <link rel="alternate" hrefLang="es" href={`${SITE_URL}/`} />
-      <link rel="alternate" hrefLang="en" href={`${SITE_URL}/en`} />
-      <link rel="alternate" hrefLang="x-default" href={`${SITE_URL}/`} />
 
       <meta property="og:site_name" content="Sliabh" />
       <meta property="og:locale" content={c.locale} />
       <meta property="og:locale:alternate" content={c.localeAlt} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content={url} />
       <meta property="og:title" content={c.ogTitle} />
       <meta property="og:description" content={c.ogDescription} />
       <meta property="og:image" content={`${SITE_URL}/og-image.jpg`} />

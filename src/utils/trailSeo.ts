@@ -15,7 +15,8 @@
 import type { ArgentinaTrail } from '../data/argentinaTrails';
 import { difficultyLabel, seasonLabel, activityLabel } from '../data/argentinaTrails';
 import { regionMeta, parkMeta, slugifyArea } from '../data/hubs';
-import { trailFaqs } from './trailFaq';
+import { trailFaqs, type Faq } from './trailFaq';
+import { formatDuration } from './duration';
 
 export const SITE_URL = 'https://sliabh.com.ar';
 
@@ -33,6 +34,7 @@ export interface TrailSeo {
   urlEs: string;
   urlEn: string;
   jsonLd: object[];
+  faqs: Faq[];
 }
 
 function firstSentence(text: string, max = 180): string {
@@ -44,9 +46,7 @@ function firstSentence(text: string, max = 180): string {
 }
 
 function durationText(trail: ArgentinaTrail, lang: 'es' | 'en'): string {
-  const { min, max, unit } = trail.duration;
-  const u = lang === 'en' ? (unit === 'dias' ? 'days' : 'h') : unit === 'dias' ? 'días' : 'h';
-  return min === max ? `${min} ${u}` : `${min}–${max} ${u}`;
+  return formatDuration(trail.duration, lang, 'short');
 }
 
 export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
@@ -56,6 +56,8 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
   const region = regionMeta(trail.region);
   const park = parkMeta(slugifyArea(trail.area));
   const regionName = region ? (isEn ? region.en.name : region.es.name) : '';
+  const regionKw = regionName.replace(/^the\s+/i, '').replace(/\s*\([^)]*\)/g, '').trim();
+  const regionCrumb = regionName.charAt(0).toUpperCase() + regionName.slice(1);
 
   const isPatagonia = trail.region === 'patagonia-sur' || trail.region === 'patagonia-norte';
   // Foreign searchers qualify by "Patagonia"/"Argentina", not the province;
@@ -78,12 +80,12 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
   const spot = parts[parts.length - 1];
   const kw = isEn
     ? [
-        ...parts.flatMap((x) => [`${x} hike`, `${x} trail`]), `${spot} trek`, trail.area, `${trail.province} Argentina`, regionName,
+        ...parts.flatMap((x) => [`${x} hike`, `${x} trail`]), `${spot} trek`, trail.area, `${trail.province} Argentina`, regionKw,
         isPatagonia ? 'Patagonia hiking' : 'Argentina hiking', 'hiking trail Argentina',
         `${activityLabel(trail.activity, 'en').toLowerCase()} Argentina`, 'GPX track', 'offline hiking map', 'trail map',
       ]
     : [
-        ...parts, ...parts.map((x) => `ruta ${x}`), `trekking ${spot}`, `cómo llegar a ${spot}`, trail.area, trail.province, regionName,
+        ...parts, ...parts.map((x) => `ruta ${x}`), `trekking ${spot}`, `cómo llegar a ${spot}`, trail.area, trail.province, regionKw,
         `trekking ${trail.province}`, `senderismo ${trail.province}`, isPatagonia ? 'trekking Patagonia' : 'trekking Argentina',
         'track GPX', 'mapa offline', ...trail.tags,
       ];
@@ -99,7 +101,7 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
   const crumbs: Array<{ name: string; item: string }> = [
     { name: 'Sliabh', item: `${SITE_URL}${isEn ? '/en' : '/'}` },
   ];
-  if (region) crumbs.push({ name: regionName, item: `${SITE_URL}${prefix}/region/${region.slug}` });
+  if (region) crumbs.push({ name: regionCrumb, item: `${SITE_URL}${prefix}/region/${region.slug}` });
   if (park) crumbs.push({ name: isEn ? park.en.name : park.es.name, item: `${SITE_URL}${prefix}/parque/${park.slug}` });
   crumbs.push({ name: trail.name, item: url });
 
@@ -142,5 +144,5 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
     },
   ];
 
-  return { lang, title, description, keywords, image, path, url, urlEs, urlEn, jsonLd };
+  return { lang, title, description, keywords, image, path, url, urlEs, urlEn, jsonLd, faqs };
 }
