@@ -22,6 +22,15 @@ const ESRI_TILES: Record<EsriLayer, string> = {
   'esri-streets':   'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
 };
 
+// Deepest level Esri actually serves in rural Argentina. Past it the tile
+// server answers with nothing and the map went blank; with maxzoom set,
+// MapLibre stretches the last real tile instead.
+const ESRI_MAXZOOM: Record<EsriLayer, number> = {
+  'esri-topo': 16,
+  'esri-satellite': 17,
+  'esri-streets': 17,
+};
+
 interface Props {
   onMarkerPress?: (id: string) => void;
   onLocationUpdate?: (lat: number, lon: number) => void;
@@ -39,6 +48,8 @@ interface Props {
   routePoints?: LatLon[];
   /** Live breadcrumb of where the user has actually walked, drawn in blue. */
   trackPoints?: LatLon[];
+  /** Frame the whole walked track (and route) on load, instead of `center`/`zoom`. */
+  fitToTrack?: boolean;
 }
 
 // Load MapLibre GL JS from CDN once (no npm dep needed)
@@ -78,6 +89,7 @@ function buildStyle(layer: EsriLayer) {
         type: 'raster' as const,
         tiles: [ESRI_TILES[layer]],
         tileSize: 256,
+        maxzoom: ESRI_MAXZOOM[layer],
         attribution: '&copy; Esri, HERE, Garmin, FAO, NOAA, USGS',
       },
     },
@@ -126,6 +138,7 @@ export function MapLibreEsri({
   userPosition,
   routePoints,
   trackPoints,
+  fitToTrack = false,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -219,6 +232,16 @@ export function MapLibreEsri({
             .addTo(map);
           markerInstancesRef.current.push(instance);
         });
+
+        if (fitToTrack) {
+          const all = [...(trackRef.current ?? []), ...(routeRef.current ?? [])]
+            .filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lon));
+          if (all.length >= 2) {
+            const b = new ml.LngLatBounds([all[0].lon, all[0].lat], [all[0].lon, all[0].lat]);
+            all.forEach((p) => b.extend([p.lon, p.lat]));
+            map.fitBounds(b, { padding: 36, maxZoom: 16, duration: 0 });
+          }
+        }
       });
     });
 
