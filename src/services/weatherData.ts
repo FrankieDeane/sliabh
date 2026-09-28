@@ -153,6 +153,22 @@ export function windLevel(gustKmh: number): WindLevel {
   return 'calm';
 }
 
+export type AlertKind = 'storm' | 'snow' | 'wind';
+
+/**
+ * Hazards forecast for one day, most serious first. Same rules as the
+ * weather-alert badges on the parks map (public/parques.html): thunderstorm
+ * (WMO 95–99), snowfall (71–77, 85, 86) and gusts of 60 km/h or more.
+ */
+export function dayAlerts(d: ForecastDay): AlertKind[] {
+  const out: AlertKind[] = [];
+  if (d.weatherCode >= 95) out.push('storm');
+  if (d.gustMaxKmh >= 80) out.push('wind');
+  if ((d.weatherCode >= 71 && d.weatherCode <= 77) || d.weatherCode === 85 || d.weatherCode === 86) out.push('snow');
+  if (d.gustMaxKmh >= 60 && d.gustMaxKmh < 80) out.push('wind');
+  return out;
+}
+
 /** WMO weather code → icon and short label. */
 export function describeWeather(code: number): { icon: string; es: string; en: string } {
   if (code === 0) return { icon: 'sunny', es: 'Despejado', en: 'Clear' };

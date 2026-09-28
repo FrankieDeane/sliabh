@@ -9,6 +9,8 @@ import {
   windLevel,
   describeWeather,
   compass,
+  dayAlerts,
+  type AlertKind,
   type TrailForecast,
   type WindLevel,
 } from '../../services/weatherData';
@@ -25,6 +27,12 @@ export interface WeatherTrail {
 
 const WEEKDAYS_ES = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
 const WEEKDAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const ALERT_STYLE: Record<AlertKind, { icon: string; color: string }> = {
+  storm: { icon: 'thunderstorm', color: '#a855f7' },
+  wind: { icon: 'warning', color: '#ef4444' },
+  snow: { icon: 'snow', color: '#38bdf8' },
+};
 
 const LEVEL_COLOR: Record<WindLevel, string> = {
   calm: '#22c55e',
@@ -102,6 +110,18 @@ export function WeatherPanel({ trail, colors }: { trail: WeatherTrail; colors: C
       extreme: t('Ráfagas extremas: evaluá postergar', 'Extreme gusts: consider postponing'),
     })[l];
 
+  const alertText = (k: AlertKind) =>
+    ({
+      storm: t('Tormenta eléctrica', 'Thunderstorm'),
+      snow: t('Nevada', 'Snowfall'),
+      wind: t('Viento peligroso', 'Dangerous wind'),
+    })[k];
+
+  // One chip per hazard and day, e.g. "Tormenta eléctrica · mañana"
+  const alerts = (forecast?.days ?? []).flatMap((d, i) =>
+    [...new Set(dayAlerts(d))].map((k) => ({ key: `${d.date}-${k}`, kind: k, when: i === 0 ? t('hoy', 'today') : i === 1 ? t('mañana', 'tomorrow') : weekday(d.date) })),
+  );
+
   const today = forecast?.days[0];
   const todayLevel = today ? windLevel(today.gustMaxKmh) : null;
   const stale = forecast ? !isFresh(forecast) : false;
@@ -165,6 +185,19 @@ export function WeatherPanel({ trail, colors }: { trail: WeatherTrail; colors: C
               </Text>
             </View>
           </View>
+
+          {alerts.length > 0 && (
+            <View style={s.alertsRow}>
+              {alerts.map((a) => (
+                <View key={a.key} style={[s.alertChip, { borderColor: ALERT_STYLE[a.kind].color, backgroundColor: colors.elevated }]}>
+                  <Ionicons name={ALERT_STYLE[a.kind].icon as any} size={13} color={ALERT_STYLE[a.kind].color} />
+                  <Text style={[s.alertTxt, { color: colors.text }]}>
+                    {alertText(a.kind)} · {a.when}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
 
           {/* Three days side by side */}
           <View style={s.daysRow}>
@@ -235,6 +268,9 @@ const s = StyleSheet.create({
   verdict: { flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1.5, borderRadius: 12, padding: 12 },
   verdictTitle: { fontSize: 13.5, fontWeight: '800' },
   verdictSub: { fontSize: 12, marginTop: 2 },
+  alertsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  alertChip: { flexDirection: 'row', alignItems: 'center', gap: 5, borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
+  alertTxt: { fontSize: 11.5, fontWeight: '700' },
   daysRow: { flexDirection: 'row', gap: 8 },
   day: { flex: 1, alignItems: 'center', borderWidth: 1, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 4, gap: 3 },
   dayName: { fontSize: 12, fontWeight: '800', textTransform: 'capitalize' },
