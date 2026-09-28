@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { isSupabaseConfigured, submitPollVote, submitPollLead, fetchPollResults } from '../../services/supabase';
+import { whenOverlayAllowed } from '../../utils/overlayGate';
 
 // Bump the id (v2, v3, …) to retire this question and start a fresh poll —
 // old votes stay in the table, untouched, under the old poll_id.
@@ -73,39 +74,17 @@ export function QuickPoll() {
     if (alreadyVoted) setVoted(alreadyVoted);
     if (leadAlreadyDone) setLeadDone(true);
 
-    function reveal() {
-      let consentGiven = true;
-      try { consentGiven = !!localStorage.getItem(CONSENT_KEY); } catch {}
-      if (consentGiven) setVisible(true);
-    }
+    // Ya votó y dejó sus datos: la encuesta no tiene nada nuevo que pedir, no
+    // gasta la única interrupción de la sesión.
+    if (alreadyVoted && leadAlreadyDone) return;
 
-    // On narrow screens the floating card competes with the page for space,
-    // so instead of dropping it on top of the content after a fixed delay,
-    // wait until the visitor has scrolled down to the footer. Fall back to
-    // the timer if the footer can't be found or IntersectionObserver isn't
-    // available, so the poll still shows up eventually.
-    if (isNarrow) {
-      const footer = typeof document !== 'undefined' ? document.getElementById('site-footer') : null;
-      if (footer && typeof IntersectionObserver !== 'undefined') {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries.some((e) => e.isIntersecting)) {
-              reveal();
-              observer.disconnect();
-            }
-          },
-          { rootMargin: '0px 0px -10% 0px' },
-        );
-        observer.observe(footer);
-        return () => observer.disconnect();
-      }
-    }
-
-    // Wait for the cookie banner to be resolved (or absent) before adding a
-    // second floating widget, and give visitors a moment to land first.
-    const timer = setTimeout(reveal, 4000);
-    return () => clearTimeout(timer);
-  }, [isNarrow]);
+    const consentGiven = () => {
+      try { return !!localStorage.getItem(CONSENT_KEY); } catch { return true; }
+    };
+    // Una sola interrupción por sesión, nunca en la página de aterrizaje
+    // (ver src/utils/overlayGate.ts).
+    return whenOverlayAllowed('poll', () => setVisible(true), consentGiven);
+  }, []);
 
   useEffect(() => {
     // Only the "already finished on a previous visit" case belongs here — a

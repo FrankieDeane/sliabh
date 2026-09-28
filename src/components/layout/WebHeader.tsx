@@ -10,13 +10,14 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
+import { useRouter, usePathname, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 import { appPromoAudience } from '../../utils/appPromo';
+import { navHref, isActiveRoute } from '../../utils/navHref';
 import { deleteAccount, signOut as supabaseSignOut } from '../../services/supabase';
 import { showAlert, showConfirm } from '../../utils/alert';
 
@@ -90,27 +91,26 @@ export function WebHeader() {
     });
   }
 
-  // Annotated rather than inferred: expo-router's typed-route union is
-  // generated (.expo/types), so a freshly added screen fails to type-check
-  // until someone runs the dev server — and the failure surfaces far from
-  // here. These hrefs are only ever used as strings.
+  // `route` es el segmento público: navHref lo convierte en "/…" o "/en/…"
+  // y el ítem se renderiza como <a href> rastreable. Los ítems con scrollTo
+  // son anclas dentro de la home y siguen siendo botones.
   const NAV: Array<{
     labelEs: string;
     labelEn: string;
-    href: string;
+    route: string;
     icon: React.ComponentProps<typeof Ionicons>['name'];
     scrollTo: string | null;
   }> = [
-    { labelEs: 'Inicio', labelEn: 'Home', href: '/(tabs)/inicio', icon: 'home-outline', scrollTo: null },
-    { labelEs: 'Rutas', labelEn: 'Trails', href: '/(tabs)/rutas', icon: 'trail-sign-outline', scrollTo: null },
-    { labelEs: 'Mis recorridos', labelEn: 'My hikes', href: '/(tabs)/mis-recorridos', icon: 'footsteps-outline', scrollTo: null },
-    { labelEs: 'Mapas', labelEn: 'Maps', href: '/(tabs)/mapas', icon: 'map-outline', scrollTo: null },
-    { labelEs: 'Planificar', labelEn: 'Plan', href: '/(tabs)/planificar', icon: 'map-outline', scrollTo: null },
-    { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq', icon: 'chatbubble-outline', scrollTo: null },
-    { labelEs: 'Supervivencia', labelEn: 'Survival', href: '/(tabs)/supervivencia', icon: 'shield-checkmark-outline', scrollTo: null },
-    { labelEs: 'Guías', labelEn: 'Guides', href: '/(tabs)/guias', icon: 'compass-outline', scrollTo: null },
-    { labelEs: 'Nosotros', labelEn: 'About', href: '/(tabs)/inicio', icon: 'people-outline', scrollTo: 'about-us' },
-    { labelEs: 'Contactanos', labelEn: 'Contact us', href: '/(tabs)/inicio', icon: 'mail-outline', scrollTo: 'sponsors-form' },
+    { labelEs: 'Inicio', labelEn: 'Home', route: 'inicio', icon: 'home-outline', scrollTo: null },
+    { labelEs: 'Rutas', labelEn: 'Trails', route: 'rutas', icon: 'trail-sign-outline', scrollTo: null },
+    { labelEs: 'Mis recorridos', labelEn: 'My hikes', route: 'mis-recorridos', icon: 'footsteps-outline', scrollTo: null },
+    { labelEs: 'Mapas', labelEn: 'Maps', route: 'mapas', icon: 'map-outline', scrollTo: null },
+    { labelEs: 'Planificar', labelEn: 'Plan', route: 'planificar', icon: 'map-outline', scrollTo: null },
+    { labelEs: 'FAQ', labelEn: 'FAQ', route: 'faq', icon: 'chatbubble-outline', scrollTo: null },
+    { labelEs: 'Supervivencia', labelEn: 'Survival', route: 'supervivencia', icon: 'shield-checkmark-outline', scrollTo: null },
+    { labelEs: 'Guías', labelEn: 'Guides', route: 'guias', icon: 'compass-outline', scrollTo: null },
+    { labelEs: 'Nosotros', labelEn: 'About', route: 'inicio', icon: 'people-outline', scrollTo: 'about-us' },
+    { labelEs: 'Contactanos', labelEn: 'Contact us', route: 'inicio', icon: 'mail-outline', scrollTo: 'sponsors-form' },
   ];
 
   const c = isDark
@@ -139,7 +139,7 @@ export function WebHeader() {
   function navigate(href: string, scrollTo?: string | null) {
     setDrawerOpen(false);
     if (scrollTo && typeof window !== 'undefined') {
-      if (pathname.includes('/inicio')) {
+      if (isActiveRoute(pathname, 'inicio')) {
         const el = document.getElementById(scrollTo);
         if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
       }
@@ -161,10 +161,11 @@ export function WebHeader() {
       >
         <View style={[styles.inner, { paddingHorizontal: sidePad }]}>
           {/* Logo + wordmark */}
+          <Link href={navHref('inicio', lang) as any} asChild>
           <TouchableOpacity
             style={styles.brand}
-            onPress={() => navigate('/(tabs)/inicio')}
             activeOpacity={0.8}
+            accessibilityLabel={t('Sliabh — inicio', 'Sliabh — home')}
           >
             <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" alt="Sliabh" />
             {!isCompact && (
@@ -174,16 +175,17 @@ export function WebHeader() {
               </View>
             )}
           </TouchableOpacity>
+          </Link>
 
           {/* Desktop nav links */}
           {!isCompact && (
             <View style={styles.nav}>
               {NAV.map((n) => {
-                const active = !n.scrollTo && pathname.includes(n.href.replace('/(tabs)', ''));
-                return (
+                const active = !n.scrollTo && isActiveRoute(pathname, n.route);
+                const item = (
                   <TouchableOpacity
                     key={n.labelEs}
-                    onPress={() => navigate(n.href, n.scrollTo)}
+                    onPress={n.scrollTo ? () => navigate(navHref(n.route, lang), n.scrollTo) : undefined}
                     style={styles.navItem}
                     activeOpacity={0.7}
                     {...({ 'data-nav-link': true } as any)}
@@ -193,6 +195,9 @@ export function WebHeader() {
                     </Text>
                     {active && <View style={styles.navDot} />}
                   </TouchableOpacity>
+                );
+                return n.scrollTo ? item : (
+                  <Link key={n.labelEs} href={navHref(n.route, lang) as any} asChild>{item}</Link>
                 );
               })}
             </View>
@@ -286,11 +291,10 @@ export function WebHeader() {
               {/* Nav items */}
               <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.drawerNav}>
                 {appAudience === 'android' && !pathname.includes('/app') && (
+                  <Link href={navHref('app', lang) as any} onPress={() => setDrawerOpen(false)} asChild>
                   <TouchableOpacity
                     style={styles.drawerApp}
-                    onPress={() => navigate('/(tabs)/app')}
                     activeOpacity={0.85}
-                    accessibilityRole="link"
                   >
                     <Ionicons name="logo-android" size={20} color="#04210f" />
                     <View style={{ flex: 1 }}>
@@ -301,14 +305,15 @@ export function WebHeader() {
                     </View>
                     <Ionicons name="download-outline" size={18} color="#04210f" />
                   </TouchableOpacity>
+                  </Link>
                 )}
                 {NAV.map((n) => {
-                  const active = !n.scrollTo && pathname.includes(n.href.replace('/(tabs)', ''));
-                  return (
+                  const active = !n.scrollTo && isActiveRoute(pathname, n.route);
+                  const item = (
                     <TouchableOpacity
                       key={n.labelEs}
                       style={[styles.drawerItem, active && { backgroundColor: isDark ? 'rgba(34,197,94,0.08)' : 'rgba(22,163,74,0.07)' }]}
-                      onPress={() => navigate(n.href, n.scrollTo)}
+                      onPress={n.scrollTo ? () => navigate(navHref(n.route, lang), n.scrollTo) : undefined}
                       activeOpacity={0.75}
                     >
                       <View style={[styles.drawerItemIcon, { backgroundColor: active ? 'rgba(34,197,94,0.15)' : isDark ? '#162035' : '#f1f5f9' }]}>
@@ -319,6 +324,9 @@ export function WebHeader() {
                       </Text>
                       {active && <Ionicons name="chevron-forward" size={14} color="#22c55e" style={{ marginLeft: 'auto' }} />}
                     </TouchableOpacity>
+                  );
+                  return n.scrollTo ? item : (
+                    <Link key={n.labelEs} href={navHref(n.route, lang) as any} onPress={() => setDrawerOpen(false)} asChild>{item}</Link>
                   );
                 })}
               </ScrollView>

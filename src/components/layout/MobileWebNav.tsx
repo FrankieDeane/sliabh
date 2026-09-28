@@ -3,27 +3,27 @@
 // this replaces it with a focused 5-link row that matches the native experience.
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Platform } from 'react-native';
-import { usePathname, useRouter } from 'expo-router';
+import { usePathname, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
+import { navHref, isActiveRoute } from '../../utils/navHref';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
-const LINKS: Array<{ labelEs: string; labelEn: string; href: string; icon: IoniconName; iconActive: IoniconName }> = [
-  { labelEs: 'Inicio',      labelEn: 'Home',    href: '/(tabs)/inicio',          icon: 'home-outline',              iconActive: 'home'              },
-  { labelEs: 'Rutas',       labelEn: 'Trails',  href: '/(tabs)/rutas',           icon: 'trail-sign-outline',        iconActive: 'trail-sign'        },
-  { labelEs: 'Recorridos',  labelEn: 'Hikes',   href: '/(tabs)/mis-recorridos',  icon: 'footsteps-outline',         iconActive: 'footsteps'         },
-  { labelEs: 'Mapas',       labelEn: 'Maps',    href: '/(tabs)/mapas',           icon: 'map-outline',               iconActive: 'map'               },
-  { labelEs: 'Seguridad',   labelEn: 'Safety',  href: '/(tabs)/supervivencia',   icon: 'shield-checkmark-outline',  iconActive: 'shield-checkmark'  },
+const LINKS: Array<{ labelEs: string; labelEn: string; route: string; icon: IoniconName; iconActive: IoniconName }> = [
+  { labelEs: 'Inicio',      labelEn: 'Home',    route: 'inicio',          icon: 'home-outline',              iconActive: 'home'              },
+  { labelEs: 'Rutas',       labelEn: 'Trails',  route: 'rutas',           icon: 'trail-sign-outline',        iconActive: 'trail-sign'        },
+  { labelEs: 'Recorridos',  labelEn: 'Hikes',   route: 'mis-recorridos',  icon: 'footsteps-outline',         iconActive: 'footsteps'         },
+  { labelEs: 'Mapas',       labelEn: 'Maps',    route: 'mapas',           icon: 'map-outline',               iconActive: 'map'               },
+  { labelEs: 'Seguridad',   labelEn: 'Safety',  route: 'supervivencia',   icon: 'shield-checkmark-outline',  iconActive: 'shield-checkmark'  },
 ];
 
 export function MobileWebNav() {
   const { width } = useWindowDimensions();
   const pathname = usePathname();
-  const router = useRouter();
   const { theme } = useThemeStore();
-  const { t } = useLangStore();
+  const { lang, t } = useLangStore();
   const isDark = theme === 'dark';
 
   // Only render on narrow web viewports
@@ -35,21 +35,18 @@ export function MobileWebNav() {
   return (
     <View style={[styles.bar, { backgroundColor: bg, borderTopColor: border }]}>
       {LINKS.map((link) => {
-        const href = link.href.replace('/(tabs)', '');
-        const active = pathname === href || pathname.startsWith(href + '/');
+        const active = isActiveRoute(pathname, link.route);
         const color = active ? '#22c55e' : isDark ? '#475569' : '#64748b';
+        // <a href> real (vía Link) para que el menú sea rastreable.
         return (
-          <TouchableOpacity
-            key={link.href}
-            style={styles.item}
-            onPress={() => router.push(link.href as any)}
-            activeOpacity={0.7}
-          >
-            <Ionicons name={active ? link.iconActive : link.icon} size={22} color={color} />
-            <Text style={[styles.label, { color }]} numberOfLines={1}>
-              {t(link.labelEs, link.labelEn)}
-            </Text>
-          </TouchableOpacity>
+          <Link key={link.route} href={navHref(link.route, lang) as any} asChild>
+            <TouchableOpacity style={styles.item} activeOpacity={0.7}>
+              <Ionicons name={active ? link.iconActive : link.icon} size={22} color={color} />
+              <Text style={[styles.label, { color }]} numberOfLines={1}>
+                {t(link.labelEs, link.labelEn)}
+              </Text>
+            </TouchableOpacity>
+          </Link>
         );
       })}
     </View>

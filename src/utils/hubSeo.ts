@@ -8,6 +8,7 @@ import {
   type RegionMeta, type ParkMeta,
 } from '../data/hubs';
 import { regionFaqs, parkFaqs, type Faq } from './trailFaq';
+import { fitTitle, fitDescription } from './seoText';
 
 const SITE_URL = 'https://sliabh.com.ar';
 
@@ -47,21 +48,55 @@ export function hubSeo(kind: 'region' | 'park', slug: string, lang: 'es' | 'en')
   const faqs = region ? regionFaqs(region, trails, lang) : parkFaqs(park!, trails, lang);
   const provinces = [...new Set(trails.map((t) => t.province))];
 
+  // ≤60 caracteres, del más completo al más corto (ver seoText.ts).
+  const bare = name.replace(/^the\s+/i, '');
   const title = region
     ? isEn
-      ? `Hiking & Trekking in ${name}, Argentina — Trails, Maps & GPX | Sliabh`
-      : `Trekking en ${name}: rutas, mapas y GPX | Sliabh`
+      ? fitTitle([
+          `Hiking & Trekking in ${name}, Argentina — Trails & GPX | Sliabh`,
+          `Hiking in ${name}, Argentina: Trails & GPX | Sliabh`,
+          `Hiking in ${name}: Trails & GPX | Sliabh`,
+          `Hiking in ${name} | Sliabh`,
+        ])
+      : fitTitle([
+          `Trekking en ${name}: rutas, mapas y GPX | Sliabh`,
+          `Trekking en ${name}: rutas y GPX | Sliabh`,
+          `Trekking en ${name} | Sliabh`,
+        ])
     : isEn
-      ? `${name} Hiking Trails, Argentina — Maps & GPX | Sliabh`
-      : `Trekking en ${name}: rutas, mapas y GPX | Sliabh`;
+      ? fitTitle([
+          `${bare} Hiking Trails, Argentina — Maps & GPX | Sliabh`,
+          `${bare} Hiking Trails — Maps & GPX | Sliabh`,
+          `${bare} Hiking Trails | Sliabh`,
+          `${bare} | Sliabh`,
+        ])
+      : fitTitle([
+          `Trekking en ${name}: rutas, mapas y GPX | Sliabh`,
+          `Trekking en ${name}: rutas y GPX | Sliabh`,
+          `${name}: rutas de trekking | Sliabh`,
+          `${name} | Sliabh`,
+        ]);
 
-  const description = region
-    ? isEn
-      ? `${trails.length} hiking trails in ${name}, Argentina (${provinces.join(', ')}), with 3D maps, offline GPS and free GPX tracks. Best time: ${region.en.bestTime}`
-      : `${trails.length} rutas de trekking y senderismo en ${name} (${provinces.join(', ')}), con mapa 3D, GPS offline y track GPX gratis. Mejor época: ${region.es.bestTime}`
-    : isEn
-      ? `${trails.length} hiking trails in ${name}, ${provinces.join(', ')}, Argentina: 3D maps, offline GPS, free GPX tracks and trip planning for every route.`
-      : `${trails.length} rutas de trekking en ${name}, ${provinces.join(', ')}: mapa 3D, GPS offline, track GPX gratis y planificación de cada ruta.`;
+  // ≤160 caracteres: cantidad de rutas + dónde + llamado a la acción siempre;
+  // la mejor época (regiones) o la intro (parques) solo si entra.
+  const provs = provinces.join(', ');
+  const description = isEn
+    ? fitDescription(
+        [
+          `${trails.length} hiking trails in ${name}, Argentina (${provs}).`,
+          `${trails.length} hiking trails in ${name}, Argentina.`,
+        ],
+        region ? `Best time: ${region.en.bestTime}` : intro,
+        ['3D maps, offline GPS and free GPX tracks for every trail.', '3D maps, offline GPS and free GPX tracks.'],
+      )
+    : fitDescription(
+        [
+          `${trails.length} rutas de trekking en ${name} (${provs}).`,
+          `${trails.length} rutas de trekking en ${name}.`,
+        ],
+        region ? `Mejor época: ${region.es.bestTime}` : intro,
+        ['Mapa 3D, GPS offline y track GPX gratis de cada ruta.', 'Mapa 3D, GPS offline y GPX gratis.'],
+      );
 
   const trailNames = trails.slice(0, 6).map((t) => t.name.split(' — ')[0]);
   // "the North (Salta & Jujuy)" reads fine in a sentence but not as a search

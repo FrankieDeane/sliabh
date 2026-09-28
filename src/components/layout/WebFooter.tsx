@@ -6,6 +6,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { LOGO_URI } from '../../constants/logo';
 import { appPromoAudience } from '../../utils/appPromo';
+import { navHref } from '../../utils/navHref';
 import { shareOnWhatsApp, currentPageUrl } from '../../utils/share';
 import { subscribeNewsletter } from '../../services/supabase';
 import { SUBSCRIBED_KEY } from '../ui/NewsletterPopup';
@@ -32,7 +33,7 @@ const REGION_LINKS = [
 export function WebFooter() {
   const router = useRouter();
   const { theme } = useThemeStore();
-  const { t } = useLangStore();
+  const { t, lang } = useLangStore();
   const isDark = theme === 'dark';
   const [legalOpen, setLegalOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -58,9 +59,11 @@ export function WebFooter() {
 
           {/* Brand column */}
           <View style={styles.brandCol}>
-            <TouchableOpacity style={styles.brand} onPress={() => router.push('/(tabs)/inicio')} activeOpacity={0.8}>
-              <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" alt="Sliabh" />
-            </TouchableOpacity>
+            <Link href={navHref('inicio', lang) as any} asChild>
+              <TouchableOpacity style={styles.brand} activeOpacity={0.8}>
+                <Image source={{ uri: LOGO_URI }} style={styles.logo} resizeMode="contain" alt="Sliabh" />
+              </TouchableOpacity>
+            </Link>
             <Text style={[styles.tagline, { color: c.muted }]}>
               {t(
                 'La plataforma de senderismo\npara explorar Argentina.\nFunciona con y sin señal.',
@@ -95,10 +98,12 @@ export function WebFooter() {
           {/* Explorar column */}
           <View style={styles.navCol}>
             <Text style={[styles.navTitle, { color: c.muted }]}>{t('EXPLORAR', 'EXPLORE')}</Text>
-            <TouchableOpacity style={styles.navItem} onPress={() => router.push('/(tabs)/rutas')} activeOpacity={0.7}>
-              <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-              <Text style={[styles.navLabel, { color: c.muted }]}>{t('Todas las rutas', 'All trails')}</Text>
-            </TouchableOpacity>
+            <Link href={navHref('rutas', lang) as any} asChild>
+              <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+                <Text style={[styles.navLabel, { color: c.muted }]}>{t('Todas las rutas', 'All trails')}</Text>
+              </TouchableOpacity>
+            </Link>
             {REGION_LINKS.map((r) => (
               <Link key={r.slug} href={`${t('', '/en')}/region/${r.slug}` as any} asChild>
                 <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
@@ -113,16 +118,20 @@ export function WebFooter() {
           <View style={styles.navCol}>
             <Text style={[styles.navTitle, { color: c.muted }]}>{t('PREPARAR', 'PREPARE')}</Text>
             {([
-              { labelEs: 'App para Android', labelEn: 'Android app', href: '/(tabs)/app' as const },
-              { labelEs: 'Mapas offline', labelEn: 'Offline maps', href: '/(tabs)/mapas' as const },
-              { labelEs: 'Planificar ruta', labelEn: 'Plan a route', href: '/(tabs)/planificar' as const },
-              { labelEs: 'FAQ', labelEn: 'FAQ', href: '/(tabs)/faq' as const },
-              { labelEs: 'Contribuir', labelEn: 'Contribute', href: '/(tabs)/contribuir' as const },
+              { labelEs: 'App para Android', labelEn: 'Android app', route: 'app' },
+              { labelEs: 'Mapas offline', labelEn: 'Offline maps', route: 'mapas' },
+              { labelEs: 'Planificar ruta', labelEn: 'Plan a route', route: 'planificar' },
+              { labelEs: 'Guías de supervivencia', labelEn: 'Survival guides', route: 'supervivencia' },
+              { labelEs: 'Guías de montaña', labelEn: 'Mountain guides', route: 'guias' },
+              { labelEs: 'FAQ', labelEn: 'FAQ', route: 'faq' },
+              { labelEs: 'Contribuir', labelEn: 'Contribute', route: 'contribuir' },
             ]).map((n) => (
-              <TouchableOpacity key={n.labelEs} style={styles.navItem} onPress={() => router.push(n.href)} activeOpacity={0.7}>
-                <Ionicons name="chevron-forward" size={11} color="#22c55e" />
-                <Text style={[styles.navLabel, { color: c.muted }]}>{t(n.labelEs, n.labelEn)}</Text>
-              </TouchableOpacity>
+              <Link key={n.labelEs} href={navHref(n.route, lang) as any} asChild>
+                <TouchableOpacity style={styles.navItem} activeOpacity={0.7}>
+                  <Ionicons name="chevron-forward" size={11} color="#22c55e" />
+                  <Text style={[styles.navLabel, { color: c.muted }]}>{t(n.labelEs, n.labelEn)}</Text>
+                </TouchableOpacity>
+              </Link>
             ))}
             <View style={[styles.infoCard, { backgroundColor: c.surface, borderColor: c.border }]}>
               <Text style={[styles.infoCardTxt, { color: c.muted }]}>
