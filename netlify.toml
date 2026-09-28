@@ -35,7 +35,11 @@
 # netlify/edge-functions/geo-lang.ts.
 [[edge_functions]]
   path = "/*"
+  excludedPath = ["/mcp"]
   function = "geo-lang"
+
+# /mcp is the public MCP server (netlify/functions/mcp.mts, logic in
+# src/mcp/server.ts): JSON-RPC over POST, not a page, so geo-lang is skipped.
 
 # Security headers, sent on every response. Kept conservative (no CSP yet —
 # the app pulls scripts/tiles from several CDNs and a wrong CSP would break

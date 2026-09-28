@@ -15,11 +15,13 @@
     "check:newarch": "node scripts/check-new-arch.mjs",
     "validate:track": "node --experimental-strip-types scripts/validate-track-stats.mjs",
     "test:offline": "node tests/offline.mjs",
-    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline"
+    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline && npm run test:mcp",
+    "test:mcp": "node scripts/test-mcp.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
     "@mlc-ai/web-llm": "^0.2.84",
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "@react-native-community/netinfo": "^11.3.1",
     "@react-navigation/native": "^7.0.0",
     "@supabase/supabase-js": "^2.46.0",
@@ -51,6 +53,7 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "typescript": "^5.3.0",
+    "zod": "^4.6.5",
     "zustand": "^5.0.0"
   },
   "overrides": {

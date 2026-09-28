@@ -43,6 +43,11 @@ jobs:
       - name: Elevation and pace against known profiles
         run: npm run validate:track
 
+      # The public MCP server (sliabh.com.ar/mcp): every tool annotated,
+      # answering with valid input and failing clearly with invalid input.
+      - name: MCP server
+        run: npm run test:mcp
+
       - name: Build the web bundle
         run: npx expo export -p web
 
