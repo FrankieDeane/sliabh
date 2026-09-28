@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLangStore } from '../../store/langStore';
 import {
@@ -22,8 +22,6 @@ export interface WeatherTrail {
   gpxTrack?: Array<{ lat: number; lon: number; ele?: number }>;
   max_altitude_m?: number;
 }
-
-const SMN_URL = 'https://www.smn.gob.ar/pronostico';
 
 const WEEKDAYS_ES = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
 const WEEKDAYS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -62,7 +60,7 @@ function ago(ms: number, t: (es: string, en: string) => string): string {
  * Wind and weather at the trail's highest point for the next three days
  * (Open-Meteo, no key). The last forecast is kept on the device and shown
  * with its age when there is no signal. Never a substitute for the official
- * forecast or the park rangers — the panel says so and links the SMN.
+ * forecast or the park rangers — the panel says so.
  */
 export function WeatherPanel({ trail, colors }: { trail: WeatherTrail; colors: Colors }) {
   const { t, lang } = useLangStore();
@@ -223,16 +221,6 @@ export function WeatherPanel({ trail, colors }: { trail: WeatherTrail; colors: C
           )}
         </Text>
       </View>
-      <TouchableOpacity
-        onPress={() => Linking.openURL(SMN_URL)}
-        style={[s.smnBtn, { borderColor: colors.border }]}
-        accessibilityRole="link"
-      >
-        <Ionicons name="open-outline" size={14} color={colors.accent} />
-        <Text style={[s.smnTxt, { color: colors.text }]}>
-          {t('Ver pronóstico oficial del SMN', 'See the official SMN forecast')}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -260,8 +248,6 @@ const s = StyleSheet.create({
   updated: { fontSize: 11, fontWeight: '600' },
   notice: { flexDirection: 'row', gap: 8, alignItems: 'flex-start', borderWidth: 1, borderRadius: 12, padding: 10 },
   noticeTxt: { fontSize: 11.5, lineHeight: 16, flex: 1 },
-  smnBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10 },
-  smnTxt: { fontSize: 12.5, fontWeight: '700', flex: 1 },
 });
 
 export default WeatherPanel;
