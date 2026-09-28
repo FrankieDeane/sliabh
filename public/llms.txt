@@ -97,3 +97,4 @@ Cada ruta abajo enlaza a su página en /ruta/{id}, con track GPX descargable, ma
 - Todo el contenido de este sitio es gratuito; no requiere cuenta para consultar rutas ni descargar tracks GPX.
 - El sitio es una single-page app: las páginas individuales de ruta (/ruta/{id}) requieren ejecutar JavaScript para ver el detalle completo en el HTML servido; este archivo llms.txt existe para dar acceso directo en texto plano al catálogo completo sin depender de JS.
 - robots.txt permite el rastreo completo del sitio.
+- Servidor MCP público (Streamable HTTP, sin autenticación, solo lectura): https://sliabh.com.ar/mcp — consulta los 39 parques nacionales de Argentina y sus rutas. Documentación: https://sliabh.com.ar/claude/ · Privacidad: https://sliabh.com.ar/privacidad/
