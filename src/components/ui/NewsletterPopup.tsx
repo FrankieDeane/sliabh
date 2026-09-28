@@ -4,14 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { subscribeNewsletter } from '../../services/supabase';
+import { whenOverlayAllowed } from '../../utils/overlayGate';
 
 // A floating card that surfaces the newsletter signup every so often —
 // not on every visit, and never again once the visitor has subscribed
 // (from here, the footer, or the native app's card; they all set the same
-// SUBSCRIBED_KEY). Mirrors QuickPoll.tsx's timing/positioning conventions:
-// bottom-left (QuickPoll sits bottom-right) so the two never overlap, same
-// reveal delay/footer-intersection trick on narrow screens, gated behind
-// cookie consent.
+// SUBSCRIBED_KEY). Bottom-left (QuickPoll sits bottom-right), gated behind
+// cookie consent, and timed by src/utils/overlayGate.ts: one interruption per
+// session, never on the landing page.
 const DISMISSED_AT_KEY = 'sliabh-newsletter-popup-dismissed-at';
 export const SUBSCRIBED_KEY = 'sliabh-newsletter-subscribed';
 const CONSENT_KEY = 'sliabh-cookie-consent';
@@ -44,35 +44,13 @@ export function NewsletterPopup() {
     if (subscribed) return;
     if (Date.now() - dismissedAt < COOLDOWN_MS) return;
 
-    function reveal() {
-      let consentGiven = true;
-      try { consentGiven = !!localStorage.getItem(CONSENT_KEY); } catch {}
-      if (consentGiven) setVisible(true);
-    }
-
-    // Same narrow-screen trick as QuickPoll: wait for the footer instead of
-    // dropping a floating card over content on small screens.
-    if (isNarrow) {
-      const footer = typeof document !== 'undefined' ? document.getElementById('site-footer') : null;
-      if (footer && typeof IntersectionObserver !== 'undefined') {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            if (entries.some((e) => e.isIntersecting)) {
-              reveal();
-              observer.disconnect();
-            }
-          },
-          { rootMargin: '0px 0px -10% 0px' },
-        );
-        observer.observe(footer);
-        return () => observer.disconnect();
-      }
-    }
-
-    // Later than QuickPoll's 4s so the two don't both pop in at once.
-    const timer = setTimeout(reveal, 9000);
-    return () => clearTimeout(timer);
-  }, [isNarrow]);
+    const consentGiven = () => {
+      try { return !!localStorage.getItem(CONSENT_KEY); } catch { return true; }
+    };
+    // Una sola interrupción por sesión, nunca en la página de aterrizaje
+    // (ver src/utils/overlayGate.ts).
+    return whenOverlayAllowed('newsletter', () => setVisible(true), consentGiven);
+  }, []);
 
   function dismiss() {
     try { localStorage.setItem(DISMISSED_AT_KEY, String(Date.now())); } catch {}

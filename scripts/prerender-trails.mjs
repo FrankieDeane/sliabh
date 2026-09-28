@@ -32,7 +32,7 @@ const { ALL_HUB_TRAILS: ALL_TRAILS } = loadTs('src/data/hubs.ts');
 const { trailSeo } = loadTs('src/utils/trailSeo.ts');
 const { trailFaqs } = loadTs('src/utils/trailFaq.ts');
 const { formatDuration } = loadTs('src/utils/duration.ts');
-const { regionMeta, parkMeta, slugifyArea } = loadTs('src/data/hubs.ts');
+const { regionMeta, parkMeta, slugifyArea, relatedTrails } = loadTs('src/data/hubs.ts');
 const { difficultyLabel, seasonLabel } = loadTs('src/data/argentinaTrails.ts');
 
 // The trail's real text for crawlers that never run JS (GPTBot, ClaudeBot,
@@ -62,10 +62,16 @@ function noscriptBody(trail, lang) {
     park ? `<a href="${prefix}/parque/${park.slug}">${esc(en ? park.en.name : park.es.name)}</a>` : '',
     region ? `<a href="${prefix}/region/${region.slug}">${esc(en ? `Hiking in ${region.en.name}` : `Trekking en ${region.es.name}`)}</a>` : '',
   ].filter(Boolean).join(' · ');
+  // Mismo bloque "Rutas cercanas" que renderiza la pantalla.
+  const related = relatedTrails(trail)
+    .map((r) => `<li><a href="${prefix}/ruta/${esc(r.id)}">${esc(r.name)}</a> — ${esc(r.area)}, ${r.distance_km} km</li>`)
+    .join('');
   return (
     `<noscript><main><h1>${esc(trail.name)}</h1><p>${esc(body)}</p>` +
     (long ? long.split(/\n\s*\n/).map((pp) => `<p>${esc(pp.trim())}</p>`).join('') : '') +
-    `<ul>${facts}</ul><h2>${en ? 'Frequently asked questions' : 'Preguntas frecuentes'}</h2>${faqs}` +
+    `<ul>${facts}</ul>` +
+    (related ? `<h2>${en ? 'Nearby trails' : 'Rutas cercanas'}</h2><ul>${related}</ul>` : '') +
+    `<h2>${en ? 'Frequently asked questions' : 'Preguntas frecuentes'}</h2>${faqs}` +
     (links ? `<p>${links}</p>` : '') +
     `</main></noscript>`
   );

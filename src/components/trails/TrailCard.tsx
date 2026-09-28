@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ArgentinaTrail } from '../../data/argentinaTrails';
 import { difficultyLabel, activityLabel, seasonLabel, DIFFICULTY_COLOR, ACTIVITY_ICON } from '../../data/argentinaTrails';
 import { fetchWikiImage } from '../../utils/wikiImage';
+import { trailPhotoAlt } from '../../utils/trailSeo';
 import { useLangStore, Lang } from '../../store/langStore';
 import { asset } from '../../constants/asset';
 
@@ -47,6 +48,7 @@ export function FeaturedTrailCard({ trail, onPress }: FeaturedProps) {
         source={{ uri: photo }}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
+        accessibilityLabel={trailPhotoAlt(trail, lang)}
       />
       {/* Bottom gradient overlay */}
       <View style={styles.featuredGradient} />
@@ -123,6 +125,7 @@ const TrailListCardBody = React.forwardRef<any, ListProps>(function TrailListCar
           source={{ uri: photo }}
           style={StyleSheet.absoluteFillObject}
           resizeMode="cover"
+          accessibilityLabel={trailPhotoAlt(trail, lang)}
         />
         <View style={[styles.diffCorner, { backgroundColor: diff.bg }]}>
           <Text style={[styles.diffCornerText, { color: diff.text }]}>

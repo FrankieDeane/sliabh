@@ -1,6 +1,7 @@
 import '../global.css';
 import React, { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
+import { trackPageview } from '../src/utils/overlayGate';
 import { StatusBar } from 'expo-status-bar';
 import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
@@ -123,6 +124,19 @@ class AppErrorBoundary extends React.Component<
   }
 }
 
+/**
+ * Cuenta las páginas vistas en la sesión para la regla de interrupciones
+ * (src/utils/overlayGate.ts). Va antes que PromoBanner en el árbol: los
+ * efectos de hermanos corren en orden, así el banner ya ve la página nueva.
+ */
+function PageviewTracker() {
+  const pathname = usePathname();
+  useEffect(() => {
+    trackPageview(pathname);
+  }, [pathname]);
+  return null;
+}
+
 function NetworkWatcher() {
   const setOnline = useNetworkStore((s) => s.setOnline);
 
@@ -204,6 +218,7 @@ export default function RootLayout() {
       <AppErrorBoundary>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <SiteHead />
+          <PageviewTracker />
           <NetworkWatcher />
           <TrackSyncWatcher />
           <StatusBar style={isDark ? 'light' : 'dark'} />

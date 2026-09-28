@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../../store/themeStore';
 import { useLangStore } from '../../store/langStore';
 import { appPromoAudience } from '../../utils/appPromo';
+import { claimOverlayNow } from '../../utils/overlayGate';
 
 // A slim, occasional announcement strip under the header — rotates through
 // a small pool of messages (new trails, tips, FAQ, community invite) and
@@ -101,6 +102,17 @@ export function PromoBanner() {
 
   const [message, setMessage] = useState<PromoMessage | null>(null);
   const barRef = React.useRef<any>(null);
+  const pickRef = React.useRef<PromoMessage | null>(null);
+
+  // Antes aparecía a los 1–2 s de cargar y empujaba toda la página hacia
+  // abajo (CLS) justo en la página de aterrizaje. Ahora comparte la regla de
+  // una interrupción por sesión (src/utils/overlayGate.ts) y solo se muestra
+  // al cambiar de ruta, dentro de la ventana del clic que CLS no penaliza.
+  useEffect(() => {
+    if (message || !pickRef.current) return;
+    if (claimOverlayNow('promo')) setMessage(pickRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- solo en cada navegación
+  }, [pathname]);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -129,8 +141,7 @@ export function PromoBanner() {
       ? (audience === 'android' ? APP_ANDROID : APP_DESKTOP)
       : pool[Math.floor(Math.random() * pool.length)];
 
-    const timer = setTimeout(() => setMessage(pick), appDue ? 1200 : 2500);
-    return () => clearTimeout(timer);
+    pickRef.current = pick;
   // eslint-disable-next-line react-hooks/exhaustive-deps -- picked once per load, at the width it opened with
   }, []);
 

@@ -15,8 +15,9 @@
 import type { ArgentinaTrail } from '../data/argentinaTrails';
 import { difficultyLabel, seasonLabel, activityLabel } from '../data/argentinaTrails';
 import { regionMeta, parkMeta, slugifyArea } from '../data/hubs';
-import { trailFaqs, type Faq } from './trailFaq';
+import { trailFaqs, difficultyEsFem, type Faq } from './trailFaq';
 import { formatDuration } from './duration';
+import { fitTitle, fitDescription } from './seoText';
 
 export const SITE_URL = 'https://sliabh.com.ar';
 
@@ -37,6 +38,17 @@ export interface TrailSeo {
   faqs: Faq[];
 }
 
+/**
+ * Texto alternativo de la foto de una ruta: qué se ve y dónde. Es lo que
+ * Google Imágenes usa para posicionar la foto en búsquedas como
+ * "Laguna de los Tres" o "trekking Bariloche".
+ */
+export function trailPhotoAlt(trail: Pick<ArgentinaTrail, 'name' | 'area' | 'province'>, lang: 'es' | 'en'): string {
+  return lang === 'en'
+    ? `${trail.name} hiking trail — ${trail.area}, ${trail.province}, Argentina`
+    : `Sendero ${trail.name} — ${trail.area}, ${trail.province}, Argentina`;
+}
+
 function firstSentence(text: string, max = 180): string {
   const clean = text.replace(/\s+/g, ' ').trim();
   const m = clean.match(/^.*?[.!?](\s|$)/);
@@ -53,6 +65,7 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
   const isEn = lang === 'en';
   const body = isEn ? (trail.description_en ?? trail.description) : trail.description;
   const diff = difficultyLabel(trail.difficulty, lang).toLowerCase();
+  const diffEs = difficultyEsFem(trail.difficulty);
   const region = regionMeta(trail.region);
   const park = parkMeta(slugifyArea(trail.area));
   const regionName = region ? (isEn ? region.en.name : region.es.name) : '';
@@ -62,13 +75,47 @@ export function trailSeo(trail: ArgentinaTrail, lang: 'es' | 'en'): TrailSeo {
   const isPatagonia = trail.region === 'patagonia-sur' || trail.region === 'patagonia-norte';
   // Foreign searchers qualify by "Patagonia"/"Argentina", not the province;
   // Argentines search by province.
+  // Keyword (nombre de la ruta) primero y ≤60 caracteres, para que Google no
+  // corte el final: se prueba del más completo al más corto.
   const title = isEn
-    ? `${trail.name} Hike, ${isPatagonia ? 'Patagonia' : 'Argentina'} — Map & GPX | Sliabh`
-    : `${trail.name}: ruta, mapa y GPX — ${trail.province} | Sliabh`;
+    ? fitTitle([
+        `${trail.name} Hike, ${isPatagonia ? 'Patagonia' : 'Argentina'} — Map & GPX | Sliabh`,
+        `${trail.name} Hike — Map & GPX | Sliabh`,
+        `${trail.name} Hike | Sliabh`,
+        // Sin marca antes que sin "Hike": si no, con nombres largos el título
+        // en inglés quedaba idéntico al español ("Nombre | Sliabh").
+        `${trail.name} Hike`,
+      ])
+    : fitTitle([
+        `${trail.name}: ruta, mapa y GPX (${trail.province}) | Sliabh`,
+        `${trail.name}: ruta, mapa y GPX | Sliabh`,
+        `${trail.name}: mapa y GPX | Sliabh`,
+        `${trail.name} | Sliabh`,
+      ]);
 
+  // ≤160 caracteres: los datos duros y el llamado a la acción siempre; la
+  // primera frase de la ruta solo si entra.
+  const km = trail.distance_km;
+  const gain = trail.elevation_gain_m;
   const description = isEn
-    ? `${trail.name} (${trail.area}): ${trail.distance_km} km, ${durationText(trail, 'en')}, +${trail.elevation_gain_m} m elevation gain, ${diff}. ${firstSentence(body)} Free 3D map, offline GPS and GPX track.`
-    : `${trail.name} (${trail.area}): ${trail.distance_km} km, ${durationText(trail, 'es')}, +${trail.elevation_gain_m} m de desnivel, dificultad ${diff}. ${firstSentence(body)} Mapa 3D, GPS offline y track GPX gratis.`;
+    ? fitDescription(
+        [
+          `${trail.name} (${trail.area}): ${km} km, ${durationText(trail, 'en')}, +${gain} m, ${diff}.`,
+          `${trail.name}: ${km} km, ${durationText(trail, 'en')}, +${gain} m, ${diff}.`,
+          `${trail.name}: ${km} km, +${gain} m, ${diff}.`,
+        ],
+        firstSentence(body),
+        ['Free 3D map, offline GPS and a downloadable GPX track.', 'Free 3D map, offline GPS and GPX.'],
+      )
+    : fitDescription(
+        [
+          `${trail.name} (${trail.area}): ${km} km, ${durationText(trail, 'es')}, +${gain} m, dificultad ${diffEs}.`,
+          `${trail.name}: ${km} km, ${durationText(trail, 'es')}, +${gain} m, dificultad ${diffEs}.`,
+          `${trail.name}: ${km} km, +${gain} m, dificultad ${diffEs}.`,
+        ],
+        firstSentence(body),
+        ['Mapa 3D, GPS offline y track GPX gratis para descargar.', 'Mapa 3D, GPS offline y GPX gratis.'],
+      );
 
   // "Fitz Roy — Laguna de los Tres" is searched as either half, never with
   // the dash — but a descriptive suffix ("Cima", "Circuito", "13K") isn't a

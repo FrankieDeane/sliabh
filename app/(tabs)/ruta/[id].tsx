@@ -48,8 +48,9 @@ import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanne
 import { EarthquakeRiskBanner } from '../../../src/components/contribute/EarthquakeRiskBanner';
 import { SenderoCorrection } from '../../../src/components/contribute/SenderoCorrection';
 import { SeoHead, NoIndex } from '../../../src/components/ui/SeoHead';
-import { trailSeo } from '../../../src/utils/trailSeo';
-import { regionMeta, parkMeta, slugifyArea } from '../../../src/data/hubs';
+import { trailSeo, trailPhotoAlt } from '../../../src/utils/trailSeo';
+import { regionMeta, parkMeta, slugifyArea, relatedTrails } from '../../../src/data/hubs';
+import { TrailListCard } from '../../../src/components/trails/TrailCard';
 import { WebFooter } from '../../../src/components/layout/WebFooter';
 import { asset } from '../../../src/constants/asset';
 
@@ -622,6 +623,7 @@ export default function TrailDetailScreen() {
             source={{ uri: asset(trail.photo_uri) }}
             style={{ flex: 1, justifyContent: 'flex-end' }}
             resizeMode="cover"
+            accessibilityLabel={trailPhotoAlt(trail, lang)}
           >
             {/* Cinematic gradient: dark top for back-btn, strong bottom for text */}
             <View
@@ -710,6 +712,7 @@ export default function TrailDetailScreen() {
           {activeTab === 'gear' && (
             <GearTab categories={gearCategories} />
           )}
+          <RelatedTrails trail={trail} t={t} />
           <TrailFaqAndHubs
             faqs={faqs}
             regionName={hubRegion ? (lang === 'en' ? hubRegion.en.name : hubRegion.es.name) : null}
@@ -781,6 +784,35 @@ function TrailFaqAndHubs({
           )}
         </View>
       )}
+    </View>
+  );
+}
+
+/**
+ * "Rutas cercanas": 6 rutas del mismo parque o región, como tarjetas con
+ * <a href> real. Da el siguiente paso a quien llega desde Google a una sola
+ * ruta (más páginas por sesión y tiempo en el sitio) y enlaza rutas hermanas
+ * entre sí, no solo hacia los hubs.
+ */
+function RelatedTrails({ trail, t }: { trail: ArgentinaTrail; t: (es: string, en: string) => string }) {
+  const c = useC();
+  const { width } = useWindowDimensions();
+  const related = React.useMemo(() => relatedTrails(trail), [trail]);
+  if (!related.length) return null;
+  const prefix = t('', '/en');
+  const cols = width >= 900 ? 2 : 1;
+  return (
+    <View style={{ marginTop: 36 }}>
+      <Text accessibilityRole="header" {...({ 'aria-level': 2 } as any)} style={{ color: c.text, fontSize: 18, fontWeight: '800', marginBottom: 14 }}>
+        {t('Rutas cercanas', 'Nearby trails')}
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+        {related.map((r) => (
+          <View key={r.id} style={{ width: cols === 2 ? '48.5%' : '100%' } as any}>
+            <TrailListCard trail={r} colors={c} href={`${prefix}/ruta/${r.id}`} />
+          </View>
+        ))}
+      </View>
     </View>
   );
 }

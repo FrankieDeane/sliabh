@@ -318,3 +318,28 @@ export function trailsForPark(slug: string): ArgentinaTrail[] {
 export function parksInRegion(regionSlug: string): ParkMeta[] {
   return PARKS.filter((p) => p.region === regionSlug);
 }
+
+function distanceKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLon = (b.lon - a.lon) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+
+/**
+ * Rutas para el bloque "Rutas cercanas" al final de cada ruta: primero las
+ * del mismo parque/área, después las de la misma región, cada grupo ordenado
+ * por distancia real. Es el siguiente paso natural para quien llegó desde
+ * Google a una sola ruta (más páginas por sesión) y reparte enlaces internos
+ * entre rutas hermanas, no solo hacia arriba a los hubs.
+ */
+export function relatedTrails(trail: ArgentinaTrail, limit = 6): ArgentinaTrail[] {
+  const rank = (t: ArgentinaTrail) => (t.area === trail.area ? 0 : t.region === trail.region ? 1 : 2);
+  return ALL_HUB_TRAILS
+    .filter((t) => t.id !== trail.id && rank(t) < 2)
+    .map((t) => ({ t, r: rank(t), d: distanceKm(trail.coordinates, t.coordinates) }))
+    .sort((a, b) => a.r - b.r || a.d - b.d)
+    .slice(0, limit)
+    .map((x) => x.t);
+}

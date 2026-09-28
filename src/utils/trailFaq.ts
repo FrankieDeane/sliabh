@@ -17,6 +17,17 @@ import { formatDuration } from './duration';
 
 export interface Faq { q: string; a: string }
 
+const DIFICULTAD_FEM: Record<string, string> = { facil: 'fácil', moderado: 'moderada', dificil: 'difícil', extremo: 'extrema' };
+
+/**
+ * Dificultad concordada con un sustantivo femenino ("dificultad extrema",
+ * "ruta calificada como moderada"). DIFFICULTY_LABEL dice "Moderado"/"Extremo"
+ * (concuerda con "nivel"), que en esas frases queda mal.
+ */
+export function difficultyEsFem(diff: string): string {
+  return DIFICULTAD_FEM[diff] ?? difficultyLabel(diff, 'es').toLowerCase();
+}
+
 function durationText(trail: ArgentinaTrail, lang: 'es' | 'en'): string {
   return formatDuration(trail.duration, lang, 'long');
 }
@@ -33,7 +44,7 @@ export function trailFaqs(trail: ArgentinaTrail, lang: 'es' | 'en'): Faq[] {
         }
       : {
           q: `¿Cuánto dura la ruta ${trail.name}?`,
-          a: `${trail.name} lleva ${durationText(trail, 'es')} en total, con ${trail.distance_km} km de recorrido y ${trail.elevation_gain_m} m de desnivel positivo, de dificultad ${difficultyLabel(trail.difficulty, 'es').toLowerCase()}.`,
+          a: `${trail.name} lleva ${durationText(trail, 'es')} en total, con ${trail.distance_km} km de recorrido y ${trail.elevation_gain_m} m de desnivel positivo, de dificultad ${difficultyEsFem(trail.difficulty)}.`,
         },
   );
 
@@ -120,7 +131,7 @@ function beginnerAnswerEs(trail: ArgentinaTrail): string {
   if (diff === 'moderado') {
     return `${trail.name} es de dificultad moderada: requiere estado físico básico y algo de experiencia previa en montaña, pero no es técnica.`;
   }
-  return `No para principiantes: ${trail.name} está calificada como ${difficultyLabel(diff, 'es').toLowerCase()} y requiere experiencia previa en montaña y buen estado físico.`;
+  return `No para principiantes: ${trail.name} está calificada como ${difficultyEsFem(diff)} y requiere experiencia previa en montaña y buen estado físico.`;
 }
 
 function beginnerAnswerEn(trail: ArgentinaTrail): string {
