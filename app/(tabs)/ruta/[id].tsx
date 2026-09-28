@@ -41,6 +41,7 @@ const TrailMap3DCinematic = Platform.OS === 'web'
 import { TrailReports } from '../../../src/components/contribute/TrailReports';
 import { MyTracksSection } from '../../../src/components/trails/MyTracksSection';
 import { SolarPanel } from '../../../src/components/trails/SolarPanel';
+import { WeatherPanel } from '../../../src/components/trails/WeatherPanel';
 import { OfflineReadiness } from '../../../src/components/offline/OfflineReadiness';
 import { RecordHikeButton } from '../../../src/components/hike/RecordHikeButton';
 import { FireRiskBanner } from '../../../src/components/contribute/FireRiskBanner';
@@ -1337,6 +1338,10 @@ function OverviewTab({
 
       {/* Recent nearby earthquake alert (USGS, no key needed) */}
       <EarthquakeRiskBanner lat={trail.coordinates.lat} lon={trail.coordinates.lon} />
+
+      {/* Wind and weather at the trail's highest point for the next three days
+          (Open-Meteo, no key); the last forecast stays readable offline */}
+      <WeatherPanel trail={trail} colors={C} />
 
       {/* What still works once the signal is gone, checked against this device */}
       <OfflineReadiness trail={trail} colors={C} />

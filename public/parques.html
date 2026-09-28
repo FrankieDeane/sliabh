@@ -162,6 +162,12 @@
       transition: .18s ease;
     }
     .layer-toggle-row .layer-toggle { margin-top: 0; }
+    .wx-badge { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; line-height: 1; border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,.45); cursor: pointer; }
+    .wx-pop { font-size: 12.5px; line-height: 1.45; min-width: 190px; }
+    .wx-pop b { font-size: 13px; }
+    .wx-pop .wx-note { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .wx-pop a { display: inline-block; margin-top: 8px; font-weight: 700; color: #16a34a; }
     .layer-toggle.active { background: #1c3a6e; border-color: #3b82f6; color: #93c5fd; }
     .layer-toggle.active.chalten { background: #1a2e1a; border-color: #22c55e; color: #86efac; }
     .layer-toggle .toggle-dot { width: 9px; height: 9px; border-radius: 50%; background: #3b82f6; flex-shrink: 0; }
@@ -510,6 +516,10 @@
             <button class="layer-toggle" id="poiToggle">
               <span class="toggle-dot" style="background:#f59e0b"></span>
               <span id="poiToggleLabel">Ver puntos de interés</span>
+            </button>
+            <button class="layer-toggle" id="weatherAlertsToggle">
+              <span class="toggle-dot" style="background:#a855f7"></span>
+              <span id="weatherAlertsToggleLabel">Alertas de clima (48 h)</span>
             </button>
             <button class="layer-toggle" id="trailLayerToggle">
               <span class="toggle-dot"></span>
@@ -1318,6 +1328,7 @@
 
       initSatellitesLayer(map);
       initPoiLayer(map);
+      setTimeout(() => refreshWeatherAlerts(false), 1200);
 
       applyFilters();
       // Show every curated route on the main map by default (both sections).
@@ -1899,6 +1910,7 @@
       updateParkSatToggleLabel();
       updateSatellitesToggleLabel();
       updatePoiToggleLabel();
+      if (typeof updateWxLabel === 'function') updateWxLabel();
       updateTrailToggleLabel();
       if (typeof updateAppTrailToggleLabel === 'function') updateAppTrailToggleLabel();
       const savedPark = currentPark; // preserve user's selected park
@@ -2811,6 +2823,181 @@ ${trkpts}
     });
     updatePoiToggleLabel();
 
+    // ── Weather alerts on each trail (Open-Meteo, next 48 h) ─────────────────
+    // A badge over every trail with a thunderstorm, snowfall or dangerous
+    // gusts forecast today or tomorrow at its highest point. Same source and
+    // thresholds as the trail page's "Viento y clima" panel
+    // (src/services/weatherData.ts). One request covers up to 50 trails; the
+    // result is kept for 30 min (and in localStorage, so it survives a reload).
+    let wxPushedTrails = [];
+    let wxVisible = true;
+    let wxLoading = false;
+    let wxData = null;       // { [trailId]: daily }
+    let wxFetchedAt = 0;
+    let wxMarkers = [];
+    const WX_FRESH_MS = 30 * 60 * 1000;
+    const WX_CACHE_KEY = 'sliabh-wx-alerts-v1';
+    const wxBtn = document.getElementById('weatherAlertsToggle');
+    const wxLabel = document.getElementById('weatherAlertsToggleLabel');
+    try {
+      const c = JSON.parse(localStorage.getItem(WX_CACHE_KEY) || 'null');
+      if (c && c.data && c.at) { wxData = c.data; wxFetchedAt = c.at; }
+    } catch (e) { /* storage blocked: fetch fresh */ }
+
+    const wxEsc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+    // Every trail on the map, with the point the forecast is asked for: its
+    // highest recorded point (the summit decides the day), else the start.
+    function wxTrails() {
+      const byId = new Map();
+      [].concat(wxPushedTrails || [], chaltenTrails, barilocheTrails).forEach((t) => {
+        if (!t || !t.id || byId.has(t.id) || !Array.isArray(t.gpxTrack) || !t.gpxTrack.length) return;
+        let top = t.gpxTrack[0];
+        t.gpxTrack.forEach((pt) => {
+          if (typeof pt.ele === 'number' && (typeof top.ele !== 'number' || pt.ele > top.ele)) top = pt;
+        });
+        // The badge sits where the forecast is taken — the high point, where
+        // the danger is — which also keeps trails sharing a trailhead (all of
+        // El Chaltén's start in town) from stacking their badges.
+        byId.set(t.id, {
+          id: t.id, name: t.name,
+          qLat: top.lat, qLon: top.lon,
+          ele: typeof top.ele === 'number' ? top.ele : (t.max_altitude_m || null),
+        });
+      });
+      return [...byId.values()];
+    }
+
+    async function wxFetch(list) {
+      const out = {};
+      for (let i = 0; i < list.length; i += 50) {
+        const chunk = list.slice(i, i + 50);
+        const params = new URLSearchParams({
+          latitude: chunk.map((t) => t.qLat.toFixed(4)).join(','),
+          longitude: chunk.map((t) => t.qLon.toFixed(4)).join(','),
+          // 'nan' turns altitude downscaling off for a point with no elevation
+          elevation: chunk.map((t) => (t.ele != null ? Math.round(t.ele) : 'nan')).join(','),
+          daily: 'weather_code,wind_gusts_10m_max',
+          forecast_days: '2',
+          timezone: 'auto',
+          wind_speed_unit: 'kmh',
+        });
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?' + params);
+        if (!res.ok) throw new Error('Open-Meteo ' + res.status);
+        let data = await res.json();
+        if (!Array.isArray(data)) data = [data];
+        data.forEach((d, j) => { if (chunk[j] && d && d.daily) out[chunk[j].id] = d.daily; });
+      }
+      return out;
+    }
+
+    // Alerts per day for one trail, and the one that sets its badge:
+    // storm > extreme wind (>= 80 km/h) > snow > dangerous wind (>= 60 km/h).
+    function wxAlerts(daily) {
+      if (!daily || !Array.isArray(daily.time)) return null;
+      const days = [];
+      let top = null;
+      daily.time.forEach((date, i) => {
+        const code = daily.weather_code ? daily.weather_code[i] : null;
+        const gust = daily.wind_gusts_10m_max ? daily.wind_gusts_10m_max[i] : null;
+        const found = [];
+        if (typeof code === 'number' && code >= 95) found.push({ kind: 'storm', rank: 4 });
+        if (typeof gust === 'number' && gust >= 80) found.push({ kind: 'wind', rank: 3 });
+        if (typeof code === 'number' && ((code >= 71 && code <= 77) || code === 85 || code === 86)) found.push({ kind: 'snow', rank: 2 });
+        if (typeof gust === 'number' && gust >= 60 && gust < 80) found.push({ kind: 'wind', rank: 1 });
+        if (found.length) days.push({ day: i, gust, kinds: found.map((f) => f.kind) });
+        found.forEach((f) => { if (!top || f.rank > top.rank) top = f; });
+      });
+      return top ? { top, days } : null;
+    }
+
+    const WX_STYLE = {
+      storm: { icon: '⚡', bg: '#7c3aed' },
+      wind: { icon: '💨', bg: '#ef4444' },
+      snow: { icon: '❄️', bg: '#0ea5e9' },
+    };
+    function wxKindLabel(k) {
+      if (k === 'storm') return T('Tormenta eléctrica', 'Thunderstorm');
+      if (k === 'snow') return T('Nevada', 'Snowfall');
+      return T('Viento peligroso', 'Dangerous wind');
+    }
+
+    function wxPopupHtml(t, a) {
+      const dayName = (i) => (i === 0 ? T('Hoy', 'Today') : T('Mañana', 'Tomorrow'));
+      const lines = a.days.map((d) => {
+        const kinds = [...new Set(d.kinds)].map((k) => WX_STYLE[k].icon + ' ' + wxKindLabel(k)).join(' · ');
+        const gust = typeof d.gust === 'number' ? ' · ' + T('ráfagas', 'gusts') + ' ' + Math.round(d.gust) + ' km/h' : '';
+        return '<div><b>' + dayName(d.day) + ':</b> ' + kinds + gust + '</div>';
+      }).join('');
+      return '<div class="wx-pop"><b>' + wxEsc(t.name) + '</b>' + lines
+        + '<div class="wx-note">' + T('Pronóstico en el punto más alto · Open-Meteo', 'Forecast at the highest point · Open-Meteo') + '</div>'
+        + '<a href="/ruta/' + encodeURIComponent(t.id) + '" target="_top">' + T('Ver pronóstico de 3 días', 'See 3-day forecast') + ' →</a></div>';
+    }
+
+    function renderWeatherAlerts() {
+      wxMarkers.forEach((m) => m.remove());
+      wxMarkers = [];
+      if (wxVisible && wxData && mapLoaded) {
+        wxTrails().forEach((t) => {
+          const a = wxAlerts(wxData[t.id]);
+          if (!a) return;
+          const st = WX_STYLE[a.top.kind];
+          // An alert must stay readable even when the 3D terrain hides the
+          // trail behind a ridge (MapLibre dims covered markers to 0.2).
+          const el = document.createElement('div');
+          el.className = 'wx-badge';
+          el.style.background = st.bg;
+          el.textContent = st.icon;
+          el.title = wxKindLabel(a.top.kind);
+          const popup = new maplibregl.Popup({ offset: 18, maxWidth: '280px' });
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popup.setLngLat([t.qLon, t.qLat]).setHTML(wxPopupHtml(t, a)).addTo(map);
+          });
+          wxMarkers.push(new maplibregl.Marker({ element: el, anchor: 'bottom', offset: [0, -14], opacityWhenCovered: '1' }).setLngLat([t.qLon, t.qLat]).addTo(map));
+        });
+      }
+      updateWxLabel();
+    }
+
+    function updateWxLabel() {
+      if (!wxBtn) return;
+      wxBtn.classList.toggle('active', wxVisible);
+      if (!wxVisible) { wxLabel.textContent = T('Ver alertas de clima (48 h)', 'View weather alerts (48 h)'); return; }
+      if (wxLoading && !wxData) { wxLabel.textContent = T('Alertas de clima (cargando…)', 'Weather alerts (loading…)'); return; }
+      if (!wxData) { wxLabel.textContent = T('Alertas de clima: sin datos', 'Weather alerts: no data'); return; }
+      const n = wxMarkers.length;
+      wxLabel.textContent = n
+        ? T('Alertas de clima 48 h — ' + n + (n === 1 ? ' ruta' : ' rutas'), 'Weather alerts 48 h — ' + n + (n === 1 ? ' trail' : ' trails'))
+        : T('Alertas de clima: sin alertas en 48 h', 'Weather alerts: none in 48 h');
+    }
+
+    async function refreshWeatherAlerts(force) {
+      if (!mapLoaded || wxLoading || !wxVisible) { updateWxLabel(); return; }
+      const list = wxTrails();
+      if (!list.length) { updateWxLabel(); return; }
+      const missing = !wxData || list.some((t) => !wxData[t.id]);
+      if (!force && !missing && Date.now() - wxFetchedAt < WX_FRESH_MS) { renderWeatherAlerts(); return; }
+      wxLoading = true;
+      updateWxLabel();
+      try {
+        wxData = await wxFetch(list);
+        wxFetchedAt = Date.now();
+        try { localStorage.setItem(WX_CACHE_KEY, JSON.stringify({ at: wxFetchedAt, data: wxData })); } catch (e) { /* full or blocked */ }
+      } catch (e) {
+        // Best-effort: keep whatever was cached and leave the map alone.
+        console.warn('[weather alerts]', e);
+      }
+      wxLoading = false;
+      renderWeatherAlerts();
+    }
+
+    wxBtn.addEventListener('click', () => {
+      wxVisible = !wxVisible;
+      if (wxVisible) refreshWeatherAlerts(false); else renderWeatherAlerts();
+    });
+    updateWxLabel();
+
     let trailLayerVisible = false;
     const toggleBtn = document.getElementById('trailLayerToggle');
     const BARILOCHE_LAYERS = ['bariloche-trails-line', 'bariloche-clusters', 'bariloche-cluster-count', 'bariloche-unclustered'];
@@ -2892,6 +3079,8 @@ ${trkpts}
     // dedicated Bariloche / El Chaltén layers so nothing is drawn twice.
     function applyAppTrails(list) {
       if (!Array.isArray(list)) return;
+      wxPushedTrails = list;
+      if (mapLoaded) setTimeout(() => refreshWeatherAlerts(false), 300);
       const taken = new Set([].concat(
         barilocheTrails.map(t => t.id),
         chaltenTrails.map(t => t.id)
@@ -3199,6 +3388,7 @@ ${trkpts}
         updateParkSatToggleLabel();
         updateSatellitesToggleLabel();
         updatePoiToggleLabel();
+        if (typeof updateWxLabel === 'function') updateWxLabel();
         updateTrailToggleLabel();
         var savedPark = currentPark;
         applyFilters();
