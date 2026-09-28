@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { type HikeColors, type HikeTrail } from './HikeMode';
 import { useHikeStore } from '../../store/hikeStore';
 import { useLangStore } from '../../store/langStore';
@@ -20,6 +21,7 @@ interface Props {
 export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props) {
   const { t } = useLangStore();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   // The recording belongs to the app, not to this button: that is what lets
   // the screen come back on its own after the browser is killed.
   const start = useHikeStore((s) => s.start);
@@ -39,7 +41,14 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
     <>
       {variant === 'floating' ? (
         <View
-          style={[s.floatWrap, Platform.OS === 'web' && width < 720 && { bottom: 78 }]}
+          style={[
+            s.floatWrap,
+            // Web móvil: por encima de la barra de navegación inferior del
+            // sitio. App: por encima de la barra de gestos/botones de Android.
+            Platform.OS === 'web'
+              ? width < 720 && { bottom: 78 }
+              : { bottom: 22 + insets.bottom },
+          ]}
           pointerEvents="box-none"
         >
           <TouchableOpacity
