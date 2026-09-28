@@ -5,10 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  SafeAreaView,
   Platform,
   PermissionsAndroid,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { recordTrack } from '../../services/trackSync';
 import { useNetworkStore } from '../../store/networkStore';
@@ -141,6 +141,12 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
    * who was told to keep an eye on it.
    */
   const [screenHeld, setScreenHeld] = useState(false);
+  // El Modal usa statusBarTranslucent y el SafeAreaView de React Native no
+  // hace nada en Android: el encabezado (con el botón Detener) quedaba debajo
+  // de la barra de estado. Los márgenes se aplican a mano con los insets
+  // reales del teléfono, arriba y abajo.
+  const insets = useSafeAreaInsets();
+  const safeRoot = { paddingTop: insets.top, paddingBottom: insets.bottom };
   // What this exact browser can promise. Fixed for the life of the screen.
   const cap = React.useMemo(() => backgroundCapability(), []);
 
@@ -382,7 +388,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
 
     return (
       <Modal visible={visible} animationType="slide" statusBarTranslucent>
-        <SafeAreaView style={[hikeS.root, { backgroundColor: C.bg }]}>
+        <View style={[hikeS.root, safeRoot, { backgroundColor: C.bg }]}>
           <View style={hikeS.resultWrap}>
             <Ionicons name={copy.icon} size={44} color={copy.tone} />
             <Text style={[hikeS.resultTitle, { color: C.text }]}>{copy.title}</Text>
@@ -404,14 +410,14 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
               <Text style={hikeS.resultBtnTxt}>{t('Listo', 'Done')}</Text>
             </TouchableOpacity>
           </View>
-        </SafeAreaView>
+        </View>
       </Modal>
     );
   }
 
   return (
     <Modal visible={visible} animationType="slide" statusBarTranslucent>
-      <SafeAreaView style={[hikeS.root, { backgroundColor: C.bg }]}>
+      <View style={[hikeS.root, safeRoot, { backgroundColor: C.bg }]}>
         {/* Header */}
         <View style={[hikeS.header, { borderBottomColor: C.border }]}>
           <View style={hikeS.headerLeft}>
@@ -434,17 +440,6 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
               </View>
             )}
           </View>
-          <TouchableOpacity
-            style={[hikeS.stopBtn, { borderColor: '#ef4444', opacity: stopping ? 0.6 : 1 }]}
-            onPress={handleStop}
-            disabled={stopping}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="stop-circle-outline" size={16} color="#ef4444" />
-            <Text style={hikeS.stopBtnText}>
-              {stopping ? t('Guardando…', 'Saving…') : t('Detener', 'Stop')}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Map */}
@@ -643,7 +638,26 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
             <Text style={[hikeS.footerText, { color: C.muted, opacity: 0.7 }]}>{BUILD_LABEL}</Text>
           ) : null}
         </View>
-      </SafeAreaView>
+
+        {/* Detener: abajo y ancho, en la zona del pulgar. Arriba a la derecha
+            quedaba lejos de la mano (y en Android, pegado a la barra de
+            estado), justo el botón que se usa con guantes o cansado. */}
+        <View style={[hikeS.actionBar, { backgroundColor: C.bg }]}>
+          <TouchableOpacity
+            style={[hikeS.stopBtn, { opacity: stopping ? 0.6 : 1 }]}
+            onPress={handleStop}
+            disabled={stopping}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Detener y guardar el recorrido', 'Stop and save the hike')}
+          >
+            <Ionicons name="stop-circle" size={22} color="#fff" />
+            <Text style={hikeS.stopBtnText}>
+              {stopping ? t('Guardando…', 'Saving…') : t('Detener y guardar', 'Stop and save')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -686,12 +700,13 @@ const hikeS = StyleSheet.create({
     width: 8, height: 8, borderRadius: 4, backgroundColor: '#22c55e',
   },
   headerTitle: { fontSize: 12, fontWeight: '800', letterSpacing: 1.5 },
+  actionBar: { paddingHorizontal: 16, paddingTop: 4, paddingBottom: 12 },
   stopBtn: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8,
-    backgroundColor: 'rgba(239,68,68,0.1)',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    minHeight: 56, borderRadius: 16, paddingHorizontal: 20,
+    backgroundColor: '#dc2626',
   },
-  stopBtnText: { fontSize: 13, fontWeight: '700', color: '#ef4444' },
+  stopBtnText: { fontSize: 16, fontWeight: '800', color: '#fff', letterSpacing: -0.2 },
   // Five figures on a 390 px phone: the type shrinks and the dividers thin
   // out rather than letting "12'30\"" wrap mid-value. Mobile is the case that
   // matters — nobody checks their climb on a laptop halfway up a mountain.
