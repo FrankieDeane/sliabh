@@ -50,6 +50,10 @@ await check('initialize', async () => {
   assert.equal(r.serverInfo.name, 'sliabh-argentina-trails');
   assert.ok(r.capabilities.tools);
   assert.ok(r.instructions?.length > 0);
+  // Logo y descripción: lo que el cliente muestra junto al conector.
+  assert.ok(r.serverInfo.icons?.some((i) => i.src === 'https://sliabh.com.ar/mcp-icon-512.png' && i.mimeType === 'image/png'));
+  assert.ok(r.serverInfo.description?.length > 40);
+  assert.equal(r.serverInfo.websiteUrl, 'https://sliabh.com.ar/claude/');
 });
 
 let tools;

@@ -20,7 +20,19 @@ import {
 import { NATIONAL_PARKS, type ParkRegion } from './parks';
 
 export const SERVER_NAME = 'sliabh-argentina-trails';
-export const SERVER_VERSION = '1.0.0';
+export const SERVER_VERSION = '1.1.0';
+
+/** Lo que muestran los clientes MCP junto al nombre del conector. */
+export const SERVER_DESCRIPTION =
+  'Hiking trails of Argentina\'s 39 national parks — Patagonia, El Chaltén, Bariloche, Tierra del Fuego and more: ' +
+  'distance, elevation, duration, difficulty, season, permits and trailheads, in English or Spanish. ' +
+  '/ Rutas de trekking de los 39 parques nacionales de Argentina, en español o inglés.';
+
+/** Escudo de Sliabh (public/mcp-icon-*.png), para el ícono del conector. */
+export const SERVER_ICONS = [
+  { src: 'https://sliabh.com.ar/mcp-icon-512.png', mimeType: 'image/png', sizes: ['512x512'] },
+  { src: 'https://sliabh.com.ar/mcp-icon-128.png', mimeType: 'image/png', sizes: ['128x128'] },
+];
 
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
 
@@ -43,7 +55,14 @@ function fail(message: string) {
 
 export function createServer(): McpServer {
   const server = new McpServer(
-    { name: SERVER_NAME, title: 'Sliabh — Argentina National Parks Trails', version: SERVER_VERSION },
+    {
+      name: SERVER_NAME,
+      title: 'Sliabh — Argentina National Parks Trails',
+      version: SERVER_VERSION,
+      description: SERVER_DESCRIPTION,
+      websiteUrl: 'https://sliabh.com.ar/claude/',
+      icons: SERVER_ICONS,
+    },
     {
       instructions:
         'Hiking trail data for Argentina\'s 39 national parks and other mountain areas, from Sliabh (sliabh.com.ar). ' +

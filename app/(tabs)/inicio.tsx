@@ -18,6 +18,7 @@ import { useLangStore } from '../../src/store/langStore';
 import { WebFooter } from '../../src/components/layout/WebFooter';
 import { SponsorsAndAbout } from '../../src/components/sponsors/SponsorsAndAbout';
 import { NewsletterCard } from '../../src/components/home/NewsletterCard';
+import { ClaudeConnectorCard } from '../../src/components/home/ClaudeConnectorCard';
 import { SeoHead } from '../../src/components/ui/SeoHead';
 import { injectWebStyles } from '../../src/utils/webStyles';
 import { animateHeroEntrance, animateScrollReveal, animateParallaxHero } from '../../src/utils/gsapAnimations';
@@ -472,6 +473,11 @@ export default function InicioScreen() {
               ))}
             </View>
           </View>
+        </View>
+
+        {/* ── SLIABH EN CLAUDE (conector MCP) ── */}
+        <View style={{ paddingHorizontal: sidePad, paddingTop: 28 }}>
+          <ClaudeConnectorCard c={c} />
         </View>
 
         {/* ── FEATURE CARDS (Explorar / Mapas / Supervivencia) ── */}

@@ -27,7 +27,8 @@ const APP_COOLDOWN_MS: Record<'android' | 'desktop', number> = {
   desktop: 1000 * 60 * 60 * 24 * 3,
 };
 
-type Action = { path: string; labelEs: string; labelEn: string };
+/** `static`: a plain HTML page outside the SPA (e.g. /claude/), opened with a full navigation. */
+type Action = { path: string; labelEs: string; labelEn: string; static?: boolean };
 
 interface PromoMessage {
   id: string;
@@ -74,6 +75,17 @@ const MESSAGES: PromoMessage[] = [
     action: { path: '/planificar', labelEs: 'Planificar', labelEn: 'Start planning' },
   },
 ];
+
+// Lanzamiento del conector de Claude: se muestra primero, una sola vez por
+// navegador (hasta que se cierra o se toca), y después entra en la rotación.
+const CLAUDE_SEEN_KEY = 'sliabh-promo-claude-seen';
+const CLAUDE_CONNECTOR: PromoMessage = {
+  id: 'claude-connector',
+  icon: 'sparkles-outline',
+  es: 'Nuevo: Sliabh ahora está en Claude. Preguntale por las rutas de los 39 parques nacionales.',
+  en: 'New: Sliabh is now on Claude. Ask it about trails in Argentina’s 39 national parks.',
+  action: { path: '/claude/', labelEs: 'Conectar', labelEn: 'Connect', static: true },
+};
 
 const APP_ANDROID: PromoMessage = {
   id: 'app-android',
@@ -136,10 +148,15 @@ export function PromoBanner() {
     // Pick at random, skipping the message shown last time if there's more
     // than one to choose from — avoids an immediate repeat once the cooldown
     // has passed.
-    const pool = MESSAGES.length > 1 ? MESSAGES.filter((m) => m.id !== lastId) : MESSAGES;
-    const pick = appDue
-      ? (audience === 'android' ? APP_ANDROID : APP_DESKTOP)
-      : pool[Math.floor(Math.random() * pool.length)];
+    let claudeSeen = false;
+    try { claudeSeen = localStorage.getItem(CLAUDE_SEEN_KEY) === '1'; } catch {}
+    const rotation = [...MESSAGES, CLAUDE_CONNECTOR];
+    const pool = rotation.filter((m) => m.id !== lastId);
+    const pick = !claudeSeen
+      ? CLAUDE_CONNECTOR
+      : appDue
+        ? (audience === 'android' ? APP_ANDROID : APP_DESKTOP)
+        : pool[Math.floor(Math.random() * pool.length)];
 
     pickRef.current = pick;
   // eslint-disable-next-line react-hooks/exhaustive-deps -- picked once per load, at the width it opened with
@@ -179,6 +196,7 @@ export function PromoBanner() {
       localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()));
       if (message) localStorage.setItem(LAST_ID_KEY, message.id);
       if (message?.id.startsWith('app-')) localStorage.setItem(APP_LAST_SHOWN_KEY, String(Date.now()));
+      if (message?.id === CLAUDE_CONNECTOR.id) localStorage.setItem(CLAUDE_SEEN_KEY, '1');
     } catch {}
     setMessage(null);
   }
@@ -189,10 +207,12 @@ export function PromoBanner() {
       localStorage.setItem(LAST_SHOWN_KEY, String(Date.now()));
       localStorage.setItem(LAST_ID_KEY, message.id);
       if (message.id.startsWith('app-')) localStorage.setItem(APP_LAST_SHOWN_KEY, String(Date.now()));
+      if (message.id === CLAUDE_CONNECTOR.id) localStorage.setItem(CLAUDE_SEEN_KEY, '1');
     } catch {}
-    const path = message.action.path;
+    const { path, static: isStatic } = message.action;
     setMessage(null);
-    router.push(path as any);
+    if (isStatic && typeof window !== 'undefined') window.location.assign(path);
+    else router.push(path as any);
   }
 
   // Pointless on the page it links to.
