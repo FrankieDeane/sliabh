@@ -95,13 +95,21 @@ limit 50;
 
 ## Alertas (Zapier)
 
-`supabase/migrations/20260930_error_alerts.sql` escribe filas en `error_alerts`
-y un Zap de dos pasos (**Supabase → New Row** en `error_alerts` → **Gmail →
-Send Email** con `subject` y `body`) las manda por mail.
+Zapier no tiene integración con Supabase, así que las alertas salen por RSS:
+
+1. `supabase/migrations/20260930_error_alerts.sql` escribe filas en
+   `error_alerts`.
+2. La edge function `error-feed` las publica como un feed RSS privado
+   (`/functions/v1/error-feed?token=…`; el token está en
+   `private.settings`, clave `error_feed_token`).
+3. Un Zap gratis de dos pasos, **RSS by Zapier → New Item in Feed** y
+   **Gmail → Send Email**, manda cada item por mail.
 
 - **`new`**: la primera vez que un error le pasa a una persona real (los bots
   se ignoran). Si se repite, vuelve a avisar recién después de una hora.
 - **`digest`**: los lunes 07:52 (hora Argentina), el resumen de la semana,
   incluido "sin errores".
 
-Toda la lógica vive en la base; el Zap solo reenvía.
+Para rotar el token: `update private.settings set value =
+encode(extensions.gen_random_bytes(24), 'hex') where key = 'error_feed_token';`
+y actualizar la URL en el Zap.
