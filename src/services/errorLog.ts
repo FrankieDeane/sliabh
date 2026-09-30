@@ -42,6 +42,20 @@ export interface ErrorReport {
 
 const recent = new Map<string, number>();
 
+/**
+ * Crawlers render the page with requests blocked, so every fetch they refuse
+ * files a "crash" nobody can hit. Googlebot alone was most of the table.
+ */
+const BOT_UA = /bot|crawler|spider|GoogleOther|externalagent|Lighthouse|HeadlessChrome/i;
+function isBot(): boolean {
+  try {
+    return Platform.OS === 'web' && typeof navigator !== 'undefined'
+      && BOT_UA.test(navigator.userAgent ?? '');
+  } catch {
+    return false;
+  }
+}
+
 function readQueue(): ErrorReport[] {
   try {
     const raw = storage.getString(QUEUE_KEY);
@@ -88,6 +102,7 @@ export function reportError(
   extra?: { route?: string },
 ): void {
   try {
+    if (isBot()) return;
     const message = String(
       (error as { message?: string })?.message ?? error ?? 'unknown error',
     ).slice(0, 500);

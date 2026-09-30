@@ -122,7 +122,9 @@ export default function Root({ children }: PropsWithChildren) {
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function () {
-                  navigator.serviceWorker.register('/sw.js');
+                  // A crawler's renderer refuses service workers and rejects
+                  // with a bare "A network error occurred." — nothing to fix.
+                  navigator.serviceWorker.register('/sw.js').catch(function () {});
                 });
               }
             `,

@@ -92,3 +92,16 @@ limit 50;
   que se pueda escribir nada. Para eso hace falta un SDK nativo.
 - **Los stacks del bundle web están minificados.** Para leerlos con nombres
   reales haría falta subir los source maps a algún lado.
+
+## Alertas (Zapier)
+
+`supabase/migrations/20260930_error_alerts.sql` escribe filas en `error_alerts`
+y un Zap de dos pasos (**Supabase → New Row** en `error_alerts` → **Gmail →
+Send Email** con `subject` y `body`) las manda por mail.
+
+- **`new`**: la primera vez que un error le pasa a una persona real (los bots
+  se ignoran). Si se repite, vuelve a avisar recién después de una hora.
+- **`digest`**: los lunes 07:52 (hora Argentina), el resumen de la semana,
+  incluido "sin errores".
+
+Toda la lógica vive en la base; el Zap solo reenvía.
