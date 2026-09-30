@@ -34,6 +34,7 @@ create or replace function public.is_bot_user_agent(ua text)
 returns boolean
 language sql
 immutable
+set search_path = ''
 as $$
   select coalesce(ua, '') ~* '(bot|crawler|spider|GoogleOther|externalagent|Lighthouse|HeadlessChrome)';
 $$;
@@ -150,6 +151,7 @@ as $$
   delete from public.error_alerts where created_at < now() - interval '30 days';
 $$;
 
+revoke all on function public.queue_error_alert() from public, anon, authenticated;
 revoke all on function public.queue_error_digest() from public, anon, authenticated;
 revoke all on function public.prune_error_alerts() from public, anon, authenticated;
 
