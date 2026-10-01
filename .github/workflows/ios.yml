@@ -1,0 +1,132 @@
+# Compila la app de iPhone en una Mac de GitHub — la contraparte de android.yml.
+#
+# Prueba que el build nativo de iOS compila de punta a punta: genera ios/ desde
+# app.json (igual que Android, no está en el repo), instala los pods y compila
+# en Release para el simulador. El resultado (Sliabh.app) queda adjunto a la
+# corrida y se puede abrir en el simulador de Xcode.
+#
+# Lo que NO hace: un .ipa para instalar en un iPhone de verdad. Eso exige firmar
+# con una cuenta del Apple Developer Program (USD 99/año): sin ella iOS no deja
+# instalar nada fuera de la App Store / TestFlight. Con la cuenta, el camino es
+# EAS (`eas build -p ios --profile production` + `eas submit`), que maneja los
+# certificados solo. Ver docs/NATIVE-BUILD.md → iPhone.
+
+name: iOS app
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'Para qué es este build (aparece en el nombre de la corrida)'
+        required: false
+        default: 'prueba iPhone'
+  # Lo que puede romper el build nativo se compila en el PR que lo cambia; los
+  # PR comunes no pagan los ~25 minutos de Mac.
+  pull_request:
+    paths:
+      - 'app.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'eas.json'
+      - '.github/workflows/ios.yml'
+      - 'src/services/backgroundTrack*'
+      - 'src/services/liveTrack.ts'
+      - 'src/components/hike/**'
+  push:
+    branches:
+      - sliabh-index
+    paths:
+      - 'app.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'eas.json'
+      - '.github/workflows/ios.yml'
+      - 'src/services/backgroundTrack*'
+      - 'src/services/liveTrack.ts'
+      - 'src/components/hike/**'
+
+run-name: 'iOS app — ${{ inputs.note || github.ref_name }}'
+
+permissions:
+  contents: read
+
+jobs:
+  simulator-build:
+    # Expo SDK 52 pide Xcode 16.
+    runs-on: macos-15
+    timeout-minutes: 75
+    env:
+      # Misma config pública del cliente que Android y la web (ver netlify.toml).
+      EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
+      EXPO_PUBLIC_BUILD_ID: ${{ github.run_number }}-${{ github.sha }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check the Expo packages match the SDK
+        run: npm run check:sdk
+
+      - name: Generate the iOS project
+        run: npx expo prebuild -p ios --no-install
+
+      # Sin estas claves, grabar con el iPhone bloqueado deja de funcionar y
+      # nada más en el build lo diría (expo-location tira LocationUpdatesUnavailable).
+      - name: Confirm background location survived the merge
+        run: |
+          set -e
+          PLIST=ios/Sliabh/Info.plist
+          /usr/libexec/PlistBuddy -c 'Print :UIBackgroundModes' "$PLIST" | grep -q location
+          for key in NSLocationWhenInUseUsageDescription NSLocationAlwaysAndWhenInUseUsageDescription; do
+            /usr/libexec/PlistBuddy -c "Print :$key" "$PLIST" > /dev/null
+          done
+          echo "UIBackgroundModes=location + location usage strings present"
+
+      - name: Install pods
+        working-directory: ios
+        run: pod install
+
+      - name: Build for the simulator (Release, unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace ios/Sliabh.xcworkspace \
+            -scheme Sliabh \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build | tail -n 80
+
+      - name: Confirm the app points at the real Supabase project
+        run: |
+          set -e
+          APP=build/Build/Products/Release-iphonesimulator/Sliabh.app
+          REF=$(echo "$EXPO_PUBLIC_SUPABASE_URL" | sed -E 's#https://([^.]+)\..*#\1#')
+          if ! grep -q "$REF" "$APP/main.jsbundle"; then
+            echo "::error::The iOS bundle does not contain the Supabase project ($REF); login would not work."
+            exit 1
+          fi
+          echo "bundle points at $REF"
+
+      - name: Package the simulator app
+        run: |
+          cd build/Build/Products/Release-iphonesimulator
+          zip -qry "$GITHUB_WORKSPACE/sliabh-ios-simulator.zip" Sliabh.app
+          ls -lh "$GITHUB_WORKSPACE/sliabh-ios-simulator.zip"
+
+      - name: Attach it to this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: sliabh-ios-simulator
+          path: sliabh-ios-simulator.zip
+          retention-days: 30

@@ -14,6 +14,7 @@
     "userInterfaceStyle": "dark",
     "platforms": [
       "android",
+      "ios",
       "web"
     ],
     "web": {
@@ -45,6 +46,14 @@
         "backgroundColor": "#14532d"
       }
     },
+    "ios": {
+      "bundleIdentifier": "com.sliabh.app",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
     "plugins": [
       "expo-router",
       [
@@ -53,7 +62,9 @@
           "isAndroidBackgroundLocationEnabled": true,
           "isAndroidForegroundServiceEnabled": true,
           "locationAlwaysAndWhenInUsePermission": "Sliabh usa tu ubicación para grabar el recorrido mientras caminás, incluso con la pantalla apagada.",
-          "locationWhenInUsePermission": "Sliabh usa tu ubicación para mostrar dónde estás en el sendero y grabar tu recorrido."
+          "locationWhenInUsePermission": "Sliabh usa tu ubicación para mostrar dónde estás en el sendero y grabar tu recorrido.",
+          "isIosBackgroundLocationEnabled": true,
+          "locationAlwaysPermission": "Sliabh usa tu ubicación para seguir grabando el recorrido con la pantalla bloqueada."
         }
       ]
     ],
