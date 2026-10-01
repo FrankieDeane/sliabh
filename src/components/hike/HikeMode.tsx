@@ -7,6 +7,7 @@ import {
   Modal,
   Platform,
   PermissionsAndroid,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,8 +25,10 @@ import {
   startBackgroundTrack,
   stopBackgroundTrack,
   watchScreenPosition,
+  watchForegroundTrack,
   BACKGROUND_TRACKING_SUPPORTED,
 } from '../../services/backgroundTrack';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { readLiveSession } from '../../services/liveTrack';
 import { elevationStats, paceMinPerKm, formatPace, formatGain } from '../../utils/trackStats';
 import {
@@ -57,6 +60,8 @@ export interface HikeTrail {
   coordinates?: { lat: number; lon: number };
   gpxTrack?: Array<{ lat: number; lon: number }>;
 }
+
+const KEEP_AWAKE_TAG = 'sliabh-hike';
 
 /** Hikes recorded without picking a trail are filed under this id. */
 export const FREE_TRACK_ID = 'recorrido-libre';
@@ -122,6 +127,12 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   const [stopping, setStopping] = useState(false);
   const [satelliteView, setSatelliteView] = useState(false);
   const [gpsProblem, setGpsProblem] = useState<null | 'denied' | 'services-off' | 'searching'>(null);
+  /**
+   * iPhone with location "While Using" but not "Always": the hike still
+   * records, but only while the app is on screen. Shown as a warning with a
+   * shortcut to Settings, never as an error — the track is not lost.
+   */
+  const [foregroundOnly, setForegroundOnly] = useState(false);
   const [result, setResult] = useState<null | 'synced' | 'queued' | 'too-short'>(null);
   const [recovered, setRecovered] = useState(false);
   /** How long the app was in the background, when that gap cost us fixes. */
@@ -234,6 +245,20 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       // that file rather than owning the track itself.
       startBackgroundTrack(trail?.name ?? null).then((res: { started: boolean; reason?: string }) => {
         if (cancelled) return;
+        if (!res.started && res.reason === 'background-denied') {
+          // iOS without "Always": record from the screen instead of losing the
+          // hike, and keep the screen on, since a locked iPhone suspends the
+          // app and with it the GPS.
+          setForegroundOnly(true);
+          activateKeepAwakeAsync(KEEP_AWAKE_TAG).catch(() => {});
+          watchForegroundTrack((lat, lon, alt, accuracy) => {
+            if (!cancelled) updatePosition(lat, lon, alt, accuracy);
+          }).then((stop) => {
+            if (cancelled) stop();
+            else stopDot = stop;
+          });
+          return;
+        }
         if (!res.started) {
           setGpsProblem(res.reason === 'services-off' ? 'services-off' : 'denied');
           return;
@@ -292,6 +317,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
       }
       if (mirrorId) clearInterval(mirrorId);
       stopDot?.();
+      if (Platform.OS !== 'web') Promise.resolve(deactivateKeepAwake(KEEP_AWAKE_TAG)).catch(() => {});
       if (timerRef.current) clearInterval(timerRef.current);
       if (Platform.OS === 'web' && watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
@@ -321,6 +347,7 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
   // to the account later, so it still reaches the user's other devices.
   const handleStop = useCallback(async () => {
     if (posHistory.length < 2) {
+      sessionRef.current = null;
       clearLiveSession();
       setResult('too-short');
       return;
@@ -343,6 +370,10 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
     } finally {
       // recordTrack has written the hike to the upload queue, so the in-flight
       // copy has done its job and must not be offered for recovery later.
+      // Dropping the ref matters as much as the delete: the GPS watch is still
+      // running behind the result screen, and its next fix would otherwise
+      // write the session straight back to disk.
+      sessionRef.current = null;
       clearLiveSession();
       setStopping(false);
     }
@@ -510,15 +541,40 @@ export function HikeMode({ visible, trail, onClose, colors: C, t, resume }: Hike
                     'No GPS access. Turn on location and restart the hike to record your track.',
                   )
                 : gpsProblem === 'services-off'
-                ? t(
-                    'La ubicación del teléfono está apagada. Activala en los ajustes rápidos y volvé a iniciar la caminata.',
-                    "Your phone's location is off. Turn it on from quick settings and restart the hike.",
-                  )
+                ? Platform.OS === 'ios'
+                  ? t(
+                      'La localización del iPhone está apagada. Activala en Ajustes → Privacidad y seguridad → Localización y volvé a iniciar la caminata.',
+                      "Your iPhone's Location Services are off. Turn them on in Settings → Privacy & Security → Location Services and restart the hike.",
+                    )
+                  : t(
+                      'La ubicación del teléfono está apagada. Activala en los ajustes rápidos y volvé a iniciar la caminata.',
+                      "Your phone's location is off. Turn it on from quick settings and restart the hike.",
+                    )
                 : t(
                     'Buscando señal GPS. Puede tardar un minuto bajo el bosque o entre paredones; seguimos intentando.',
                     'Searching for a GPS fix. Under tree cover or between walls this can take a minute; still trying.',
                   )}
             </Text>
+          </View>
+        )}
+
+        {foregroundOnly && (
+          <View style={[hikeS.gapWarn, { borderTopColor: C.border }]}>
+            <Ionicons name="phone-portrait-outline" size={15} color={WARN_ICON} />
+            <Text style={hikeS.gpsWarnText}>
+              {t(
+                'Grabando solo con la pantalla encendida: la dejamos prendida. Para grabar con el iPhone bloqueado, en Ajustes → Sliabh → Ubicación elegí "Siempre".',
+                'Recording with the screen on only, so we keep it on. To record with the iPhone locked, go to Settings → Sliabh → Location and choose "Always".',
+              )}
+            </Text>
+            <TouchableOpacity
+              onPress={() => Linking.openSettings().catch(() => {})}
+              accessibilityRole="button"
+              accessibilityLabel={t('Abrir Ajustes', 'Open Settings')}
+              style={hikeS.settingsBtn}
+            >
+              <Text style={hikeS.settingsBtnTxt}>{t('Ajustes', 'Settings')}</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -731,6 +787,11 @@ const hikeS = StyleSheet.create({
     backgroundColor: WARN_BG,
   },
   gpsWarnText: { fontSize: 11.5, flex: 1, lineHeight: 16, color: WARN_TEXT, fontWeight: '600' },
+  settingsBtn: {
+    borderWidth: 1, borderColor: WARN_TEXT, borderRadius: 999,
+    paddingHorizontal: 12, paddingVertical: 6, minHeight: 32, justifyContent: 'center',
+  },
+  settingsBtnTxt: { color: WARN_TEXT, fontSize: 12, fontWeight: '800' },
   gapWarn: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingHorizontal: 16, paddingVertical: 10, borderTopWidth: 1,

@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import { readLiveSession, appendLivePoints } from './liveTrack';
@@ -82,13 +83,41 @@ if (!TaskManager.isTaskDefined(HIKE_LOCATION_TASK)) {
 
 export type BackgroundStartResult =
   | { started: true }
-  | { started: false; reason: 'foreground-denied' | 'services-off' | 'unavailable' };
+  | {
+      started: false;
+      /**
+       * `background-denied` is iOS only: the walker allowed location "While
+       * Using the App" but not "Always". The screen can still record (see
+       * HikeMode), just not with the phone locked.
+       */
+      reason: 'foreground-denied' | 'background-denied' | 'services-off' | 'unavailable';
+    };
+
+/**
+ * iOS has no foreground service. The only way an iPhone app keeps reading the
+ * GPS with the screen locked is "Always" location access plus the `location`
+ * background mode (app.json → expo-location → UIBackgroundModes), and
+ * expo-location refuses to start background updates without it. iOS shows the
+ * "Change to Always Allow" prompt right after "While Using", so this is one
+ * extra tap, not a trip to Settings — unless the walker already said no once,
+ * in which case only Settings can change it.
+ */
+async function ensureIosAlwaysPermission(): Promise<boolean> {
+  const current = await Location.getBackgroundPermissionsAsync();
+  if (current.status === 'granted') return true;
+  if (!current.canAskAgain) return false;
+  const asked = await Location.requestBackgroundPermissionsAsync();
+  return asked.status === 'granted';
+}
 
 export async function startBackgroundTrack(trailName?: string | null): Promise<BackgroundStartResult> {
   try {
     const fg = await Location.requestForegroundPermissionsAsync();
     if (fg.status !== 'granted') return { started: false, reason: 'foreground-denied' };
     if (!(await ensureLocationServices())) return { started: false, reason: 'services-off' };
+    if (Platform.OS === 'ios' && !(await ensureIosAlwaysPermission())) {
+      return { started: false, reason: 'background-denied' };
+    }
 
     // No "Allow all the time" needed: a foreground service started while the
     // app is on screen keeps its while-in-use location access after the screen
@@ -107,9 +136,11 @@ export async function startBackgroundTrack(trailName?: string | null): Promise<B
       // Tells the OS this is a walk, so its own filtering stops treating a
       // slow ascent as noise.
       activityType: Location.ActivityType.Fitness,
-      // Android pauses updates when it decides the user is still; on a slow
+      // iOS pauses updates when it decides the user is still; on a slow
       // ascent or a long rest that silently truncates the track.
       pausesUpdatesAutomatically: false,
+      // iOS: the blue status-bar pill, the iPhone's equivalent of the Android
+      // notification — the walker can see at a glance that it is recording.
       showsBackgroundLocationIndicator: true,
       foregroundService: {
         notificationTitle: trailName
@@ -136,6 +167,8 @@ export async function startBackgroundTrack(trailName?: string | null): Promise<B
 export async function ensureLocationServices(): Promise<boolean> {
   try {
     if (await Location.hasServicesEnabledAsync()) return true;
+    // iOS has no in-app switch for this: only Settings can turn it on.
+    if (Platform.OS !== 'android') return false;
     await Location.enableNetworkProviderAsync();
     return await Location.hasServicesEnabledAsync();
   } catch {
@@ -157,6 +190,26 @@ export async function watchScreenPosition(onFix: (lat: number, lon: number) => v
     const sub = await Location.watchPositionAsync(
       { accuracy: Location.Accuracy.High, timeInterval: 3000, distanceInterval: 2 },
       (loc) => onFix(loc.coords.latitude, loc.coords.longitude),
+    );
+    return () => sub.remove();
+  } catch {
+    return () => {};
+  }
+}
+
+/**
+ * Recording with the app on screen only — the fallback when iOS has
+ * "While Using" but not "Always". Unlike watchScreenPosition it never replays
+ * the last known fix (it may be minutes old and far away): every point it
+ * delivers is live, so the caller can append it to the track.
+ */
+export async function watchForegroundTrack(
+  onFix: (lat: number, lon: number, alt: number | null, accuracy: number | null) => void,
+): Promise<() => void> {
+  try {
+    const sub = await Location.watchPositionAsync(
+      { accuracy: ACCURACY, timeInterval: INTERVAL_MS, distanceInterval: DISTANCE_M },
+      (loc) => onFix(loc.coords.latitude, loc.coords.longitude, loc.coords.altitude, loc.coords.accuracy),
     );
     return () => sub.remove();
   } catch {

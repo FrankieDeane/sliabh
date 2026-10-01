@@ -15,7 +15,7 @@
 
 export type BackgroundStartResult =
   | { started: true }
-  | { started: false; reason: 'foreground-denied' | 'services-off' | 'unavailable' | 'not-applicable' };
+  | { started: false; reason: 'foreground-denied' | 'background-denied' | 'services-off' | 'unavailable' | 'not-applicable' };
 
 export async function startBackgroundTrack(_trailName?: string | null): Promise<BackgroundStartResult> {
   return { started: false, reason: 'not-applicable' };
@@ -29,6 +29,13 @@ export async function ensureLocationServices(): Promise<boolean> {
 
 /** The web page reads the position itself (HikeMode's watchPosition). */
 export async function watchScreenPosition(_onFix: (lat: number, lon: number) => void): Promise<() => void> {
+  return () => {};
+}
+
+/** Native-only fallback (iOS without "Always"); the web records in HikeMode itself. */
+export async function watchForegroundTrack(
+  _onFix: (lat: number, lon: number, alt: number | null, accuracy: number | null) => void,
+): Promise<() => void> {
   return () => {};
 }
 

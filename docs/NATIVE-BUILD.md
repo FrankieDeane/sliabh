@@ -128,3 +128,77 @@ La web no se queda sin nada: cada navegador recibe **su** máximo y **su**
 instrucción, medido en el dispositivo y no supuesto por el nombre del
 navegador. Está en `src/services/backgroundCapability.web.ts` y documentado en
 [`OFFLINE.md`](./OFFLINE.md).
+
+## iPhone
+
+La app de iPhone es **el mismo código** que la de Android: las mismas
+pantallas, el mismo archivo de sesión en disco, la misma cola de subida y la
+misma sincronización. Lo único que cambia es cómo el sistema deja grabar con
+la pantalla bloqueada.
+
+| | Android | iPhone |
+| --- | --- | --- |
+| Qué mantiene vivo el GPS | foreground service + notificación | modo de fondo `location` + barra azul arriba |
+| Permiso necesario | "Mientras se usa la app" alcanza | **"Siempre"** |
+| Si el permiso no alcanza | — | graba igual, con la pantalla encendida (la app la mantiene prendida) y avisa cómo pasar a "Siempre" |
+| Instalación | APK directo, sin cuenta | TestFlight o App Store: **requiere Apple Developer Program** |
+
+### El permiso "Siempre"
+
+iOS no tiene foreground service: lo único que deja a una app leer el GPS con
+el iPhone bloqueado es el permiso de ubicación **"Siempre"** más el modo de
+fondo `location` (`app.json` → plugin `expo-location` →
+`isIosBackgroundLocationEnabled`). `expo-location` se niega a arrancar la
+grabación en segundo plano sin ese permiso.
+
+La app lo pide en dos pasos, con los diálogos del sistema: primero "Mientras
+se usa la app" y enseguida "Cambiar a Permitir siempre". Si el caminante dice
+que no, **la caminata no se pierde**: `HikeMode` graba desde la pantalla, la
+mantiene prendida (`expo-keep-awake`) y muestra un aviso con un botón que abre
+Ajustes → Sliabh → Ubicación.
+
+### Comprobar que compila (sin cuenta, desde GitHub)
+
+**Actions → iOS app → Run workflow.** En una Mac de GitHub se genera `ios/`
+desde `app.json`, se instalan los pods y la app se compila completa para el
+simulador. También corre solo en cada PR que toca algo nativo. El workflow
+falla si desaparecen el modo de fondo `location` o los textos de permiso del
+`Info.plist`. El `Sliabh.app` resultante queda adjunto a la corrida y se abre
+en el simulador de Xcode.
+
+### Ponerla en un iPhone de verdad
+
+Apple no deja instalar apps fuera de la App Store o TestFlight sin firmarlas,
+y para firmar hace falta una cuenta del **Apple Developer Program (USD 99 por
+año)**, a nombre tuyo o de una empresa. Con la cuenta:
+
+```bash
+npm install -g eas-cli
+eas login
+# TestFlight: la forma de probarla en tu iPhone y en los de amigos
+eas build -p ios --profile production    # EAS crea los certificados solo
+eas submit -p ios                        # la sube a App Store Connect
+```
+
+En App Store Connect, la build aparece en TestFlight en unos minutos. Los
+testers instalan la app TestFlight y abren el link de invitación. Para la
+App Store pública, desde la misma build se completa la ficha y se manda a
+revisión.
+
+En la ficha de revisión de Apple, explicá el uso de la ubicación en segundo
+plano: *"Graba el recorrido de una caminata de montaña mientras el teléfono
+está bloqueado en el bolsillo. La grabación la inicia y la detiene el usuario,
+y solo corre durante la caminata."* Apple rechaza las apps que piden "Siempre"
+sin una razón visible para el usuario.
+
+Para instalar sin TestFlight en iPhones puntuales (ad-hoc), registrá cada uno
+con `eas device:create` y usá `eas build -p ios --profile preview`.
+
+### Probarla en el cerro
+
+Mismo protocolo que en Android, con dos diferencias:
+
+1. Cuando pida ubicación, elegí **"Permitir mientras se usa la app"** y en el
+   segundo diálogo **"Cambiar a Permitir siempre"**.
+2. Mientras graba, arriba a la izquierda tiene que aparecer la **barra azul**
+   de ubicación. Si no está, no está grabando en segundo plano.
