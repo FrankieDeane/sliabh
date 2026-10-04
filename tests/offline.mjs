@@ -407,6 +407,53 @@ try {
 
     await agentCtx.close();
   }
+
+  // ── Navigation menus ───────────────────────────────────────────────────
+  // The menus are <Link asChild> around a TouchableOpacity so Google can
+  // follow them. Radix's Slot merges the child's `style` with an object spread,
+  // so an array style there becomes {0: …, 1: …} and the browser throws
+  // "Failed to set an indexed property [0] on CSSStyleDeclaration" — the whole
+  // app fell to the error screen the moment the hamburger was tapped, and
+  // typecheck, lint and every other test stayed green.
+  console.log('\nnavigation menus');
+  async function menuPage(width, height, mobile) {
+    const menuCtx = await browser.newContext({ viewport: { width, height }, hasTouch: mobile, isMobile: mobile });
+    const menuPage = await menuCtx.newPage();
+    menuPage.crashes = [];
+    menuPage.on('pageerror', (e) => menuPage.crashes.push(e.message));
+    await menuPage.goto(base + '/', { waitUntil: 'domcontentloaded' });
+    await menuPage.getByText(/^Acepto$/).first().waitFor({ timeout: 15_000 }).catch(() => {});
+    await dismissBanners(menuPage);
+    return { menuCtx, menuPage };
+  }
+  const pathOf = (p) => new URL(p.url()).pathname;
+  /** A click that reports instead of throwing, so a broken menu is a FAIL line and not a stack trace. */
+  const tap = (locator) => locator.click({ timeout: 8_000 }).then(() => true, () => false);
+  const waitPath = (p, want) => waitFor(p, `location.pathname === ${JSON.stringify(want)}`, 10_000);
+
+  const phone = await menuPage(390, 844, true);
+  const mp = phone.menuPage;
+  await tap(mp.locator('[aria-label="Open menu"]'));
+  await mp.waitForTimeout(800);
+  check('phone: opening the menu does not crash the app',
+    (await mp.getByText('Algo salió mal').count()) === 0 && mp.crashes.length === 0,
+    mp.crashes[0] || '');
+  const drawerHrefs = await mp.locator('a[href^="/"]').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
+  check('phone: the menu items are real <a href> links',
+    ['/rutas', '/mapas', '/faq', '/supervivencia'].every((h) => drawerHrefs.includes(h)),
+    'a menu of buttons gives Google nothing to follow');
+  await tap(mp.locator('a[href="/rutas"]', { hasText: 'Rutas' }).last());
+  check('phone: tapping "Rutas" in the menu opens /rutas', await waitPath(mp, '/rutas'), pathOf(mp));
+  await tap(mp.locator('a[href="/mapas"]').filter({ visible: true }).last());
+  check('phone: the bottom bar opens /mapas', await waitPath(mp, '/mapas'), pathOf(mp));
+  check('phone: no uncaught errors while navigating', mp.crashes.length === 0, mp.crashes[0] || '');
+  await phone.menuCtx.close();
+
+  const desk = await menuPage(1280, 800, false);
+  await tap(desk.menuPage.locator('a[href="/faq"]').first());
+  check('desktop: the top menu opens /faq', await waitPath(desk.menuPage, '/faq'), pathOf(desk.menuPage));
+  check('desktop: no uncaught errors while navigating', desk.menuPage.crashes.length === 0, desk.menuPage.crashes[0] || '');
+  await desk.menuCtx.close();
 } finally {
   await browser.close();
   server.close();

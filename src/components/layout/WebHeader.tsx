@@ -312,7 +312,11 @@ export function WebHeader() {
                   const item = (
                     <TouchableOpacity
                       key={n.labelEs}
-                      style={[styles.drawerItem, active && { backgroundColor: isDark ? 'rgba(34,197,94,0.08)' : 'rgba(22,163,74,0.07)' }]}
+                      // Aplanado a propósito: el hijo de un <Link asChild> pasa por el Slot de
+                      // Radix, que fusiona el style con un spread de objeto. Una lista de estilos
+                      // queda como {0: …, 1: …} y el navegador tira "Failed to set an indexed
+                      // property [0] on CSSStyleDeclaration": se caía toda la app al abrir el menú.
+                      style={StyleSheet.flatten([styles.drawerItem, active && { backgroundColor: isDark ? 'rgba(34,197,94,0.08)' : 'rgba(22,163,74,0.07)' }])}
                       onPress={n.scrollTo ? () => navigate(navHref(n.route, lang), n.scrollTo) : undefined}
                       activeOpacity={0.75}
                     >
