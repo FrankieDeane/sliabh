@@ -13,6 +13,7 @@ import { ARGENTINA_TRAILS, ArgentinaTrail } from '../../src/data/argentinaTrails
 import { usePlannerStore } from '../../src/store/plannerStore';
 import { useLangStore, Lang } from '../../src/store/langStore';
 import { downloadGpx } from '../../src/utils/gpx';
+import { RouteSuggest } from '../../src/components/planner/RouteSuggest';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -521,6 +522,7 @@ export default function PlanificarScreen() {
           )}
         </>
       )}
+      <RouteSuggest c={c} />
       <View style={{ height: 64 }} />
       </View>
       {Platform.OS === 'web' && <WebFooter />}

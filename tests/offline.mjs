@@ -294,6 +294,41 @@ try {
   check('it lists what is waiting to upload',
     (await page.getByText(/esperando subir|waiting to upload/i).count()) > 0);
 
+  // ── 6b. "Which way do I go?" is answered on the device ────────────────
+  //
+  // The route suggester has to work exactly where it is needed: with no
+  // signal. From the GPS (still on the Fitz Roy trailhead) to a lake, and
+  // then along an OpenStreetMap trail, whose data must carry the credit.
+  console.log('\nroute suggestion');
+  await page.goto(base + '/planificar', { waitUntil: 'domcontentloaded' });
+  await waitFor(page, () => !!document.querySelector('[data-testid="route-gps"]'));
+  async function pickPlace(button, query) {
+    await page.locator(`[data-testid="${button}"]`).click();
+    await page.locator('[data-testid="place-search"]').fill(query);
+    await page.waitForTimeout(300);
+    await page.locator('[data-testid="place-item"]').first().click();
+    await page.waitForTimeout(300);
+  }
+  await page.locator('[data-testid="route-gps"]').click();
+  await waitFor(page, () => /Mi ubicación/.test(document.body.innerText), 10_000);
+  check('the start can come from the GPS with no signal',
+    (await page.getByText(/^Mi ubicación$/).count()) > 0);
+  await pickPlace('route-to', 'laguna de los tres');
+  await page.locator('[data-testid="route-run"]').click();
+  const found = await waitFor(page, () => !!document.querySelector('[data-testid="route-result"]'), 10_000);
+  check('a route is suggested offline', found,
+    found ? '' : await page.locator('[data-testid="route-fail"]').innerText().catch(() => 'no answer'));
+  check('it is labelled as an unverified suggestion',
+    (await page.getByText(/sin verificar/).count()) > 0);
+  check('a curated-only route does not show the OpenStreetMap credit',
+    (await page.locator('[data-testid="route-osm-credit"]').count()) === 0);
+  await pickPlace('route-from', 'trailhead — ruta j');
+  await pickPlace('route-to', 'laguna esmeralda — orilla');
+  await page.locator('[data-testid="route-run"]').click();
+  await waitFor(page, () => !!document.querySelector('[data-testid="route-result"]'), 10_000);
+  check('an OpenStreetMap trail carries the © OpenStreetMap credit',
+    (await page.locator('[data-testid="route-osm-credit"]').count()) > 0);
+
   // ── 7. A share link opened with no signal must say so, not spin ────────
   console.log('\nshared hike link');
   await page.goto(base + '/recorrido/sin-conexion-test', { waitUntil: 'domcontentloaded' });

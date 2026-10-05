@@ -1260,6 +1260,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A loop trail climbing through lenga and ñire forest to Laguna Esmeralda, a turquoise glacial lake ringed by mountains. Snow is common on the upper stretch. One of Ushuaia\'s favorites.',
     trailhead: 'Ruta J (camino a Valle Andorra), Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.721948, lon: -68.121951, name: 'Trailhead — Ruta J' },
       { lat: -54.719955, lon: -68.123893, name: 'Cruce del arroyo' },
@@ -1293,6 +1294,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A short trail to the quiet Laguna Negra inside the park. Great for families, with subantarctic forest and wildlife typical of the Beagle Channel.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.846914, lon: -68.581049, name: 'Trailhead — PN Tierra del Fuego' },
       { lat: -54.846581, lon: -68.581937, name: 'Orilla Laguna Negra' },
@@ -1325,6 +1327,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail to Hito XXIV, the point on the shore of Lago Acigami that marks the Chilean border. Lenga forest and lake views. One of the symbols of the end of the world.',
     trailhead: 'Lago Acigami, PN Tierra del Fuego',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.830251, lon: -68.563004, name: 'Trailhead — Lago Acigami' },
       { lat: -54.824203, lon: -68.565929, name: 'Bosque costero' },
@@ -1357,6 +1360,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A short trail to Laguna Verde, a small emerald-water lagoon inside the park. Subantarctic forest, peat-bog flora, and excellent birdwatching.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.844743, lon: -68.563620, name: 'Trailhead' },
       { lat: -54.846245, lon: -68.565216, name: 'Arroyo del bosque' },
@@ -1389,6 +1393,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail to the park\'s main lookout with panoramic views of the Beagle Channel and the mountains of Isla Navarino. Short, but with a good final climb.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.852580, lon: -68.578705, name: 'Trailhead' },
       { lat: -54.849125, lon: -68.582178, name: 'Subida por el bosque' },
@@ -1421,6 +1426,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail to the coastal beacon on the shore of the Beagle Channel. Direct views of the channel, peat-bog flora, and subantarctic forest. Popular with birdwatchers.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.860818, lon: -68.560364, name: 'Trailhead' },
       { lat: -54.860114, lon: -68.562017, name: 'Costa del Canal Beagle' },
@@ -1453,6 +1459,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'An educational trail through an active peat bog in the park. Wooden boardwalks over the wetland, carnivorous plants, and a unique look at the subantarctic ecosystem.',
     trailhead: 'Acceso PN Tierra del Fuego, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.851786, lon: -68.588056, name: 'Trailhead' },
       { lat: -54.852325, lon: -68.588921, name: 'Pasarela sobre turbera' },
@@ -1485,6 +1492,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A coastal trail along the shore of the Beagle Channel inside the park, passing pebble beaches and lenga forest with views of Isla Navarino. From Bahía Ensenada to Bahía Lapataia.',
     trailhead: 'Bahía Ensenada, PN Tierra del Fuego',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.857130, lon: -68.520746, name: 'Bahía Ensenada — Inicio' },
       { lat: -54.851425, lon: -68.497041, name: 'Primera playa Canal Beagle' },
@@ -1517,6 +1525,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A coastal trail through Ensenada Zaratiegui with views of the Beagle Channel. Subantarctic lenga and ñire forest, pebble beaches, and seabird and sea lion sightings.',
     trailhead: 'Ensenada Zaratiegui, PN Tierra del Fuego',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.831200, lon: -68.491088, name: 'Ensenada Zaratiegui — Inicio' },
       { lat: -54.830738, lon: -68.489871, name: 'Bosque de lenga costero' },
@@ -1549,6 +1558,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail along the Río Pipo, one of the park\'s most scenic rivers. Lenga forest, typical flora, and the famous End of the World Train departs from here.',
     trailhead: 'Estación del Fin del Mundo, PN Tierra del Fuego',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.814959, lon: -68.479442, name: 'Estación Fin del Mundo — Inicio' },
       { lat: -54.817285, lon: -68.477723, name: 'Orilla del Río Pipo' },
@@ -1581,6 +1591,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A demanding trek across the Sierra Valdivieso to Laguna del Caminante, a high-mountain glacial lake. Technical passes, frequent snow, and exceptional views of the valleys and the Beagle Channel. Requires route-finding on open terrain.',
     trailhead: 'Valle Andorra, Ushuaia',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.753244, lon: -68.416918, name: 'Trailhead — Valle Andorra' },
       { lat: -54.752559, lon: -68.383410, name: 'Bosque de lenga bajo' },
@@ -1613,6 +1624,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail to the Lagunas de los Cinco Hermanos, a chain of five glacial lakes ringed by lenga forest and snow-capped mountains. One of the most scenic treks near Ushuaia.',
     trailhead: 'Ushuaia (acceso por Ruta J)',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.770919, lon: -68.199913, name: 'Trailhead — Ushuaia' },
       { lat: -54.769628, lon: -68.193360, name: 'Bosque de lenga' },
@@ -1645,6 +1657,7 @@ From the summit (1,860 m) the view takes in Lagos Lácar, Nonthué and Queñi al
     description_en:
       'A trail to Laguna Submarino, named for its distinctive shape visible from the surrounding summits. Lenga forest, peat bogs, and panoramic views of Ushuaia and the Beagle Channel.',
     trailhead: 'Ushuaia (acceso por Ruta al Valle)',
+    source: 'OpenStreetMap (ODbL)',
     gpxTrack: [
       { lat: -54.722085, lon: -68.070324, name: 'Trailhead — Ushuaia' },
       { lat: -54.728407, lon: -68.072447, name: 'Bosque de lenga inicial' },

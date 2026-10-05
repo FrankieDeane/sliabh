@@ -14,8 +14,9 @@
     "check:sdk": "node scripts/check-sdk-versions.mjs",
     "check:newarch": "node scripts/check-new-arch.mjs",
     "validate:track": "node --experimental-strip-types scripts/validate-track-stats.mjs",
+    "validate:routing": "node --experimental-strip-types scripts/validate-routing.mjs",
     "test:offline": "node tests/offline.mjs",
-    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline && npm run test:mcp && npm run test:errors",
+    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run validate:routing && npm run test:offline && npm run test:mcp && npm run test:errors",
     "test:mcp": "node scripts/test-mcp.mjs",
     "test:errors": "node scripts/test-error-noise.mjs"
   },
