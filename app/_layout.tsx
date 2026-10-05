@@ -5,7 +5,7 @@ import { trackPageview } from '../src/utils/overlayGate';
 import { StatusBar } from 'expo-status-bar';
 import { useThemeStore } from '../src/store/themeStore';
 import { useNetworkStore } from '../src/store/networkStore';
-import { Platform, View, Text, TouchableOpacity } from 'react-native';
+import { AppState, Platform, View, Text, TouchableOpacity } from 'react-native';
 import { WebHeader } from '../src/components/layout/WebHeader';
 import { PromoBanner } from '../src/components/ui/PromoBanner';
 import { CookieBanner } from '../src/components/ui/CookieBanner';
@@ -15,6 +15,7 @@ import { SiteHead } from '../src/components/ui/SiteHead';
 import { injectWebStyles } from '../src/utils/webStyles';
 import { supabase } from '../src/services/supabase';
 import { syncPendingTracks } from '../src/services/trackSync';
+import { useTrackQueueStore } from '../src/store/trackQueueStore';
 import { InstallPrompt } from '../src/components/offline/InstallPrompt';
 import { HikeHost } from '../src/components/hike/HikeHost';
 import { MobileWebNav } from '../src/components/layout/MobileWebNav';
@@ -182,6 +183,7 @@ function NetworkWatcher() {
  */
 function TrackSyncWatcher() {
   const online = useNetworkStore((s) => s.isOnline);
+  const hasPending = useTrackQueueStore((s) => s.pending.length > 0);
 
   useEffect(() => {
     if (!online) return;
@@ -193,6 +195,26 @@ function TrackSyncWatcher() {
     });
     return () => sub.subscription.unsubscribe();
   }, [online]);
+
+  // "Conectado" no es lo mismo que "con internet". En la montaña el teléfono
+  // suele quedar enganchado a una antena con una rayita (o a un wifi sin
+  // salida): NetInfo dice isConnected = true todo el tiempo, la subida falla
+  // por timeout y `online` nunca cambia, así que el efecto de arriba no vuelve
+  // a correr. El recorrido quedaba en el teléfono hasta reabrir la app. Mientras
+  // haya algo en la cola, se reintenta al volver la app a primer plano y cada
+  // minuto; con la cola vacía no hay timer ni listener.
+  useEffect(() => {
+    if (!online || !hasPending) return;
+    const retry = () => syncPendingTracks().catch(() => {});
+    const timer = setInterval(retry, 60_000);
+    const appState = AppState.addEventListener('change', (state) => {
+      if (state === 'active') retry();
+    });
+    return () => {
+      clearInterval(timer);
+      appState.remove();
+    };
+  }, [online, hasPending]);
 
   return null;
 }
