@@ -4,7 +4,7 @@
  *
  * The spot is stored as a side plus a fraction of the free height, not as
  * pixels: a position saved in portrait on a small phone still lands somewhere
- * sensible after rotating, on a tablet, or in a browser window of any size.
+ * sensible after rotating, on a tablet, or in split screen.
  */
 
 export type FloatSide = 'left' | 'center' | 'right';

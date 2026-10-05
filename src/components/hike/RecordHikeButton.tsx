@@ -61,7 +61,21 @@ export function RecordHikeButton({ colors, trail, variant = 'floating' }: Props)
 
   return (
     <>
-      {variant === 'floating' ? (
+      {variant === 'floating' && Platform.OS === 'web' ? (
+        // The website keeps the fixed pill: moving it is an app feature.
+        <View style={s.webFloatWrap} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={openHike}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={label}
+            style={[s.floatBtn, { backgroundColor: colors.accent }]}
+          >
+            <Ionicons name="radio-button-on" size={18} color="#04210f" />
+            <Text style={s.floatText}>{label}</Text>
+          </TouchableOpacity>
+        </View>
+      ) : variant === 'floating' ? (
         <FloatingRecordButton label={label} color={colors.accent} onPress={openHike} />
       ) : (
         <TouchableOpacity
@@ -116,20 +130,18 @@ function FloatingRecordButton({
     return floatBounds(
       area,
       btn,
-      // Web: the page has no notch, and the site's bottom bar is the margin.
-      Platform.OS === 'web' ? { top: 0, bottom: 0, left: 0, right: 0 } : insets,
-      { side: 12, top: 12, bottom: Platform.OS === 'web' ? 78 : 22 },
+      insets,
+      { side: 12, top: 12, bottom: 22 },
     );
   }, [area, btn, insets]);
 
-  const native = Platform.OS !== 'web';
   const pos = React.useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const point = React.useRef({ x: 0, y: 0 });
   const boundsRef = React.useRef(bounds);
   boundsRef.current = bounds;
 
   // Re-place the button whenever the screen changes size or shape (rotation,
-  // split screen, a browser window being resized) so it is never left off it.
+  // split screen) so it is never left off it.
   React.useEffect(() => {
     if (!bounds || dragging) return;
     point.current = spotToPoint(spot, bounds);
@@ -141,9 +153,8 @@ function FloatingRecordButton({
   onPressRef.current = onPress;
   const moved = React.useRef(false);
 
-  // One responder handles both the tap and the drag. A child Touchable would
-  // keep the touch to itself in the browser, so the button could never move
-  // there; this way phone app and website behave the same.
+  // One responder handles both the tap and the drag, so a drag never ends in
+  // an accidental start of the recording.
   const responder = React.useMemo(
     () =>
       PanResponder.create({
@@ -190,7 +201,7 @@ function FloatingRecordButton({
     point.current = target;
     Animated.spring(pos, {
       toValue: target,
-      useNativeDriver: native,
+      useNativeDriver: true,
       friction: 7,
       tension: 60,
     }).start(() => setDragging(false));
@@ -231,7 +242,6 @@ function FloatingRecordButton({
             opacity: !bounds ? 0 : pressed && !dragging ? 0.85 : 1,
             transform: [...pos.getTranslateTransform(), { scale: dragging ? 1.06 : 1 }],
           },
-          Platform.OS === 'web' && ({ cursor: dragging ? 'grabbing' : 'pointer', userSelect: 'none', touchAction: 'none' } as any),
         ]}
       >
         <Ionicons name="radio-button-on" size={18} color="#04210f" />
@@ -244,8 +254,17 @@ function FloatingRecordButton({
 }
 
 const s = StyleSheet.create({
+  webFloatWrap: {
+    // Above the site's bottom navigation bar on a phone.
+    position: 'fixed' as any,
+    left: 0,
+    right: 0,
+    bottom: 78,
+    alignItems: 'center',
+    zIndex: 50,
+  },
   floatArea: {
-    position: Platform.OS === 'web' ? ('fixed' as any) : 'absolute',
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
