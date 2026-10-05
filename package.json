@@ -15,8 +15,9 @@
     "check:newarch": "node scripts/check-new-arch.mjs",
     "validate:track": "node --experimental-strip-types scripts/validate-track-stats.mjs",
     "test:offline": "node tests/offline.mjs",
-    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline && npm run test:mcp",
-    "test:mcp": "node scripts/test-mcp.mjs"
+    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run test:offline && npm run test:mcp && npm run test:errors",
+    "test:mcp": "node scripts/test-mcp.mjs",
+    "test:errors": "node scripts/test-error-noise.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",

@@ -48,6 +48,9 @@ jobs:
       - name: MCP server
         run: npm run test:mcp
 
+      - name: Error reporting filters
+        run: npm run test:errors
+
       - name: Build the web bundle
         run: npx expo export -p web
 

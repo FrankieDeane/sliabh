@@ -58,7 +58,32 @@ const jsonLd = JSON.stringify({
   ],
 });
 
+// La fuente de íconos (Ionicons, 440 KB) es lo primero que necesita cada página
+// y el navegador solo la descubre cuando el JavaScript ya corrió: en un celular
+// con señal lenta pasaban más de 6 s hasta tenerla y @expo/vector-icons
+// (que hace `await Font.loadAsync()` sin atrapar nada) terminaba con un rechazo
+// sin manejar ("6000ms timeout exceeded") y los íconos sin dibujar. Con la
+// precarga en el <head> empieza a bajar junto con el HTML.
+// El nombre lleva el hash del contenido, así que se busca en dist en vez de
+// escribirlo a mano. Si Expo cambia dónde la deja, solo se pierde la precarga:
+// la fuente sigue cargando como siempre, por eso avisa pero no corta el build.
+const ICON_FONT_DIR = 'dist/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts';
+function iconFontPreload() {
+  const file = fs.existsSync(ICON_FONT_DIR)
+    ? fs.readdirSync(ICON_FONT_DIR).find((f) => /^Ionicons\.[0-9a-f]+\.ttf$/.test(f))
+    : undefined;
+  if (!file) {
+    console.warn(`inject-seo: no hay Ionicons en ${ICON_FONT_DIR}; la página sale sin precarga de la fuente de íconos`);
+    return '';
+  }
+  // `crossorigin` es obligatorio para fuentes: sin él el navegador la baja dos veces.
+  return `<link rel="preload" href="/${ICON_FONT_DIR.replace(/^dist\//, '')}/${file}" as="font" type="font/ttf" crossorigin />`;
+}
+
 const headTags = `
+    <!-- Fuente de íconos: empieza a bajar con el HTML, no después del JS -->
+    ${iconFontPreload()}
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
