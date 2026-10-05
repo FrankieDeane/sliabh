@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import { supabase, currentUserId, withTimeout } from './supabase';
 import { storage } from '../store/mmkv';
+import { isBotUserAgent, isEnvironmentNoise } from './errorNoise';
 
 /**
  * Crash reporting, for an app whose users are out of reach.
@@ -42,15 +43,12 @@ export interface ErrorReport {
 
 const recent = new Map<string, number>();
 
-/**
- * Crawlers render the page with requests blocked, so every fetch they refuse
- * files a "crash" nobody can hit. Googlebot alone was most of the table.
- */
-const BOT_UA = /bot|crawler|spider|GoogleOther|externalagent|Lighthouse|HeadlessChrome/i;
+// El filtro de bots y de ruido del entorno vive en errorNoise.ts (plain TS,
+// con test propio): ver ahí qué se descarta y por qué.
 function isBot(): boolean {
   try {
     return Platform.OS === 'web' && typeof navigator !== 'undefined'
-      && BOT_UA.test(navigator.userAgent ?? '');
+      && isBotUserAgent(navigator.userAgent);
   } catch {
     return false;
   }
@@ -107,6 +105,8 @@ export function reportError(
       (error as { message?: string })?.message ?? error ?? 'unknown error',
     ).slice(0, 500);
     if (!message) return;
+    // Red lenta y avisos del navegador: nada que arreglar en la app.
+    if (isEnvironmentNoise(error, message)) return;
 
     const now = Date.now();
     const last = recent.get(message);
