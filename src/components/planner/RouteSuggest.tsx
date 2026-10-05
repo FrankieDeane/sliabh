@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, Modal, TextInput,
-  Platform, StyleSheet, Share, ActivityIndicator,
+  StyleSheet, Share, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLangStore } from '../../store/langStore';
@@ -9,11 +9,11 @@ import {
   routablePlaces, suggestRoute, normalizeForSearch,
   type Place, type RouteResult, type RouteDifficulty,
 } from '../../routing';
-import { buildGpx, downloadGpx } from '../../utils/gpx';
+import { buildGpx } from '../../utils/gpx';
+import { getQuickFix } from '../../services/quickFix';
 
-const TrackMap = Platform.OS === 'web'
-  ? require('../map/MapLibreEsri.web').MapLibreEsri
-  : require('../map/MapLibreEsri.native').MapLibreEsri;
+// Phone app only: the web build gets RouteSuggest.web.tsx, which renders nothing.
+const TrackMap = require('../map/MapLibreEsri.native').MapLibreEsri;
 
 type Colors = { surface: string; elevated: string; border: string; text: string; muted: string };
 type Endpoint = { kind: 'me'; lat: number; lon: number } | ({ kind: 'place' } & Place);
@@ -28,17 +28,6 @@ const DIFFS: Array<{ id: RouteDifficulty; es: string; en: string }> = [
 
 /** One position from the phone's GPS. Works with no signal: GPS needs none. */
 async function currentPosition(): Promise<{ lat: number; lon: number } | null> {
-  if (Platform.OS === 'web') {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) return null;
-    return new Promise((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
-        () => resolve(null),
-        { enableHighAccuracy: true, timeout: 20_000, maximumAge: 120_000 },
-      );
-    });
-  }
-  const { getQuickFix } = require('../../services/quickFix');
   const fix = await getQuickFix();
   return fix.ok ? { lat: fix.coords.latitude, lon: fix.coords.longitude } : null;
 }
@@ -154,8 +143,7 @@ export function RouteSuggest({ c }: { c: Colors }) {
       'Ruta sugerida por Sliabh sin conexión. Sin verificar en el terreno.',
       'Route suggested offline by Sliabh. Not verified on the ground.',
     ) + (result.usesOsm ? ' © OpenStreetMap' : '');
-    if (Platform.OS === 'web') downloadGpx(name, result.points, desc);
-    else Share.share({ message: buildGpx(name, result.points, desc) }).catch(() => {});
+    Share.share({ message: buildGpx(name, result.points, desc) }).catch(() => {});
   }
 
   const failText: Record<string, { es: string; en: string }> = {

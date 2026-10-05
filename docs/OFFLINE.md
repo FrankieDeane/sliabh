@@ -24,7 +24,7 @@ on every pull request via `.github/workflows/tests.yml`.
 | A hike recorded offline reaches the account | Queued on the device first, uploaded when a session and signal exist |
 | Uploading twice cannot duplicate a hike | A hike already filed under the same start instant is treated as the same hike |
 | The climb is measured, never invented | Altitude is median-filtered and credited only past a threshold; a track with none says so instead of showing zero |
-| A way between two points is suggested with no signal | Trail lines are bundled; the route is computed on the device (`src/routing/`), the same code on Android, iOS and web — checked by `npm run validate:routing` and offline in the browser test |
+| A way between two points is suggested with no signal (phone app only) | Trail lines are bundled; the route is computed on the device (`src/routing/`), the same code on Android and iOS — checked by `npm run validate:routing` |
 | A crash reaches us even from a trail | Reports queue on the device and upload when signal returns — see [TELEMETRY.md](./TELEMETRY.md) |
 
 ## The failure modes this is built against
