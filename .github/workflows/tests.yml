@@ -43,6 +43,11 @@ jobs:
       - name: Elevation and pace against known profiles
         run: npm run validate:track
 
+      # A suggested route is planned around: it must take the sensible way,
+      # leave out trails harder than asked, and never invent a connection.
+      - name: Offline route suggestions
+        run: npm run validate:routing
+
       # The public MCP server (sliabh.com.ar/mcp): every tool annotated,
       # answering with valid input and failing clearly with invalid input.
       - name: MCP server
