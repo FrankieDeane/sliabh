@@ -149,6 +149,20 @@ const FIRST_HIKE: L[] = [
 
 const TROUBLE: Array<{ q: L; a: L }> = [
   {
+    q: { es: 'Dice "La app no se instaló" o "conflicto con un paquete existente"', en: 'It says "App not installed" or "conflicts with an existing package"' },
+    a: {
+      es: 'Tenés una versión vieja de Sliabh firmada distinto. Ajustes → Aplicaciones → **Sliabh** → **Desinstalar**, y volvé a abrir **sliabh.apk** desde Descargas. Tus recorridos guardados en la cuenta no se pierden.',
+      en: 'You have an old Sliabh build signed differently. Settings → Apps → **Sliabh** → **Uninstall**, then open **sliabh.apk** from Downloads again. Hikes saved to your account are kept.',
+    },
+  },
+  {
+    q: { es: 'Play Protect la bloquea', en: 'Play Protect blocks it' },
+    a: {
+      es: 'Tocá **Más detalles** → **Instalar de todas formas**. Si no aparece esa opción: Play Store → tu foto → **Play Protect** → ⚙ → desactivá **Analizar apps** un momento, instalá y volvé a activarlo.',
+      en: 'Tap **More details** → **Install anyway**. If that option is missing: Play Store → your photo → **Play Protect** → ⚙ → turn off **Scan apps** for a moment, install, then turn it back on.',
+    },
+  },
+  {
     q: { es: 'Se cortó la grabación con la pantalla apagada', en: 'Recording stopped with the screen off' },
     a: {
       es: 'Ajustes → Aplicaciones → Sliabh → Batería → **Sin restricciones** (Samsung, Xiaomi y Motorola cierran apps para ahorrar batería). En Ubicación tiene que decir **Mientras se usa la app** o **Permitir siempre**, y **Ubicación precisa** activada.',

@@ -107,6 +107,14 @@ jobs:
       - name: Check elevation and pace
         run: npm run validate:track
 
+      # Every build is a real update for Android: the version code is the run
+      # number, so it always goes up. With a fixed 1, every APK looked like the
+      # same version as the one already on the phone.
+      - name: Give this build its own version code
+        run: |
+          node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('app.json','utf8'));j.expo.android.versionCode=Number(process.env.GITHUB_RUN_NUMBER);fs.writeFileSync('app.json',JSON.stringify(j,null,2)+'\n')"
+          echo "versionCode $GITHUB_RUN_NUMBER"
+
       - name: Generate the Android project
         # android/ is not in the repo: app.json is the source of truth, so the
         # project is regenerated here and cannot drift from it.
@@ -175,6 +183,15 @@ jobs:
           got=$("$APKSIGNER" verify --print-certs "$APK" | grep -m1 'SHA-256 digest' | sed 's/.*: *//')
           echo "expected $want"; echo "signed   $got"
           [ -n "$want" ] && [ "$want" = "$got" ]
+
+      - name: Confirm the APK carries this build's version code
+        run: |
+          set -e
+          APK=android/app/build/outputs/apk/release/app-release.apk
+          AAPT=$(ls "$ANDROID_HOME"/build-tools/*/aapt | sort -V | tail -1)
+          got=$("$AAPT" dump badging "$APK" | sed -nE "s/.*versionCode='([0-9]+)'.*/\1/p")
+          echo "versionCode $got"
+          [ "$got" = "$GITHUB_RUN_NUMBER" ]
 
       - name: Confirm the app points at the real Supabase project
         # EXPO_PUBLIC_* are baked in at bundle time; without them the client
