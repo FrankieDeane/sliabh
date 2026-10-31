@@ -59,6 +59,16 @@ jobs:
       - name: Build the web bundle
         run: npx expo export -p web
 
+      # Lo que Netlify publica para que la app se actualice sola: si esto no
+      # arma, los teléfonos se quedan sin mejoras sin que nadie lo note.
+      - name: App auto-update files
+        run: |
+          node scripts/build-app-updates.mjs --out "$RUNNER_TEMP/upd" --strict
+          for p in android ios; do
+            f=$(ls "$RUNNER_TEMP/upd/app-updates/$p/"*.json)
+            node -e "const m=require('$f');for(const k of ['id','createdAt','runtimeVersion','launchAsset'])if(!m[k])throw new Error(k);console.log('$p',m.runtimeVersion,m.assets.length,'assets')"
+          done
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
