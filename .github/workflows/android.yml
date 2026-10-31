@@ -63,10 +63,6 @@ jobs:
       EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
       # Shown on the hike screen, so the phone says which build it runs.
       EXPO_PUBLIC_BUILD_ID: ${{ github.run_number }}-${{ github.sha }}
-      # Actualizaciones automáticas: con el id del proyecto de Expo, el APK sabe
-      # dónde buscar mejoras y se actualiza solo (ver app.config.js y
-      # ota-update.yml). Sin la variable, el APK funciona igual pero no busca.
-      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
       EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
 
     steps:
@@ -213,6 +209,12 @@ jobs:
             exit 1
           fi
           echo "bundle points at $REF"
+
+      # La huella nativa con la que este APK pide actualizaciones. Tiene que
+      # coincidir con la que publica Netlify (scripts/build-app-updates.mjs);
+      # queda en el log para poder compararlas.
+      - name: Show the auto-update runtime
+        run: grep -o 'expo_runtime_version">[^<]*' android/app/src/main/res/values/strings.xml || echo "sin runtime de expo-updates"
 
       - name: Name it after the commit
         id: name
