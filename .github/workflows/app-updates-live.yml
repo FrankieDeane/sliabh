@@ -1,0 +1,59 @@
+name: app updates live
+
+# Comprueba, contra el sitio publicado, que los teléfonos reciben la
+# actualización automática: que /api/app-updates entrega el manifiesto de la
+# huella nativa actual y que el código que nombra se baja entero (mismo hash).
+# Se puede correr a mano desde Actions después de un deploy.
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/app-updates-live.yml
+      - public/parques.html
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: sliabh.com.ar entrega la actualización
+        run: |
+          set -euo pipefail
+          for p in android ios; do
+            rt=$(npx expo-updates runtimeversion:resolve --platform "$p" | node -pe 'JSON.parse(require("fs").readFileSync(0)).runtimeVersion')
+            echo "== $p runtime $rt"
+            code=$(curl -sS -o m.json -w '%{http_code}' \
+              -H "expo-platform: $p" -H "expo-runtime-version: $rt" -H 'expo-protocol-version: 1' \
+              -D h.txt https://sliabh.com.ar/api/app-updates)
+            cat h.txt
+            test "$code" = 200 || { echo "esperaba 200, vino $code"; exit 1; }
+            grep -qi '^expo-protocol-version: 1' h.txt
+            node -e '
+              const m = JSON.parse(require("fs").readFileSync("m.json", "utf8"));
+              if (m.runtimeVersion !== process.argv[1]) throw new Error("runtime distinto: " + m.runtimeVersion);
+              console.log("update", m.id, "creado", m.createdAt, "-", m.assets.length, "assets");
+              console.log("launchAsset", m.launchAsset.url);
+            ' "$rt"
+            url=$(node -pe 'JSON.parse(require("fs").readFileSync("m.json","utf8")).launchAsset.url')
+            want=$(node -pe 'JSON.parse(require("fs").readFileSync("m.json","utf8")).launchAsset.hash')
+            curl -sSf -o bundle.hbc "$url"
+            got=$(node -e 'process.stdout.write(require("crypto").createHash("sha256").update(require("fs").readFileSync("bundle.hbc")).digest("base64url"))')
+            echo "bundle $(stat -c %s bundle.hbc) bytes, hash $got"
+            test "$got" = "$want" || { echo "hash del código no coincide ($want)"; exit 1; }
+            # Un asset cualquiera también tiene que existir.
+            a=$(node -pe 'const m=JSON.parse(require("fs").readFileSync("m.json","utf8")); (m.assets[0]||{}).url||""')
+            if [ -n "$a" ]; then curl -sSf -o /dev/null "$a"; echo "asset ok: $a"; fi
+          done
+          # Una huella que no existe recibe "no hay nada" (204), no un error.
+          code=$(curl -sS -o /dev/null -w '%{http_code}' -H 'expo-platform: android' -H 'expo-runtime-version: no-existe' https://sliabh.com.ar/api/app-updates)
+          echo "huella desconocida -> $code"
+          test "$code" = 204

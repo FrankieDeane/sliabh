@@ -3514,12 +3514,13 @@ ${trkpts}
     Esta página es lo único que esas instalaciones viejas cargan de internet, así
     que es el único lugar donde se les puede avisar sin reinstalar. Las versiones
     que ya se actualizan solas lo dicen (window.__SLIABH_APP.autoUpdate, puesto
-    por ParksMap.native.tsx) y no ven el aviso. Se enciende con UPDATE_NOTICE_ON
-    una vez que el APK que se actualiza solo esté publicado.
+    por ParksMap.native.tsx) y no ven el aviso. Encendido desde el build 76, el
+    primer APK que se actualiza solo. El link abre el navegador (la app saca
+    fuera del WebView todo lo que no sea esta página).
   -->
   <script>
   (function () {
-    var UPDATE_NOTICE_ON = false;
+    var UPDATE_NOTICE_ON = true;
     var APK = 'https://github.com/FrankieDeane/sliabh/releases/latest/download/sliabh.apk';
     var HIDE_KEY = 'sliabh-update-notice-hidden-until';
     // Solo Android: el aviso lleva al APK (en iPhone no hay app instalada fuera de la tienda).
