@@ -3509,5 +3509,48 @@ ${trkpts}
       }
     });
   </script>
+  <!--
+    Aviso "hay una versión nueva" para la app que la gente ya tiene instalada.
+    Esta página es lo único que esas instalaciones viejas cargan de internet, así
+    que es el único lugar donde se les puede avisar sin reinstalar. Las versiones
+    que ya se actualizan solas lo dicen (window.__SLIABH_APP.autoUpdate, puesto
+    por ParksMap.native.tsx) y no ven el aviso. Se enciende con UPDATE_NOTICE_ON
+    una vez que el APK que se actualiza solo esté publicado.
+  -->
+  <script>
+  (function () {
+    var UPDATE_NOTICE_ON = false;
+    var APK = 'https://github.com/FrankieDeane/sliabh/releases/latest/download/sliabh.apk';
+    var HIDE_KEY = 'sliabh-update-notice-hidden-until';
+    // Solo Android: el aviso lleva al APK (en iPhone no hay app instalada fuera de la tienda).
+    function inApp() { return !!window.ReactNativeWebView && /Android/i.test(navigator.userAgent); }
+    function show() {
+      if (!UPDATE_NOTICE_ON || !inApp()) return;
+      if (window.__SLIABH_APP && window.__SLIABH_APP.autoUpdate) return;
+      try { if (Number(localStorage.getItem(HIDE_KEY) || 0) > Date.now()) return; } catch (e) {}
+      var en = (document.documentElement.lang || '').indexOf('en') === 0;
+      var box = document.createElement('div');
+      box.id = 'sliabh-update-notice';
+      box.setAttribute('style', 'position:fixed;left:12px;right:12px;bottom:84px;z-index:9999;background:#0f1724;border:1px solid #22c55e;border-radius:14px;padding:12px 14px;color:#f0f9ff;font:14px/1.4 -apple-system,system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.45)');
+      box.innerHTML =
+        '<div style="font-weight:800;margin-bottom:4px">' + (en ? 'A new version of Sliabh is out' : 'Hay una versión nueva de Sliabh') + '</div>' +
+        '<div style="color:#cbd5e1;font-size:13px;margin-bottom:10px">' + (en
+          ? 'Offline maps that stay saved, and from now on the app updates itself. Your hikes and saved maps are kept.'
+          : 'Mapas sin señal que no se pierden y, desde esta, la app se actualiza sola. Tus recorridos y mapas guardados se mantienen.') + '</div>' +
+        '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+        '<button id="sun-later" style="background:none;border:0;color:#94a3b8;font-weight:700;padding:8px 10px">' + (en ? 'Later' : 'Más tarde') + '</button>' +
+        '<a id="sun-go" href="' + APK + '" style="background:#16a34a;color:#fff;font-weight:800;border-radius:999px;padding:8px 16px;text-decoration:none">' + (en ? 'Update' : 'Actualizar') + '</a>' +
+        '</div>';
+      document.body.appendChild(box);
+      document.getElementById('sun-later').onclick = function () {
+        try { localStorage.setItem(HIDE_KEY, String(Date.now() + 24 * 3600 * 1000)); } catch (e) {}
+        box.remove();
+      };
+    }
+    // Espera a que la app haya podido presentarse (el puente corre antes).
+    if (document.readyState === 'complete') setTimeout(show, 1500);
+    else window.addEventListener('load', function () { setTimeout(show, 1500); });
+  })();
+  </script>
 </body>
 </html>

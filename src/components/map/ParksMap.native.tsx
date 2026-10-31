@@ -6,6 +6,7 @@ import { SITE } from './trailMapHtml';
 import { getQuickFix } from '../../services/quickFix';
 import { offlineParksPage, primeOfflineMapShell, PARKS_PAGE_PATH } from '../../services/offlineMapShell';
 import { useNetworkStore } from '../../store/networkStore';
+import * as Updates from 'expo-updates';
 
 // Same page and version the website embeds on /mapas, so the app shows the
 // exact same general map: 3D terrain, trail clusters visible from all of
@@ -16,6 +17,10 @@ const PAGE = `${SITE}${PARKS_PAGE_PATH}?v=20260923a&ctx=mapas`;
 // este tiempo no terminó y hay una copia guardada, se abre la copia.
 const SLOW_LOAD_MS = 12_000;
 
+// Le dice a la página que esta versión de la app ya se actualiza sola, así no
+// muestra el aviso "hay una versión nueva" (ver el final de parques.html).
+const APP_INFO = JSON.stringify({ autoUpdate: Updates.isEnabled });
+
 // parques.html talks to its host through window.parent (an iframe on the
 // web). A WebView page is its own parent, so it would never speak: route
 // window.parent.postMessage to React Native before the page's scripts run.
@@ -23,6 +28,7 @@ const SLOW_LOAD_MS = 12_000;
 // It also replaces navigator.geolocation with the phone's own location (see
 // getQuickFix): the WebView's often times out on Android before any fix.
 export const BRIDGE = `(function(){
+  try { window.__SLIABH_APP = ${APP_INFO}; } catch(e) {}
   try {
     window.parent = { postMessage: function(m){
       try { window.ReactNativeWebView.postMessage(JSON.stringify(m)); } catch(e){}
