@@ -1,6 +1,9 @@
 import React, { useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { SITE } from './trailMapHtml';
+import { OFFLINE_TILES_JS } from './offlineTilesJs';
+import { inlineMapVendor } from '../../services/offlineMapShell';
 
 export interface MapLibreEsriHandle {
   startHikeTracking: () => void;
@@ -73,8 +76,9 @@ function buildHTML(
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="stylesheet" href="${SITE}/vendor/maplibre-gl-4.7.1.css"/>
+<script src="${SITE}/vendor/maplibre-gl-4.7.1.js"></script>
+<script>${OFFLINE_TILES_JS}</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body,#map{height:100vh;width:100vw;}
@@ -97,6 +101,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
 <script>
 (function(){
   var trailRoute = ${trailRouteJson};
+  if(typeof window.sliabhTiles!=='function') window.sliabhTiles=function(u){return u;};
 
   // Hike mode can ask for tracking before the style is ready; remember the
   // request so no fix is lost while MapLibre is still loading.
@@ -116,7 +121,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
     sources:{
       esri:{
         type:'raster',
-        tiles:['${tileUrl}'],
+        tiles:[sliabhTiles('${tileUrl}')],
         tileSize:256,
         maxzoom:${ESRI_MAXZOOM[layer]},
         attribution:'&copy; Esri, HERE, Garmin, FAO, NOAA, USGS'
@@ -142,6 +147,7 @@ body{font-family:-apple-system,system-ui,sans-serif;}
   // maxzoom cannot change on a live source, so a layer switch rebuilds just
   // the raster source and layer under the lines.
   window.setBaseLayer=function(u,mz){
+    u=sliabhTiles(u);
     if(!map.isStyleLoaded()){window.__pendingLayer=[u,mz];return;}
     var src=map.getSource('esri');
     if(src&&src.tiles&&src.tiles[0]===u) return;
@@ -500,7 +506,7 @@ export const MapLibreEsri = forwardRef<MapLibreEsriHandle, Props>(function MapLi
     <View style={containerStyle}>
       <WebView
         ref={webviewRef}
-        source={{ html, baseUrl: 'https://unpkg.com' }}
+        source={{ html: inlineMapVendor(html), baseUrl: SITE }}
         onMessage={handleMessage}
         onLoad={handleLoad}
         style={styles.webview}

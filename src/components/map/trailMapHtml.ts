@@ -1,5 +1,6 @@
 import { gpxTrackToGeoJSON, trackToSlopeSegments } from '../../utils/geojson';
 import { MAP_SKY_JS } from './mapSky';
+import { OFFLINE_TILES_JS } from './offlineTilesJs';
 
 export interface TrailMapPoint {
   lat: number;
@@ -46,6 +47,7 @@ export function buildTrailMapHtml(
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="stylesheet" href="${site}/vendor/maplibre-gl-4.7.1.css">
 <script src="${site}/vendor/maplibre-gl-4.7.1.js"></script>
+<script>${OFFLINE_TILES_JS}</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body,#map{width:100%;height:100%;background:#070b14;overflow:hidden}
@@ -115,12 +117,13 @@ body{font-family:-apple-system,system-ui,sans-serif;-webkit-tap-highlight-color:
     frames.push({center:pts[idx], zoom:last?13.5:11+i*0.3, pitch:last?72:58+i*2, bearing:bearing(pts[idx],nxt), duration:last?5000:6000});
   }
 
+  var T = typeof window.sliabhTiles==='function' ? window.sliabhTiles : function(u){return u;};
   var map = new maplibregl.Map({
     container:'map',
     style:{version:8,
       sources:{
-        satellite:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:18,attribution:'© Esri'},
-        topo:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:18,attribution:'© Esri'}
+        satellite:{type:'raster',tiles:[T('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}')],tileSize:256,maxzoom:18,attribution:'© Esri'},
+        topo:{type:'raster',tiles:[T('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}')],tileSize:256,maxzoom:18,attribution:'© Esri'}
       },
       layers:[
         {id:'satellite-bg',type:'raster',source:'satellite',paint:{'raster-brightness-max':0.9}},

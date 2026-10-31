@@ -19,6 +19,8 @@ import { useTrackQueueStore } from '../src/store/trackQueueStore';
 import { InstallPrompt } from '../src/components/offline/InstallPrompt';
 import { HikeHost } from '../src/components/hike/HikeHost';
 import { MobileWebNav } from '../src/components/layout/MobileWebNav';
+import { AppUpdates } from '../src/components/ui/AppUpdates';
+import { primeOfflineMapShell, refreshOfflineMapShell } from '../src/services/offlineMapShell';
 /**
  * Side-effect import, and it must stay one.
  *
@@ -219,6 +221,19 @@ function TrackSyncWatcher() {
   return null;
 }
 
+/**
+ * Guarda en el teléfono lo que los mapas necesitan para abrir sin señal (la
+ * página del mapa general y MapLibre). Se lee al abrir y se renueva con señal.
+ */
+function OfflineMapShellWatcher() {
+  const online = useNetworkStore((s) => s.isOnline);
+  useEffect(() => { primeOfflineMapShell().catch(() => {}); }, []);
+  useEffect(() => {
+    if (online) refreshOfflineMapShell().catch(() => {});
+  }, [online]);
+  return null;
+}
+
 export default function RootLayout() {
   const { theme } = useThemeStore();
   const isDark = theme === 'dark';
@@ -269,6 +284,7 @@ export default function RootLayout() {
     <AppErrorBoundary>
       <NetworkWatcher />
       <TrackSyncWatcher />
+      <OfflineMapShellWatcher />
       <HikeHost />
       <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={isDark ? '#111827' : '#ffffff'} />
       <Stack
@@ -277,6 +293,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: isDark ? '#111827' : '#f9fafb' },
         }}
       />
+      <AppUpdates />
     </AppErrorBoundary>
   );
 }

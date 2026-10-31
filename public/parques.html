@@ -557,6 +557,64 @@
 
   <link rel="stylesheet" href="/vendor/maplibre-gl-4.7.1.css" />
   <script src="/vendor/maplibre-gl-4.7.1.js"></script>
+  <!-- Mapa offline: lee los tiles guardados con 💾 (copia de src/components/map/offlineTilesJs.ts; mantener iguales) -->
+  <script id="sliabh-offline-tiles">(function(){
+  var CACHE='sliabh-tiles-v1', PROTO='sliabhtile';
+  function canon(u){ return u.replace('://server.arcgisonline.com/','://services.arcgisonline.com/'); }
+  function zyx(u){ var m=/\/tile\/(\d+)\/(\d+)\/(\d+)(?:[?#]|$)/.exec(u); return m?{z:+m[1],y:+m[2],x:+m[3]}:null; }
+  function at(u,z,y,x){ return u.replace(/\/tile\/\d+\/\d+\/\d+/,'/tile/'+z+'/'+y+'/'+x); }
+  function fromCache(u){
+    try { return caches.open(CACHE).then(function(c){ return c.match(canon(u)); })
+      .then(function(r){ return r ? r.blob() : null; }).catch(function(){ return null; }); }
+    catch(e){ return Promise.resolve(null); }
+  }
+  function crop(blob,k,t){
+    var s=1<<k;
+    return createImageBitmap(blob).then(function(img){
+      var size=img.width/s, cv=document.createElement('canvas');
+      cv.width=cv.height=256;
+      var g=cv.getContext('2d');
+      g.drawImage(img,(t.x%s)*size,(t.y%s)*size,size,size,0,0,256,256);
+      if(img.close) img.close();
+      return new Promise(function(res){ cv.toBlob(res,'image/jpeg',0.9); });
+    });
+  }
+  function overzoom(u){
+    var t=zyx(u); if(!t) return Promise.resolve(null);
+    var k=0;
+    function next(){
+      k++; if(k>6||t.z-k<0) return Promise.resolve(null);
+      var s=1<<k;
+      return fromCache(at(u,t.z-k,Math.floor(t.y/s),Math.floor(t.x/s))).then(function(b){
+        return b ? crop(b,k,t) : next();
+      });
+    }
+    return next();
+  }
+  function load(url,signal){
+    var real=url.replace(new RegExp('^'+PROTO+'://'),'https://');
+    return fromCache(real).then(function(hit){
+      if(hit) return hit.arrayBuffer();
+      return fetch(real,{mode:'cors',signal:signal}).then(function(r){
+        if(!r.ok) throw new Error('tile HTTP '+r.status);
+        return r.arrayBuffer();
+      }).catch(function(err){
+        if(signal&&signal.aborted) throw err;
+        return overzoom(real).then(function(b){ if(b) return b.arrayBuffer(); throw err; });
+      });
+    });
+  }
+  window.__sliabhTileLoad=load;
+  window.sliabhTiles=function(u){ return window.__sliabhTilesOn ? String(u).replace(/^https:\/\//,PROTO+'://') : u; };
+  try {
+    if(window.maplibregl&&maplibregl.addProtocol&&('caches' in window)){
+      maplibregl.addProtocol(PROTO,function(p,ac){
+        return load(p.url,ac&&ac.signal).then(function(d){ return {data:d}; });
+      });
+      window.__sliabhTilesOn=true;
+    }
+  } catch(e){}
+})();</script>
   <script src="/vendor/jspdf-2.5.1.umd.min.js"></script>
   <!-- SGP4 orbit propagation for the live-satellites layer (see
        "Live orbiting satellites" below). Not vendored locally like the
@@ -759,6 +817,15 @@
     }
 
     // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
+    // Si el script de tiles offline no cargó, las URLs quedan como siempre.
+    if (typeof window.sliabhTiles !== 'function') window.sliabhTiles = function (u) { return u; };
+    // En la app (Android) esta página se abre sola en un WebView, sin el sitio
+    // alrededor que registra el service worker. Sin él, al reabrir la app sin
+    // señal la página misma no cargaba. Lo registramos acá también: sirve la
+    // página, MapLibre y los tiles guardados desde el teléfono.
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    }
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
     let mapLoaded = false;
@@ -813,13 +880,13 @@
             sources: {
               esri: {
                 type: 'raster',
-                tiles: [ESRI_SAT],
+                tiles: [sliabhTiles(ESRI_SAT)],
                 tileSize: 256,
                 attribution: '&copy; Esri, Maxar, Earthstar Geographics',
               },
               'esri-topo': {
                 type: 'raster',
-                tiles: [ESRI_TOPO],
+                tiles: [sliabhTiles(ESRI_TOPO)],
                 tileSize: 256,
                 attribution: '&copy; Esri',
               },
@@ -1579,12 +1646,12 @@
           sources: {
             satellite: {
               type: 'raster',
-              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+              tiles: [sliabhTiles('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}')],
               tileSize: 256, maxzoom: 18, attribution: '© Esri',
             },
             topo: {
               type: 'raster',
-              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+              tiles: [sliabhTiles('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}')],
               tileSize: 256, maxzoom: 18, attribution: '© Esri',
             },
           },

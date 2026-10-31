@@ -4,11 +4,17 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { useRouter } from 'expo-router';
 import { SITE } from './trailMapHtml';
 import { getQuickFix } from '../../services/quickFix';
+import { offlineParksPage, primeOfflineMapShell, PARKS_PAGE_PATH } from '../../services/offlineMapShell';
+import { useNetworkStore } from '../../store/networkStore';
 
 // Same page and version the website embeds on /mapas, so the app shows the
 // exact same general map: 3D terrain, trail clusters visible from all of
 // Argentina, trail lines, OSM circuits, provinces and parks.
-const PAGE = `${SITE}/parques.html?v=20260923a&ctx=mapas`;
+const PAGE = `${SITE}${PARKS_PAGE_PATH}?v=20260923a&ctx=mapas`;
+
+// Con una rayita de señal la página puede quedar cargando para siempre. Si en
+// este tiempo no terminó y hay una copia guardada, se abre la copia.
+const SLOW_LOAD_MS = 12_000;
 
 // parques.html talks to its host through window.parent (an iframe on the
 // web). A WebView page is its own parent, so it would never speak: route
@@ -69,6 +75,34 @@ export const ParksMap = forwardRef<ParksMapHandle, Props>(function ParksMap({ la
   const router = useRouter();
   const webRef = useRef<WebView>(null);
   const [failed, setFailed] = useState(false);
+  const online = useNetworkStore((s) => s.isOnline);
+  // Sin señal se abre la copia guardada de la página (con su MapLibre adentro).
+  // Mismo origen que la de internet, así que ve los mismos tiles guardados.
+  const [useSaved, setUseSaved] = useState(!online);
+  const [savedHtml, setSavedHtml] = useState<string | null>(() => offlineParksPage());
+  const loadedOk = useRef(false);
+
+  React.useEffect(() => {
+    let alive = true;
+    primeOfflineMapShell().then(() => { if (alive) setSavedHtml(offlineParksPage()); });
+    return () => { alive = false; };
+  }, []);
+
+  // Si se corta la señal antes de que la página termine de cargar, pasar a la copia.
+  React.useEffect(() => {
+    if (!online && !loadedOk.current) setUseSaved(true);
+  }, [online]);
+
+  const fallBack = useCallback(() => {
+    if (offlineParksPage()) setUseSaved(true);
+    else setFailed(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (useSaved) return;
+    const timer = setTimeout(() => { if (!loadedOk.current) fallBack(); }, SLOW_LOAD_MS);
+    return () => clearTimeout(timer);
+  }, [useSaved, fallBack]);
 
   const send = useCallback((msg: object) => {
     const js = `try{window.postMessage(${JSON.stringify(msg).replace(/</g, '\\u003c')},'*');}catch(e){} true;`;
@@ -127,11 +161,11 @@ export const ParksMap = forwardRef<ParksMapHandle, Props>(function ParksMap({ la
         </Text>
         <Text style={{ color: colors.muted, fontSize: 13, lineHeight: 19, textAlign: 'center' }}>
           {lang === 'en'
-            ? 'Your downloaded park maps and recorded hikes still work offline.'
-            : 'Los mapas de parques que descargaste y tus recorridos siguen funcionando sin señal.'}
+            ? 'Open it once with signal and it stays saved on the phone for next time. Your recorded hikes still work offline.'
+            : 'Abrilo una vez con señal y queda guardado en el teléfono para la próxima. Tus recorridos siguen funcionando sin señal.'}
         </Text>
         <TouchableOpacity
-          onPress={() => setFailed(false)}
+          onPress={() => { loadedOk.current = false; setUseSaved(false); setFailed(false); }}
           style={{ marginTop: 6, backgroundColor: '#16a34a', borderRadius: 999, paddingHorizontal: 18, paddingVertical: 10 }}
         >
           <Text style={{ color: '#fff', fontWeight: '700' }}>{lang === 'en' ? 'Try again' : 'Reintentar'}</Text>
@@ -143,16 +177,17 @@ export const ParksMap = forwardRef<ParksMapHandle, Props>(function ParksMap({ la
   return (
     <WebView
       ref={webRef}
-      source={{ uri: PAGE }}
+      source={useSaved && savedHtml ? { html: savedHtml, baseUrl: PAGE } : { uri: PAGE }}
       style={{ flex: 1, backgroundColor: colors.bg }}
       injectedJavaScriptBeforeContentLoaded={BRIDGE}
       injectedJavaScript={AFTER_LOAD}
       onMessage={onMessage}
       onLoadEnd={pushState}
+      onLoad={() => { loadedOk.current = true; }}
       onShouldStartLoadWithRequest={onShouldStart}
       onOpenWindow={(e) => { Linking.openURL(e.nativeEvent.targetUrl).catch(() => {}); }}
-      onError={() => setFailed(true)}
-      onHttpError={(e) => { if (e.nativeEvent.statusCode >= 500) setFailed(true); }}
+      onError={() => { if (useSaved) setFailed(true); else fallBack(); }}
+      onHttpError={(e) => { if (e.nativeEvent.statusCode >= 500 && !useSaved) fallBack(); }}
       startInLoadingState
       renderLoading={() => (
         <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg }]}>

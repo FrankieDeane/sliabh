@@ -39,6 +39,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'eas.json'
+      - 'app.config.js'
+      - 'fingerprint.config.js'
       - '.github/workflows/android.yml'
       - 'src/services/backgroundTrack*'
       - 'src/services/liveTrack.ts'
@@ -61,6 +63,10 @@ jobs:
       EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
       # Shown on the hike screen, so the phone says which build it runs.
       EXPO_PUBLIC_BUILD_ID: ${{ github.run_number }}-${{ github.sha }}
+      # Actualizaciones automáticas: con el id del proyecto de Expo, el APK sabe
+      # dónde buscar mejoras y se actualiza solo (ver app.config.js y
+      # ota-update.yml). Sin la variable, el APK funciona igual pero no busca.
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
       EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
 
     steps:

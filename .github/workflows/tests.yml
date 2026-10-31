@@ -56,6 +56,11 @@ jobs:
       - name: Error reporting filters
         run: npm run test:errors
 
+      # El mapa offline: lo guardado con 💾 se lee al reabrir la app y no queda
+      # en blanco al acercar de más.
+      - name: Offline map tiles
+        run: npm run test:offline-tiles
+
       - name: Build the web bundle
         run: npx expo export -p web
 

@@ -1162,7 +1162,7 @@ function DownloadRow({
       }
     } else {
       try {
-        const { FileSystem } = await import('expo-file-system') as any;
+        const FileSystem = await import('expo-file-system');
         const content = buildGpx(trail.name, gpxPoints, trailDescription);
         const filename = `${trail.id.replace(/[^a-z0-9-]/gi, '-')}.gpx`;
         const uri = `${FileSystem.documentDirectory}${filename}`;

@@ -1,0 +1,92 @@
+# Actualización automática de la app instalada, sin bajar un APK nuevo.
+#
+# En cada merge a sliabh-index publica el código JavaScript nuevo en Expo
+# (EAS Update). Los teléfonos con la app lo bajan solos la próxima vez que la
+# abren con señal y muestran el cartel "Última actualización" con lo que diga
+# src/constants/changelog.ts.
+#
+# Lo que NO viaja así: cambios nativos (permisos, librerías nativas, versión de
+# Expo). Esos cambian la "huella" nativa (fingerprint.config.js); el teléfono
+# ignora la actualización hasta que se instale el APK nuevo que publica
+# android.yml. Nunca carga código incompatible con lo que tiene instalado.
+#
+# Necesita, una sola vez (Settings → Secrets and variables → Actions):
+#   - Variable EAS_PROJECT_ID: el id del proyecto en expo.dev.
+#   - Secret EXPO_TOKEN: un token de expo.dev (Account settings → Access tokens).
+# Sin los dos, este workflow no hace nada y lo dice.
+
+name: Actualización automática
+
+on:
+  push:
+    branches:
+      - sliabh-index
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Qué cambió (queda en el historial de expo.dev)'
+        required: false
+
+concurrency:
+  group: ota-update
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Las mismas variables con las que se compila el APK (android.yml): el
+      # código nuevo las lleva adentro. Sin estas, la actualización apuntaría
+      # a un Supabase que no existe y el login dejaría de andar.
+      EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
+      EXPO_PUBLIC_BUILD_ID: ota-${{ github.run_number }}-${{ github.sha }}
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    steps:
+      - name: ¿Está configurado?
+        id: ready
+        run: |
+          if [ -n "$EAS_PROJECT_ID" ] && [ -n "$EXPO_TOKEN" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Actualizaciones automáticas sin configurar: falta la variable EAS_PROJECT_ID o el secret EXPO_TOKEN. No se publica nada."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.ready.outputs.ok == 'true'
+        run: npm ci
+
+      # Lo mismo que se revisa antes de compilar un APK: no se manda a los
+      # teléfonos nada que no pasaría para un APK.
+      - name: Checks
+        if: steps.ready.outputs.ok == 'true'
+        run: |
+          npm run check:sdk
+          npm run validate:solar
+          npm run validate:track
+
+      - name: Publicar la actualización
+        if: steps.ready.outputs.ok == 'true'
+        env:
+          MESSAGE: ${{ inputs.message || github.event.head_commit.message }}
+        run: |
+          MSG=$(printf '%s' "$MESSAGE" | head -n1 | cut -c1-200)
+          [ -n "$MSG" ] || MSG="Actualización ${GITHUB_SHA::7}"
+          npx --yes eas-cli@16 update \
+            --channel production \
+            --platform all \
+            --message "$MSG" \
+            --non-interactive
