@@ -16,7 +16,8 @@
     "validate:track": "node --experimental-strip-types scripts/validate-track-stats.mjs",
     "validate:routing": "node --experimental-strip-types scripts/validate-routing.mjs",
     "test:offline": "node tests/offline.mjs",
-    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run validate:routing && npm run test:offline && npm run test:mcp && npm run test:errors",
+    "test:offline-tiles": "node --experimental-strip-types tests/offline-tiles.mjs",
+    "test": "npm run check:sdk && npm run validate:solar && npm run validate:track && npm run validate:routing && npm run test:offline && npm run test:offline-tiles && npm run test:mcp && npm run test:errors",
     "test:mcp": "node scripts/test-mcp.mjs",
     "test:errors": "node scripts/test-error-noise.mjs"
   },
@@ -39,6 +40,7 @@
     "expo-router": "~4.0.0",
     "expo-status-bar": "~2.0.0",
     "expo-task-manager": "~12.0.6",
+    "expo-updates": "^0.27.5",
     "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",

@@ -86,6 +86,40 @@ eas build -p android --profile production
 Necesita una cuenta Expo (gratis) y la cuenta de Google Play Developer (pago
 único de USD 25).
 
+## Actualizaciones automáticas (sin bajar el APK otra vez)
+
+La app instalada busca mejoras sola al abrirse con señal (expo-updates + EAS
+Update). Si hay, la baja en segundo plano y la aplica la próxima vez que se
+abre, o al tocar "Actualizar ahora" en el aviso. Después muestra el cartel
+**Última actualización** con lo que diga `src/constants/changelog.ts`. Nunca
+reinicia la app sola ni muestra nada durante una caminata.
+
+**Configurarlo, una sola vez:**
+
+1. Crear una cuenta gratis en [expo.dev](https://expo.dev) y un proyecto
+   llamado `sliabh`. Copiar su **Project ID**.
+2. En GitHub → Settings → Secrets and variables → Actions:
+   - pestaña *Variables*: `EAS_PROJECT_ID` = ese id;
+   - pestaña *Secrets*: `EXPO_TOKEN` = un token de expo.dev (Account settings →
+     Access tokens).
+3. Hacer un merge a `sliabh-index` (o correr "Android APK"): ese APK ya viene
+   preparado para actualizarse. **Hay que instalarlo una vez más**; desde ahí,
+   cada merge llega solo a los teléfonos.
+
+**Cada mejora nueva:** agregar una entrada arriba de todo en
+`src/constants/changelog.ts` (fecha, título y qué cambia para el que camina).
+El workflow "Actualización automática" la publica en cada merge.
+
+**El límite:** solo viaja así el código JavaScript (pantallas, mapas, textos,
+arreglos). Un cambio nativo (permisos, librerías nativas, ícono, versión de
+Expo) cambia la "huella" nativa de la app (`fingerprint.config.js`): los
+teléfonos ignoran esa actualización hasta instalar el APK nuevo, así nunca
+cargan código incompatible. Igual en Android y iPhone.
+
+**Además:** la página del mapa general (`public/parques.html`) se carga desde
+el sitio, así que lo que se cambie ahí llega a la app apenas Netlify publica,
+incluso a los APK viejos.
+
 ## La prueba que hay que hacer sí o sí
 
 El código nativo **nunca se ejecutó en un teléfono real**. Acá no hay

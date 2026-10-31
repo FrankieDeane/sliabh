@@ -28,6 +28,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'eas.json'
+      - 'app.config.js'
+      - 'fingerprint.config.js'
       - '.github/workflows/ios.yml'
       - 'src/services/backgroundTrack*'
       - 'src/services/liveTrack.ts'
@@ -40,6 +42,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'eas.json'
+      - 'app.config.js'
+      - 'fingerprint.config.js'
       - '.github/workflows/ios.yml'
       - 'src/services/backgroundTrack*'
       - 'src/services/liveTrack.ts'
@@ -59,6 +63,8 @@ jobs:
       # Misma config pública del cliente que Android y la web (ver netlify.toml).
       EXPO_PUBLIC_SUPABASE_URL: https://pfwazngwcvirdeyamvsd.supabase.co
       EXPO_PUBLIC_BUILD_ID: ${{ github.run_number }}-${{ github.sha }}
+      # Actualizaciones automáticas (ver app.config.js): igual que Android.
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
       EXPO_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2F6bmd3Y3ZpcmRleWFtdnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzM3OTIsImV4cCI6MjA5NjUwOTc5Mn0.BYVJDsEESyEbZLwA-6W1-GDgYx4Q5ODmHrOeNwzJFD0
 
     steps:

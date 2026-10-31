@@ -3,6 +3,9 @@
     "name": "Sliabh",
     "slug": "sliabh",
     "version": "0.1.0",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",

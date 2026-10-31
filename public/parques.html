@@ -557,6 +557,64 @@
 
   <link rel="stylesheet" href="/vendor/maplibre-gl-4.7.1.css" />
   <script src="/vendor/maplibre-gl-4.7.1.js"></script>
+  <!-- Mapa offline: lee los tiles guardados con 💾 (copia de src/components/map/offlineTilesJs.ts; mantener iguales) -->
+  <script id="sliabh-offline-tiles">(function(){
+  var CACHE='sliabh-tiles-v1', PROTO='sliabhtile';
+  function canon(u){ return u.replace('://server.arcgisonline.com/','://services.arcgisonline.com/'); }
+  function zyx(u){ var m=/\/tile\/(\d+)\/(\d+)\/(\d+)(?:[?#]|$)/.exec(u); return m?{z:+m[1],y:+m[2],x:+m[3]}:null; }
+  function at(u,z,y,x){ return u.replace(/\/tile\/\d+\/\d+\/\d+/,'/tile/'+z+'/'+y+'/'+x); }
+  function fromCache(u){
+    try { return caches.open(CACHE).then(function(c){ return c.match(canon(u)); })
+      .then(function(r){ return r ? r.blob() : null; }).catch(function(){ return null; }); }
+    catch(e){ return Promise.resolve(null); }
+  }
+  function crop(blob,k,t){
+    var s=1<<k;
+    return createImageBitmap(blob).then(function(img){
+      var size=img.width/s, cv=document.createElement('canvas');
+      cv.width=cv.height=256;
+      var g=cv.getContext('2d');
+      g.drawImage(img,(t.x%s)*size,(t.y%s)*size,size,size,0,0,256,256);
+      if(img.close) img.close();
+      return new Promise(function(res){ cv.toBlob(res,'image/jpeg',0.9); });
+    });
+  }
+  function overzoom(u){
+    var t=zyx(u); if(!t) return Promise.resolve(null);
+    var k=0;
+    function next(){
+      k++; if(k>6||t.z-k<0) return Promise.resolve(null);
+      var s=1<<k;
+      return fromCache(at(u,t.z-k,Math.floor(t.y/s),Math.floor(t.x/s))).then(function(b){
+        return b ? crop(b,k,t) : next();
+      });
+    }
+    return next();
+  }
+  function load(url,signal){
+    var real=url.replace(new RegExp('^'+PROTO+'://'),'https://');
+    return fromCache(real).then(function(hit){
+      if(hit) return hit.arrayBuffer();
+      return fetch(real,{mode:'cors',signal:signal}).then(function(r){
+        if(!r.ok) throw new Error('tile HTTP '+r.status);
+        return r.arrayBuffer();
+      }).catch(function(err){
+        if(signal&&signal.aborted) throw err;
+        return overzoom(real).then(function(b){ if(b) return b.arrayBuffer(); throw err; });
+      });
+    });
+  }
+  window.__sliabhTileLoad=load;
+  window.sliabhTiles=function(u){ return window.__sliabhTilesOn ? String(u).replace(/^https:\/\//,PROTO+'://') : u; };
+  try {
+    if(window.maplibregl&&maplibregl.addProtocol&&('caches' in window)){
+      maplibregl.addProtocol(PROTO,function(p,ac){
+        return load(p.url,ac&&ac.signal).then(function(d){ return {data:d}; });
+      });
+      window.__sliabhTilesOn=true;
+    }
+  } catch(e){}
+})();</script>
   <script src="/vendor/jspdf-2.5.1.umd.min.js"></script>
   <!-- SGP4 orbit propagation for the live-satellites layer (see
        "Live orbiting satellites" below). Not vendored locally like the
@@ -759,6 +817,15 @@
     }
 
     // ── MapLibre map (ESRI Satellite + 3D terrain) ───────────────────────────
+    // Si el script de tiles offline no cargó, las URLs quedan como siempre.
+    if (typeof window.sliabhTiles !== 'function') window.sliabhTiles = function (u) { return u; };
+    // En la app (Android) esta página se abre sola en un WebView, sin el sitio
+    // alrededor que registra el service worker. Sin él, al reabrir la app sin
+    // señal la página misma no cargaba. Lo registramos acá también: sirve la
+    // página, MapLibre y los tiles guardados desde el teléfono.
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    }
     const ESRI_SAT = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
     const ESRI_TOPO = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
     let mapLoaded = false;
@@ -813,13 +880,13 @@
             sources: {
               esri: {
                 type: 'raster',
-                tiles: [ESRI_SAT],
+                tiles: [sliabhTiles(ESRI_SAT)],
                 tileSize: 256,
                 attribution: '&copy; Esri, Maxar, Earthstar Geographics',
               },
               'esri-topo': {
                 type: 'raster',
-                tiles: [ESRI_TOPO],
+                tiles: [sliabhTiles(ESRI_TOPO)],
                 tileSize: 256,
                 attribution: '&copy; Esri',
               },
@@ -1579,12 +1646,12 @@
           sources: {
             satellite: {
               type: 'raster',
-              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+              tiles: [sliabhTiles('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}')],
               tileSize: 256, maxzoom: 18, attribution: '© Esri',
             },
             topo: {
               type: 'raster',
-              tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
+              tiles: [sliabhTiles('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}')],
               tileSize: 256, maxzoom: 18, attribution: '© Esri',
             },
           },
@@ -3441,6 +3508,49 @@ ${trkpts}
         return;
       }
     });
+  </script>
+  <!--
+    Aviso "hay una versión nueva" para la app que la gente ya tiene instalada.
+    Esta página es lo único que esas instalaciones viejas cargan de internet, así
+    que es el único lugar donde se les puede avisar sin reinstalar. Las versiones
+    que ya se actualizan solas lo dicen (window.__SLIABH_APP.autoUpdate, puesto
+    por ParksMap.native.tsx) y no ven el aviso. Se enciende con UPDATE_NOTICE_ON
+    una vez que el APK que se actualiza solo esté publicado.
+  -->
+  <script>
+  (function () {
+    var UPDATE_NOTICE_ON = false;
+    var APK = 'https://github.com/FrankieDeane/sliabh/releases/latest/download/sliabh.apk';
+    var HIDE_KEY = 'sliabh-update-notice-hidden-until';
+    // Solo Android: el aviso lleva al APK (en iPhone no hay app instalada fuera de la tienda).
+    function inApp() { return !!window.ReactNativeWebView && /Android/i.test(navigator.userAgent); }
+    function show() {
+      if (!UPDATE_NOTICE_ON || !inApp()) return;
+      if (window.__SLIABH_APP && window.__SLIABH_APP.autoUpdate) return;
+      try { if (Number(localStorage.getItem(HIDE_KEY) || 0) > Date.now()) return; } catch (e) {}
+      var en = (document.documentElement.lang || '').indexOf('en') === 0;
+      var box = document.createElement('div');
+      box.id = 'sliabh-update-notice';
+      box.setAttribute('style', 'position:fixed;left:12px;right:12px;bottom:84px;z-index:9999;background:#0f1724;border:1px solid #22c55e;border-radius:14px;padding:12px 14px;color:#f0f9ff;font:14px/1.4 -apple-system,system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.45)');
+      box.innerHTML =
+        '<div style="font-weight:800;margin-bottom:4px">' + (en ? 'A new version of Sliabh is out' : 'Hay una versión nueva de Sliabh') + '</div>' +
+        '<div style="color:#cbd5e1;font-size:13px;margin-bottom:10px">' + (en
+          ? 'Offline maps that stay saved, and from now on the app updates itself. Your hikes and saved maps are kept.'
+          : 'Mapas sin señal que no se pierden y, desde esta, la app se actualiza sola. Tus recorridos y mapas guardados se mantienen.') + '</div>' +
+        '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+        '<button id="sun-later" style="background:none;border:0;color:#94a3b8;font-weight:700;padding:8px 10px">' + (en ? 'Later' : 'Más tarde') + '</button>' +
+        '<a id="sun-go" href="' + APK + '" style="background:#16a34a;color:#fff;font-weight:800;border-radius:999px;padding:8px 16px;text-decoration:none">' + (en ? 'Update' : 'Actualizar') + '</a>' +
+        '</div>';
+      document.body.appendChild(box);
+      document.getElementById('sun-later').onclick = function () {
+        try { localStorage.setItem(HIDE_KEY, String(Date.now() + 24 * 3600 * 1000)); } catch (e) {}
+        box.remove();
+      };
+    }
+    // Espera a que la app haya podido presentarse (el puente corre antes).
+    if (document.readyState === 'complete') setTimeout(show, 1500);
+    else window.addEventListener('load', function () { setTimeout(show, 1500); });
+  })();
   </script>
 </body>
 </html>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Modal, StatusBar } from 'react-native';
 import WebView from 'react-native-webview';
 import { buildTrailMapHtml, SITE } from './trailMapHtml';
+import { inlineMapVendor } from '../../services/offlineMapShell';
 
 interface GpxPoint {
   lat: number;
@@ -21,7 +22,7 @@ interface TrailMap3DProps {
 function TrailWebView({ html, onMessage }: { html: string; onMessage: (type: string) => void }) {
   return (
     <WebView
-      source={{ html, baseUrl: SITE }}
+      source={{ html: inlineMapVendor(html), baseUrl: SITE }}
       style={{ flex: 1, backgroundColor: '#070b14' }}
       originWhitelist={['*']}
       javaScriptEnabled
